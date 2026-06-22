@@ -50,6 +50,22 @@ struct SettingsView: View {
                     Text("Used to convert wheel revolutions into speed. GPS is used when no speed sensor is connected.")
                 }
 
+                Section {
+                    HStack {
+                        Text("Weight")
+                        Spacer()
+                        TextField("kg", value: $settings.riderWeightKg, format: .number)
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 80)
+                        Text("kg").foregroundStyle(.secondary)
+                    }
+                } header: {
+                    Text("Rider")
+                } footer: {
+                    Text("Used with heart rate from a paired Apple Watch to estimate calories. Read from Apple Health when available.")
+                }
+
                 Section("Alerts & Ride") {
                     Toggle("Beep on new vehicle", isOn: $settings.beepEnabled)
                     Toggle("Auto-pause when stopped", isOn: $settings.autoPauseEnabled)

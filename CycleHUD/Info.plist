@@ -49,6 +49,10 @@
 	<string>CycleHUD connects to your rear radar and speed/cadence sensors over Bluetooth to show approaching vehicles and your riding data.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>CycleHUD uses the barometer to measure your elevation gain accurately during a ride.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>CycleHUD reads your heart rate and body metrics to estimate calories burned during a ride.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>CycleHUD saves your ride as a cycling workout, including distance, calories and route, to Apple Health.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>CycleHUD uses GPS to record your speed and distance during a ride, including while the screen is off.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

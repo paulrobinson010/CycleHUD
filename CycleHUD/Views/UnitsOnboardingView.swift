@@ -33,6 +33,16 @@ struct UnitsOnboardingView: View {
                     }
                     .pickerStyle(.segmented)
                 }
+                pickerRow(title: "Weight (for calories)") {
+                    HStack {
+                        TextField("kg", value: $settings.riderWeightKg, format: .number)
+                            .keyboardType(.decimalPad)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 100)
+                        Text("kg").foregroundStyle(.secondary)
+                        Spacer()
+                    }
+                }
             }
             .padding(.horizontal, 28)
 

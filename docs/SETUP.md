@@ -1,0 +1,59 @@
+# CycleHUD — enabling Health & the Watch app
+
+The phone app builds and runs as-is. Heart rate, calories, saving rides to
+Apple Health, and the Watch app need a few one-time steps in Xcode that can't be
+scripted. **All of these require a paid Apple Developer account** — on a free
+personal team the HealthKit capability won't provision and the build will fail,
+so only do these if you're on the paid program. The core ride/radar app works
+either way.
+
+Estimated time: ~5 minutes.
+
+## 1. HealthKit on the iPhone app (saves rides + reads heart rate)
+
+1. Select the project → **CycleHUD** target → **Signing & Capabilities**.
+2. Click **+ Capability** → add **HealthKit**.
+3. That's it — the usage-description strings are already in `Info.plist`.
+
+Now tapping **Stop** on a ride saves a cycling workout (distance, duration,
+calories, GPS route) to Apple Health.
+
+## 2. Add the Watch app target
+
+1. **File → New → Target… → watchOS → App**.
+2. Product Name: **CycleHUDWatch**. Make sure it's created as a companion to the
+   **CycleHUD** app (Xcode offers this; it sets the companion bundle id and
+   pairing automatically). Interface **SwiftUI**, Language **Swift**.
+3. Xcode generates a couple of template files (an `…App.swift` and a
+   `ContentView.swift`) in the new watch target. **Delete those two template
+   files** (move to Trash) to avoid a duplicate `@main`.
+4. Add the prepared Watch sources: drag the three files from the repo's
+   **`CycleHUDWatch/`** folder into the watch target in Xcode —
+   `CycleHUDWatchApp.swift`, `WatchSessionManager.swift`, `WatchContentView.swift`.
+   In the dialog, tick the **CycleHUDWatch** target (uncheck the iOS CycleHUD
+   target). Don't add them to the iPhone app.
+5. Watch target → **Signing & Capabilities**:
+   - **+ Capability → HealthKit**.
+   - **+ Capability → Background Modes**, then tick **Workout processing**.
+6. Watch target → Info: add **Privacy - Health Share Usage Description** and
+   **Privacy - Health Update Usage Description** (any short text, e.g. "Used to
+   measure heart rate during a ride").
+7. Set the watch target's deployment to **watchOS 10** or later.
+
+## 3. Run it
+
+- Build/run the **CycleHUD** (iPhone) scheme to your phone.
+- Build/run the **CycleHUDWatch** scheme to your Apple Watch (first install can
+  take a minute).
+- Start a ride on the phone. The watch automatically starts a workout session,
+  streams your heart rate back (Calories + Heart Rate tiles light up), mirrors
+  your speed/distance/radar state, and taps your wrist when a new car appears.
+- Tap **Stop** → the ride is saved to Apple Health with its route.
+
+## Notes
+
+- The watch's own workout is intentionally **discarded** on stop — the phone
+  saves the single authoritative workout (it has the GPS route), so you won't get
+  duplicates in Health.
+- Calories are an HR-based estimate (Keytel formula) using your weight (Settings
+  → Rider, or read from Apple Health) and age/sex from Apple Health.

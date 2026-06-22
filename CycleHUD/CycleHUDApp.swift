@@ -5,16 +5,23 @@ struct CycleHUDApp: App {
     @StateObject private var settings: AppSettings
     @StateObject private var ble: BluetoothManager
     @StateObject private var location: LocationManager
+    @StateObject private var health: HealthKitManager
+    @StateObject private var watch: WatchConnectivityManager
     @StateObject private var ride: RideManager
 
     init() {
         let settings = AppSettings()
         let ble = BluetoothManager(settings: settings)
         let location = LocationManager()
-        let ride = RideManager(ble: ble, location: location, settings: settings)
+        let health = HealthKitManager()
+        let watch = WatchConnectivityManager()
+        let ride = RideManager(ble: ble, location: location, settings: settings,
+                               health: health, watch: watch)
         _settings = StateObject(wrappedValue: settings)
         _ble = StateObject(wrappedValue: ble)
         _location = StateObject(wrappedValue: location)
+        _health = StateObject(wrappedValue: health)
+        _watch = StateObject(wrappedValue: watch)
         _ride = StateObject(wrappedValue: ride)
     }
 
@@ -29,6 +36,7 @@ struct CycleHUDApp: App {
                 .onAppear {
                     location.requestAuthorization()
                     location.start(background: false)
+                    health.requestAuthorization()
                 }
         }
     }

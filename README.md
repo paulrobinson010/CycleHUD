@@ -17,8 +17,12 @@ with standard BLE speed/cadence sensors and GPS for ride metrics.
   vehicle is detected (each car beeps once, persisting cars don't re-trigger).
   Plays over music and ignores the silent switch. Toggle in Settings.
 - **Live metrics** — current speed, average speed (moving time only), distance,
-  elapsed moving time, cadence, elevation, and total ascent (barometer-based
-  when available, GPS-altitude fallback otherwise).
+  elapsed moving time, cadence, total ascent (barometer-based when available,
+  GPS-altitude fallback otherwise), plus heart rate and calories when an Apple
+  Watch is paired.
+- **Apple Health** — tapping Stop saves a cycling workout (distance, duration,
+  calories, GPS route) to Apple Health. Requires the HealthKit capability (see
+  Setup).
 - **Ride control** — Start / Pause / Resume / Stop.
 - **Auto-pause / auto-resume** — pauses automatically after you're stopped
   (< 1 km/h) for 5 s, and resumes ~1 s after you start moving again.
@@ -43,6 +47,15 @@ with standard BLE speed/cadence sensors and GPS for ride metrics.
 
 > Requires a physical iPhone — Bluetooth LE and GPS don't work in the Simulator.
 > Deployment target is iOS 17.
+
+### Health & Watch setup
+
+Heart rate, calories, saving rides to Apple Health, and the Watch app need a few
+one-time Xcode steps (HealthKit capability + adding the watch target) and a paid
+Apple Developer account. The full walkthrough is in **[docs/SETUP.md](docs/SETUP.md)**.
+The watch sources are ready in the `CycleHUDWatch/` folder; the phone already
+includes the WatchConnectivity link (heart rate in, mirror display + new-car
+wrist haptics out). The core ride/radar app runs without any of this.
 
 ### Pairing sensors
 

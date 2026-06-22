@@ -141,6 +141,14 @@ struct RideView: View {
                            value: elevationString(ride.elevationGainMeters),
                            unit: settings.distanceUnit.shortLabel, valueSize: 32, height: 90)
             }
+            HStack(spacing: 8) {
+                MetricTile(title: "Heart Rate",
+                           value: ride.currentHeartRate.map { "\($0)" } ?? "—",
+                           unit: "bpm", valueSize: 32, height: 90)
+                MetricTile(title: "Calories",
+                           value: ride.caloriesKcal >= 1 ? "\(Int(ride.caloriesKcal))" : "—",
+                           unit: "kcal", valueSize: 32, height: 90)
+            }
         }
     }
 

@@ -29,6 +29,8 @@ final class RideManager: ObservableObject {
     @Published private(set) var movingTimeSeconds: Double = 0
     @Published private(set) var currentSpeedMps: Double = 0
     @Published private(set) var elevationGainMeters: Double = 0   // total ascent this ride
+    @Published private(set) var caloriesKcal: Double = 0
+    @Published private(set) var currentHeartRate: Int?            // from the Watch, if present
 
     var averageSpeedMps: Double {
         movingTimeSeconds > 0 ? distanceMeters / movingTimeSeconds : 0
@@ -37,6 +39,16 @@ final class RideManager: ObservableObject {
     private let ble: BluetoothManager
     private let location: LocationManager
     private let settings: AppSettings
+    private let health: HealthKitManager
+    private let watch: WatchConnectivityManager
+
+    // Recorded GPS track + body metrics for the workout / calories.
+    private var route: [CLLocation] = []
+    private var rideStart: Date?
+    private var bodyWeightKg = 75.0
+    private var bodyAgeYears = 40.0
+    private var bodyIsFemale = false
+    private var mirrorTick = 0
 
     private var ticker: Timer?
     private var lastTick: Date?
@@ -50,12 +62,16 @@ final class RideManager: ObservableObject {
     private var lastRelativeAltitude: Double?
     private var lastGpsAltitude: Double?
 
-    init(ble: BluetoothManager, location: LocationManager, settings: AppSettings) {
+    init(ble: BluetoothManager, location: LocationManager, settings: AppSettings,
+         health: HealthKitManager, watch: WatchConnectivityManager) {
         self.ble = ble
         self.location = location
         self.settings = settings
+        self.health = health
+        self.watch = watch
         self.location.onLocation = { [weak self] loc in self?.accumulate(loc) }
         self.ble.onDemoFinished = { [weak self] in self?.stopDemo() }
+        self.ble.onNewCar = { [weak self] in self?.watch.sendNewCarHaptic() }
     }
 
     // MARK: - Controls
@@ -66,17 +82,35 @@ final class RideManager: ObservableObject {
         distanceMeters = 0
         movingTimeSeconds = 0
         elevationGainMeters = 0
+        caloriesKcal = 0
+        currentHeartRate = nil
+        route = []
+        rideStart = Date()
         stationarySeconds = 0
         movingSeconds = 0
         lastGatedLocation = nil
         lastGpsAltitude = nil
         lastRelativeAltitude = nil
         lastTick = Date()
+        loadBodyMetrics()
         status = .running
         location.start(background: true)
         startTicker()
         startAltimeter()
         applyScreenLock()
+    }
+
+    /// Snapshot the body metrics used for HR-based calories (from Health, with
+    /// the Settings weight as fallback).
+    private func loadBodyMetrics() {
+        bodyAgeYears = health.ageYears() ?? 40
+        bodyIsFemale = health.isFemale() ?? false
+        bodyWeightKg = settings.riderWeightKg
+        Task { [weak self] in
+            if let kg = await self?.health.latestWeightKg() {
+                await MainActor.run { self?.bodyWeightKg = kg }
+            }
+        }
     }
 
     /// Toggle between running and a manual pause.
@@ -91,12 +125,33 @@ final class RideManager: ObservableObject {
     }
 
     func stop() {
+        let start = rideStart ?? Date()
+        let end = Date()
+        let savedDistance = distanceMeters
+        let savedCalories = caloriesKcal
+        let savedRoute = route
+
         status = .idle
         stopTicker()
         stopAltimeter()
         location.stop(background: true)
         currentSpeedMps = 0
         UIApplication.shared.isIdleTimerDisabled = false
+        sendMirror()
+
+        // Save a cycling workout for any ride worth keeping.
+        if savedDistance >= 50 {
+            Task { [health] in
+                await health.saveRide(start: start, end: end,
+                                      distanceMeters: savedDistance,
+                                      calories: savedCalories, route: savedRoute)
+            }
+        }
+
+        route = []
+        caloriesKcal = 0
+        currentHeartRate = nil
+        rideStart = nil
     }
 
     // MARK: - Demo metrics
@@ -202,15 +257,48 @@ final class RideManager: ObservableObject {
         lastTick = now
 
         currentSpeedMps = resolvedSpeed()
+        currentHeartRate = watch.freshHeartRate()
 
         switch status {
         case .running:
             movingTimeSeconds += dt
+            accumulateCalories(dt: dt)
             updateAutoPause(dt: dt)
         case .autoPaused:
             updateAutoResume(dt: dt)
         case .paused, .idle:
             break
+        }
+
+        // Mirror to the Watch at ~2 Hz.
+        mirrorTick += 1
+        if mirrorTick % 2 == 0 { sendMirror() }
+    }
+
+    /// HR-based calories (only when the Watch is supplying a heart rate).
+    private func accumulateCalories(dt: Double) {
+        guard let hr = currentHeartRate, hr > 0 else { return }
+        let perMinute = Calories.kcalPerMinute(heartRate: Double(hr), weightKg: bodyWeightKg,
+                                               ageYears: bodyAgeYears, isFemale: bodyIsFemale)
+        caloriesKcal += perMinute * (dt / 60.0)
+    }
+
+    private func sendMirror() {
+        let levels = ble.threats.map { $0.level.rawValue }
+        let nearest = ble.threats.map { Int($0.distanceMeters.rounded()) }.min()
+        watch.sendMirror(speedMps: currentSpeedMps,
+                         distanceMeters: distanceMeters,
+                         rideStatusRaw: statusRaw,
+                         threatLevel: levels.max() ?? -1,
+                         nearestThreatMeters: nearest)
+    }
+
+    private var statusRaw: String {
+        switch status {
+        case .idle: return "idle"
+        case .running: return "running"
+        case .paused: return "paused"
+        case .autoPaused: return "autoPaused"
         }
     }
 
@@ -265,6 +353,12 @@ final class RideManager: ObservableObject {
             return
         }
         defer { lastGatedLocation = loc }
+
+        // Record reasonably-accurate fixes for the saved workout route.
+        if loc.horizontalAccuracy >= 0, loc.horizontalAccuracy < 30 {
+            route.append(loc)
+        }
+
         let step = lastGatedLocation.map { loc.distance(from: $0) } ?? 0
         // Ignore GPS jitter while essentially stationary.
         if step >= 0.5 {

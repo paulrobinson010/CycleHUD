@@ -8,6 +8,7 @@ final class AppSettings: ObservableObject {
         static let speedUnit = "speedUnit"
         static let distanceUnit = "distanceUnit"
         static let wheelCircumferenceMM = "wheelCircumferenceMM"
+        static let riderWeightKg = "riderWeightKg"
         static let beepEnabled = "beepEnabled"
         static let autoPauseEnabled = "autoPauseEnabled"
         static let keepScreenOn = "keepScreenOn"
@@ -19,6 +20,7 @@ final class AppSettings: ObservableObject {
     @Published var speedUnit: SpeedUnit { didSet { defaults.set(speedUnit.rawValue, forKey: Keys.speedUnit) } }
     @Published var distanceUnit: DistanceUnit { didSet { defaults.set(distanceUnit.rawValue, forKey: Keys.distanceUnit) } }
     @Published var wheelCircumferenceMM: Double { didSet { defaults.set(wheelCircumferenceMM, forKey: Keys.wheelCircumferenceMM) } }
+    @Published var riderWeightKg: Double { didSet { defaults.set(riderWeightKg, forKey: Keys.riderWeightKg) } }
     @Published var beepEnabled: Bool { didSet { defaults.set(beepEnabled, forKey: Keys.beepEnabled) } }
     @Published var autoPauseEnabled: Bool { didSet { defaults.set(autoPauseEnabled, forKey: Keys.autoPauseEnabled) } }
     @Published var keepScreenOn: Bool { didSet { defaults.set(keepScreenOn, forKey: Keys.keepScreenOn) } }
@@ -29,6 +31,7 @@ final class AppSettings: ObservableObject {
             Keys.speedUnit: SpeedUnit.kmh.rawValue,
             Keys.distanceUnit: DistanceUnit.km.rawValue,
             Keys.wheelCircumferenceMM: 2105.0,   // 700x25c default
+            Keys.riderWeightKg: 75.0,
             Keys.beepEnabled: true,
             Keys.autoPauseEnabled: true,
             Keys.keepScreenOn: true,
@@ -38,6 +41,7 @@ final class AppSettings: ObservableObject {
         speedUnit = SpeedUnit(rawValue: defaults.string(forKey: Keys.speedUnit) ?? "") ?? .kmh
         distanceUnit = DistanceUnit(rawValue: defaults.string(forKey: Keys.distanceUnit) ?? "") ?? .km
         wheelCircumferenceMM = defaults.double(forKey: Keys.wheelCircumferenceMM)
+        riderWeightKg = defaults.double(forKey: Keys.riderWeightKg)
         beepEnabled = defaults.bool(forKey: Keys.beepEnabled)
         autoPauseEnabled = defaults.bool(forKey: Keys.autoPauseEnabled)
         keepScreenOn = defaults.bool(forKey: Keys.keepScreenOn)

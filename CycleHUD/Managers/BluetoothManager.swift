@@ -355,8 +355,9 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         let existingIDs = Set(threats.map(\.id))
         let hasNewCar = sorted.contains { !existingIDs.contains($0.id) }
         threats = sorted
-        if hasNewCar && settings.beepEnabled {
-            AudioAlerts.shared.playNewCar()
+        if hasNewCar {
+            if settings.beepEnabled { AudioAlerts.shared.playNewCar() }
+            onNewCar?()
         }
     }
 
@@ -371,6 +372,9 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     /// Called when the radar demo finishes its single pass, so the metrics demo
     /// can stop in step with it.
     var onDemoFinished: (() -> Void)?
+
+    /// Called when a *new* vehicle is detected (for the Watch wrist haptic).
+    var onNewCar: (() -> Void)?
 
     // (id, distance m, approach speed km/h) → level is derived in Threat.level.
     private let demoFrames: [[(Int, Double, Double)]] = [
