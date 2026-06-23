@@ -34,14 +34,27 @@ final class AppLog {
         guard let data = line.data(using: .utf8) else { return }
         if let handle = try? FileHandle(forWritingTo: fileURL) {
             defer { try? handle.close() }
-            let size = (try? handle.seekToEnd()) ?? 0
-            if size > 600_000 {                 // keep the file from growing forever
-                try? handle.truncate(atOffset: 0)
-            }
             _ = try? handle.seekToEnd()
             try? handle.write(contentsOf: data)
         } else {
             try? data.write(to: fileURL)
+        }
+    }
+
+    /// Drop entries older than `days`. Lines without a leading timestamp (e.g.
+    /// crash stack frames) inherit the keep/drop decision of the entry above
+    /// them, so whole multi-line entries are kept or dropped together.
+    func prune(days: Int = 14) {
+        queue.async {
+            guard let text = try? String(contentsOf: self.fileURL, encoding: .utf8) else { return }
+            let cutoff = Date().addingTimeInterval(-Double(days) * 86_400)
+            var kept: [Substring] = []
+            var keeping = true
+            for line in text.split(separator: "\n", omittingEmptySubsequences: false) {
+                if let date = Self.parseDate(line) { keeping = date >= cutoff }
+                if keeping { kept.append(line) }
+            }
+            try? kept.joined(separator: "\n").write(to: self.fileURL, atomically: true, encoding: .utf8)
         }
     }
 
@@ -77,9 +90,17 @@ final class AppLog {
         }
     }
 
-    private static func timestamp() -> String {
+    private static let formatter: DateFormatter = {
         let f = DateFormatter()
-        f.dateFormat = "HH:mm:ss.SSS"
-        return f.string(from: Date())
+        f.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+        f.locale = Locale(identifier: "en_US_POSIX")
+        return f
+    }()
+
+    private static func timestamp() -> String { formatter.string(from: Date()) }
+
+    private static func parseDate(_ line: Substring) -> Date? {
+        guard line.count >= 23 else { return nil }
+        return formatter.date(from: String(line.prefix(23)))
     }
 }

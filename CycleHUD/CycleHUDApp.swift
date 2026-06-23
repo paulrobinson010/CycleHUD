@@ -11,6 +11,7 @@ struct CycleHUDApp: App {
 
     init() {
         AppLog.shared.installCrashHandlers()
+        AppLog.shared.prune()                 // keep ~14 days
         AppLog.shared.log("=== App launch ===")
         let settings = AppSettings()
         let ble = BluetoothManager(settings: settings)
