@@ -20,7 +20,8 @@ struct RideView: View {
             Theme.background.ignoresSafeArea()
             VStack(spacing: 12) {
                 statusBar
-                RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit)
+                RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
+                      radarConnected: ble.status(for: .radar) == .connected)
                     .frame(maxHeight: .infinity)
                 metricsGrid
                 controlBar

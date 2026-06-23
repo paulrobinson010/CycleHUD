@@ -7,6 +7,7 @@ import SwiftUI
 struct RadarView: View {
     let threats: [Threat]
     let distanceUnit: DistanceUnit
+    let radarConnected: Bool
 
     private let maxRange: Double = 150          // metres shown top-to-bottom
     private let rings: [Double] = [30, 60, 90, 120]
@@ -29,7 +30,7 @@ struct RadarView: View {
                 ringLines(w: w, h: h, nearWidth: nearWidth, farWidth: farWidth)
                 threatMarkers(w: w, h: h)
                 rider(w: w)
-                if threats.isEmpty { clearBadge(h: h) }
+                if threats.isEmpty { centerBadge(h: h) }
             }
             .frame(width: w, height: h)
             .background(
@@ -143,21 +144,38 @@ struct RadarView: View {
     private func rider(w: CGFloat) -> some View {
         Image(systemName: "bicycle")
             .font(.system(size: 30, weight: .bold))
-            .foregroundStyle(alertActive ? Color.white : Theme.good)
+            .foregroundStyle(riderColor)
             .position(x: w / 2, y: 30)
     }
 
-    private func clearBadge(h: CGFloat) -> some View {
-        VStack(spacing: 6) {
-            Image(systemName: "checkmark.shield.fill")
-                .font(.system(size: 26))
-                .foregroundStyle(Theme.good)
-            Text("Clear")
-                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                .foregroundStyle(Theme.good)
+    private var riderColor: Color {
+        if !radarConnected { return Theme.threatHigh }   // red: no radar
+        return alertActive ? Color.white : Theme.good
+    }
+
+    @ViewBuilder private func centerBadge(h: CGFloat) -> some View {
+        VStack(spacing: 8) {
+            if radarConnected {
+                Image(systemName: "checkmark.shield.fill")
+                    .font(.system(size: 26))
+                    .foregroundStyle(Theme.good)
+                Text("Clear")
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Theme.good)
+            } else {
+                Image(systemName: "antenna.radiowaves.left.and.right.slash")
+                    .font(.system(size: 26))
+                    .foregroundStyle(Theme.threatHigh)
+                Text("NOT CONNECTED")
+                    .font(.system(size: 13, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 5)
+                    .background(Capsule().fill(Theme.threatHigh))
+            }
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, h * 0.46)
+        .padding(.top, h * 0.44)
     }
 
     private func distanceLabel(_ meters: Double) -> String {
