@@ -352,12 +352,21 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     @Published private(set) var radarPacketCount = 0
     @Published private(set) var lastRadarHex = ""
+    private var lastRadarLogAt: Date?
 
     private func parseRadar(_ data: Data) {
         guard !demoActive else { return }
         let bytes = [UInt8](data)
         radarPacketCount += 1
         lastRadarHex = bytes.map { String(format: "%02x", $0) }.joined(separator: " ")
+
+        // Throttled radar logging so a diagnostics run captures real packets.
+        let now = Date()
+        if lastRadarLogAt == nil || now.timeIntervalSince(lastRadarLogAt!) >= 3 {
+            lastRadarLogAt = now
+            AppLog.shared.log("RADAR rx #\(radarPacketCount) \(bytes.count)B: \(lastRadarHex)")
+        }
+
         var newThreats: [Threat] = []
         var i = 1
         while i + 3 <= bytes.count {

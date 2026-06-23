@@ -59,7 +59,10 @@ struct DiagnosticsView: View {
         }
         .navigationTitle("Diagnostics")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { logText = lastLines(AppLog.shared.contents(), 120) }
+        .onAppear {
+            AppLog.shared.log("Sensor diagnostics opened (radar packets=\(ble.radarPacketCount))")
+            logText = lastLines(AppLog.shared.contents(), 120)
+        }
         .refreshable { logText = lastLines(AppLog.shared.contents(), 120) }
     }
 
