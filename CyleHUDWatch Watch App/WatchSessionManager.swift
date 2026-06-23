@@ -51,7 +51,36 @@ final class WatchSessionManager: NSObject, ObservableObject {
         healthRequested = true
         let share: Set<HKSampleType> = [HKQuantityType(.activeEnergyBurned), hrType]
         let read: Set<HKObjectType> = [hrType]
-        healthStore.requestAuthorization(toShare: share, read: read) { _, _ in }
+        healthStore.requestAuthorization(toShare: share, read: read) { [weak self] success, _ in
+            if success { self?.startHeartRateQuery() }
+        }
+    }
+
+    // MARK: - Idle heart rate (no workout required)
+
+    private var hrQuery: HKAnchoredObjectQuery?
+
+    /// Streams the latest recorded heart rate from HealthKit even when no ride
+    /// is running, so opening the app shows a value. At rest watchOS samples HR
+    /// every few minutes; during a ride the workout session updates it live.
+    private func startHeartRateQuery() {
+        guard hrQuery == nil else { return }
+        let predicate = HKQuery.predicateForSamples(withStart: Date().addingTimeInterval(-3600),
+                                                    end: nil, options: [])
+        let handler: (HKAnchoredObjectQuery, [HKSample]?, [HKDeletedObject]?, HKQueryAnchor?, Error?) -> Void = {
+            [weak self] _, samples, _, _, _ in
+            guard let self, let last = (samples as? [HKQuantitySample])?.last else { return }
+            let hr = last.quantity.doubleValue(for: self.hrUnit)
+            DispatchQueue.main.async {
+                self.heartRate = Int(hr.rounded())
+                self.sendHeartRate(hr)
+            }
+        }
+        let query = HKAnchoredObjectQuery(type: hrType, predicate: predicate, anchor: nil,
+                                          limit: HKObjectQueryNoLimit, resultsHandler: handler)
+        query.updateHandler = handler
+        healthStore.execute(query)
+        hrQuery = query
     }
 
     // MARK: - Workout session (heart rate source)
