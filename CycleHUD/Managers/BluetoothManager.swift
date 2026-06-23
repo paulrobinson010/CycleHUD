@@ -127,6 +127,12 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     private var connected: [UUID: CBPeripheral] = [:]
     private var discoveredPeripherals: [UUID: CBPeripheral] = [:]
 
+    // Liveness: a sensor counts as connected only while it's actually streaming
+    // data (CoreBluetooth can report a powered-off sensor as connected for ages).
+    private var lastDataAt: [UUID: Date] = [:]
+    private var livenessTimer: Timer?
+    private let dataTimeout: TimeInterval = 10
+
     // CSC running state for delta calculations.
     private var lastWheelRevs: UInt32?
     private var lastWheelEventTime: UInt16?
@@ -138,6 +144,26 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         super.init()
         loadSavedDevices()
         central = CBCentralManager(delegate: self, queue: nil)
+        livenessTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+            self?.checkLiveness()
+        }
+    }
+
+    /// Demote any "connected" device that has gone quiet (powered off) to
+    /// retrying, and clear the radar lane if it's the radar that went silent.
+    private func checkLiveness() {
+        let now = Date()
+        for (id, peripheral) in connected where peripheral.state == .connected {
+            guard connectionStates[id] == .connected else { continue }
+            if now.timeIntervalSince(lastDataAt[id] ?? .distantPast) > dataTimeout {
+                connectionStates[id] = .retrying
+                if (peripheral.services ?? []).contains(where: {
+                    BluetoothManager.radarServiceUUIDs.contains($0.uuid)
+                }) {
+                    threats = []
+                }
+            }
+        }
     }
 
     // MARK: - Role / device status (for the main-screen icons)
@@ -273,6 +299,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         connectionStates[peripheral.identifier] = .connected
+        lastDataAt[peripheral.identifier] = Date()   // grace period before liveness applies
         upsertSavedDevice(id: peripheral.identifier, name: peripheral.name ?? "")
         diag("Connected: \(peripheral.name ?? "?")")
         peripheral.discoverServices(nil)   // discover everything, match by UUID below
@@ -336,6 +363,11 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic,
                    error: Error?) {
         guard let data = characteristic.value else { return }
+        // Any data = the sensor is alive; refresh liveness and restore connected.
+        lastDataAt[peripheral.identifier] = Date()
+        if connectionStates[peripheral.identifier] == .retrying {
+            connectionStates[peripheral.identifier] = .connected
+        }
         if BluetoothManager.radarMeasurementUUIDs.contains(characteristic.uuid) {
             parseRadar(data)
             return
