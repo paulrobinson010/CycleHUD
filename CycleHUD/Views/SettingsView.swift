@@ -94,6 +94,16 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    NavigationLink {
+                        DiagnosticsView().environmentObject(ble)
+                    } label: {
+                        Label("Sensor diagnostics", systemImage: "stethoscope")
+                    }
+                } footer: {
+                    Text("Shows the Bluetooth services your sensors expose and live radar packets — useful if the radar connects but shows nothing.")
+                }
+
+                Section {
                     Text("CycleHUD pairs with a Coospo TR70 (or other Varia-compatible) rear radar and standard CSC speed/cadence sensors.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }

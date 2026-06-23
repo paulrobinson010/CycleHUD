@@ -6,8 +6,37 @@
 	objectVersion = 70;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		26F2F0D02FE9DFB900B4258D /* CyleHUDWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 26F2F0C62FE9DFB800B4258D /* CyleHUDWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		26F2F0CE2FE9DFB900B4258D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A0000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 26F2F0C52FE9DFB800B4258D;
+			remoteInfo = "CyleHUDWatch Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		26F2F0D42FE9DFB900B4258D /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				26F2F0D02FE9DFB900B4258D /* CyleHUDWatch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		1A0000000000000000000006 /* CycleHUD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CycleHUD.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		26F2F0C62FE9DFB800B4258D /* CyleHUDWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CyleHUDWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -22,10 +51,18 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1A0000000000000000000004 /* CycleHUD */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (1A0000000000000000000010 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CycleHUD; sourceTree = "<group>"; };
+		26F2F0C72FE9DFB800B4258D /* CyleHUDWatch Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "CyleHUDWatch Watch App"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		1A0000000000000000000008 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26F2F0C32FE9DFB800B4258D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -39,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				1A0000000000000000000004 /* CycleHUD */,
+				26F2F0C72FE9DFB800B4258D /* CyleHUDWatch Watch App */,
 				1A0000000000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -47,6 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				1A0000000000000000000006 /* CycleHUD.app */,
+				26F2F0C62FE9DFB800B4258D /* CyleHUDWatch Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,10 +100,12 @@
 				1A0000000000000000000007 /* Sources */,
 				1A0000000000000000000008 /* Frameworks */,
 				1A0000000000000000000009 /* Resources */,
+				26F2F0D42FE9DFB900B4258D /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				26F2F0CF2FE9DFB900B4258D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				1A0000000000000000000004 /* CycleHUD */,
@@ -74,6 +115,28 @@
 			productReference = 1A0000000000000000000006 /* CycleHUD.app */;
 			productType = "com.apple.product-type.application";
 		};
+		26F2F0C52FE9DFB800B4258D /* CyleHUDWatch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26F2F0D12FE9DFB900B4258D /* Build configuration list for PBXNativeTarget "CyleHUDWatch Watch App" */;
+			buildPhases = (
+				26F2F0C22FE9DFB800B4258D /* Sources */,
+				26F2F0C32FE9DFB800B4258D /* Frameworks */,
+				26F2F0C42FE9DFB800B4258D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				26F2F0C72FE9DFB800B4258D /* CyleHUDWatch Watch App */,
+			);
+			name = "CyleHUDWatch Watch App";
+			packageProductDependencies = (
+			);
+			productName = "CyleHUDWatch Watch App";
+			productReference = 26F2F0C62FE9DFB800B4258D /* CyleHUDWatch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -81,11 +144,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1600;
+				LastSwiftUpdateCheck = 2650;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					1A0000000000000000000005 = {
 						CreatedOnToolsVersion = 16.0;
+					};
+					26F2F0C52FE9DFB800B4258D = {
+						CreatedOnToolsVersion = 26.5;
 					};
 				};
 			};
@@ -104,12 +170,20 @@
 			projectRoot = "";
 			targets = (
 				1A0000000000000000000005 /* CycleHUD */,
+				26F2F0C52FE9DFB800B4258D /* CyleHUDWatch Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		1A0000000000000000000009 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26F2F0C42FE9DFB800B4258D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -126,7 +200,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		26F2F0C22FE9DFB800B4258D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		26F2F0CF2FE9DFB900B4258D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 26F2F0C52FE9DFB800B4258D /* CyleHUDWatch Watch App */;
+			targetProxy = 26F2F0CE2FE9DFB900B4258D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1A000000000000000000000C /* Debug */ = {
@@ -253,6 +342,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CycleHUD/CycleHUD.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UPF9A27355;
@@ -279,6 +369,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CycleHUD/CycleHUD.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UPF9A27355;
@@ -300,6 +391,78 @@
 			};
 			name = Release;
 		};
+		26F2F0D22FE9DFB900B4258D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "CyleHUDWatch Watch App/CyleHUDWatch.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UPF9A27355;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = CyleHUDWatch;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Used to read heart rate during a ride.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Used to record your workout.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.paulrobinson.CycleHUD;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.paulrobinson.CycleHUD.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		26F2F0D32FE9DFB900B4258D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "CyleHUDWatch Watch App/CyleHUDWatch.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UPF9A27355;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = CyleHUDWatch;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Used to read heart rate during a ride.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Used to record your workout.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.paulrobinson.CycleHUD;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.paulrobinson.CycleHUD.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -317,6 +480,15 @@
 			buildConfigurations = (
 				1A000000000000000000000E /* Debug */,
 				1A000000000000000000000F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		26F2F0D12FE9DFB900B4258D /* Build configuration list for PBXNativeTarget "CyleHUDWatch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26F2F0D22FE9DFB900B4258D /* Debug */,
+				26F2F0D32FE9DFB900B4258D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

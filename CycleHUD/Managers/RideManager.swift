@@ -14,6 +14,22 @@ enum RideStatus: Equatable {
     var isMoving: Bool { self == .running }
 }
 
+/// Persisted so an in-progress ride survives the app being killed (e.g. phone
+/// pocketed while carrying the bike). The ride only truly ends on Stop.
+private struct RideSnapshot: Codable {
+    var statusRaw: String
+    var distance: Double
+    var movingTime: Double
+    var elevation: Double
+    var calories: Double
+    var startEpoch: Double
+}
+
+private struct RoutePoint: Codable {
+    var lat: Double, lon: Double, alt: Double
+    var hAcc: Double, vAcc: Double, course: Double, speed: Double, t: Double
+}
+
 /// Drives the ride: distance, moving time, current/average speed, and the
 /// auto-pause / auto-resume logic. Reads live speed from the wheel sensor when
 /// available, otherwise GPS.
@@ -49,6 +65,14 @@ final class RideManager: ObservableObject {
     private var bodyAgeYears = 40.0
     private var bodyIsFemale = false
     private var mirrorTick = 0
+    private var saveTick = 0
+
+    // Crash/termination recovery
+    private let snapshotKey = "activeRideSnapshot"
+    private var routeURL: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("active-route.json")
+    }
 
     private var ticker: Timer?
     private var lastTick: Date?
@@ -72,6 +96,7 @@ final class RideManager: ObservableObject {
         self.location.onLocation = { [weak self] loc in self?.accumulate(loc) }
         self.ble.onDemoFinished = { [weak self] in self?.stopDemo() }
         self.ble.onNewCar = { [weak self] in self?.watch.sendNewCarHaptic() }
+        restoreActiveRide()
     }
 
     // MARK: - Controls
@@ -98,6 +123,8 @@ final class RideManager: ObservableObject {
         startTicker()
         startAltimeter()
         applyScreenLock()
+        try? FileManager.default.removeItem(at: routeURL)
+        persistSnapshot()
     }
 
     /// Snapshot the body metrics used for HR-based calories (from Health, with
@@ -122,6 +149,7 @@ final class RideManager: ObservableObject {
         }
         stationarySeconds = 0
         movingSeconds = 0
+        persistSnapshot()
     }
 
     func stop() {
@@ -152,6 +180,7 @@ final class RideManager: ObservableObject {
         caloriesKcal = 0
         currentHeartRate = nil
         rideStart = nil
+        clearPersistence()
     }
 
     // MARK: - Demo metrics
@@ -193,6 +222,9 @@ final class RideManager: ObservableObject {
         movingTimeSeconds = 0
         elevationGainMeters = 0
         currentSpeedMps = 0
+        // Tell the Watch it's over: resets speed, clears threats, ends its
+        // workout (which zeroes the heart rate).
+        sendMirror()
     }
 
     /// Pause/resume the demo (mirrors a manual pause on a real ride).
@@ -215,6 +247,7 @@ final class RideManager: ObservableObject {
         if Double.random(in: 0...1) < 0.5 {
             elevationGainMeters += Double.random(in: 0...0.7)
         }
+        sendMirror()   // drive the Watch (mirror + escalating haptics) during the demo too
     }
 
     // MARK: - Elevation (barometer)
@@ -273,6 +306,11 @@ final class RideManager: ObservableObject {
         // Mirror to the Watch at ~2 Hz.
         mirrorTick += 1
         if mirrorTick % 2 == 0 { sendMirror() }
+
+        // Persist so the ride survives the app being killed mid-ride.
+        saveTick += 1
+        if saveTick % 8 == 0 { persistSnapshot() }     // ~every 2 s
+        if saveTick % 60 == 0 { persistRoute() }        // ~every 15 s
     }
 
     /// HR-based calories (only when the Watch is supplying a heart rate).
@@ -286,9 +324,11 @@ final class RideManager: ObservableObject {
     private func sendMirror() {
         let levels = ble.threats.map { $0.level.rawValue }
         let nearest = ble.threats.map { Int($0.distanceMeters.rounded()) }.min()
+        // During the demo, present as "running" so the Watch starts its workout
+        // session (real HR) for testing without a full ride.
         watch.sendMirror(speedMps: currentSpeedMps,
                          distanceMeters: distanceMeters,
-                         rideStatusRaw: statusRaw,
+                         rideStatusRaw: demoActive ? "running" : statusRaw,
                          threatLevel: levels.max() ?? -1,
                          nearestThreatMeters: nearest)
     }
@@ -377,5 +417,71 @@ final class RideManager: ObservableObject {
 
     private func applyScreenLock() {
         UIApplication.shared.isIdleTimerDisabled = settings.keepScreenOn
+    }
+
+    // MARK: - Crash / termination recovery
+
+    private func persistSnapshot() {
+        guard status != .idle else { return }
+        let snap = RideSnapshot(statusRaw: statusRaw, distance: distanceMeters,
+                                movingTime: movingTimeSeconds, elevation: elevationGainMeters,
+                                calories: caloriesKcal,
+                                startEpoch: (rideStart ?? Date()).timeIntervalSince1970)
+        if let data = try? JSONEncoder().encode(snap) {
+            UserDefaults.standard.set(data, forKey: snapshotKey)
+        }
+    }
+
+    private func persistRoute() {
+        let points = route.map {
+            RoutePoint(lat: $0.coordinate.latitude, lon: $0.coordinate.longitude, alt: $0.altitude,
+                       hAcc: $0.horizontalAccuracy, vAcc: $0.verticalAccuracy,
+                       course: $0.course, speed: $0.speed, t: $0.timestamp.timeIntervalSince1970)
+        }
+        if let data = try? JSONEncoder().encode(points) { try? data.write(to: routeURL) }
+    }
+
+    private func clearPersistence() {
+        UserDefaults.standard.removeObject(forKey: snapshotKey)
+        try? FileManager.default.removeItem(at: routeURL)
+    }
+
+    /// On launch, resume an in-progress ride that was interrupted by the app
+    /// being killed — so the ride only ever ends when the rider taps Stop.
+    private func restoreActiveRide() {
+        guard let data = UserDefaults.standard.data(forKey: snapshotKey),
+              let snap = try? JSONDecoder().decode(RideSnapshot.self, from: data),
+              snap.statusRaw != "idle" else { return }
+        let start = Date(timeIntervalSince1970: snap.startEpoch)
+        guard Date().timeIntervalSince(start) < 12 * 3600 else { clearPersistence(); return }
+
+        distanceMeters = snap.distance
+        movingTimeSeconds = snap.movingTime
+        elevationGainMeters = snap.elevation
+        caloriesKcal = snap.calories
+        rideStart = start
+        route = loadRoute()
+        switch snap.statusRaw {
+        case "paused": status = .paused
+        case "autoPaused": status = .autoPaused
+        default: status = .running
+        }
+        loadBodyMetrics()
+        lastTick = Date()
+        location.start(background: true)
+        startTicker()
+        startAltimeter()
+        applyScreenLock()
+    }
+
+    private func loadRoute() -> [CLLocation] {
+        guard let data = try? Data(contentsOf: routeURL),
+              let points = try? JSONDecoder().decode([RoutePoint].self, from: data) else { return [] }
+        return points.map {
+            CLLocation(coordinate: CLLocationCoordinate2D(latitude: $0.lat, longitude: $0.lon),
+                       altitude: $0.alt, horizontalAccuracy: $0.hAcc, verticalAccuracy: $0.vAcc,
+                       course: $0.course, speed: $0.speed,
+                       timestamp: Date(timeIntervalSince1970: $0.t))
+        }
     }
 }

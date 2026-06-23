@@ -22,6 +22,11 @@ struct WatchContentView: View {
                 metric(label: "KM", value: String(format: "%.2f", session.distanceMeters / 1000))
             }
             .padding(.top, 2)
+
+            // Diagnostic line — shows where the HR chain stands.
+            Text("\(session.healthRequested ? "HK✓" : "HK✗")  \(session.workoutActive ? "WO on" : "WO off")")
+                .font(.system(size: 9, weight: .medium, design: .rounded))
+                .foregroundStyle(.secondary)
         }
         .padding(.horizontal, 6)
         .containerBackground(bannerColor.gradient, for: .navigation)

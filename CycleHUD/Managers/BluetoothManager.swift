@@ -81,10 +81,13 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     static let radarService = CBUUID(string: "6A4E3200-667B-11E3-949A-0800200C9A66")
     static let radarMeasurement = CBUUID(string: "6A4E3203-667B-11E3-949A-0800200C9A66")
+    // Some Varia-compatible radars (incl. some Coospo firmware) use this family.
+    static let radarServiceAlt = CBUUID(string: "6A4ECD65-D688-4A4C-A37D-CF5AF0DBEDD0")
+    static let radarMeasurementAlt = CBUUID(string: "6A4ECD66-D688-4A4C-A37D-CF5AF0DBEDD0")
+    static let radarMeasurementUUIDs: Set<CBUUID> = [radarMeasurement, radarMeasurementAlt]
+    static let radarServiceUUIDs: Set<CBUUID> = [radarService, radarServiceAlt]
     static let cscService = CBUUID(string: "1816")
     static let cscMeasurement = CBUUID(string: "2A5B")
-
-    private let knownServices = [BluetoothManager.radarService, BluetoothManager.cscService]
     private let savedDevicesKey = "savedDevicesV3"
 
     // MARK: Published state
@@ -98,6 +101,14 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     @Published private(set) var threats: [Threat] = []
     @Published private(set) var demoActive = false
+
+    /// Human-readable BLE diagnostics (services/characteristics found, radar
+    /// packets) shown in the Diagnostics screen to debug sensors in the field.
+    @Published private(set) var diagnostics: [String] = []
+    private func diag(_ line: String) {
+        diagnostics.append(line)
+        if diagnostics.count > 300 { diagnostics.removeFirst(diagnostics.count - 300) }
+    }
 
     @Published private(set) var sensorSpeedMps: Double?
     @Published private(set) var cadenceRpm: Int?
@@ -256,7 +267,8 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         connectionStates[peripheral.identifier] = .connected
         upsertSavedDevice(id: peripheral.identifier, name: peripheral.name ?? "")
-        peripheral.discoverServices(knownServices)
+        diag("Connected: \(peripheral.name ?? "?")")
+        peripheral.discoverServices(nil)   // discover everything, match by UUID below
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral,
@@ -285,22 +297,24 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         for service in peripheral.services ?? [] {
-            let chars = service.uuid == BluetoothManager.radarService
-                ? [BluetoothManager.radarMeasurement]
-                : (service.uuid == BluetoothManager.cscService ? [BluetoothManager.cscMeasurement] : nil)
-            peripheral.discoverCharacteristics(chars, for: service)
+            diag("Service \(service.uuid.uuidString)")
+            peripheral.discoverCharacteristics(nil, for: service)
         }
     }
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService,
                    error: Error?) {
         for ch in service.characteristics ?? [] {
-            if ch.uuid == BluetoothManager.radarMeasurement {
+            let notify = ch.properties.contains(.notify) || ch.properties.contains(.indicate)
+            diag("  char \(ch.uuid.uuidString)\(notify ? " [notify]" : "")")
+            if BluetoothManager.radarMeasurementUUIDs.contains(ch.uuid) {
                 peripheral.setNotifyValue(true, for: ch)
                 upsertSavedDevice(id: peripheral.identifier, name: peripheral.name ?? "", addRole: .radar)
+                diag("  → subscribed RADAR")
             } else if ch.uuid == BluetoothManager.cscMeasurement {
                 // Speed / cadence roles are assigned once we see the data flags.
                 peripheral.setNotifyValue(true, for: ch)
+                diag("  → subscribed CSC")
             }
         }
     }
@@ -308,8 +322,11 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic,
                    error: Error?) {
         guard let data = characteristic.value else { return }
+        if BluetoothManager.radarMeasurementUUIDs.contains(characteristic.uuid) {
+            parseRadar(data)
+            return
+        }
         switch characteristic.uuid {
-        case BluetoothManager.radarMeasurement: parseRadar(data)
         case BluetoothManager.cscMeasurement: parseCSC(data, from: peripheral.identifier)
         default: break
         }
@@ -320,7 +337,9 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     private func recomputeRadarThreatsIfNeeded() {
         // If no radar is actively connected, clear the lane.
         let radarConnected = connected.values.contains { p in
-            p.state == .connected && (p.services ?? []).contains { $0.uuid == BluetoothManager.radarService }
+            p.state == .connected && (p.services ?? []).contains {
+                BluetoothManager.radarServiceUUIDs.contains($0.uuid)
+            }
         }
         if !radarConnected && !demoActive { threats = [] }
     }
@@ -330,9 +349,14 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     // Payload = 1 page/counter byte, then 3 bytes per threat:
     //   [threat id][distance in metres][approach speed in km/h]
 
+    @Published private(set) var radarPacketCount = 0
+    @Published private(set) var lastRadarHex = ""
+
     private func parseRadar(_ data: Data) {
         guard !demoActive else { return }
         let bytes = [UInt8](data)
+        radarPacketCount += 1
+        lastRadarHex = bytes.map { String(format: "%02x", $0) }.joined(separator: " ")
         var newThreats: [Threat] = []
         var i = 1
         while i + 3 <= bytes.count {
