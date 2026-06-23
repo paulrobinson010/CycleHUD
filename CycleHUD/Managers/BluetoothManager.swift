@@ -380,6 +380,17 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         }
     }
 
+    /// Confirms whether a notify subscription actually took, so a silent radar
+    /// (device sending nothing) can be told apart from a failed subscribe.
+    func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic,
+                   error: Error?) {
+        if let error {
+            diag("  ✗ notify \(characteristic.uuid.uuidString) failed: \(error.localizedDescription)")
+        } else {
+            diag("  ✓ notify \(characteristic.uuid.uuidString) on=\(characteristic.isNotifying)")
+        }
+    }
+
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic,
                    error: Error?) {
         guard let data = characteristic.value else { return }
