@@ -88,10 +88,6 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     // Coospo TR70 uses proprietary services over BLE (FDB0 is radar-unique).
     static let coospoRadarService = CBUUID(string: "FDB0")
     static let radarServiceUUIDs: Set<CBUUID> = [radarService, radarServiceAlt, coospoRadarService]
-    // Unknown-format notify characteristics to capture for protocol decoding.
-    static let captureCharUUIDs: Set<CBUUID> = [
-        CBUUID(string: "FDB1"), CBUUID(string: "FD29"), CBUUID(string: "FD09")
-    ]
     static let cscService = CBUUID(string: "1816")
     static let cscMeasurement = CBUUID(string: "2A5B")
     private let savedDevicesKey = "savedDevicesV3"
@@ -352,6 +348,13 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         if service.uuid == BluetoothManager.coospoRadarService {
             upsertSavedDevice(id: peripheral.identifier, name: peripheral.name ?? "", addRole: .radar)
         }
+        // A radar speaking a proprietary protocol (e.g. the TR70) streams its
+        // threat data over a vendor characteristic we can't name in advance, so
+        // on a radar peripheral we subscribe to *every* notify characteristic and
+        // log the raw bytes — that's the only way to capture and decode it.
+        let isRadarPeripheral = (peripheral.services ?? []).contains {
+            BluetoothManager.radarServiceUUIDs.contains($0.uuid)
+        }
         for ch in service.characteristics ?? [] {
             let notify = ch.properties.contains(.notify) || ch.properties.contains(.indicate)
             diag("  char \(ch.uuid.uuidString)\(notify ? " [notify]" : "")")
@@ -362,8 +365,9 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             } else if ch.uuid == BluetoothManager.cscMeasurement {
                 peripheral.setNotifyValue(true, for: ch)
                 diag("  → subscribed CSC")
-            } else if BluetoothManager.captureCharUUIDs.contains(ch.uuid), notify {
-                // Capture proprietary radar data for protocol decoding.
+            } else if notify, isRadarPeripheral {
+                // Proprietary radar characteristic — subscribe and capture raw
+                // bytes so a ride past a car records the protocol to decode.
                 peripheral.setNotifyValue(true, for: ch)
                 diag("  → capturing \(ch.uuid.uuidString)")
             }
@@ -382,14 +386,13 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             parseRadar(data)
             return
         }
-        if BluetoothManager.captureCharUUIDs.contains(characteristic.uuid) {
-            captureLog(characteristic.uuid, peripheral.name ?? "?", data)
+        if characteristic.uuid == BluetoothManager.cscMeasurement {
+            parseCSC(data, from: peripheral.identifier)
             return
         }
-        switch characteristic.uuid {
-        case BluetoothManager.cscMeasurement: parseCSC(data, from: peripheral.identifier)
-        default: break
-        }
+        // Anything else is a proprietary radar stream — log the raw bytes
+        // (throttled per UUID) so the protocol can be decoded from a real ride.
+        captureLog(characteristic.uuid, peripheral.name ?? "?", data)
     }
 
     // MARK: - Helpers
