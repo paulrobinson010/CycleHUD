@@ -7,6 +7,7 @@ struct RideView: View {
     @EnvironmentObject var ble: BluetoothManager
     @EnvironmentObject var location: LocationManager
     @EnvironmentObject var ride: RideManager
+    @EnvironmentObject var watch: WatchConnectivityManager
 
     private enum ActiveSheet: Int, Identifiable {
         case pairing, settings
@@ -143,7 +144,7 @@ struct RideView: View {
             }
             HStack(spacing: 8) {
                 MetricTile(title: "Heart Rate",
-                           value: ride.currentHeartRate.map { "\($0)" } ?? "—",
+                           value: (watch.displayHeartRate ?? ride.currentHeartRate).map { "\($0)" } ?? "—",
                            unit: "bpm", valueSize: 32, height: 90)
                 MetricTile(title: "Calories",
                            value: ride.caloriesKcal >= 1 ? "\(Int(ride.caloriesKcal))" : "—",

@@ -35,6 +35,7 @@ struct CycleHUDApp: App {
                 .environmentObject(ble)
                 .environmentObject(location)
                 .environmentObject(ride)
+                .environmentObject(watch)
                 .preferredColorScheme(.dark)
                 .onAppear {
                     location.requestAuthorization()

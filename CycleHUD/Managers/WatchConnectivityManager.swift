@@ -39,6 +39,10 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
         return Date().timeIntervalSince(at) <= seconds ? hr : nil
     }
 
+    /// Heart rate for on-screen display — tolerates the sparse idle sampling
+    /// (the Watch only records HR every few minutes when not in a workout).
+    var displayHeartRate: Int? { freshHeartRate(staleAfter: 300) }
+
     // MARK: - Outgoing
 
     /// Push the current ride state to the Watch face (best-effort, low priority).
