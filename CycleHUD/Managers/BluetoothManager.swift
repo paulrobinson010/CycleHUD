@@ -149,19 +149,29 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         }
     }
 
-    /// Demote any "connected" device that has gone quiet (powered off) to
-    /// retrying, and clear the radar lane if it's the radar that went silent.
+    /// Watchdog for sensors that have gone quiet.
+    ///
+    /// A CSC speed/cadence sensor streams continuously while it's on, so a long
+    /// silence means it powered off (CoreBluetooth can keep reporting it as
+    /// connected for a while) — demote it to retrying.
+    ///
+    /// A rear radar is different: with no vehicles behind, it legitimately sends
+    /// no threat data while staying connected, so silence must NOT be read as a
+    /// dropped link. We only clear the stale threat lane; the radar's connection
+    /// status stays driven by the actual BLE link (didConnect/didDisconnect).
     private func checkLiveness() {
         let now = Date()
         for (id, peripheral) in connected where peripheral.state == .connected {
             guard connectionStates[id] == .connected else { continue }
-            if now.timeIntervalSince(lastDataAt[id] ?? .distantPast) > dataTimeout {
-                connectionStates[id] = .retrying
-                if (peripheral.services ?? []).contains(where: {
-                    BluetoothManager.radarServiceUUIDs.contains($0.uuid)
-                }) {
-                    threats = []
-                }
+            guard now.timeIntervalSince(lastDataAt[id] ?? .distantPast) > dataTimeout else { continue }
+
+            let isRadar = (peripheral.services ?? []).contains {
+                BluetoothManager.radarServiceUUIDs.contains($0.uuid)
+            }
+            if isRadar {
+                threats = []                       // drop stale cars, keep it connected
+            } else {
+                connectionStates[id] = .retrying   // CSC sensor went silent → powered off
             }
         }
     }
