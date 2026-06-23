@@ -4,7 +4,6 @@ import SwiftUI
 /// threat banner that turns amber/red when a vehicle is closing in.
 struct WatchContentView: View {
     @EnvironmentObject var session: WatchSessionManager
-    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         VStack(spacing: 6) {
@@ -31,9 +30,6 @@ struct WatchContentView: View {
         }
         .padding(.horizontal, 6)
         .containerBackground(bannerColor.gradient, for: .navigation)
-        .onChange(of: scenePhase) { _, phase in
-            session.setForeground(phase == .active)
-        }
     }
 
     private var threatBanner: some View {

@@ -29,18 +29,14 @@ final class WatchSessionManager: NSObject, ObservableObject {
     private let hrType = HKQuantityType(.heartRate)
     private let hrUnit = HKUnit.count().unitDivided(by: .minute())
 
-    private var appForeground = true   // run a session while viewed, for live HR
-    private var rideActive = false     // keep the session running for the whole ride
+    private var rideActive = false     // run the workout session only during a ride
 
-    /// Called by the view on scene-phase changes.
-    func setForeground(_ active: Bool) {
-        appForeground = active
-        updateWorkout()
-    }
-
-    /// Start/stop the workout session based on whether we want live HR now.
+    /// Start/stop the workout session. A live `HKWorkoutSession` is the single
+    /// biggest battery drain on the watch, so we run it ONLY during an actual
+    /// ride — never just because the app is on screen. When idle, heart rate
+    /// comes from the low-power HealthKit sample stream (startHeartRateQuery).
     private func updateWorkout() {
-        let want = appForeground || rideActive
+        let want = rideActive
         if want, workoutSession == nil {
             startWorkout()
         } else if !want, workoutSession != nil {
@@ -169,30 +165,35 @@ final class WatchSessionManager: NSObject, ObservableObject {
     // and stronger as the car closes in.
 
     private var hapticTimer: Timer?
-    private var lastHapticAt: Date?
 
+    /// Start the wrist-tap loop when a car appears, stop it when the lane clears.
     private func updateHapticLoop() {
         let carPresent = threatLevel >= 0
-        if carPresent, hapticTimer == nil {
-            lastHapticAt = nil
-            hapticTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in
-                self?.evaluateHaptic()
-            }
-        } else if !carPresent, hapticTimer != nil {
+        if carPresent {
+            if hapticTimer == nil { scheduleNextHaptic(after: 0) }   // tap right away
+        } else if hapticTimer != nil {
             hapticTimer?.invalidate()
             hapticTimer = nil
         }
     }
 
-    private func evaluateHaptic() {
-        guard threatLevel >= 0 else { return }
+    /// Schedule exactly one tap, then reschedule from inside it — so the timer
+    /// only fires when a haptic actually plays, instead of polling several times
+    /// a second while a car is behind us.
+    private func scheduleNextHaptic(after delay: TimeInterval) {
+        hapticTimer?.invalidate()
+        hapticTimer = Timer.scheduledTimer(withTimeInterval: max(0.05, delay), repeats: false) {
+            [weak self] _ in
+            guard let self, self.threatLevel >= 0 else { return }
+            self.playHaptic()
+            // Cadence: ~5 s apart when far, down to ~0.6 s when right behind.
+            let distance = Double(self.nearestThreatMeters ?? 120)
+            self.scheduleNextHaptic(after: max(0.6, min(5.0, distance / 24.0)))
+        }
+    }
+
+    private func playHaptic() {
         let distance = Double(nearestThreatMeters ?? 120)
-
-        // Cadence: ~5 s apart when far, down to ~0.6 s when right behind.
-        let interval = max(0.6, min(5.0, distance / 24.0))
-        if let last = lastHapticAt, Date().timeIntervalSince(last) < interval { return }
-        lastHapticAt = Date()
-
         // Strength escalates with proximity.
         let device = WKInterfaceDevice.current()
         if distance <= 25 {
