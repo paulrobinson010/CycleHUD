@@ -29,6 +29,25 @@ final class WatchSessionManager: NSObject, ObservableObject {
     private let hrType = HKQuantityType(.heartRate)
     private let hrUnit = HKUnit.count().unitDivided(by: .minute())
 
+    private var appForeground = true   // run a session while viewed, for live HR
+    private var rideActive = false     // keep the session running for the whole ride
+
+    /// Called by the view on scene-phase changes.
+    func setForeground(_ active: Bool) {
+        appForeground = active
+        updateWorkout()
+    }
+
+    /// Start/stop the workout session based on whether we want live HR now.
+    private func updateWorkout() {
+        let want = appForeground || rideActive
+        if want, workoutSession == nil {
+            startWorkout()
+        } else if !want, workoutSession != nil {
+            stopWorkout()
+        }
+    }
+
     override init() {
         super.init()
         if WCSession.isSupported() {
@@ -138,11 +157,8 @@ final class WatchSessionManager: NSObject, ObservableObject {
         nearestThreatMeters = data["nearest"] as? Int
         if let s = data["status"] as? String {
             statusRaw = s
-            if s == "running", workoutSession == nil {
-                startWorkout()
-            } else if s == "idle", workoutSession != nil {
-                stopWorkout()
-            }
+            rideActive = (s != "idle")
+            updateWorkout()
         }
         updateHapticLoop()
     }
