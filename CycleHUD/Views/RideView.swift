@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// The main riding screen: radar-first, with the data grid and ride controls
 /// beneath it. No map.
@@ -14,6 +15,7 @@ struct RideView: View {
         var id: Int { rawValue }
     }
     @State private var activeSheet: ActiveSheet?
+    @State private var carMarkFlash = false
 
     var body: some View {
         ZStack {
@@ -23,6 +25,7 @@ struct RideView: View {
                 RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
                       radarConnected: ble.status(for: .radar) == .connected)
                     .frame(maxHeight: .infinity)
+                    .overlay(alignment: .bottomTrailing) { carMarkButton }
                 metricsGrid
                 controlBar
             }
@@ -194,6 +197,34 @@ struct RideView: View {
             .frame(height: 58)
             .background(RoundedRectangle(cornerRadius: 16).fill(color))
         }
+    }
+
+    // MARK: - Car mark (protocol-decode aid)
+
+    /// Tapped when a real car passes, to drop a timestamp in the log so sparse
+    /// car events can be matched against captured radar packets.
+    private var carMarkButton: some View {
+        Button {
+            ble.markCarObserved()
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            withAnimation(.easeOut(duration: 0.12)) { carMarkFlash = true }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                withAnimation(.easeIn(duration: 0.3)) { carMarkFlash = false }
+            }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "car.fill")
+                Text(carMarkFlash ? "Marked \(ble.carMarkCount)" : "Mark car")
+            }
+            .font(.system(size: 15, weight: .bold, design: .rounded))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 11)
+            .background(Capsule().fill(carMarkFlash ? Theme.good : Color.black.opacity(0.55)))
+            .overlay(Capsule().stroke(Color.white.opacity(0.25), lineWidth: 1))
+        }
+        .padding(12)
+        .accessibilityLabel("Mark that a car just passed")
     }
 
     // MARK: - Formatting

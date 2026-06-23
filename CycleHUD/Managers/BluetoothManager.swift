@@ -448,6 +448,20 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     @Published private(set) var lastRadarHex = ""
     private var lastRadarLogAt: Date?
 
+    /// Number of manual "a car just passed" marks the rider has logged this run.
+    @Published private(set) var carMarkCount = 0
+
+    /// Rider taps this when a real car passes, dropping a timestamped, greppable
+    /// line into the log so sparse car events can be lined up against captured
+    /// radar packets when decoding the TR70's proprietary protocol. Logging the
+    /// current packet count/last hex makes it obvious whether the radar sent
+    /// anything at the moment the car went by.
+    func markCarObserved() {
+        carMarkCount += 1
+        let hex = lastRadarHex.isEmpty ? "(no radar packets yet)" : lastRadarHex
+        diag("CAR MARK #\(carMarkCount) — radarPackets=\(radarPacketCount) lastHex=\(hex)")
+    }
+
     private func parseRadar(_ data: Data) {
         guard !demoActive else { return }
         let bytes = [UInt8](data)
