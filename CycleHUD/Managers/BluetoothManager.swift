@@ -85,7 +85,13 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     static let radarServiceAlt = CBUUID(string: "6A4ECD65-D688-4A4C-A37D-CF5AF0DBEDD0")
     static let radarMeasurementAlt = CBUUID(string: "6A4ECD66-D688-4A4C-A37D-CF5AF0DBEDD0")
     static let radarMeasurementUUIDs: Set<CBUUID> = [radarMeasurement, radarMeasurementAlt]
-    static let radarServiceUUIDs: Set<CBUUID> = [radarService, radarServiceAlt]
+    // Coospo TR70 uses proprietary services over BLE (FDB0 is radar-unique).
+    static let coospoRadarService = CBUUID(string: "FDB0")
+    static let radarServiceUUIDs: Set<CBUUID> = [radarService, radarServiceAlt, coospoRadarService]
+    // Unknown-format notify characteristics to capture for protocol decoding.
+    static let captureCharUUIDs: Set<CBUUID> = [
+        CBUUID(string: "FDB1"), CBUUID(string: "FD29"), CBUUID(string: "FD09")
+    ]
     static let cscService = CBUUID(string: "1816")
     static let cscMeasurement = CBUUID(string: "2A5B")
     private let savedDevicesKey = "savedDevicesV3"
@@ -305,6 +311,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService,
                    error: Error?) {
+        // The TR70 radar identifies itself by its proprietary FDB0 service.
+        if service.uuid == BluetoothManager.coospoRadarService {
+            upsertSavedDevice(id: peripheral.identifier, name: peripheral.name ?? "", addRole: .radar)
+        }
         for ch in service.characteristics ?? [] {
             let notify = ch.properties.contains(.notify) || ch.properties.contains(.indicate)
             diag("  char \(ch.uuid.uuidString)\(notify ? " [notify]" : "")")
@@ -313,9 +323,12 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
                 upsertSavedDevice(id: peripheral.identifier, name: peripheral.name ?? "", addRole: .radar)
                 diag("  → subscribed RADAR")
             } else if ch.uuid == BluetoothManager.cscMeasurement {
-                // Speed / cadence roles are assigned once we see the data flags.
                 peripheral.setNotifyValue(true, for: ch)
                 diag("  → subscribed CSC")
+            } else if BluetoothManager.captureCharUUIDs.contains(ch.uuid), notify {
+                // Capture proprietary radar data for protocol decoding.
+                peripheral.setNotifyValue(true, for: ch)
+                diag("  → capturing \(ch.uuid.uuidString)")
             }
         }
     }
@@ -327,6 +340,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             parseRadar(data)
             return
         }
+        if BluetoothManager.captureCharUUIDs.contains(characteristic.uuid) {
+            captureLog(characteristic.uuid, peripheral.name ?? "?", data)
+            return
+        }
         switch characteristic.uuid {
         case BluetoothManager.cscMeasurement: parseCSC(data, from: peripheral.identifier)
         default: break
@@ -334,6 +351,17 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     }
 
     // MARK: - Helpers
+
+    // Logs raw bytes from unknown notify characteristics (throttled per UUID)
+    // so the TR70's radar protocol can be decoded from a real ride.
+    private var lastCaptureAt: [CBUUID: Date] = [:]
+    private func captureLog(_ uuid: CBUUID, _ name: String, _ data: Data) {
+        let now = Date()
+        if let last = lastCaptureAt[uuid], now.timeIntervalSince(last) < 1.0 { return }
+        lastCaptureAt[uuid] = now
+        let hex = [UInt8](data).map { String(format: "%02x", $0) }.joined(separator: " ")
+        diag("CAP \(name) \(uuid.uuidString) \(data.count)B: \(hex)")
+    }
 
     private func recomputeRadarThreatsIfNeeded() {
         // If no radar is actively connected, clear the lane.
