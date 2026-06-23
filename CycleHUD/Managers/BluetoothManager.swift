@@ -170,6 +170,12 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
                 connectionStates[id] = .retrying   // CSC sensor went silent → powered off
             }
         }
+        // Prune threats we haven't seen recently so a car that has passed can't
+        // linger on the lane (covers radars that don't send an explicit "clear").
+        if !demoActive {
+            let fresh = threats.filter { now.timeIntervalSince($0.lastSeen) <= 5 }
+            if fresh.count != threats.count { threats = fresh }
+        }
     }
 
     // MARK: - Role / device status (for the main-screen icons)
@@ -390,8 +396,12 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             parseCSC(data, from: peripheral.identifier)
             return
         }
-        // Anything else is a proprietary radar stream — log the raw bytes
-        // (throttled per UUID) so the protocol can be decoded from a real ride.
+        // The TR70's proprietary radar lives under its FDB0 service: try a
+        // best-effort Varia-format decode so cars actually render. Always log the
+        // raw bytes (throttled per UUID) so the protocol can be confirmed/refined.
+        if characteristic.service?.uuid == BluetoothManager.coospoRadarService {
+            tryParseProprietaryRadar(data)
+        }
         captureLog(characteristic.uuid, peripheral.name ?? "?", data)
     }
 
@@ -453,6 +463,46 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             i += 3
         }
         applyThreats(newThreats)
+    }
+
+    /// Best-effort decode of a Coospo TR70 proprietary radar packet.
+    ///
+    /// The TR70 streams over its own FDB0 service rather than the standard Varia
+    /// measurement characteristic, but is almost certainly the same 24 GHz radar
+    /// payload the rest of the cycling world uses (confirmed identical in
+    /// pycycling and harbour-tacho): one counter byte then 3 bytes per threat —
+    /// [id, distance m, approach speed km/h].
+    ///
+    /// Because this characteristic is unconfirmed, we only accept a packet whose
+    /// decoded threats all fall within sane radar bounds; anything implausible is
+    /// rejected (returns false) so a non-radar notification can't spawn phantom
+    /// cars, and the raw bytes are still captured for exact decoding.
+    @discardableResult
+    private func tryParseProprietaryRadar(_ data: Data) -> Bool {
+        guard !demoActive else { return false }
+        let bytes = [UInt8](data)
+        // Need the counter byte plus whole 3-byte threat slots.
+        guard bytes.count >= 4, (bytes.count - 1) % 3 == 0 else { return false }
+
+        var parsed: [Threat] = []
+        var i = 1
+        while i + 3 <= bytes.count {
+            let id = Int(bytes[i])
+            let distance = Double(bytes[i + 1])
+            let speed = Double(bytes[i + 2])
+            if !(id == 0 && distance == 0) {              // skip empty slots
+                guard (1...200).contains(distance), (0...160).contains(speed) else {
+                    return false                          // out of range ⇒ not radar data
+                }
+                parsed.append(Threat(id: id, distanceMeters: distance,
+                                     approachSpeedKmh: speed, lastSeen: Date()))
+            }
+            i += 3
+        }
+        radarPacketCount += 1
+        lastRadarHex = bytes.map { String(format: "%02x", $0) }.joined(separator: " ")
+        applyThreats(parsed)                              // empty slots ⇒ all-clear
+        return true
     }
 
     /// Shared threat pipeline used by both the radar and demo mode: detect new
