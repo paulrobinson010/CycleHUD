@@ -10,6 +10,8 @@ struct CycleHUDApp: App {
     @StateObject private var ride: RideManager
 
     init() {
+        AppLog.shared.installCrashHandlers()
+        AppLog.shared.log("=== App launch ===")
         let settings = AppSettings()
         let ble = BluetoothManager(settings: settings)
         let location = LocationManager()

@@ -5,9 +5,31 @@ import SwiftUI
 /// actually speaks.
 struct DiagnosticsView: View {
     @EnvironmentObject var ble: BluetoothManager
+    @State private var logText = ""
 
     var body: some View {
         List {
+            Section {
+                ShareLink(item: AppLog.shared.fileURL) {
+                    Label("Share log file", systemImage: "square.and.arrow.up")
+                }
+                Button(role: .destructive) {
+                    AppLog.shared.clear()
+                    logText = ""
+                } label: {
+                    Label("Clear log", systemImage: "trash")
+                }
+            } header: {
+                Text("Event log")
+            } footer: {
+                Text("Records ride events, sensor activity and any crash. Share this file after a ride that misbehaved.")
+            }
+
+            Section("Recent log") {
+                Text(logText.isEmpty ? "No log yet." : logText)
+                    .font(.system(.caption2, design: .monospaced))
+                    .textSelection(.enabled)
+            }
             Section("Radar data") {
                 LabeledContent("Packets received", value: "\(ble.radarPacketCount)")
                 Text(ble.radarPacketCount > 0 ? "Radar is streaming ✓" : "No radar data received yet")
@@ -37,5 +59,13 @@ struct DiagnosticsView: View {
         }
         .navigationTitle("Diagnostics")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear { logText = lastLines(AppLog.shared.contents(), 120) }
+        .refreshable { logText = lastLines(AppLog.shared.contents(), 120) }
+    }
+
+    /// Show only the most recent lines so the view stays light.
+    private func lastLines(_ text: String, _ count: Int) -> String {
+        let lines = text.split(separator: "\n", omittingEmptySubsequences: false)
+        return lines.suffix(count).joined(separator: "\n")
     }
 }

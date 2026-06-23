@@ -108,6 +108,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     private func diag(_ line: String) {
         diagnostics.append(line)
         if diagnostics.count > 300 { diagnostics.removeFirst(diagnostics.count - 300) }
+        AppLog.shared.log("BLE: \(line)")
     }
 
     @Published private(set) var sensorSpeedMps: Double?

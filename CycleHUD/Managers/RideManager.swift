@@ -125,6 +125,7 @@ final class RideManager: ObservableObject {
         applyScreenLock()
         try? FileManager.default.removeItem(at: routeURL)
         persistSnapshot()
+        AppLog.shared.log("Ride START")
     }
 
     /// Snapshot the body metrics used for HR-based calories (from Health, with
@@ -153,6 +154,7 @@ final class RideManager: ObservableObject {
     }
 
     func stop() {
+        AppLog.shared.log("Ride STOP (user) dist=\(Int(distanceMeters))m time=\(Int(movingTimeSeconds))s")
         let start = rideStart ?? Date()
         let end = Date()
         let savedDistance = distanceMeters
@@ -365,6 +367,7 @@ final class RideManager: ObservableObject {
             if stationarySeconds >= autoPauseDelay {
                 status = .autoPaused
                 movingSeconds = 0
+                AppLog.shared.log("Auto-paused")
             }
         } else {
             stationarySeconds = 0
@@ -377,6 +380,7 @@ final class RideManager: ObservableObject {
             if movingSeconds >= autoResumeDelay {
                 status = .running
                 stationarySeconds = 0
+                AppLog.shared.log("Auto-resumed")
             }
         } else {
             movingSeconds = 0
@@ -472,6 +476,7 @@ final class RideManager: ObservableObject {
         startTicker()
         startAltimeter()
         applyScreenLock()
+        AppLog.shared.log("Restored in-progress ride (status=\(snap.statusRaw), dist=\(Int(distanceMeters))m) — prior session likely crashed/terminated")
     }
 
     private func loadRoute() -> [CLLocation] {
