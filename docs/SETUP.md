@@ -47,7 +47,9 @@ calories, GPS route) to Apple Health.
   take a minute).
 - Start a ride on the phone. The watch automatically starts a workout session,
   streams your heart rate back (Calories + Heart Rate tiles light up), mirrors
-  your speed/distance/radar state, and taps your wrist when a new car appears.
+  your speed/distance/radar state, taps your wrist for approaching vehicles
+  (escalating as they close in), and warns with a distinct buzz + RADAR OFF
+  banner if the radar drops out mid-ride.
 - Tap **Stop** → the ride is saved to Apple Health with its route.
 
 ## Notes

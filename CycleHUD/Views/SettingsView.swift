@@ -66,10 +66,14 @@ struct SettingsView: View {
                     Text("Used with heart rate from a paired Apple Watch to estimate calories. Read from Apple Health when available.")
                 }
 
-                Section("Alerts & Ride") {
+                Section {
                     Toggle("Beep on new vehicle", isOn: $settings.beepEnabled)
                     Toggle("Auto-pause when stopped", isOn: $settings.autoPauseEnabled)
                     Toggle("Keep screen on while riding", isOn: $settings.keepScreenOn)
+                } header: {
+                    Text("Alerts & Ride")
+                } footer: {
+                    Text("The new-vehicle beep plays through the phone. A paired Apple Watch also taps your wrist — once for each new vehicle, faster as one closes in, and a distinct double-buzz if the radar drops out mid-ride.")
                 }
 
                 Section {
@@ -90,7 +94,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Demo")
                 } footer: {
-                    Text("Plays a one-time preview on the main screen showing low (yellow), medium (orange) and high (red) threats, with the new-vehicle beep and realistic live ride stats, so you can see and hear what to expect. It runs through once and stops; starting a ride also stops it.")
+                    Text("Plays a one-time preview on the main screen — low (yellow), medium (orange) and high (red) vehicles, the new-vehicle beep, escalating Apple Watch wrist taps, and a “radar off” wrist alert at the end — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it.")
                 }
 
                 Section {
@@ -104,7 +108,7 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Text("CycleHUD pairs with a Coospo TR70 (or other Varia-compatible) rear radar and standard CSC speed/cadence sensors.")
+                    Text("CycleHUD is a personal quality-of-life cycling HUD built around the Coospo TR70 rear radar. Vehicles behind you appear on a clear radar lane with Apple Watch wrist alerts, and each ride is saved as an Apple Health workout. Also works with Garmin Varia–compatible radars and standard CSC speed/cadence sensors.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
             }
