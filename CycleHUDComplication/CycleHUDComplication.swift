@@ -1,7 +1,21 @@
 import WidgetKit
 import SwiftUI
 
-struct CycleHUDEntry: TimelineEntry { let date: Date }
+// CycleHUD watch-face complication.
+//
+// A lightweight "launch the app" complication that shows the CycleHUD logo on
+// the watch face. It carries no live data (no App Group needed) — its only job
+// is to put a recognisable CycleHUD tile on the face that opens the app in one
+// tap. Add live speed/threat later by sharing state via an App Group.
+//
+// NOTE: the `@main` lives on the WidgetBundle (CycleHUDComplicationBundle.swift),
+// NOT here — a target may only have one `@main`.
+
+private let glyph = "dot.radiowaves.left.and.right"   // inline slots can't show images
+
+struct CycleHUDEntry: TimelineEntry {
+    let date: Date
+}
 
 struct CycleHUDProvider: TimelineProvider {
     func placeholder(in context: Context) -> CycleHUDEntry { CycleHUDEntry(date: Date()) }
