@@ -64,14 +64,22 @@ target — set it up once:
    make sure it's embedded in the **CycleHUDWatch** app.
 2. Xcode generates a template widget file — **delete it** (to avoid a duplicate
    `@main`).
-3. Drag **`CycleHUDComplication/CycleHUDComplication.swift`** from the repo into
-   the new target (tick the **CycleHUDComplication** target only).
+3. Drag both **`CycleHUDComplication/CycleHUDComplication.swift`** and the
+   **`CycleHUDComplication/Assets.xcassets`** folder from the repo into the new
+   target (tick the **CycleHUDComplication** target only). The asset catalog
+   holds the `AppLogo` image the complication draws.
 4. Build/run the **CycleHUDComplication** scheme to the watch, then long-press a
    watch face → **Edit** → add **CycleHUD** to a complication slot.
 
-This is a static "launch the app" glyph (the radar icon) — no data sharing
-needed. To show live speed/threat on the face later, share ride state from the
-watch app to the widget via an **App Group** and read it in the timeline.
+This is a static "launch the app" tile that shows the CycleHUD logo — no data
+sharing needed. To show live speed/threat on the face later, share ride state
+from the watch app to the widget via an **App Group** and read it in the
+timeline.
+
+> Watch faces render most complication slots **tinted/monochrome**, so the logo
+> may appear as a single-colour silhouette rather than full colour — that's the
+> system styling, not a bug. The shape stays recognisable and the tap still
+> launches the app.
 
 ## Notes
 

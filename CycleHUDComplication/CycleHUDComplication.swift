@@ -11,7 +11,7 @@ import SwiftUI
 // This is the @main of a **Widget Extension** target — see docs/SETUP.md for how
 // to add that target in Xcode and drop this file into it.
 
-private let glyph = "dot.radiowaves.left.and.right"   // matches the app's radar icon
+private let glyph = "dot.radiowaves.left.and.right"   // inline slots can't show images
 
 struct CycleHUDEntry: TimelineEntry {
     let date: Date
@@ -33,26 +33,29 @@ struct CycleHUDProvider: TimelineProvider {
 struct CycleHUDComplicationView: View {
     @Environment(\.widgetFamily) private var family
 
+    private var logo: some View {
+        Image("AppLogo").resizable().scaledToFit()
+    }
+
     var body: some View {
         switch family {
         case .accessoryCircular:
             ZStack {
                 AccessoryWidgetBackground()
-                Image(systemName: glyph).font(.system(size: 18, weight: .bold))
+                logo.padding(3)
             }
         case .accessoryCorner:
-            Image(systemName: glyph)
-                .font(.system(size: 20, weight: .bold))
-                .widgetLabel("CycleHUD")
+            logo.widgetLabel("CycleHUD")
         case .accessoryInline:
+            // Inline complications only support text + an SF Symbol, not images.
             Label("CycleHUD", systemImage: glyph)
         case .accessoryRectangular:
             HStack(spacing: 6) {
-                Image(systemName: glyph)
+                logo.frame(width: 26, height: 26)
                 Text("CycleHUD").fontWeight(.semibold)
             }
         default:
-            Image(systemName: glyph)
+            logo
         }
     }
 }
