@@ -62,12 +62,15 @@ target — set it up once:
 1. **File → New → Target… → watchOS → Widget Extension**. Name it
    **CycleHUDComplication**, **uncheck** "Include Configuration App Intent", and
    make sure it's embedded in the **CycleHUDWatch** app.
-2. Xcode generates a template widget file — **delete it** (to avoid a duplicate
-   `@main`).
-3. Drag both **`CycleHUDComplication/CycleHUDComplication.swift`** and the
-   **`CycleHUDComplication/Assets.xcassets`** folder from the repo into the new
-   target (tick the **CycleHUDComplication** target only). The asset catalog
-   holds the `AppLogo` image the complication draws.
+2. Xcode generates a sample widget file (it shows as "ExampleWidget" with a
+   placeholder description). **Open it and replace its entire contents** with the
+   code from **`CycleHUDComplication/CycleHUDComplication.swift`** in the repo.
+   (Keep using Xcode's generated file so there's exactly one `@main` — don't also
+   add the repo file to the target, or you'll get a duplicate-`@main` error.)
+3. Add the logo: select the widget's own **Assets.xcassets** (Xcode created it in
+   the new target's folder) → drag in a 1024×1024 PNG → name the image set
+   **AppLogo** (that's the name the code draws). A copy of the icon is at
+   `CycleHUD/Assets.xcassets/AppIcon.appiconset/CycleHUD.png`.
 4. Build/run the **CycleHUDComplication** scheme to the watch, then long-press a
    watch face → **Edit** → add **CycleHUD** to a complication slot.
 
@@ -78,8 +81,9 @@ timeline.
 
 > Watch faces render most complication slots **tinted/monochrome**, so the logo
 > may appear as a single-colour silhouette rather than full colour — that's the
-> system styling, not a bug. The shape stays recognisable and the tap still
-> launches the app.
+> system styling, not a bug. If it looks like an indistinct blob, a simple
+> high-contrast SF Symbol (e.g. `dot.radiowaves.left.and.right`) reads more
+> clearly; swap `Image("AppLogo")` for `Image(systemName: …)` in the code.
 
 ## Notes
 
