@@ -550,14 +550,15 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     ///   [0xC8][len][page][payload…][checksum]
     /// where `len` is the whole-frame length and `checksum` = sum of all prior
     /// bytes & 0xFF (verified against real packets). Page 0x24 is the threat
-    /// list — 14 target bytes that are all-zero when the road is clear; other
-    /// pages (e.g. 0x03 status/heartbeat) carry no threats and are ignored.
+    /// page; other pages (e.g. 0x03 status/heartbeat, 0x05 keepalive ack) carry
+    /// no threats and are ignored.
     ///
-    /// The exact threat-byte layout is still unconfirmed (we've only seen the
-    /// empty page indoors — a person is below a car radar's detection threshold),
-    /// so non-empty threat pages are logged in full and parsed best-effort as
-    /// [id, distance m, approach speed km/h] triplets with sane bounds; a real
-    /// passing car will confirm or correct the offsets.
+    /// Page 0x24 layout, decoded from a real ride past traffic (an 18-byte frame
+    /// reporting the primary/nearest target):
+    ///   byte 3  = the radar's own threat level (0 = none, rises as it nears)
+    ///   byte 9  = distance in metres (counts down as a vehicle approaches)
+    ///   byte 13 = approach speed in metres per second
+    /// All-zero (distance 0) means the road is clear.
     @discardableResult
     private func parseCoospoRadar(_ data: Data) -> Bool {
         guard !demoActive else { return false }
@@ -570,26 +571,17 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         radarPacketCount += 1
         lastRadarHex = bytes.map { String(format: "%02x", $0) }.joined(separator: " ")
 
-        guard bytes[2] == BluetoothManager.coospoRadarThreatPage else { return true }  // status page
-        let slots = Array(bytes[3 ..< bytes.count - 1])
-        if slots.allSatisfy({ $0 == 0 }) { applyThreats([]); return true }  // road clear
+        guard bytes[2] == BluetoothManager.coospoRadarThreatPage, bytes.count >= 18 else { return true }
 
-        // A real target — log every such frame (the empty pages are throttled
-        // elsewhere) so the threat layout can be confirmed from a ride.
+        let distanceM = Double(bytes[9])
+        guard distanceM > 0 else { applyThreats([]); return true }   // road clear
+
+        // A real target — log every such frame so the protocol stays verifiable.
         AppLog.shared.log("RADAR FDB1 threat \(bytes.count)B: \(lastRadarHex)")
-        var parsed: [Threat] = []
-        var i = 0
-        while i + 3 <= slots.count {
-            let id = Int(slots[i])
-            let distance = Double(slots[i + 1])
-            let speed = Double(slots[i + 2])
-            if !(id == 0 && distance == 0), (1...200).contains(distance), (0...160).contains(speed) {
-                parsed.append(Threat(id: id, distanceMeters: distance,
-                                     approachSpeedKmh: speed, lastSeen: Date()))
-            }
-            i += 3
-        }
-        applyThreats(parsed)
+        let speedKmh = Double(bytes[13]) * 3.6
+        let threat = Threat(id: 0, distanceMeters: distanceM,
+                            approachSpeedKmh: speedKmh, lastSeen: Date())
+        applyThreats([threat])
         return true
     }
 
