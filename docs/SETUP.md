@@ -62,11 +62,15 @@ target — set it up once:
 1. **File → New → Target… → watchOS → Widget Extension**. Name it
    **CycleHUDComplication**, **uncheck** "Include Configuration App Intent", and
    make sure it's embedded in the **CycleHUDWatch** app.
-2. Xcode generates a sample widget file (it shows as "ExampleWidget" with a
-   placeholder description). **Open it and replace its entire contents** with the
-   code from **`CycleHUDComplication/CycleHUDComplication.swift`** in the repo.
-   (Keep using Xcode's generated file so there's exactly one `@main` — don't also
-   add the repo file to the target, or you'll get a duplicate-`@main` error.)
+2. Xcode generates two files: a **`…Bundle.swift`** (the `@main` `WidgetBundle`)
+   and a sample widget ("ExampleWidget"). Wire them to CycleHUD:
+   - In the **sample widget file**, replace its contents with the code from
+     **`CycleHUDComplication/CycleHUDComplication.swift`** (note: that struct has
+     **no** `@main`).
+   - In the **`…Bundle.swift`**, set its body to just `CycleHUDComplication()`
+     (delete any `ExampleWidget()` / Control / Live Activity entries). The
+     `@main` stays on the bundle — only one `@main` is allowed per target, so the
+     widget struct must not have one.
 3. Add the logo: select the widget's own **Assets.xcassets** (Xcode created it in
    the new target's folder) → drag in a 1024×1024 PNG → name the image set
    **AppLogo** (that's the name the code draws). A copy of the icon is at

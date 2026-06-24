@@ -3,13 +3,13 @@ import SwiftUI
 
 // CycleHUD watch-face complication.
 //
-// A lightweight "launch the app" complication that shows the CycleHUD radar
-// glyph on the watch face. It carries no live data (no App Group needed) — its
-// only job is to put a recognisable CycleHUD icon on the face that opens the app
-// in one tap. Add the live speed/threat later by sharing state via an App Group.
+// A lightweight "launch the app" complication that shows the CycleHUD logo on
+// the watch face. It carries no live data (no App Group needed) — its only job
+// is to put a recognisable CycleHUD tile on the face that opens the app in one
+// tap. Add live speed/threat later by sharing state via an App Group.
 //
-// This is the @main of a **Widget Extension** target — see docs/SETUP.md for how
-// to add that target in Xcode and drop this file into it.
+// NOTE: the `@main` lives on the WidgetBundle (CycleHUDComplicationBundle.swift),
+// NOT here — a target may only have one `@main`.
 
 private let glyph = "dot.radiowaves.left.and.right"   // inline slots can't show images
 
@@ -60,7 +60,6 @@ struct CycleHUDComplicationView: View {
     }
 }
 
-@main
 struct CycleHUDComplication: Widget {
     let kind = "CycleHUDComplication"
 
