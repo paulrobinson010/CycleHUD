@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CycleHUD — radar-first cycling HUD for iPhone &amp; Apple Watch</title>
+  <meta name="description" content="CycleHUD is a clean, radar-first cycling HUD for iPhone and Apple Watch. See vehicles approaching from behind, feel wrist alerts, and save each ride to Apple Health.">
+  <link rel="icon" href="logo.png">
+  <link rel="stylesheet" href="style.css">
+  <meta property="og:title" content="CycleHUD">
+  <meta property="og:description" content="A clean, radar-first cycling HUD for iPhone & Apple Watch.">
+  <meta property="og:image" content="logo.png">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap">
+      <span class="brand"><img src="logo.png" alt="CycleHUD logo"> CycleHUD</span>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#privacy">Privacy</a>
+        <a href="privacy.html">Policy</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" style="border-top:none">
+      <div class="wrap">
+        <img class="logo" src="logo.png" alt="CycleHUD radar logo">
+        <h1>CycleHUD</h1>
+        <p class="tag">Eyes on the road. Radar on your wrist.</p>
+        <p class="lead">
+          A clean, radar-first cycling HUD for iPhone and Apple Watch. See vehicles
+          approaching from behind on a glanceable radar lane, feel escalating wrist
+          alerts as they close in, and finish every ride as an Apple Health workout.
+        </p>
+        <span class="badge">🚧 In testing — coming to the App Store</span>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="wrap">
+        <h2>What it does</h2>
+        <p class="sub">Built around the Coospo TR70 rear radar (and Garmin Varia–compatible radars).</p>
+        <div class="grid">
+          <div class="card">
+            <div class="dot">📡</div>
+            <h3>Rear radar lane</h3>
+            <p>Vehicles behind you are plotted by distance on a perspective lane that glows amber → red as a car closes in.</p>
+          </div>
+          <div class="card">
+            <div class="dot">⌚️</div>
+            <h3>Apple Watch wrist alerts</h3>
+            <p>A tap for each new vehicle, escalating as it nears, and a distinct buzz if the radar drops out — eyes stay on the road.</p>
+          </div>
+          <div class="card">
+            <div class="dot">🛡️</div>
+            <h3>Reliable presence</h3>
+            <p>Uses the radar's heartbeat to confirm it's really there, and clearly shows <em>NOT CONNECTED</em> the moment it isn't.</p>
+          </div>
+          <div class="card">
+            <div class="dot">📊</div>
+            <h3>Live ride metrics</h3>
+            <p>Speed, average, distance, time, cadence, ascent, heart rate and calories — at a glance.</p>
+          </div>
+          <div class="card">
+            <div class="dot">❤️</div>
+            <h3>Apple Health workout</h3>
+            <p>Each ride is saved as a cycling workout with distance, duration, calories and GPS route.</p>
+          </div>
+          <div class="card">
+            <div class="dot">🔒</div>
+            <h3>Private by design</h3>
+            <p>No accounts, no servers, no tracking. Your ride data stays on your device and in Apple Health.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap showcase">
+        <img src="screenshot.png" alt="CycleHUD main riding screen with the radar panel flooded red as a vehicle closes in">
+        <div class="copy">
+          <h2>Made for the ride</h2>
+          <p class="sub">A radar-first screen with the data that matters, and nothing that doesn't.</p>
+          <p>The whole panel floods with colour and your wrist taps faster as a vehicle
+            approaches, so you always know what's behind you without looking down.
+            Speed comes from your wheel sensor or GPS, elevation from the barometer,
+            and heart rate from your Apple Watch.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacy">
+      <div class="wrap">
+        <h2>Privacy</h2>
+        <p class="sub">CycleHUD is built to keep your data on your device.</p>
+        <p class="policy" style="max-width:680px">
+          CycleHUD has no accounts and no servers. It does not collect, transmit, sell,
+          or share your personal data, and contains no analytics, advertising or tracking.
+          Location, motion, Bluetooth-sensor and heart-rate data are used only on your
+          device to power the ride display and to save your workout to Apple Health, which
+          you control.
+        </p>
+        <p style="margin-top:18px"><a href="privacy.html">Read the full privacy policy →</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© <span id="yr"></span> CycleHUD</span>
+      <nav>
+        <a href="privacy.html">Privacy</a>
+        <a href="https://github.com/paulrobinson010/cyclehud">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+</body>
+</html>
