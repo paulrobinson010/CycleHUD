@@ -47,14 +47,15 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
 
     /// Push the current ride state to the Watch face (best-effort, low priority).
     func sendMirror(speedMps: Double, distanceMeters: Double, rideStatusRaw: String,
-                    threatLevel: Int, nearestThreatMeters: Int?) {
+                    threatLevel: Int, nearestThreatMeters: Int?, radarLost: Bool) {
         #if canImport(WatchConnectivity)
         guard let session, session.activationState == .activated else { return }
         var payload: [String: Any] = [
             "speed": speedMps,
             "distance": distanceMeters,
             "status": rideStatusRaw,
-            "threat": threatLevel
+            "threat": threatLevel,
+            "radarLost": radarLost
         ]
         if let nearestThreatMeters { payload["nearest"] = nearestThreatMeters }
         try? session.updateApplicationContext(payload)
@@ -66,6 +67,14 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
         #if canImport(WatchConnectivity)
         guard let session, session.isReachable else { return }
         session.sendMessage(["event": "newCar"], replyHandler: nil, errorHandler: nil)
+        #endif
+    }
+
+    /// Tell the Watch the radar has dropped out — a distinct safety alert.
+    func sendRadarLostHaptic() {
+        #if canImport(WatchConnectivity)
+        guard let session, session.isReachable else { return }
+        session.sendMessage(["event": "radarLost"], replyHandler: nil, errorHandler: nil)
         #endif
     }
 }

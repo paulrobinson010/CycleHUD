@@ -66,6 +66,7 @@ final class RideManager: ObservableObject {
     private var bodyIsFemale = false
     private var mirrorTick = 0
     private var saveTick = 0
+    private var radarWasConnected = false   // edge-detect radar drop-out for the Watch alert
 
     // Crash/termination recovery
     private let snapshotKey = "activeRideSnapshot"
@@ -276,6 +277,9 @@ final class RideManager: ObservableObject {
 
     private func startTicker() {
         ticker?.invalidate()
+        // Baseline the radar state so resuming a ride doesn't fire a spurious
+        // drop-out alert on the first tick.
+        radarWasConnected = ble.status(for: .radar) == .connected
         ticker = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
             self?.tick()
         }
@@ -305,7 +309,8 @@ final class RideManager: ObservableObject {
             break
         }
 
-        // Mirror to the Watch at ~2 Hz.
+        // Watch radar drop-out alert, then mirror state at ~2 Hz.
+        checkRadarPresence()
         mirrorTick += 1
         if mirrorTick % 2 == 0 { sendMirror() }
 
@@ -332,7 +337,26 @@ final class RideManager: ObservableObject {
                          distanceMeters: distanceMeters,
                          rideStatusRaw: demoActive ? "running" : statusRaw,
                          threatLevel: levels.max() ?? -1,
-                         nearestThreatMeters: nearest)
+                         nearestThreatMeters: nearest,
+                         radarLost: demoActive ? false : radarConfiguredButDown)
+    }
+
+    /// True when a radar is set up but not currently connected — the state that
+    /// drives the Watch "RADAR OFF" banner and the drop-out haptic.
+    private var radarConfiguredButDown: Bool {
+        let s = ble.status(for: .radar)
+        return s != .connected && s != .notConfigured
+    }
+
+    /// Buzz the Watch the moment the radar drops mid-ride — a safety device going
+    /// dark should be felt, not just seen. Edge-triggered; only while riding.
+    private func checkRadarPresence() {
+        let connected = ble.status(for: .radar) == .connected
+        let riding = (status == .running || status == .autoPaused) && !demoActive
+        if riding, radarWasConnected, !connected {
+            watch.sendRadarLostHaptic()
+        }
+        radarWasConnected = connected
     }
 
     private var statusRaw: String {

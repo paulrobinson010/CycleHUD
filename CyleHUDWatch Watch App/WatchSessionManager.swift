@@ -17,6 +17,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
     @Published var threatLevel: Int = -1
     @Published var nearestThreatMeters: Int?
     @Published var heartRate: Int = 0
+    @Published var radarLost: Bool = false   // radar dropped out mid-ride
 
     // Diagnostics surfaced on-screen so we can see where the HR chain breaks.
     @Published var healthRequested = false
@@ -151,6 +152,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
         if let v = data["distance"] as? Double { distanceMeters = v }
         if let v = data["threat"] as? Int { threatLevel = v }
         nearestThreatMeters = data["nearest"] as? Int
+        if let v = data["radarLost"] as? Bool { radarLost = v }
         if let s = data["status"] as? String {
             statusRaw = s
             rideActive = (s != "idle")
@@ -218,8 +220,23 @@ extension WatchSessionManager: WCSessionDelegate {
     }
 
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
-        if message["event"] as? String == "newCar" {
-            DispatchQueue.main.async { WKInterfaceDevice.current().play(.notification) }
+        guard let event = message["event"] as? String else { return }
+        DispatchQueue.main.async { self.playEventHaptic(event) }
+    }
+
+    /// One-shot wrist alerts pushed from the phone. The radar-lost pattern is
+    /// deliberately distinct from a car tap — a double `.failure` buzz reads as
+    /// "something's wrong", not "car behind".
+    private func playEventHaptic(_ event: String) {
+        let device = WKInterfaceDevice.current()
+        switch event {
+        case "newCar":
+            device.play(.notification)
+        case "radarLost":
+            device.play(.failure)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { device.play(.failure) }
+        default:
+            break
         }
     }
 }

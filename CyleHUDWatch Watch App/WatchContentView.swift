@@ -45,6 +45,18 @@ struct WatchContentView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 6)
                 .background(Capsule().fill(bannerColor))
+            } else if session.radarLost && session.statusRaw != "idle" {
+                // Radar dropped out: warn explicitly — never show a green "Clear",
+                // which would falsely imply the road behind is being watched.
+                HStack(spacing: 6) {
+                    Image(systemName: "antenna.radiowaves.left.and.right.slash")
+                    Text("RADAR OFF").fontWeight(.bold)
+                }
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 6)
+                .background(Capsule().fill(Color(red: 0.95, green: 0.20, blue: 0.22)))
             } else {
                 Text(session.statusRaw == "running" ? "Clear" : statusLabel)
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
