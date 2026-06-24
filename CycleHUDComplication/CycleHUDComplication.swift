@@ -32,6 +32,13 @@ struct CycleHUDComplicationView: View {
     private var logo: some View { Image("AppLogo").resizable().scaledToFit() }
 
     var body: some View {
+        // watchOS 10+/iOS 17+ require every widget to declare a container
+        // background or it won't render (the "widget background view is missing"
+        // warning, shown as a grey placeholder on the face).
+        complication.containerBackground(.clear, for: .widget)
+    }
+
+    @ViewBuilder private var complication: some View {
         switch family {
         case .accessoryCircular:
             ZStack { AccessoryWidgetBackground(); logo.padding(3) }
