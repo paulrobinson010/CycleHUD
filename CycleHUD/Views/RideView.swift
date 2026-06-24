@@ -16,17 +16,22 @@ struct RideView: View {
     }
     @State private var activeSheet: ActiveSheet?
     @State private var carMarkFlash = false
+    @State private var page = 0
 
     var body: some View {
         ZStack {
             Theme.background.ignoresSafeArea()
             VStack(spacing: 12) {
                 statusBar
-                RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
-                      radarConnected: ble.status(for: .radar) == .connected)
-                    .frame(maxHeight: .infinity)
-                    .overlay(alignment: .bottomTrailing) { carMarkButton }
-                metricsGrid
+                // Swipeable layouts: radar-focused vs full metrics. Status bar
+                // and ride controls stay fixed above/below.
+                TabView(selection: $page) {
+                    radarPage.tag(0)
+                    metricsPage.tag(1)
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(maxHeight: .infinity)
+                pageDots
                 controlBar
             }
             .padding(.horizontal, 14)
@@ -45,6 +50,64 @@ struct RideView: View {
         )) {
             UnitsOnboardingView().environmentObject(settings)
         }
+    }
+
+    // MARK: - Pages
+
+    /// Radar-first layout: the lane dominates, with the key three metrics below.
+    private var radarPage: some View {
+        VStack(spacing: 10) {
+            RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
+                      radarConnected: ble.status(for: .radar) == .connected)
+                .frame(maxHeight: .infinity)
+                .overlay(alignment: .bottomTrailing) { carMarkButton }
+            HStack(spacing: 8) {
+                MetricTile(title: "Speed", value: speedString(ride.currentSpeedMps),
+                           unit: settings.speedUnit.label, valueSize: 26, height: 72)
+                MetricTile(title: "Distance", value: distanceString(ride.distanceMeters),
+                           unit: settings.distanceUnit.label, valueSize: 26, height: 72)
+                MetricTile(title: "Time", value: timeString(ride.movingTimeSeconds),
+                           unit: "", valueSize: 26, height: 72)
+            }
+        }
+    }
+
+    /// Data-first layout: the full metrics grid, with a slim threat pill on top
+    /// so a closing vehicle is never hidden while reading stats.
+    private var metricsPage: some View {
+        VStack(spacing: 10) {
+            threatStrip
+            Spacer(minLength: 0)
+            metricsGrid
+            Spacer(minLength: 0)
+        }
+    }
+
+    @ViewBuilder private var threatStrip: some View {
+        if let nearest = ble.threats.min(by: { $0.distanceMeters < $1.distanceMeters }),
+           let level = ble.threats.map(\.level).max() {
+            HStack(spacing: 8) {
+                Image(systemName: "car.fill")
+                Text("\(Int(settings.distanceUnit.shortValue(fromMeters: nearest.distanceMeters).rounded())) \(settings.distanceUnit.shortLabel) behind")
+                Spacer()
+            }
+            .font(.system(size: 16, weight: .bold, design: .rounded))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 9)
+            .background(RoundedRectangle(cornerRadius: 14).fill(level.color))
+        }
+    }
+
+    private var pageDots: some View {
+        HStack(spacing: 7) {
+            ForEach(0..<2, id: \.self) { i in
+                Circle()
+                    .fill(i == page ? Theme.textPrimary : Theme.textSecondary.opacity(0.4))
+                    .frame(width: 7, height: 7)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: page)
     }
 
     // MARK: - Status bar
