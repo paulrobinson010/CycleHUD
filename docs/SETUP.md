@@ -52,6 +52,27 @@ calories, GPS route) to Apple Health.
   banner if the radar drops out mid-ride.
 - Tap **Stop** → the ride is saved to Apple Health with its route.
 
+## 4. Watch-face complication (optional)
+
+The app icon is already wired up (`CyleHUDWatch Watch App/Assets.xcassets/AppIcon`),
+so the app shows its icon on the watch home screen. A **complication** (the
+tappable CycleHUD glyph on a watch face) is a separate **Widget Extension**
+target — set it up once:
+
+1. **File → New → Target… → watchOS → Widget Extension**. Name it
+   **CycleHUDComplication**, **uncheck** "Include Configuration App Intent", and
+   make sure it's embedded in the **CycleHUDWatch** app.
+2. Xcode generates a template widget file — **delete it** (to avoid a duplicate
+   `@main`).
+3. Drag **`CycleHUDComplication/CycleHUDComplication.swift`** from the repo into
+   the new target (tick the **CycleHUDComplication** target only).
+4. Build/run the **CycleHUDComplication** scheme to the watch, then long-press a
+   watch face → **Edit** → add **CycleHUD** to a complication slot.
+
+This is a static "launch the app" glyph (the radar icon) — no data sharing
+needed. To show live speed/threat on the face later, share ride state from the
+watch app to the widget via an **App Group** and read it in the timeline.
+
 ## Notes
 
 - The watch's own workout is intentionally **discarded** on stop — the phone
