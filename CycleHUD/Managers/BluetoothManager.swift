@@ -95,6 +95,9 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     // [opcode][len][params…][checksum = sum of prior bytes & 0xFF]; B8 05 02 01
     // is "radar on", C0 the checksum. Resent on a keepalive or the radar stops.
     static let coospoRadarEnableCommand = Data([0xB8, 0x05, 0x02, 0x01, 0xC0])
+    // FDB1 frame: [0xC8][len][page][payload…][checksum]. Page 0x24 is the threat
+    // list (all-zero target bytes when clear); other pages are status/heartbeat.
+    static let coospoRadarThreatPage: UInt8 = 0x24
     static let radarServiceUUIDs: Set<CBUUID> = [radarService, radarServiceAlt, coospoRadarService]
     static let cscService = CBUUID(string: "1816")
     static let cscMeasurement = CBUUID(string: "2A5B")
@@ -457,11 +460,11 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             parseCSC(data, from: peripheral.identifier)
             return
         }
-        // The TR70's proprietary radar lives under its FDB0 service: try a
-        // best-effort Varia-format decode so cars actually render. Always log the
-        // raw bytes (throttled per UUID) so the protocol can be confirmed/refined.
-        if characteristic.service?.uuid == BluetoothManager.coospoRadarService {
-            tryParseProprietaryRadar(data)
+        // The TR70 streams radar frames on FDB1 (its FDB0-service data char).
+        // Decode them; always also log the raw bytes (throttled per UUID) so the
+        // threat layout can be confirmed/refined from a ride.
+        if characteristic.uuid == BluetoothManager.coospoRadarData {
+            parseCoospoRadar(data)
         }
         captureLog(characteristic.uuid, peripheral.name ?? "?", data)
     }
@@ -540,43 +543,50 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         applyThreats(newThreats)
     }
 
-    /// Best-effort decode of a Coospo TR70 proprietary radar packet.
+    /// Decode a TR70 FDB1 radar frame, captured from CoospoRide:
+    ///   [0xC8][len][page][payload…][checksum]
+    /// where `len` is the whole-frame length and `checksum` = sum of all prior
+    /// bytes & 0xFF (verified against real packets). Page 0x24 is the threat
+    /// list — 14 target bytes that are all-zero when the road is clear; other
+    /// pages (e.g. 0x03 status/heartbeat) carry no threats and are ignored.
     ///
-    /// The TR70 streams over its own FDB0 service rather than the standard Varia
-    /// measurement characteristic, but is almost certainly the same 24 GHz radar
-    /// payload the rest of the cycling world uses (confirmed identical in
-    /// pycycling and harbour-tacho): one counter byte then 3 bytes per threat —
-    /// [id, distance m, approach speed km/h].
-    ///
-    /// Because this characteristic is unconfirmed, we only accept a packet whose
-    /// decoded threats all fall within sane radar bounds; anything implausible is
-    /// rejected (returns false) so a non-radar notification can't spawn phantom
-    /// cars, and the raw bytes are still captured for exact decoding.
+    /// The exact threat-byte layout is still unconfirmed (we've only seen the
+    /// empty page indoors — a person is below a car radar's detection threshold),
+    /// so non-empty threat pages are logged in full and parsed best-effort as
+    /// [id, distance m, approach speed km/h] triplets with sane bounds; a real
+    /// passing car will confirm or correct the offsets.
     @discardableResult
-    private func tryParseProprietaryRadar(_ data: Data) -> Bool {
+    private func parseCoospoRadar(_ data: Data) -> Bool {
         guard !demoActive else { return false }
         let bytes = [UInt8](data)
-        // Need the counter byte plus whole 3-byte threat slots.
-        guard bytes.count >= 4, (bytes.count - 1) % 3 == 0 else { return false }
+        guard bytes.count >= 4, bytes[0] == 0xC8, Int(bytes[1]) == bytes.count else { return false }
+        let checksum = bytes.dropLast().reduce(0) { $0 + Int($1) } & 0xFF
+        guard checksum == Int(bytes[bytes.count - 1]) else { return false }
 
+        // Valid frame ⇒ the radar is alive and streaming.
+        radarPacketCount += 1
+        lastRadarHex = bytes.map { String(format: "%02x", $0) }.joined(separator: " ")
+
+        guard bytes[2] == BluetoothManager.coospoRadarThreatPage else { return true }  // status page
+        let slots = Array(bytes[3 ..< bytes.count - 1])
+        if slots.allSatisfy({ $0 == 0 }) { applyThreats([]); return true }  // road clear
+
+        // A real target — log every such frame (the empty pages are throttled
+        // elsewhere) so the threat layout can be confirmed from a ride.
+        AppLog.shared.log("RADAR FDB1 threat \(bytes.count)B: \(lastRadarHex)")
         var parsed: [Threat] = []
-        var i = 1
-        while i + 3 <= bytes.count {
-            let id = Int(bytes[i])
-            let distance = Double(bytes[i + 1])
-            let speed = Double(bytes[i + 2])
-            if !(id == 0 && distance == 0) {              // skip empty slots
-                guard (1...200).contains(distance), (0...160).contains(speed) else {
-                    return false                          // out of range ⇒ not radar data
-                }
+        var i = 0
+        while i + 3 <= slots.count {
+            let id = Int(slots[i])
+            let distance = Double(slots[i + 1])
+            let speed = Double(slots[i + 2])
+            if !(id == 0 && distance == 0), (1...200).contains(distance), (0...160).contains(speed) {
                 parsed.append(Threat(id: id, distanceMeters: distance,
                                      approachSpeedKmh: speed, lastSeen: Date()))
             }
             i += 3
         }
-        radarPacketCount += 1
-        lastRadarHex = bytes.map { String(format: "%02x", $0) }.joined(separator: " ")
-        applyThreats(parsed)                              // empty slots ⇒ all-clear
+        applyThreats(parsed)
         return true
     }
 
