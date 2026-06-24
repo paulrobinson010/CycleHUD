@@ -353,12 +353,7 @@ final class RideManager: ObservableObject {
         // During the demo, present as "running" so the Watch starts its workout
         // session (real HR) for testing without a full ride.
         watch.sendMirror(speedMps: currentSpeedMps,
-                         avgSpeedMps: averageSpeedMps,
                          distanceMeters: distanceMeters,
-                         movingTimeSeconds: movingTimeSeconds,
-                         ascentMeters: elevationGainMeters,
-                         calories: caloriesKcal,
-                         cadenceRpm: ble.freshCadence,
                          rideStatusRaw: demoActive ? "running" : statusRaw,
                          threatLevel: levels.max() ?? -1,
                          nearestThreatMeters: nearest,

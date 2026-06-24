@@ -46,25 +46,18 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
     // MARK: - Outgoing
 
     /// Push the current ride state to the Watch face (best-effort, low priority).
-    func sendMirror(speedMps: Double, avgSpeedMps: Double, distanceMeters: Double,
-                    movingTimeSeconds: Double, ascentMeters: Double, calories: Double,
-                    cadenceRpm: Int?, rideStatusRaw: String,
+    func sendMirror(speedMps: Double, distanceMeters: Double, rideStatusRaw: String,
                     threatLevel: Int, nearestThreatMeters: Int?, radarLost: Bool) {
         #if canImport(WatchConnectivity)
         guard let session, session.activationState == .activated else { return }
         var payload: [String: Any] = [
             "speed": speedMps,
-            "avgSpeed": avgSpeedMps,
             "distance": distanceMeters,
-            "movingTime": movingTimeSeconds,
-            "ascent": ascentMeters,
-            "calories": calories,
             "status": rideStatusRaw,
             "threat": threatLevel,
             "radarLost": radarLost
         ]
         if let nearestThreatMeters { payload["nearest"] = nearestThreatMeters }
-        if let cadenceRpm { payload["cadence"] = cadenceRpm }
         try? session.updateApplicationContext(payload)
         #endif
     }

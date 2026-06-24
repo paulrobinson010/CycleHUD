@@ -12,12 +12,7 @@ import WatchKit
 final class WatchSessionManager: NSObject, ObservableObject {
 
     @Published var speedMps: Double = 0
-    @Published var avgSpeedMps: Double = 0
     @Published var distanceMeters: Double = 0
-    @Published var movingTimeSeconds: Double = 0
-    @Published var ascentMeters: Double = 0
-    @Published var calories: Double = 0
-    @Published var cadence: Int = 0
     @Published var statusRaw: String = "idle"
     @Published var threatLevel: Int = -1
     @Published var nearestThreatMeters: Int?
@@ -154,12 +149,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
 
     private func apply(_ data: [String: Any]) {
         if let v = data["speed"] as? Double { speedMps = v }
-        if let v = data["avgSpeed"] as? Double { avgSpeedMps = v }
         if let v = data["distance"] as? Double { distanceMeters = v }
-        if let v = data["movingTime"] as? Double { movingTimeSeconds = v }
-        if let v = data["ascent"] as? Double { ascentMeters = v }
-        if let v = data["calories"] as? Double { calories = v }
-        cadence = data["cadence"] as? Int ?? 0
         if let v = data["threat"] as? Int { threatLevel = v }
         nearestThreatMeters = data["nearest"] as? Int
         if let v = data["radarLost"] as? Bool { radarLost = v }
