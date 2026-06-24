@@ -138,7 +138,11 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     // data (CoreBluetooth can report a powered-off sensor as connected for ages).
     private var lastDataAt: [UUID: Date] = [:]
     private var livenessTimer: Timer?
-    private let dataTimeout: TimeInterval = 10
+    private let dataTimeout: TimeInterval = 10        // CSC sensors (can be sparse)
+    // Radar streams a ~2 Hz heartbeat, so a few seconds of silence means it's
+    // gone. Kept short because it's a safety device, but long enough to ride out
+    // a brief BLE stall (~8 missed heartbeats) without flickering.
+    private let radarDataTimeout: TimeInterval = 4
 
     // Coospo radar control: the FDB2 characteristic per radar peripheral, poked
     // periodically to keep the TR70 streaming radar data on FDB1.
@@ -156,35 +160,34 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         super.init()
         loadSavedDevices()
         central = CBCentralManager(delegate: self, queue: nil)
-        livenessTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+        livenessTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             self?.checkLiveness()
         }
     }
 
     /// Watchdog for sensors that have gone quiet.
     ///
-    /// A CSC speed/cadence sensor streams continuously while it's on, so a long
-    /// silence means it powered off (CoreBluetooth can keep reporting it as
-    /// connected for a while) — demote it to retrying.
+    /// Every supported sensor streams continuously while powered: a CSC sensor
+    /// reports periodically, and the radar sends a ~2 Hz heartbeat (plus an empty
+    /// threat page) even with no vehicles behind. So a silence longer than the
+    /// sensor's timeout reliably means it's gone — CoreBluetooth can keep
+    /// reporting a powered-off device as "connected" well after the fact, so we
+    /// trust the data, not the link.
     ///
-    /// A rear radar is different: with no vehicles behind, it legitimately sends
-    /// no threat data while staying connected, so silence must NOT be read as a
-    /// dropped link. We only clear the stale threat lane; the radar's connection
-    /// status stays driven by the actual BLE link (didConnect/didDisconnect).
+    /// The radar gets a short timeout because it's a safety device: if it's off,
+    /// the rider must see "NOT CONNECTED" quickly, and stale cars are cleared.
     private func checkLiveness() {
         let now = Date()
         for (id, peripheral) in connected where peripheral.state == .connected {
             guard connectionStates[id] == .connected else { continue }
-            guard now.timeIntervalSince(lastDataAt[id] ?? .distantPast) > dataTimeout else { continue }
-
             let isRadar = (peripheral.services ?? []).contains {
                 BluetoothManager.radarServiceUUIDs.contains($0.uuid)
             }
-            if isRadar {
-                threats = []                       // drop stale cars, keep it connected
-            } else {
-                connectionStates[id] = .retrying   // CSC sensor went silent → powered off
-            }
+            let timeout = isRadar ? radarDataTimeout : dataTimeout
+            guard now.timeIntervalSince(lastDataAt[id] ?? .distantPast) > timeout else { continue }
+
+            connectionStates[id] = .retrying       // heartbeat stopped → treat as gone
+            if isRadar { threats = [] }            // safety: never show stale cars
         }
         // Prune threats we haven't seen recently so a car that has passed can't
         // linger on the lane (covers radars that don't send an explicit "clear").
