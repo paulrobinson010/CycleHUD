@@ -87,6 +87,14 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     static let radarMeasurementUUIDs: Set<CBUUID> = [radarMeasurement, radarMeasurementAlt]
     // Coospo TR70 uses proprietary services over BLE (FDB0 is radar-unique).
     static let coospoRadarService = CBUUID(string: "FDB0")
+    // FDB1 = radar data (notify); FDB2 = radar control (write without response).
+    static let coospoRadarData = CBUUID(string: "FDB1")
+    static let coospoRadarControl = CBUUID(string: "FDB2")
+    // The TR70 streams radar data on FDB1 only while it's periodically poked with
+    // this command on FDB2 (captured from the CoospoRide app). Format is
+    // [opcode][len][params…][checksum = sum of prior bytes & 0xFF]; B8 05 02 01
+    // is "radar on", C0 the checksum. Resent on a keepalive or the radar stops.
+    static let coospoRadarEnableCommand = Data([0xB8, 0x05, 0x02, 0x01, 0xC0])
     static let radarServiceUUIDs: Set<CBUUID> = [radarService, radarServiceAlt, coospoRadarService]
     static let cscService = CBUUID(string: "1816")
     static let cscMeasurement = CBUUID(string: "2A5B")
@@ -128,6 +136,11 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     private var lastDataAt: [UUID: Date] = [:]
     private var livenessTimer: Timer?
     private let dataTimeout: TimeInterval = 10
+
+    // Coospo radar control: the FDB2 characteristic per radar peripheral, poked
+    // periodically to keep the TR70 streaming radar data on FDB1.
+    private var radarControlChars: [UUID: CBCharacteristic] = [:]
+    private var radarKeepAliveTimer: Timer?
 
     // CSC running state for delta calculations.
     private var lastWheelRevs: UInt32?
@@ -225,6 +238,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         }
         connected[id] = nil
         connectionStates[id] = nil
+        clearRadarControl(for: id)
         savedDevices.removeAll { $0.id == id }
         persistSavedDevices()
         recomputeRadarThreatsIfNeeded()
@@ -319,6 +333,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral,
                         error: Error?) {
+        clearRadarControl(for: peripheral.identifier)   // re-armed on re-discovery
         recomputeRadarThreatsIfNeeded()
         // Auto-reconnect remembered devices indefinitely (sensors drop in/out a lot).
         if savedDevices.contains(where: { $0.id == peripheral.identifier }) {
@@ -371,12 +386,47 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             } else if ch.uuid == BluetoothManager.cscMeasurement {
                 peripheral.setNotifyValue(true, for: ch)
                 diag("  → subscribed CSC")
+            } else if ch.uuid == BluetoothManager.coospoRadarControl {
+                // The TR70's radar stays silent until poked here periodically.
+                radarControlChars[peripheral.identifier] = ch
+                diag("  → radar control FDB2 ready")
+                pokeRadar()              // enable immediately…
+                startRadarKeepAlive()    // …then keep it alive
             } else if notify, isRadarPeripheral {
                 // Proprietary radar characteristic — subscribe and capture raw
                 // bytes so a ride past a car records the protocol to decode.
                 peripheral.setNotifyValue(true, for: ch)
                 diag("  → capturing \(ch.uuid.uuidString)")
             }
+        }
+    }
+
+    // MARK: - Coospo radar keepalive
+
+    /// Write the "radar on" command to every connected radar's FDB2 control
+    /// characteristic. The TR70 only streams on FDB1 while it's being poked.
+    private func pokeRadar() {
+        for (id, ch) in radarControlChars {
+            guard let peripheral = connected[id], peripheral.state == .connected else { continue }
+            peripheral.writeValue(BluetoothManager.coospoRadarEnableCommand, for: ch,
+                                  type: .withoutResponse)
+        }
+    }
+
+    private func startRadarKeepAlive() {
+        guard radarKeepAliveTimer == nil else { return }
+        radarKeepAliveTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+            self?.pokeRadar()
+        }
+    }
+
+    /// Drop a radar's control char on disconnect and stop the keepalive once no
+    /// radar remains, so we're not writing into a dead peripheral.
+    private func clearRadarControl(for id: UUID) {
+        radarControlChars[id] = nil
+        if radarControlChars.isEmpty {
+            radarKeepAliveTimer?.invalidate()
+            radarKeepAliveTimer = nil
         }
     }
 
