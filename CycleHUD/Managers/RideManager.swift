@@ -95,7 +95,7 @@ final class RideManager: ObservableObject {
         self.health = health
         self.watch = watch
         self.location.onLocation = { [weak self] loc in self?.accumulate(loc) }
-        self.ble.onDemoFinished = { [weak self] in self?.stopDemo() }
+        self.ble.onDemoFinished = { [weak self] in self?.demoFramesFinished() }
         self.ble.onNewCar = { [weak self] in self?.watch.sendNewCarHaptic() }
         restoreActiveRide()
     }
@@ -196,6 +196,8 @@ final class RideManager: ObservableObject {
     @Published private(set) var demoPaused = false
     private var demoTimer: Timer?
     private var demoBaseSpeedMps = 0.0
+    // While set, the demo is in its closing "radar dropped out" preview window.
+    private var demoRadarLostUntil: Date?
 
     func startDemo() {
         guard status == .idle, !demoActive else { return }
@@ -219,6 +221,7 @@ final class RideManager: ObservableObject {
         guard demoActive else { return }
         demoActive = false
         demoPaused = false
+        demoRadarLostUntil = nil
         demoTimer?.invalidate()
         demoTimer = nil
         distanceMeters = 0
@@ -238,11 +241,27 @@ final class RideManager: ObservableObject {
         lastTick = Date()
     }
 
+    /// The scripted threat frames have run; before ending the demo, preview the
+    /// radar drop-out alert (distinct buzz + RADAR OFF banner) so the rider can
+    /// feel and fine-tune every Watch alert in one demo, not just car taps.
+    private func demoFramesFinished() {
+        guard demoActive, demoRadarLostUntil == nil else { return }
+        demoRadarLostUntil = Date().addingTimeInterval(3.5)
+        watch.sendRadarLostHaptic()   // the distinct double-buzz, once
+        sendMirror()                  // push the RADAR OFF banner immediately
+    }
+
     private func demoTick() {
         let now = Date()
         let dt = lastTick.map { now.timeIntervalSince($0) } ?? 0.5
         lastTick = now
         guard !demoPaused else { return }
+
+        // Closing radar-lost preview: hold the RADAR OFF banner, then finish.
+        if let until = demoRadarLostUntil {
+            if now >= until { stopDemo() } else { sendMirror() }
+            return
+        }
         movingTimeSeconds += dt
         let wobble = sin(movingTimeSeconds / 6.0) * 1.2 + Double.random(in: -0.4...0.4)
         currentSpeedMps = max(0, demoBaseSpeedMps + wobble)
@@ -338,7 +357,7 @@ final class RideManager: ObservableObject {
                          rideStatusRaw: demoActive ? "running" : statusRaw,
                          threatLevel: levels.max() ?? -1,
                          nearestThreatMeters: nearest,
-                         radarLost: demoActive ? false : radarConfiguredButDown)
+                         radarLost: demoActive ? (demoRadarLostUntil != nil) : radarConfiguredButDown)
     }
 
     /// True when a radar is set up but not currently connected — the state that
