@@ -52,6 +52,25 @@ final class WatchSessionManager: NSObject, ObservableObject {
             WCSession.default.activate()
         }
         requestHealthAuthorization()
+        discardOrphanedWorkout()
+    }
+
+    /// If a previous run was killed mid-ride, watchOS keeps that workout session
+    /// alive in the background and will eventually save it as an (empty) workout.
+    /// The watch must NEVER own a workout — the phone saves the authoritative one
+    /// — so recover any such session on launch and discard it immediately.
+    private func discardOrphanedWorkout() {
+        guard HKHealthStore.isHealthDataAvailable(), healthUsageStringsPresent else { return }
+        healthStore.recoverActiveWorkoutSession { [weak self] session, _ in
+            guard let self, let session else { return }
+            DispatchQueue.main.async {
+                self.workoutSession = session
+                self.builder = session.associatedWorkoutBuilder()
+                session.delegate = self
+                self.builder?.delegate = self
+                session.end()   // → didChangeTo .ended → endCollection + discardWorkout
+            }
+        }
     }
 
     /// True only when the HealthKit usage-description keys exist in this target's
@@ -251,18 +270,24 @@ extension WatchSessionManager: HKWorkoutSessionDelegate {
                         didChangeTo toState: HKWorkoutSessionState,
                         from fromState: HKWorkoutSessionState, date: Date) {
         guard toState == .ended else { return }
-        // Finish and DISCARD — the phone saves the authoritative workout (with
+        // DISCARD, never finish — the phone saves the authoritative workout (with
         // the GPS route), so the watch must never save its own. Niling the
         // session lets it auto-restart if the ride is still going.
-        builder?.endCollection(withEnd: Date()) { [weak self] _, _ in
-            self?.builder?.discardWorkout()
-            DispatchQueue.main.async {
-                self?.workoutSession = nil
-                self?.builder = nil
-                self?.workoutActive = false
-                self?.heartRate = 0
-            }
+        guard let builder else {
+            DispatchQueue.main.async { self.clearWorkout() }
+            return
         }
+        builder.endCollection(withEnd: Date()) { [weak self] _, _ in
+            self?.builder?.discardWorkout()
+            DispatchQueue.main.async { self?.clearWorkout() }
+        }
+    }
+
+    private func clearWorkout() {
+        workoutSession = nil
+        builder = nil
+        workoutActive = false
+        heartRate = 0
     }
 
     func workoutSession(_ session: HKWorkoutSession, didFailWithError error: Error) {
