@@ -195,15 +195,18 @@ final class WatchSessionManager: NSObject, ObservableObject {
     }
 
     private func playHaptic() {
-        let distance = Double(nearestThreatMeters ?? 120)
-        // Strength escalates with proximity.
+        // Strength matches the on-screen threat colour so the wrist tells you the
+        // severity without looking: red = double tap, orange = firm tap, yellow =
+        // light tick. Cadence (how often) is handled by scheduleNextHaptic and
+        // tightens with proximity.
         let device = WKInterfaceDevice.current()
-        if distance <= 25 {
+        switch threatLevel {
+        case 2:   // high — red
             device.play(.notification)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { device.play(.notification) }
-        } else if distance <= 60 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.16) { device.play(.notification) }
+        case 1:   // medium — orange
             device.play(.notification)
-        } else {
+        default:  // low — yellow
             device.play(.click)
         }
     }
