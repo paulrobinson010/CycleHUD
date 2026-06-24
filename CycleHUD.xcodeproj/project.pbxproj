@@ -402,7 +402,7 @@
 				DEVELOPMENT_TEAM = UPF9A27355;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = CyleHUDWatch;
+				INFOPLIST_KEY_CFBundleDisplayName = CycleHUD;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Used to read heart rate during a ride.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Used to record your workout.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -438,7 +438,7 @@
 				DEVELOPMENT_TEAM = UPF9A27355;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = CyleHUDWatch;
+				INFOPLIST_KEY_CFBundleDisplayName = CycleHUD;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Used to read heart rate during a ride.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Used to record your workout.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
