@@ -125,7 +125,7 @@ struct RadarView: View {
     }
 
     private func ringLines(w: CGFloat, h: CGFloat, nearWidth: CGFloat, farWidth: CGFloat) -> some View {
-        let lineColor = alertActive ? Color.black.opacity(0.28) : Color.white.opacity(0.10)
+        let lineColor = alertActive ? Color.black.opacity(0.28) : Theme.textSecondary.opacity(0.28)
         let labelColor = alertActive ? Color.black.opacity(0.7) : Theme.textSecondary
         return ForEach(rings, id: \.self) { distance in
             let yy = y(for: distance, h: h)

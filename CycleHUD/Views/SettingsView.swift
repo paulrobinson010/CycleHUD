@@ -87,11 +87,12 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Toggle("Dark mode", isOn: $settings.darkModeEnabled)
                     Toggle("Landscape layout", isOn: $settings.landscapeEnabled)
                 } header: {
                     Text("Display")
                 } footer: {
-                    Text("When on, the ride screen is fixed in landscape — radar on the left, ride data and controls on the right. It won't flip back when you rotate the phone; Settings and other screens stay in portrait.")
+                    Text("Dark mode uses a black background; off is a light theme. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait.")
                 }
 
                 Section {

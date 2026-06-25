@@ -52,6 +52,8 @@ and standard BLE speed/cadence sensors work too.
   landscape, radar on the left and your ride data and controls on the right. The
   HUD stays landscape regardless of how you hold the phone; Settings and other
   screens stay portrait.
+- **Light or dark** — a Dark Mode toggle in Settings; the app is a clean light
+  theme by default and flips to an all-black HUD when you want it.
 - **Ride control** — Start / Pause / Resume / Stop, with **auto-pause /
   auto-resume** (pauses after you're stopped < 1 km/h for 5 s, resumes ~1 s
   after you move again).

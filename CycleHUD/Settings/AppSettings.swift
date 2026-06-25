@@ -18,6 +18,7 @@ final class AppSettings: ObservableObject {
         static let hrWarningEnabled = "hrWarningEnabled"
         static let hrWarningBpm = "hrWarningBpm"
         static let saveWorkouts = "saveWorkouts"
+        static let darkModeEnabled = "darkModeEnabled"
     }
 
     private let defaults = UserDefaults.standard
@@ -45,6 +46,8 @@ final class AppSettings: ObservableObject {
 
     /// When on, each finished ride is saved as an Apple Health workout.
     @Published var saveWorkouts: Bool { didSet { defaults.set(saveWorkouts, forKey: Keys.saveWorkouts) } }
+    /// App appearance: off = light (white background), on = dark.
+    @Published var darkModeEnabled: Bool { didSet { defaults.set(darkModeEnabled, forKey: Keys.darkModeEnabled) } }
 
     /// The warning threshold to broadcast to the Watch — 0 when disabled.
     var effectiveHRWarningBpm: Int { hrWarningEnabled ? hrWarningBpm : 0 }
@@ -63,7 +66,8 @@ final class AppSettings: ObservableObject {
             Keys.landscapeEnabled: false,
             Keys.hrWarningEnabled: false,
             Keys.hrWarningBpm: 200,
-            Keys.saveWorkouts: true
+            Keys.saveWorkouts: true,
+            Keys.darkModeEnabled: false
         ])
 
         speedUnit = SpeedUnit(rawValue: defaults.string(forKey: Keys.speedUnit) ?? "") ?? .kmh
@@ -79,6 +83,7 @@ final class AppSettings: ObservableObject {
         hrWarningEnabled = defaults.bool(forKey: Keys.hrWarningEnabled)
         hrWarningBpm = defaults.integer(forKey: Keys.hrWarningBpm)
         saveWorkouts = defaults.bool(forKey: Keys.saveWorkouts)
+        darkModeEnabled = defaults.bool(forKey: Keys.darkModeEnabled)
     }
 
     var wheelCircumferenceMeters: Double { wheelCircumferenceMM / 1000.0 }
