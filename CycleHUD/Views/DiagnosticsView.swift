@@ -34,6 +34,18 @@ struct DiagnosticsView: View {
                 Text("Adds a “Mark car” button to the ride screen that timestamps the log as each vehicle passes. Enable this only when debugging a new or misbehaving radar — it's not needed for normal riding.")
             }
 
+            Section {
+                Button {
+                    settings.hasChosenUnits = false
+                } label: {
+                    Label("Show welcome screen again", systemImage: "sparkles")
+                }
+            } header: {
+                Text("Onboarding")
+            } footer: {
+                Text("Re-shows the first-launch welcome/units screen. Close Settings (or relaunch the app) to see it. Your rides and other settings are kept.")
+            }
+
             Section("Recent log") {
                 Text(logText.isEmpty ? "No log yet." : logText)
                     .font(.system(.caption2, design: .monospaced))

@@ -43,6 +43,13 @@ struct UnitsOnboardingView: View {
                         Spacer()
                     }
                 }
+                pickerRow(title: "Appearance") {
+                    Picker("Appearance", selection: $settings.darkModeEnabled) {
+                        Text("Light").tag(false)
+                        Text("Dark").tag(true)
+                    }
+                    .pickerStyle(.segmented)
+                }
             }
             .padding(.horizontal, 28)
 
