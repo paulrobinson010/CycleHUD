@@ -1,4 +1,5 @@
 import SwiftUI
+import MapKit
 
 /// A ride's stats, shown as a sheet both at the end of a ride and when tapping a
 /// ride in the history list. Self-contained with its own close button.
@@ -12,6 +13,7 @@ struct RideSummaryView: View {
             ScrollView {
                 VStack(spacing: 18) {
                     header
+                    routeMap
                     statGrid
                 }
                 .padding()
@@ -49,14 +51,39 @@ struct RideSummaryView: View {
         .padding(.top, 8)
     }
 
+    @ViewBuilder private var routeMap: some View {
+        let coords = summary.coordinates
+        if coords.count >= 2 {
+            Map(initialPosition: .region(Self.region(for: coords))) {
+                MapPolyline(coordinates: coords)
+                    .stroke(Theme.accent, lineWidth: 4)
+            }
+            .frame(height: 180)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .allowsHitTesting(false)   // a thumbnail, not an interactive map
+        }
+    }
+
     private var statGrid: some View {
         let cols = [GridItem(.flexible()), GridItem(.flexible())]
         return LazyVGrid(columns: cols, spacing: 12) {
-            stat("Time", timeValue, "")
-            stat("Avg Speed", avgSpeedValue, settings.speedUnit.label)
-            stat("Ascent", ascentValue, settings.distanceUnit.shortLabel)
-            stat("Calories", caloriesValue, "kcal")
+            ForEach(stats, id: \.0) { stat($0.0, $0.1, $0.2) }
         }
+    }
+
+    /// Stat cells, including heart rate only when the ride captured it.
+    private var stats: [(String, String, String)] {
+        var s: [(String, String, String)] = [
+            ("Time", timeValue, ""),
+            ("Avg Speed", avgSpeedValue, settings.speedUnit.label),
+        ]
+        if let avg = summary.averageHeartRate {
+            s.append(("Avg HR", "\(avg)", "bpm"))
+            s.append(("Max HR", summary.maxHeartRate.map { "\($0)" } ?? "—", "bpm"))
+        }
+        s.append(("Ascent", ascentValue, settings.distanceUnit.shortLabel))
+        s.append(("Calories", caloriesValue, "kcal"))
+        return s
     }
 
     private func stat(_ title: String, _ value: String, _ unit: String) -> some View {
@@ -79,6 +106,20 @@ struct RideSummaryView: View {
         .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
         .padding(.horizontal, 16)
         .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
+    }
+
+    // MARK: - Map region
+
+    static func region(for coords: [CLLocationCoordinate2D]) -> MKCoordinateRegion {
+        let lats = coords.map(\.latitude), lons = coords.map(\.longitude)
+        let minLat = lats.min() ?? 0, maxLat = lats.max() ?? 0
+        let minLon = lons.min() ?? 0, maxLon = lons.max() ?? 0
+        let center = CLLocationCoordinate2D(latitude: (minLat + maxLat) / 2,
+                                            longitude: (minLon + maxLon) / 2)
+        // Pad the bounds so the track isn't flush to the edges.
+        let span = MKCoordinateSpan(latitudeDelta: max((maxLat - minLat) * 1.4, 0.003),
+                                    longitudeDelta: max((maxLon - minLon) * 1.4, 0.003))
+        return MKCoordinateRegion(center: center, span: span)
     }
 
     // MARK: - Formatting

@@ -73,6 +73,11 @@ final class RideManager: ObservableObject {
     private var saveTick = 0
     private var radarWasConnected = false   // edge-detect radar drop-out for the Watch alert
 
+    // Heart-rate accumulation for the ride summary.
+    private var hrSum = 0.0
+    private var hrCount = 0
+    private var hrMax = 0
+
     // Crash/termination recovery
     private let snapshotKey = "activeRideSnapshot"
     private var routeURL: URL {
@@ -116,6 +121,7 @@ final class RideManager: ObservableObject {
         elevationGainMeters = 0
         caloriesKcal = 0
         currentHeartRate = nil
+        hrSum = 0; hrCount = 0; hrMax = 0
         route = []
         rideStart = Date()
         stationarySeconds = 0
@@ -189,9 +195,13 @@ final class RideManager: ObservableObject {
         // Record any ride worth keeping: local history + end-of-ride summary, and
         // the authoritative Apple Health workout.
         if savedDistance >= 50 {
+            let points = downsampledRoute(savedRoute)
             let summary = RideSummary(id: UUID(), date: start, distanceMeters: savedDistance,
                                       movingTimeSeconds: savedTime, elevationGainMeters: savedAscent,
-                                      caloriesKcal: savedCalories)
+                                      caloriesKcal: savedCalories,
+                                      averageHeartRate: hrCount > 0 ? Int((hrSum / Double(hrCount)).rounded()) : nil,
+                                      maxHeartRate: hrMax > 0 ? hrMax : nil,
+                                      routePoints: points.isEmpty ? nil : points)
             history.add(summary)
             finishedSummary = summary
             Task { [health] in
@@ -336,6 +346,9 @@ final class RideManager: ObservableObject {
 
         currentSpeedMps = resolvedSpeed()
         currentHeartRate = watch.freshHeartRate()
+        if let hr = currentHeartRate, hr > 0 {
+            hrSum += Double(hr); hrCount += 1; hrMax = max(hrMax, hr)
+        }
 
         switch status {
         case .running:
@@ -485,6 +498,20 @@ final class RideManager: ObservableObject {
             }
             lastGpsAltitude = loc.altitude
         }
+    }
+
+    /// Reduce the GPS track to ~250 points for a lightweight stored summary map.
+    private func downsampledRoute(_ locations: [CLLocation]) -> [Coord] {
+        guard !locations.isEmpty else { return [] }
+        let stride = max(1, locations.count / 250)
+        var points = locations.enumerated().compactMap { idx, loc in
+            idx % stride == 0 ? Coord(lat: loc.coordinate.latitude, lon: loc.coordinate.longitude) : nil
+        }
+        if let last = locations.last {
+            let end = Coord(lat: last.coordinate.latitude, lon: last.coordinate.longitude)
+            if points.last != end { points.append(end) }   // keep the true endpoint
+        }
+        return points
     }
 
     private func applyScreenLock() {
