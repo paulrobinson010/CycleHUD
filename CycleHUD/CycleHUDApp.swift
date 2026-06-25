@@ -67,7 +67,7 @@ struct CycleHUDApp: App {
                 .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
                 .onAppear {
                     location.requestAuthorization()
-                    location.start(background: false)
+                    location.setMode(.idle)        // low-power fix until a ride starts
                     health.requestAuthorization()
                 }
         }

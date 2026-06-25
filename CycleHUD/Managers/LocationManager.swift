@@ -19,34 +19,46 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 
     private var lastAcceptedLocation: CLLocation?   // for position-derived speed
 
+    /// Power profile for GPS. Full-accuracy navigation GPS is a heavy battery
+    /// drain, so we only use it while actually recording a ride; when idle on the
+    /// main screen we drop to a low-power fix just to show GPS is available.
+    enum Mode { case off, idle, recording }
+    private(set) var mode: Mode = .off
+
     override init() {
         super.init()
         manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
         manager.activityType = .fitness
-        manager.distanceFilter = kCLDistanceFilterNone
     }
 
     func requestAuthorization() {
         manager.requestWhenInUseAuthorization()
     }
 
-    /// Begin continuous updates. `background` enables updates while the screen
-    /// is locked (used while a ride is recording).
-    func start(background: Bool) {
-        if background {
+    /// Apply a power profile. `.idle` is a low-power fix for the GPS indicator;
+    /// `.recording` is full accuracy with background updates for the ride.
+    func setMode(_ newMode: Mode) {
+        mode = newMode
+        switch newMode {
+        case .off:
+            manager.allowsBackgroundLocationUpdates = false
+            manager.stopUpdatingLocation()
+            lastAcceptedLocation = nil
+            hasFix = false
+        case .idle:
+            manager.allowsBackgroundLocationUpdates = false
+            manager.pausesLocationUpdatesAutomatically = true
+            manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+            manager.distanceFilter = 50
+            manager.startUpdatingLocation()
+            lastAcceptedLocation = nil   // don't carry a speed reference across rides
+        case .recording:
             manager.allowsBackgroundLocationUpdates = true
             manager.pausesLocationUpdatesAutomatically = false
+            manager.desiredAccuracy = kCLLocationAccuracyBest
+            manager.distanceFilter = kCLDistanceFilterNone
+            manager.startUpdatingLocation()
         }
-        manager.startUpdatingLocation()
-    }
-
-    func stop(background: Bool) {
-        if background {
-            manager.allowsBackgroundLocationUpdates = false
-        }
-        manager.stopUpdatingLocation()
-        lastAcceptedLocation = nil   // don't carry a speed reference across rides
     }
 
     // MARK: - CLLocationManagerDelegate
@@ -54,7 +66,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         authorization = manager.authorizationStatus
         if authorization == .authorizedWhenInUse || authorization == .authorizedAlways {
-            manager.startUpdatingLocation()
+            if mode != .off { setMode(mode) }   // (re)start with the current power profile
         }
     }
 
@@ -68,8 +80,11 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         guard abs(loc.timestamp.timeIntervalSinceNow) < 5 else { return }
 
         horizontalAccuracy = loc.horizontalAccuracy
-        // Reject obviously bad fixes.
-        guard loc.horizontalAccuracy >= 0, loc.horizontalAccuracy < 50 else { return }
+        // Reject obviously bad fixes. While recording we demand a tight fix for
+        // distance/speed quality; when idle (low-power GPS) we accept a coarser
+        // one just to light the "GPS ready" indicator.
+        let accuracyLimit: Double = mode == .recording ? 50 : 150
+        guard loc.horizontalAccuracy >= 0, loc.horizontalAccuracy < accuracyLimit else { return }
 
         hasFix = true
 

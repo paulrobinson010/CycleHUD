@@ -154,7 +154,7 @@ final class RideManager: ObservableObject {
         lastTick = Date()
         loadBodyMetrics()
         status = .running
-        location.start(background: true)
+        location.setMode(.recording)
         startTicker()
         startAltimeter()
         applyScreenLock()
@@ -204,7 +204,7 @@ final class RideManager: ObservableObject {
         status = .idle
         stopTicker()
         stopAltimeter()
-        location.stop(background: true)
+        location.setMode(.idle)        // back to low-power once the ride ends
         // Reset all live metrics to a clean slate (the ride is saved to Health
         // below), THEN mirror the zeros so the Watch clears too — otherwise it
         // keeps showing the last ride's distance until a new one starts.
@@ -656,7 +656,7 @@ final class RideManager: ObservableObject {
         }
         loadBodyMetrics()
         lastTick = Date()
-        location.start(background: true)
+        location.setMode(.recording)
         startTicker()
         startAltimeter()
         applyScreenLock()
