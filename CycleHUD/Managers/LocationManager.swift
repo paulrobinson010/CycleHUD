@@ -58,6 +58,12 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let loc = locations.last else { return }
 
+        // Reject stale/cached fixes. CoreLocation hands back the last known
+        // location first (and after a pause), which can be old and far away —
+        // the "GPS memory" that inflates distance/average and reports a wrong
+        // speed. Only trust fixes from the last few seconds.
+        guard abs(loc.timestamp.timeIntervalSinceNow) < 5 else { return }
+
         horizontalAccuracy = loc.horizontalAccuracy
         // Reject obviously bad fixes.
         guard loc.horizontalAccuracy >= 0, loc.horizontalAccuracy < 50 else { return }
