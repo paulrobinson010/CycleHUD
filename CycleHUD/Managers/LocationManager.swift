@@ -17,6 +17,8 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     /// Called for every accepted location fix (used for distance accumulation).
     var onLocation: ((CLLocation) -> Void)?
 
+    private var lastAcceptedLocation: CLLocation?   // for position-derived speed
+
     override init() {
         super.init()
         manager.delegate = self
@@ -44,6 +46,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
             manager.allowsBackgroundLocationUpdates = false
         }
         manager.stopUpdatingLocation()
+        lastAcceptedLocation = nil   // don't carry a speed reference across rides
     }
 
     // MARK: - CLLocationManagerDelegate
@@ -69,7 +72,23 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         guard loc.horizontalAccuracy >= 0, loc.horizontalAccuracy < 50 else { return }
 
         hasFix = true
-        speedMps = max(0, loc.speed)   // loc.speed is -1 when unavailable
+
+        // Ground speed: start from the GPS Doppler value (accurate while moving,
+        // but -1 when unavailable and occasionally stuck low). Correct it upward
+        // with a position-derived speed ONLY when the movement clearly exceeds the
+        // GPS error — so standstill jitter can't invent speed, but a genuinely
+        // under-reporting Doppler gets caught.
+        var speed = max(0, loc.speed)
+        if let last = lastAcceptedLocation {
+            let dt = loc.timestamp.timeIntervalSince(last.timestamp)
+            let moved = loc.distance(from: last)
+            if dt > 0.3, dt < 10, moved > max(loc.horizontalAccuracy, 2) {
+                speed = max(speed, moved / dt)   // take the higher of the two
+            }
+        }
+        speedMps = speed
+        lastAcceptedLocation = loc
+
         if loc.verticalAccuracy > 0 { altitudeMeters = loc.altitude }
         onLocation?(loc)
     }
