@@ -35,7 +35,7 @@ enum RoleStatus {
     var color: Color {
         switch self {
         case .notConfigured: return Theme.textSecondary
-        case .connecting, .retrying: return Theme.threatLow
+        case .connecting, .retrying: return Theme.threatMedium   // orange reads better than yellow
         case .connected: return Theme.good
         case .failed: return Theme.threatHigh
         }

@@ -75,6 +75,7 @@ struct UnitsOnboardingView: View {
             .padding(.horizontal, 28)
             .padding(.bottom, 24)
         }
+        .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
     }
 
     /// Weight as text so the field is empty (not "0") until a value is entered.

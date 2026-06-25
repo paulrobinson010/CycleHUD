@@ -156,6 +156,7 @@ struct SettingsView: View {
                 }
             }
         }
+        .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
     }
 
     /// Weight as text so the field is empty (not "0") until a value is entered.

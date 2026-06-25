@@ -39,20 +39,25 @@ struct RideView: View {
             }
         }
         .sheet(item: $activeSheet) { sheet in
-            switch sheet {
-            case .pairing: PairingView(showAccessHint: pairingFromOnboarding).environmentObject(ble)
-            case .settings: SettingsView().environmentObject(settings).environmentObject(ble)
-                    .environmentObject(ride).environmentObject(history)
+            Group {
+                switch sheet {
+                case .pairing: PairingView(showAccessHint: pairingFromOnboarding).environmentObject(ble)
+                case .settings: SettingsView().environmentObject(settings).environmentObject(ble)
+                        .environmentObject(ride).environmentObject(history)
+                }
             }
+            .preferredColorScheme(appColorScheme)
         }
         .sheet(item: $ride.finishedSummary) { summary in
             RideSummaryView(summary: summary).environmentObject(settings)
+                .preferredColorScheme(appColorScheme)
         }
         .fullScreenCover(isPresented: Binding(
             get: { !settings.hasChosenUnits },
             set: { _ in }
         )) {
             UnitsOnboardingView().environmentObject(settings)
+                .preferredColorScheme(appColorScheme)
         }
         .onAppear { updateOrientation(); checkPermissions() }
         .onChange(of: scenePhase) { _, phase in
@@ -82,17 +87,25 @@ struct RideView: View {
         .onChange(of: ride.finishedSummary) { _, _ in updateOrientation() }
         .onChange(of: settings.hasChosenUnits) { old, new in
             updateOrientation()
-            // Finishing onboarding drops the rider straight into Devices so they
-            // can pair, with a hint on how to get back here later.
             if new && !old {
+                // Finishing onboarding drops the rider straight into Devices so
+                // they can pair, with a hint on how to get back here later.
                 pairingFromOnboarding = true
                 // Let the onboarding cover finish dismissing before presenting.
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
                     activeSheet = .pairing
                 }
+            } else if old && !new {
+                // Onboarding was reset (from Diagnostics) — close any open sheet
+                // so the welcome screen presents instead of hiding behind it.
+                activeSheet = nil
             }
         }
     }
+
+    /// The app-wide light/dark choice, applied to presented sheets/covers too so
+    /// toggling it updates onboarding and Settings live, not just the main screen.
+    private var appColorScheme: ColorScheme { settings.darkModeEnabled ? .dark : .light }
 
     /// Surface any missing OS permission the app relies on. `force` re-shows even
     /// after the rider dismissed it — used when they change a setting (e.g. turn
