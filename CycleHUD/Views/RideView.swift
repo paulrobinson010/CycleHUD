@@ -19,6 +19,11 @@ struct RideView: View {
     @State private var carMarkFlash = false
     @State private var pairingFromOnboarding = false
 
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var showPermissionAlert = false
+    @State private var currentIssue: PermissionIssue?
+    @State private var dismissedIssueID: String?
+
     var body: some View {
         ZStack {
             Theme.background.ignoresSafeArea()
@@ -49,11 +54,30 @@ struct RideView: View {
         )) {
             UnitsOnboardingView().environmentObject(settings)
         }
-        .onAppear { updateOrientation() }
+        .onAppear { updateOrientation(); checkPermissions() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { checkPermissions() }
+        }
+        .onChange(of: settings.saveWorkouts) { _, _ in checkPermissions(force: true) }
+        .alert(currentIssue?.title ?? "Permission needed",
+               isPresented: $showPermissionAlert, presenting: currentIssue) { issue in
+            if issue.opensAppSettings {
+                Button("Open Settings") { Permissions.openAppSettings() }
+                Button("Later", role: .cancel) { dismissedIssueID = issue.id }
+            } else {
+                Button("Don’t save workouts") {
+                    settings.saveWorkouts = false
+                    dismissedIssueID = issue.id
+                }
+                Button("OK", role: .cancel) { dismissedIssueID = issue.id }
+            }
+        } message: { issue in
+            Text(issue.message)
+        }
         .onChange(of: settings.landscapeEnabled) { _, _ in updateOrientation() }
         .onChange(of: activeSheet) { _, sheet in
             updateOrientation()
-            if sheet == nil { pairingFromOnboarding = false }
+            if sheet == nil { pairingFromOnboarding = false; checkPermissions() }
         }
         .onChange(of: ride.finishedSummary) { _, _ in updateOrientation() }
         .onChange(of: settings.hasChosenUnits) { old, new in
@@ -68,6 +92,25 @@ struct RideView: View {
                 }
             }
         }
+    }
+
+    /// Surface any missing OS permission the app relies on. `force` re-shows even
+    /// after the rider dismissed it — used when they change a setting (e.g. turn
+    /// on workout saving) that introduces a new requirement.
+    private func checkPermissions(force: Bool = false) {
+        // Only on the main HUD — don't try to present over onboarding or a sheet.
+        guard settings.hasChosenUnits, activeSheet == nil else { return }
+        let issues = Permissions.currentIssues(saveWorkouts: settings.saveWorkouts)
+        guard let first = issues.first else {
+            showPermissionAlert = false
+            currentIssue = nil
+            dismissedIssueID = nil            // re-arm now that everything's resolved
+            return
+        }
+        if force { dismissedIssueID = nil }
+        guard dismissedIssueID != first.id else { return }   // already dismissed this one
+        currentIssue = first
+        showPermissionAlert = true
     }
 
     /// The HUD is fixed landscape when the setting is on and nothing is presented
