@@ -128,20 +128,17 @@ final class WatchSessionManager: NSObject, ObservableObject {
         config.locationType = .outdoor
         do {
             let session = try HKWorkoutSession(healthStore: healthStore, configuration: config)
-            let builder = session.associatedWorkoutBuilder()
-            builder.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore,
-                                                         workoutConfiguration: config)
             session.delegate = self
-            builder.delegate = self
             workoutSession = session
-            self.builder = builder
-            let start = Date()
-            session.startActivity(with: start)
-            builder.beginCollection(withStart: start) { _, _ in }
+            session.startActivity(with: Date())
+            // Deliberately NO HKLiveWorkoutBuilder / beginCollection: the session
+            // is run only to raise heart-rate sampling, and HR is read via the
+            // live query below. With nothing collecting samples, the watch never
+            // has a workout to save — the phone owns the authoritative workout.
             workoutActive = true
+            startHeartRateQuery()
         } catch {
             workoutSession = nil
-            builder = nil
         }
     }
 
