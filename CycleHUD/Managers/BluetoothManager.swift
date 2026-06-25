@@ -105,6 +105,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     static let radarServiceUUIDs: Set<CBUUID> = [radarService, radarServiceAlt, coospoRadarService]
     static let cscService = CBUUID(string: "1816")
     static let cscMeasurement = CBUUID(string: "2A5B")
+    static let batteryLevel = CBUUID(string: "2A19")   // standard 0–100% battery
     private let savedDevicesKey = "savedDevicesV3"
 
     // MARK: Published state
@@ -117,6 +118,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     @Published private(set) var connectionStates: [UUID: ConnectionState] = [:]
 
     @Published private(set) var threats: [Threat] = []
+    @Published private(set) var radarBatteryPercent: Int?   // radar's battery (0–100)
     @Published private(set) var demoActive = false
 
     /// Human-readable BLE diagnostics (services/characteristics found, radar
@@ -344,6 +346,11 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral,
                         error: Error?) {
         clearRadarControl(for: peripheral.identifier)   // re-armed on re-discovery
+        if (peripheral.services ?? []).contains(where: {
+            BluetoothManager.radarServiceUUIDs.contains($0.uuid)
+        }) {
+            radarBatteryPercent = nil   // unknown until the radar reconnects
+        }
         recomputeRadarThreatsIfNeeded()
         // Auto-reconnect remembered devices indefinitely (sensors drop in/out a lot).
         if savedDevices.contains(where: { $0.id == peripheral.identifier }) {
@@ -405,6 +412,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
                                       for: ch, type: .withoutResponse)   // active mode
                 pokeRadar()              // enable…
                 startRadarKeepAlive()    // …then keep it alive
+            } else if ch.uuid == BluetoothManager.batteryLevel, isRadarPeripheral {
+                peripheral.setNotifyValue(true, for: ch)   // battery-change updates
+                peripheral.readValue(for: ch)              // initial level
+                diag("  → radar battery")
             } else if notify, isRadarPeripheral {
                 // Proprietary radar characteristic — subscribe and capture raw
                 // bytes so a ride past a car records the protocol to decode.
@@ -461,6 +472,15 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         lastDataAt[peripheral.identifier] = Date()
         if connectionStates[peripheral.identifier] == .retrying {
             connectionStates[peripheral.identifier] = .connected
+        }
+        if characteristic.uuid == BluetoothManager.batteryLevel {
+            if let level = data.first,
+               (peripheral.services ?? []).contains(where: {
+                   BluetoothManager.radarServiceUUIDs.contains($0.uuid)
+               }) {
+                radarBatteryPercent = Int(level)
+            }
+            return
         }
         if BluetoothManager.radarMeasurementUUIDs.contains(characteristic.uuid) {
             parseRadar(data)

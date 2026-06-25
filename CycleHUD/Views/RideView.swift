@@ -24,7 +24,8 @@ struct RideView: View {
             VStack(spacing: 12) {
                 statusBar
                 RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
-                      radarConnected: ble.status(for: .radar) == .connected)
+                      radarConnected: ble.status(for: .radar) == .connected,
+                      batteryPercent: ble.radarBatteryPercent)
                     .frame(maxHeight: .infinity)
                     .overlay(alignment: .bottomTrailing) {
                         if settings.radarDebugEnabled { carMarkButton }

@@ -8,6 +8,7 @@ struct RadarView: View {
     let threats: [Threat]
     let distanceUnit: DistanceUnit
     let radarConnected: Bool
+    var batteryPercent: Int? = nil
 
     private let maxRange: Double = 150          // metres shown top-to-bottom
     private let rings: [Double] = [30, 60, 90, 120]
@@ -43,9 +44,31 @@ struct RadarView: View {
                     .shadow(color: alertColor.opacity(alertActive ? 0.9 : 0), radius: 14)
             )
             .clipShape(RoundedRectangle(cornerRadius: 24))
+            .overlay(alignment: .topLeading) { batteryBadge }
             .animation(.easeInOut(duration: 0.3), value: threats)
             .animation(.easeInOut(duration: 0.3), value: alertActive)
         }
+    }
+
+    @ViewBuilder private var batteryBadge: some View {
+        if radarConnected, let pct = batteryPercent {
+            HStack(spacing: 4) {
+                Image(systemName: "battery.100", variableValue: Double(pct) / 100.0)
+                Text("\(pct)%")
+            }
+            .font(.system(size: 12, weight: .bold, design: .rounded))
+            .foregroundStyle(batteryColor(pct))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
+            .background(Capsule().fill(.ultraThinMaterial))
+            .padding(12)
+        }
+    }
+
+    private func batteryColor(_ pct: Int) -> Color {
+        if pct <= 15 { return Theme.threatHigh }
+        if pct <= 30 { return Theme.threatLow }
+        return Theme.good
     }
 
     private var panelBackground: AnyShapeStyle {
