@@ -25,14 +25,32 @@ and standard BLE speed/cadence sensors work too.
   shows **NOT CONNECTED** within a few seconds (it's a safety device — it
   shouldn't pretend to be watching when it isn't).
 - **Optional new-vehicle beep** — a distinctive double-beep through the phone,
-  over music and ignoring the silent switch. Toggle in Settings.
+  over music and ignoring the silent switch. Toggle in Settings. The beep and the
+  wrist taps fire **only while you're riding**, not when the app sits idle with
+  the radar switched on.
 - **Live metrics** — current speed, average speed (moving time only), distance,
   elapsed moving time, cadence, total ascent (barometer-based when available,
   GPS-altitude fallback otherwise), plus heart rate and calories when an Apple
   Watch is paired.
+- **Radar battery** — the TR70's battery level is shown on the radar panel, so
+  you know before you set off.
+- **Heart-rate warning** *(optional)* — set a max heart rate (120–220 bpm). When
+  you reach it the heart-rate readout turns red and your Apple Watch
+  double-buzzes, repeating every 30 s while you stay above it.
 - **Apple Health workout** — tapping Stop saves a cycling workout (distance,
-  duration, calories, GPS route) to Apple Health. Requires the HealthKit
+  duration, calories, GPS route) to Apple Health. On by default; turn *Save rides
+  as workouts* off in Settings to keep rides local-only. Requires the HealthKit
   capability (see Setup).
+- **Ride summary & history** — every ride ends with a summary card (distance,
+  time, average/peak speed, heart rate, ascent, calories) over a map of your
+  route. Past rides are listed under **Settings → Previous rides** and reopen the
+  same summary.
+- **Vehicles on the map** — each vehicle the radar flags during a ride is dropped
+  as a pin on that ride's route map, with a count, so you can see where traffic
+  came up behind you.
+- **Landscape layout** *(optional)* — turn it on to hold the phone sideways with
+  the radar on the left and your ride data and controls on the right; portrait
+  stays the usual stacked layout.
 - **Ride control** — Start / Pause / Resume / Stop, with **auto-pause /
   auto-resume** (pauses after you're stopped < 1 km/h for 5 s, resumes ~1 s
   after you move again).
@@ -85,8 +103,11 @@ labels each device as *Radar* or *Speed / Cadence* once connected.
   - **Enable / keepalive:** write `B8 05 02 01 C0` to FDB2. Commands are
     `[opcode][len][params…][checksum]`, checksum = sum of the prior bytes & 0xFF.
   - **Data frame (FDB1):** `[0xC8][len][page][payload…][checksum]`. Page `0x24`
-    is the threat list (target bytes, all-zero when clear); page `0x03` is a
-    status heartbeat — used to confirm the radar is alive.
+    is the threat page: a 14-byte target block (level at byte 3, distance in
+    metres at byte 9, approach speed m/s at byte 13), all-zero when the road is
+    clear. It's parsed as repeating blocks driven by the frame length, so a
+    longer multi-target frame extends cleanly. Page `0x03` is a status
+    heartbeat — used to confirm the radar is alive.
 - **Garmin Varia–compatible radar (also supported)** — service `6A4E3200-…`,
   measurement characteristic `6A4E3203-…`. Payload is one page/counter byte then
   3 bytes per threat: `[id, distance(m), approach speed(km/h)]`.
@@ -113,11 +134,13 @@ These live in code and are easy to adjust:
   new-car/proximity taps, `playEventHaptic` for the radar-off double-buzz).
 - **New-vehicle beep** — `AudioAlerts.swift` (`makeDoubleBeepWAV`).
 
-> The TR70 threat-byte layout within page `0x24` is still being confirmed from
-> real traffic (a pedestrian is below a car radar's detection threshold, so it
-> only populates with an actual vehicle). `BluetoothManager.parseCoospoRadar`
-> decodes the FDB1 frame and is the single place to adjust it; the Varia format
-> is handled by `parseRadar`.
+> The page `0x24` distance/speed/level bytes are decoded from real traffic (a
+> pedestrian is below a car radar's detection threshold, so the page only
+> populates with an actual vehicle). Every capture so far is a single-target
+> 18-byte frame, so the multi-target (multi-block) parsing is speculative and
+> length-driven until a genuine two-car frame is captured — it's byte-for-byte
+> identical for the frames seen today. `BluetoothManager.parseCoospoRadar` is the
+> single place to adjust it; the Varia format is handled by `parseRadar`.
 
 ## Project layout
 
@@ -125,7 +148,7 @@ These live in code and are easy to adjust:
 CycleHUD/
   CycleHUDApp.swift          App entry, wires managers together
   Theme.swift                Colours & fonts
-  Models/                    Units, Threat
+  Models/                    Units, Threat, RideSummary
   Settings/                  AppSettings (persisted)
   Managers/
     BluetoothManager.swift   Scanning, TR70 + Varia radar, CSC, radar liveness
@@ -133,20 +156,26 @@ CycleHUD/
     RideManager.swift        Ride state machine, auto-pause, demo, Watch mirror
     WatchConnectivityManager.swift  iPhone⇄Watch link (HR in, alerts out)
     HealthKitManager.swift   Saves the cycling workout to Apple Health
+    RideHistory.swift        Local store of past ride summaries (JSON)
     AudioAlerts.swift        Synthesised new-vehicle beep
     Calories.swift           HR-based calorie estimate
     AppLog.swift             On-device diagnostics log
   Views/
-    RideView.swift           Main radar-first screen (+ Mark-car log button)
-    RadarView.swift          The radar lane visualisation
+    RideView.swift           Main radar-first screen (portrait + landscape)
+    RadarView.swift          The radar lane visualisation (+ battery badge)
     MetricTile.swift         Metric tiles
     PairingView.swift        Sensor pairing
     SettingsView.swift       Settings
     DiagnosticsView.swift    Live BLE services / radar packets
+    RideSummaryView.swift    End-of-ride / history summary card + route map
+    RouteMapView.swift       Full-screen route map (+ vehicle pins, Open in Maps)
+    RideHistoryView.swift    Previous-rides list
     UnitsOnboardingView.swift First-launch units prompt
 
 CyleHUDWatch Watch App/      Watch app: glanceable mirror + wrist haptics
   CycleHUDWatchApp.swift     Watch app entry
-  WatchSessionManager.swift  Workout session (HR), haptic patterns, link
+  WatchSessionManager.swift  Workout session (HR), haptic patterns, HR warning
   WatchContentView.swift     Watch face: speed/HR/distance + threat / RADAR OFF
+
+CycleHUDComplication/        Watch complication (app logo) to launch from the face
 ```
