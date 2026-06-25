@@ -5,10 +5,27 @@ import SwiftUI
 struct PairingView: View {
     @EnvironmentObject var ble: BluetoothManager
     @Environment(\.dismiss) private var dismiss
+    /// Shown when arriving here straight from onboarding: points out how to
+    /// reopen this screen later.
+    var showAccessHint: Bool = false
 
     var body: some View {
         NavigationStack {
             List {
+                if showAccessHint {
+                    Section {
+                        HStack(spacing: 12) {
+                            Image(systemName: "antenna.radiowaves.left.and.right")
+                                .font(.system(size: 24, weight: .semibold))
+                                .foregroundStyle(Theme.accent)
+                                .frame(width: 34)
+                            Text("Connect your radar and sensors here. You can reopen this screen any time from the \(Image(systemName: "antenna.radiowaves.left.and.right")) icon at the top of the main screen.")
+                                .font(.footnote)
+                        }
+                        .padding(.vertical, 2)
+                    }
+                }
+
                 if !ble.savedDevices.isEmpty {
                     Section("Remembered") {
                         ForEach(ble.savedDevices) { device in

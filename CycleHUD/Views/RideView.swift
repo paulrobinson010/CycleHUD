@@ -17,6 +17,7 @@ struct RideView: View {
     }
     @State private var activeSheet: ActiveSheet?
     @State private var carMarkFlash = false
+    @State private var pairingFromOnboarding = false
 
     var body: some View {
         ZStack {
@@ -34,7 +35,7 @@ struct RideView: View {
         }
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
-            case .pairing: PairingView().environmentObject(ble)
+            case .pairing: PairingView(showAccessHint: pairingFromOnboarding).environmentObject(ble)
             case .settings: SettingsView().environmentObject(settings).environmentObject(ble)
                     .environmentObject(ride).environmentObject(history)
             }
@@ -50,9 +51,23 @@ struct RideView: View {
         }
         .onAppear { updateOrientation() }
         .onChange(of: settings.landscapeEnabled) { _, _ in updateOrientation() }
-        .onChange(of: activeSheet) { _, _ in updateOrientation() }
+        .onChange(of: activeSheet) { _, sheet in
+            updateOrientation()
+            if sheet == nil { pairingFromOnboarding = false }
+        }
         .onChange(of: ride.finishedSummary) { _, _ in updateOrientation() }
-        .onChange(of: settings.hasChosenUnits) { _, _ in updateOrientation() }
+        .onChange(of: settings.hasChosenUnits) { old, new in
+            updateOrientation()
+            // Finishing onboarding drops the rider straight into Devices so they
+            // can pair, with a hint on how to get back here later.
+            if new && !old {
+                pairingFromOnboarding = true
+                // Let the onboarding cover finish dismissing before presenting.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
+                    activeSheet = .pairing
+                }
+            }
+        }
     }
 
     /// The HUD is fixed landscape when the setting is on and nothing is presented
