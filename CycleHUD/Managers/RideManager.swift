@@ -68,6 +68,14 @@ final class RideManager: ObservableObject {
     /// Locations where a new vehicle was detected behind the rider, overlaid on
     /// the ride summary map. Capped so a very busy ride can't grow unbounded.
     private var radarPoints: [Coord] = []
+
+    // Per-vehicle approach traces (distance/speed from detection to pass), for
+    // reviewing close or fast passes after the ride.
+    private var passes: [VehiclePass] = []
+    private var openPass: (start: Date, lat: Double?, lon: Double?, samples: [PassSample])?
+    private var lastPassFrameSeen: Date?     // de-dupes 4 Hz ticks to ~2 Hz frames
+    private var lastThreatPresentAt: Date?   // grace period before closing a pass
+
     private var rideStart: Date?
     private var bodyWeightKg = 75.0
     private var bodyAgeYears = 40.0
@@ -133,6 +141,10 @@ final class RideManager: ObservableObject {
         hrSum = 0; hrCount = 0; hrMax = 0
         route = []
         radarPoints = []
+        passes = []
+        openPass = nil
+        lastPassFrameSeen = nil
+        lastThreatPresentAt = nil
         rideStart = Date()
         stationarySeconds = 0
         movingSeconds = 0
@@ -178,6 +190,7 @@ final class RideManager: ObservableObject {
 
     func stop() {
         AppLog.shared.log("Ride STOP (user) dist=\(Int(distanceMeters))m time=\(Int(movingTimeSeconds))s")
+        finalizeOpenPass()                       // capture a pass in progress at stop
         let start = rideStart ?? Date()
         let end = Date()
         let savedDistance = distanceMeters
@@ -186,6 +199,7 @@ final class RideManager: ObservableObject {
         let savedCalories = caloriesKcal
         let savedRoute = route
         let savedRadarPoints = radarPoints
+        let savedPasses = passes
 
         status = .idle
         stopTicker()
@@ -213,7 +227,8 @@ final class RideManager: ObservableObject {
                                       averageHeartRate: hrCount > 0 ? Int((hrSum / Double(hrCount)).rounded()) : nil,
                                       maxHeartRate: hrMax > 0 ? hrMax : nil,
                                       routePoints: points.isEmpty ? nil : points,
-                                      radarPoints: savedRadarPoints.isEmpty ? nil : savedRadarPoints)
+                                      radarPoints: savedRadarPoints.isEmpty ? nil : savedRadarPoints,
+                                      passes: savedPasses.isEmpty ? nil : savedPasses)
             history.add(summary)
             finishedSummary = summary
             if settings.saveWorkouts {
@@ -227,6 +242,7 @@ final class RideManager: ObservableObject {
 
         route = []
         radarPoints = []
+        passes = []
         rideStart = nil
         clearPersistence()
     }
@@ -378,6 +394,7 @@ final class RideManager: ObservableObject {
 
         // Watch radar drop-out alert, then mirror state at ~2 Hz.
         checkRadarPresence()
+        if status == .running || status == .autoPaused { updatePassLog(now: now) }
         mirrorTick += 1
         if mirrorTick % 2 == 0 { sendMirror() }
 
@@ -528,6 +545,45 @@ final class RideManager: ObservableObject {
         guard !demoActive, status == .running || status == .autoPaused else { return }
         guard radarPoints.count < 1000, let loc = route.last else { return }
         radarPoints.append(Coord(lat: loc.coordinate.latitude, lon: loc.coordinate.longitude))
+    }
+
+    /// Sample the nearest vehicle's distance/closing-speed plus the rider's own
+    /// speed, building a trace per approach. Called each tick during a ride; only
+    /// records a new point when the radar reports a fresh frame, and closes the
+    /// encounter ~1.5 s after the lane clears.
+    private func updatePassLog(now: Date) {
+        if let nearest = ble.threats.min(by: { $0.distanceMeters < $1.distanceMeters }) {
+            if openPass == nil {
+                let loc = route.last
+                openPass = (start: now, lat: loc?.coordinate.latitude,
+                            lon: loc?.coordinate.longitude, samples: [])
+            }
+            // Only append on a genuinely new radar frame (lastSeen advances), and
+            // cap the sample count so a long tail-gating car can't grow unbounded.
+            if nearest.lastSeen != lastPassFrameSeen, var p = openPass, p.samples.count < 240 {
+                p.samples.append(PassSample(t: now.timeIntervalSince(p.start),
+                                            distance: nearest.distanceMeters,
+                                            closingKmh: nearest.approachSpeedKmh,
+                                            riderKmh: currentSpeedMps * 3.6))
+                openPass = p
+                lastPassFrameSeen = nearest.lastSeen
+            }
+            lastThreatPresentAt = now
+        } else if openPass != nil,
+                  let last = lastThreatPresentAt, now.timeIntervalSince(last) >= 1.5 {
+            finalizeOpenPass()
+        }
+    }
+
+    /// Store the in-progress approach if it's substantial enough to be useful.
+    private func finalizeOpenPass() {
+        if let p = openPass, p.samples.count >= 3, passes.count < 300 {
+            passes.append(VehiclePass(id: UUID(), date: p.start, lat: p.lat,
+                                      lon: p.lon, samples: p.samples))
+        }
+        openPass = nil
+        lastPassFrameSeen = nil
+        lastThreatPresentAt = nil
     }
 
     /// Reduce the GPS track to ~250 points for a lightweight stored summary map.

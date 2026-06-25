@@ -16,6 +16,7 @@ struct RideSummaryView: View {
                     header
                     routeMap
                     statGrid
+                    passesLink
                 }
                 .padding()
             }
@@ -94,6 +95,38 @@ struct RideSummaryView: View {
         let cols = [GridItem(.flexible()), GridItem(.flexible())]
         return LazyVGrid(columns: cols, spacing: 12) {
             ForEach(stats, id: \.0) { stat($0.0, $0.1, $0.2) }
+        }
+    }
+
+    /// Link to the per-vehicle pass review, shown only when passes were logged.
+    @ViewBuilder private var passesLink: some View {
+        if let passes = summary.passes, !passes.isEmpty {
+            let close = passes.filter(\.isClose).count
+            NavigationLink {
+                VehiclePassesView(passes: passes).environmentObject(settings)
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "car.2.fill")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(close > 0 ? Theme.threatHigh : Theme.accent)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Vehicle passes")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(Theme.textPrimary)
+                        Text(close > 0 ? "\(passes.count) logged · \(close) close"
+                                       : "\(passes.count) logged")
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .foregroundStyle(Theme.textSecondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(Theme.textSecondary)
+                }
+                .padding(16)
+                .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
+            }
+            .buttonStyle(.plain)
         }
     }
 
