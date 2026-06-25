@@ -7,6 +7,7 @@ struct RideSummaryView: View {
     let summary: RideSummary
     @EnvironmentObject var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
+    @State private var showRouteMap = false
 
     var body: some View {
         NavigationStack {
@@ -54,13 +55,27 @@ struct RideSummaryView: View {
     @ViewBuilder private var routeMap: some View {
         let coords = summary.coordinates
         if coords.count >= 2 {
-            Map(initialPosition: .region(Self.region(for: coords))) {
-                MapPolyline(coordinates: coords)
-                    .stroke(Theme.accent, lineWidth: 4)
+            Button { showRouteMap = true } label: {
+                Map(initialPosition: .region(Self.region(for: coords))) {
+                    MapPolyline(coordinates: coords)
+                        .stroke(Theme.accent, lineWidth: 4)
+                }
+                .frame(height: 180)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .allowsHitTesting(false)   // tap goes to the button (expands the map)
+                .overlay(alignment: .bottomTrailing) {
+                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(Theme.textPrimary)
+                        .padding(8)
+                        .background(.ultraThinMaterial, in: Circle())
+                        .padding(10)
+                }
             }
-            .frame(height: 180)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .allowsHitTesting(false)   // a thumbnail, not an interactive map
+            .buttonStyle(.plain)
+            .fullScreenCover(isPresented: $showRouteMap) {
+                RouteMapView(coordinates: coords)
+            }
         }
     }
 
