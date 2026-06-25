@@ -5,6 +5,7 @@ import SwiftUI
 /// actually speaks.
 struct DiagnosticsView: View {
     @EnvironmentObject var ble: BluetoothManager
+    @EnvironmentObject var settings: AppSettings
     @State private var logText = ""
 
     var body: some View {
@@ -23,6 +24,14 @@ struct DiagnosticsView: View {
                 Text("Event log")
             } footer: {
                 Text("Records ride events, sensor activity and any crash. Share this file after a ride that misbehaved.")
+            }
+
+            Section {
+                Toggle("Show “Mark car” button", isOn: $settings.radarDebugEnabled)
+            } header: {
+                Text("Radar debug")
+            } footer: {
+                Text("Adds a “Mark car” button to the ride screen that timestamps the log as each vehicle passes. Enable this only when debugging a new or misbehaving radar — it's not needed for normal riding.")
             }
 
             Section("Recent log") {

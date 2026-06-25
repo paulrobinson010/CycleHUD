@@ -25,7 +25,9 @@ struct RideView: View {
                 RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
                       radarConnected: ble.status(for: .radar) == .connected)
                     .frame(maxHeight: .infinity)
-                    .overlay(alignment: .bottomTrailing) { carMarkButton }
+                    .overlay(alignment: .bottomTrailing) {
+                        if settings.radarDebugEnabled { carMarkButton }
+                    }
                 metricsGrid
                 controlBar
             }

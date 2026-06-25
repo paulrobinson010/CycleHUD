@@ -13,6 +13,7 @@ final class AppSettings: ObservableObject {
         static let autoPauseEnabled = "autoPauseEnabled"
         static let keepScreenOn = "keepScreenOn"
         static let hasChosenUnits = "hasChosenUnits"
+        static let radarDebugEnabled = "radarDebugEnabled"
     }
 
     private let defaults = UserDefaults.standard
@@ -25,6 +26,9 @@ final class AppSettings: ObservableObject {
     @Published var autoPauseEnabled: Bool { didSet { defaults.set(autoPauseEnabled, forKey: Keys.autoPauseEnabled) } }
     @Published var keepScreenOn: Bool { didSet { defaults.set(keepScreenOn, forKey: Keys.keepScreenOn) } }
     @Published var hasChosenUnits: Bool { didSet { defaults.set(hasChosenUnits, forKey: Keys.hasChosenUnits) } }
+    /// Developer aid: shows the on-screen "Mark car" button for capturing radar
+    /// timing when decoding a new/misbehaving radar. Off for normal riders.
+    @Published var radarDebugEnabled: Bool { didSet { defaults.set(radarDebugEnabled, forKey: Keys.radarDebugEnabled) } }
 
     init() {
         defaults.register(defaults: [
@@ -35,7 +39,8 @@ final class AppSettings: ObservableObject {
             Keys.beepEnabled: true,
             Keys.autoPauseEnabled: true,
             Keys.keepScreenOn: true,
-            Keys.hasChosenUnits: false
+            Keys.hasChosenUnits: false,
+            Keys.radarDebugEnabled: false
         ])
 
         speedUnit = SpeedUnit(rawValue: defaults.string(forKey: Keys.speedUnit) ?? "") ?? .kmh
@@ -46,6 +51,7 @@ final class AppSettings: ObservableObject {
         autoPauseEnabled = defaults.bool(forKey: Keys.autoPauseEnabled)
         keepScreenOn = defaults.bool(forKey: Keys.keepScreenOn)
         hasChosenUnits = defaults.bool(forKey: Keys.hasChosenUnits)
+        radarDebugEnabled = defaults.bool(forKey: Keys.radarDebugEnabled)
     }
 
     var wheelCircumferenceMeters: Double { wheelCircumferenceMM / 1000.0 }
