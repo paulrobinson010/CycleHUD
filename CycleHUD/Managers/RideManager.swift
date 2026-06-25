@@ -166,7 +166,15 @@ final class RideManager: ObservableObject {
         stopTicker()
         stopAltimeter()
         location.stop(background: true)
+        // Reset all live metrics to a clean slate (the ride is saved to Health
+        // below), THEN mirror the zeros so the Watch clears too — otherwise it
+        // keeps showing the last ride's distance until a new one starts.
         currentSpeedMps = 0
+        distanceMeters = 0
+        movingTimeSeconds = 0
+        elevationGainMeters = 0
+        caloriesKcal = 0
+        currentHeartRate = nil
         UIApplication.shared.isIdleTimerDisabled = false
         sendMirror()
 
@@ -180,8 +188,6 @@ final class RideManager: ObservableObject {
         }
 
         route = []
-        caloriesKcal = 0
-        currentHeartRate = nil
         rideStart = nil
         clearPersistence()
     }
