@@ -91,7 +91,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Display")
                 } footer: {
-                    Text("When on, rotate the phone to landscape for a side-by-side layout: the radar on the left, ride data and controls on the right. Portrait stays stacked as usual.")
+                    Text("When on, the ride screen is fixed in landscape — radar on the left, ride data and controls on the right. It won't flip back when you rotate the phone; Settings and other screens stay in portrait.")
                 }
 
                 Section {

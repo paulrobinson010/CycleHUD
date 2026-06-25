@@ -2,13 +2,24 @@ import SwiftUI
 import UIKit
 
 /// Gates which interface orientations the app allows. The Info.plist lists all
-/// orientations, but this delegate is the runtime authority: it stays portrait
-/// unless the rider turns on the landscape layout in Settings.
+/// orientations, but this delegate is the runtime authority: screens lock
+/// themselves to portrait or landscape via `lock(_:rotateTo:)`. Default portrait.
 final class AppDelegate: NSObject, UIApplicationDelegate {
     static var orientationLock: UIInterfaceOrientationMask = .portrait
     func application(_ application: UIApplication,
                      supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         AppDelegate.orientationLock
+    }
+
+    /// Restrict the app to `mask` and rotate the interface into `rotateTo` now.
+    /// The landscape HUD locks to `.landscape`; portrait screens lock to
+    /// `.portrait`, so the phone is fixed rather than rotation-driven.
+    static func lock(_ mask: UIInterfaceOrientationMask, rotateTo: UIInterfaceOrientationMask) {
+        orientationLock = mask
+        guard let scene = UIApplication.shared.connectedScenes
+                .first(where: { $0 is UIWindowScene }) as? UIWindowScene else { return }
+        scene.windows.first?.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
+        scene.requestGeometryUpdate(.iOS(interfaceOrientations: rotateTo))
     }
 }
 
@@ -58,23 +69,7 @@ struct CycleHUDApp: App {
                     location.requestAuthorization()
                     location.start(background: false)
                     health.requestAuthorization()
-                    applyOrientation(settings.landscapeEnabled)
                 }
-                .onChange(of: settings.landscapeEnabled) { _, on in
-                    applyOrientation(on)
-                }
-        }
-    }
-
-    /// Allow (or forbid) landscape, and snap back to portrait when the rider
-    /// turns the landscape layout off while the phone is rotated.
-    private func applyOrientation(_ landscape: Bool) {
-        AppDelegate.orientationLock = landscape ? .allButUpsideDown : .portrait
-        guard let scene = UIApplication.shared.connectedScenes
-                .first(where: { $0 is UIWindowScene }) as? UIWindowScene else { return }
-        scene.windows.first?.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
-        if !landscape {
-            scene.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait))
         }
     }
 }

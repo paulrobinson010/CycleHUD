@@ -48,9 +48,10 @@ and standard BLE speed/cadence sensors work too.
 - **Vehicles on the map** — each vehicle the radar flags during a ride is dropped
   as a pin on that ride's route map, with a count, so you can see where traffic
   came up behind you.
-- **Landscape layout** *(optional)* — turn it on to hold the phone sideways with
-  the radar on the left and your ride data and controls on the right; portrait
-  stays the usual stacked layout.
+- **Landscape layout** *(optional)* — turn it on to fix the ride screen in
+  landscape, radar on the left and your ride data and controls on the right. The
+  HUD stays landscape regardless of how you hold the phone; Settings and other
+  screens stay portrait.
 - **Ride control** — Start / Pause / Resume / Stop, with **auto-pause /
   auto-resume** (pauses after you're stopped < 1 km/h for 5 s, resumes ~1 s
   after you move again).

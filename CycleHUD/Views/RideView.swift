@@ -48,6 +48,27 @@ struct RideView: View {
         )) {
             UnitsOnboardingView().environmentObject(settings)
         }
+        .onAppear { updateOrientation() }
+        .onChange(of: settings.landscapeEnabled) { _, _ in updateOrientation() }
+        .onChange(of: activeSheet) { _, _ in updateOrientation() }
+        .onChange(of: ride.finishedSummary) { _, _ in updateOrientation() }
+        .onChange(of: settings.hasChosenUnits) { _, _ in updateOrientation() }
+    }
+
+    /// The HUD is fixed landscape when the setting is on and nothing is presented
+    /// over it; every modal (Settings, pairing, the ride summary, onboarding)
+    /// drops back to portrait. So the main screen is *always* landscape rather
+    /// than rotation-driven, while Settings stays portrait.
+    private func updateOrientation() {
+        let liveHUD = settings.landscapeEnabled
+            && activeSheet == nil
+            && ride.finishedSummary == nil
+            && settings.hasChosenUnits
+        if liveHUD {
+            AppDelegate.lock(.landscape, rotateTo: .landscapeRight)
+        } else {
+            AppDelegate.lock(.portrait, rotateTo: .portrait)
+        }
     }
 
     // MARK: - Layouts
