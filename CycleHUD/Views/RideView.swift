@@ -9,6 +9,7 @@ struct RideView: View {
     @EnvironmentObject var location: LocationManager
     @EnvironmentObject var ride: RideManager
     @EnvironmentObject var watch: WatchConnectivityManager
+    @EnvironmentObject var history: RideHistory
 
     private enum ActiveSheet: Int, Identifiable {
         case pairing, settings
@@ -38,8 +39,12 @@ struct RideView: View {
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
             case .pairing: PairingView().environmentObject(ble)
-            case .settings: SettingsView().environmentObject(settings).environmentObject(ble).environmentObject(ride)
+            case .settings: SettingsView().environmentObject(settings).environmentObject(ble)
+                    .environmentObject(ride).environmentObject(history)
             }
+        }
+        .sheet(item: $ride.finishedSummary) { summary in
+            RideSummaryView(summary: summary).environmentObject(settings)
         }
         .fullScreenCover(isPresented: Binding(
             get: { !settings.hasChosenUnits },

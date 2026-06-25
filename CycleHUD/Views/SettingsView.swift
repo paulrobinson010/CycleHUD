@@ -4,6 +4,7 @@ struct SettingsView: View {
     @EnvironmentObject var settings: AppSettings
     @EnvironmentObject var ble: BluetoothManager
     @EnvironmentObject var ride: RideManager
+    @EnvironmentObject var history: RideHistory
     @Environment(\.dismiss) private var dismiss
 
     struct WheelPreset: Identifiable {
@@ -22,6 +23,14 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    NavigationLink {
+                        RideHistoryView().environmentObject(history).environmentObject(settings)
+                    } label: {
+                        Label("Previous rides", systemImage: "list.bullet.rectangle")
+                    }
+                }
+
                 Section("Units") {
                     Picker("Speed", selection: $settings.speedUnit) {
                         ForEach(SpeedUnit.allCases) { Text($0.label).tag($0) }

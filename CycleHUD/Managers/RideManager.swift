@@ -52,11 +52,16 @@ final class RideManager: ObservableObject {
         movingTimeSeconds > 0 ? distanceMeters / movingTimeSeconds : 0
     }
 
+    /// Set when a ride finishes, to present the end-of-ride summary sheet.
+    /// Cleared when the sheet is dismissed.
+    @Published var finishedSummary: RideSummary?
+
     private let ble: BluetoothManager
     private let location: LocationManager
     private let settings: AppSettings
     private let health: HealthKitManager
     private let watch: WatchConnectivityManager
+    private let history: RideHistory
 
     // Recorded GPS track + body metrics for the workout / calories.
     private var route: [CLLocation] = []
@@ -88,12 +93,13 @@ final class RideManager: ObservableObject {
     private var lastGpsAltitude: Double?
 
     init(ble: BluetoothManager, location: LocationManager, settings: AppSettings,
-         health: HealthKitManager, watch: WatchConnectivityManager) {
+         health: HealthKitManager, watch: WatchConnectivityManager, history: RideHistory) {
         self.ble = ble
         self.location = location
         self.settings = settings
         self.health = health
         self.watch = watch
+        self.history = history
         self.location.onLocation = { [weak self] loc in self?.accumulate(loc) }
         self.ble.onDemoFinished = { [weak self] in self?.demoFramesFinished() }
         self.ble.onNewCar = { [weak self] in self?.watch.sendNewCarHaptic() }
@@ -159,6 +165,8 @@ final class RideManager: ObservableObject {
         let start = rideStart ?? Date()
         let end = Date()
         let savedDistance = distanceMeters
+        let savedTime = movingTimeSeconds
+        let savedAscent = elevationGainMeters
         let savedCalories = caloriesKcal
         let savedRoute = route
 
@@ -178,8 +186,14 @@ final class RideManager: ObservableObject {
         UIApplication.shared.isIdleTimerDisabled = false
         sendMirror()
 
-        // Save a cycling workout for any ride worth keeping.
+        // Record any ride worth keeping: local history + end-of-ride summary, and
+        // the authoritative Apple Health workout.
         if savedDistance >= 50 {
+            let summary = RideSummary(id: UUID(), date: start, distanceMeters: savedDistance,
+                                      movingTimeSeconds: savedTime, elevationGainMeters: savedAscent,
+                                      caloriesKcal: savedCalories)
+            history.add(summary)
+            finishedSummary = summary
             Task { [health] in
                 await health.saveRide(start: start, end: end,
                                       distanceMeters: savedDistance,

@@ -7,6 +7,7 @@ struct CycleHUDApp: App {
     @StateObject private var location: LocationManager
     @StateObject private var health: HealthKitManager
     @StateObject private var watch: WatchConnectivityManager
+    @StateObject private var history: RideHistory
     @StateObject private var ride: RideManager
 
     init() {
@@ -18,13 +19,15 @@ struct CycleHUDApp: App {
         let location = LocationManager()
         let health = HealthKitManager()
         let watch = WatchConnectivityManager()
+        let history = RideHistory()
         let ride = RideManager(ble: ble, location: location, settings: settings,
-                               health: health, watch: watch)
+                               health: health, watch: watch, history: history)
         _settings = StateObject(wrappedValue: settings)
         _ble = StateObject(wrappedValue: ble)
         _location = StateObject(wrappedValue: location)
         _health = StateObject(wrappedValue: health)
         _watch = StateObject(wrappedValue: watch)
+        _history = StateObject(wrappedValue: history)
         _ride = StateObject(wrappedValue: ride)
     }
 
@@ -36,6 +39,7 @@ struct CycleHUDApp: App {
                 .environmentObject(location)
                 .environmentObject(ride)
                 .environmentObject(watch)
+                .environmentObject(history)
                 .preferredColorScheme(.dark)
                 .onAppear {
                     location.requestAuthorization()
