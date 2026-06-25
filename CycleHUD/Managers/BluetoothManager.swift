@@ -95,6 +95,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     // [opcode][len][params…][checksum = sum of prior bytes & 0xFF]; B8 05 02 01
     // is "radar on", C0 the checksum. Resent on a keepalive or the radar stops.
     static let coospoRadarEnableCommand = Data([0xB8, 0x05, 0x02, 0x01, 0xC0])
+    // CoospoRide also writes this to FDB2 — believed to put the radar into active
+    // threat-detection mode (the enable/keepalive alone makes it stream the
+    // heartbeat but not detect cars). Sent once on connect.
+    static let coospoRadarActivateCommand = Data([0xB8, 0x05, 0x23, 0x01, 0xE1])
     // FDB1 frame: [0xC8][len][page][payload…][checksum]. Page 0x24 is the threat
     // list (all-zero target bytes when clear); other pages are status/heartbeat.
     static let coospoRadarThreatPage: UInt8 = 0x24
@@ -393,10 +397,13 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
                 peripheral.setNotifyValue(true, for: ch)
                 diag("  → subscribed CSC")
             } else if ch.uuid == BluetoothManager.coospoRadarControl {
-                // The TR70's radar stays silent until poked here periodically.
+                // The TR70 stays silent until poked here, and won't detect cars
+                // until it's put into active mode (the activate command).
                 radarControlChars[peripheral.identifier] = ch
                 diag("  → radar control FDB2 ready")
-                pokeRadar()              // enable immediately…
+                peripheral.writeValue(BluetoothManager.coospoRadarActivateCommand,
+                                      for: ch, type: .withoutResponse)   // active mode
+                pokeRadar()              // enable…
                 startRadarKeepAlive()    // …then keep it alive
             } else if notify, isRadarPeripheral {
                 // Proprietary radar characteristic — subscribe and capture raw

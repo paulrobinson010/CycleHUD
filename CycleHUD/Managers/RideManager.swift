@@ -339,11 +339,16 @@ final class RideManager: ObservableObject {
         if saveTick % 60 == 0 { persistRoute() }        // ~every 15 s
     }
 
-    /// HR-based calories (only when the Watch is supplying a heart rate).
+    /// Calories. Uses heart rate (Keytel) when the Watch supplies one, otherwise
+    /// falls back to a speed-based estimate so calories still work without a Watch.
     private func accumulateCalories(dt: Double) {
-        guard let hr = currentHeartRate, hr > 0 else { return }
-        let perMinute = Calories.kcalPerMinute(heartRate: Double(hr), weightKg: bodyWeightKg,
+        let perMinute: Double
+        if let hr = currentHeartRate, hr > 0 {
+            perMinute = Calories.kcalPerMinute(heartRate: Double(hr), weightKg: bodyWeightKg,
                                                ageYears: bodyAgeYears, isFemale: bodyIsFemale)
+        } else {
+            perMinute = Calories.kcalPerMinute(speedMps: currentSpeedMps, weightKg: bodyWeightKg)
+        }
         caloriesKcal += perMinute * (dt / 60.0)
     }
 

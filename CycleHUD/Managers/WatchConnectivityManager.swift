@@ -58,7 +58,14 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
             "radarLost": radarLost
         ]
         if let nearestThreatMeters { payload["nearest"] = nearestThreatMeters }
+        // applicationContext is the reliable background path (latest state always
+        // gets through), but it's coalesced and slow. When the Watch app is open
+        // (reachable), also push it live via sendMessage so speed/HR update in
+        // real time and the Watch starts its workout promptly.
         try? session.updateApplicationContext(payload)
+        if session.isReachable {
+            session.sendMessage(payload, replyHandler: nil, errorHandler: nil)
+        }
         #endif
     }
 

@@ -242,8 +242,13 @@ extension WatchSessionManager: WCSessionDelegate {
     }
 
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
-        guard let event = message["event"] as? String else { return }
-        DispatchQueue.main.async { self.playEventHaptic(event) }
+        DispatchQueue.main.async {
+            if let event = message["event"] as? String {
+                self.playEventHaptic(event)       // one-shot wrist alert
+            } else {
+                self.apply(message)               // live ride mirror
+            }
+        }
     }
 
     /// One-shot wrist alerts pushed from the phone. The radar-lost pattern is

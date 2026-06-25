@@ -17,4 +17,22 @@ enum Calories {
         }
         return max(0, perMinute)
     }
+
+    /// Kilocalories burned per minute estimated from cycling speed, for when no
+    /// heart rate is available (no Watch). Uses standard cycling MET values:
+    /// kcal/min = MET × 3.5 × weightKg / 200.
+    static func kcalPerMinute(speedMps: Double, weightKg: Double) -> Double {
+        let kmh = speedMps * 3.6
+        let met: Double
+        switch kmh {
+        case ..<1:   met = 1.0     // essentially stopped (resting)
+        case ..<16:  met = 4.0     // easy
+        case ..<19:  met = 6.8
+        case ..<22:  met = 8.0
+        case ..<25:  met = 10.0
+        case ..<30:  met = 12.0
+        default:     met = 15.8    // fast
+        }
+        return met * 3.5 * weightKg / 200.0
+    }
 }
