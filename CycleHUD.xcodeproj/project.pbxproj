@@ -571,7 +571,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = CycleHUD;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Used to read heart rate during a ride.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Used to record your workout.";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.paulrobinson.CycleHUD;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -607,7 +607,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = CycleHUD;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Used to read heart rate during a ride.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Used to record your workout.";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.paulrobinson.CycleHUD;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

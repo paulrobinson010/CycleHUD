@@ -1,7 +1,20 @@
 import SwiftUI
+import UIKit
+
+/// Gates which interface orientations the app allows. The Info.plist lists all
+/// orientations, but this delegate is the runtime authority: it stays portrait
+/// unless the rider turns on the landscape layout in Settings.
+final class AppDelegate: NSObject, UIApplicationDelegate {
+    static var orientationLock: UIInterfaceOrientationMask = .portrait
+    func application(_ application: UIApplication,
+                     supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        AppDelegate.orientationLock
+    }
+}
 
 @main
 struct CycleHUDApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var settings: AppSettings
     @StateObject private var ble: BluetoothManager
     @StateObject private var location: LocationManager
@@ -45,7 +58,23 @@ struct CycleHUDApp: App {
                     location.requestAuthorization()
                     location.start(background: false)
                     health.requestAuthorization()
+                    applyOrientation(settings.landscapeEnabled)
                 }
+                .onChange(of: settings.landscapeEnabled) { _, on in
+                    applyOrientation(on)
+                }
+        }
+    }
+
+    /// Allow (or forbid) landscape, and snap back to portrait when the rider
+    /// turns the landscape layout off while the phone is rotated.
+    private func applyOrientation(_ landscape: Bool) {
+        AppDelegate.orientationLock = landscape ? .allButUpsideDown : .portrait
+        guard let scene = UIApplication.shared.connectedScenes
+                .first(where: { $0 is UIWindowScene }) as? UIWindowScene else { return }
+        scene.windows.first?.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
+        if !landscape {
+            scene.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait))
         }
     }
 }

@@ -86,6 +86,14 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Toggle("Landscape layout", isOn: $settings.landscapeEnabled)
+                } header: {
+                    Text("Display")
+                } footer: {
+                    Text("When on, rotate the phone to landscape for a side-by-side layout: the radar on the left, ride data and controls on the right. Portrait stays stacked as usual.")
+                }
+
+                Section {
                     Button {
                         if ble.demoActive {
                             ble.stopDemo()

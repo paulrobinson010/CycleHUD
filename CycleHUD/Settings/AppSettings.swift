@@ -14,6 +14,7 @@ final class AppSettings: ObservableObject {
         static let keepScreenOn = "keepScreenOn"
         static let hasChosenUnits = "hasChosenUnits"
         static let radarDebugEnabled = "radarDebugEnabled"
+        static let landscapeEnabled = "landscapeEnabled"
     }
 
     private let defaults = UserDefaults.standard
@@ -29,6 +30,10 @@ final class AppSettings: ObservableObject {
     /// Developer aid: shows the on-screen "Mark car" button for capturing radar
     /// timing when decoding a new/misbehaving radar. Off for normal riders.
     @Published var radarDebugEnabled: Bool { didSet { defaults.set(radarDebugEnabled, forKey: Keys.radarDebugEnabled) } }
+    /// When on, the phone may rotate to landscape and the ride screen splits
+    /// side-by-side (radar on the left, ride data on the right). Off keeps the
+    /// app portrait-only as before.
+    @Published var landscapeEnabled: Bool { didSet { defaults.set(landscapeEnabled, forKey: Keys.landscapeEnabled) } }
 
     init() {
         defaults.register(defaults: [
@@ -40,7 +45,8 @@ final class AppSettings: ObservableObject {
             Keys.autoPauseEnabled: true,
             Keys.keepScreenOn: true,
             Keys.hasChosenUnits: false,
-            Keys.radarDebugEnabled: false
+            Keys.radarDebugEnabled: false,
+            Keys.landscapeEnabled: false
         ])
 
         speedUnit = SpeedUnit(rawValue: defaults.string(forKey: Keys.speedUnit) ?? "") ?? .kmh
@@ -52,6 +58,7 @@ final class AppSettings: ObservableObject {
         keepScreenOn = defaults.bool(forKey: Keys.keepScreenOn)
         hasChosenUnits = defaults.bool(forKey: Keys.hasChosenUnits)
         radarDebugEnabled = defaults.bool(forKey: Keys.radarDebugEnabled)
+        landscapeEnabled = defaults.bool(forKey: Keys.landscapeEnabled)
     }
 
     var wheelCircumferenceMeters: Double { wheelCircumferenceMM / 1000.0 }

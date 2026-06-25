@@ -21,21 +21,16 @@ struct RideView: View {
     var body: some View {
         ZStack {
             Theme.background.ignoresSafeArea()
-            VStack(spacing: 12) {
-                statusBar
-                RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
-                      radarConnected: ble.status(for: .radar) == .connected,
-                      batteryPercent: ble.radarBatteryPercent)
-                    .frame(maxHeight: .infinity)
-                    .overlay(alignment: .bottomTrailing) {
-                        if settings.radarDebugEnabled { carMarkButton }
-                    }
-                metricsGrid
-                controlBar
+            GeometryReader { geo in
+                let landscape = settings.landscapeEnabled && geo.size.width > geo.size.height
+                Group {
+                    if landscape { landscapeLayout } else { portraitLayout }
+                }
+                .padding(.horizontal, 14)
+                .padding(.top, 6)
+                .padding(.bottom, 10)
+                .frame(width: geo.size.width, height: geo.size.height)
             }
-            .padding(.horizontal, 14)
-            .padding(.top, 6)
-            .padding(.bottom, 10)
         }
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
@@ -53,6 +48,46 @@ struct RideView: View {
         )) {
             UnitsOnboardingView().environmentObject(settings)
         }
+    }
+
+    // MARK: - Layouts
+
+    /// Default stacked layout: status, radar, metrics, controls top-to-bottom.
+    private var portraitLayout: some View {
+        VStack(spacing: 12) {
+            statusBar
+            radarPanel.frame(maxHeight: .infinity)
+            metricsGrid
+            controlBar
+        }
+    }
+
+    /// Landscape split: the top half (status + radar) on the left, the bottom
+    /// half (metrics + controls) on the right.
+    private var landscapeLayout: some View {
+        HStack(spacing: 12) {
+            VStack(spacing: 8) {
+                statusBar
+                radarPanel.frame(maxHeight: .infinity)
+            }
+            .frame(maxWidth: .infinity)
+            VStack(spacing: 10) {
+                metricsGrid
+                Spacer(minLength: 0)
+                controlBar
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
+
+    /// The radar lane plus its debug "Mark car" overlay, shared by both layouts.
+    private var radarPanel: some View {
+        RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
+                  radarConnected: ble.status(for: .radar) == .connected,
+                  batteryPercent: ble.radarBatteryPercent)
+            .overlay(alignment: .bottomTrailing) {
+                if settings.radarDebugEnabled { carMarkButton }
+            }
     }
 
     // MARK: - Status bar
