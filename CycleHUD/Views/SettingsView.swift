@@ -94,6 +94,21 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Toggle("Heart-rate warning", isOn: $settings.hrWarningEnabled)
+                    if settings.hrWarningEnabled {
+                        Picker("Warn above", selection: $settings.hrWarningBpm) {
+                            ForEach(Array(stride(from: 120, through: 220, by: 5)), id: \.self) { bpm in
+                                Text("\(bpm) bpm").tag(bpm)
+                            }
+                        }
+                    }
+                } header: {
+                    Text("Heart Rate")
+                } footer: {
+                    Text("When your heart rate reaches this, the heart-rate readout turns red and a paired Apple Watch double-buzzes — repeating every 30 seconds while it stays high.")
+                }
+
+                Section {
                     Button {
                         if ble.demoActive {
                             ble.stopDemo()

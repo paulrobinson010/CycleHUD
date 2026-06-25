@@ -190,9 +190,11 @@ struct RideView: View {
                            unit: settings.distanceUnit.shortLabel, valueSize: 32, height: 90)
             }
             HStack(spacing: 8) {
+                let hr = watch.displayHeartRate ?? ride.currentHeartRate
                 MetricTile(title: "Heart Rate",
-                           value: (watch.displayHeartRate ?? ride.currentHeartRate).map { "\($0)" } ?? "—",
-                           unit: "bpm", valueSize: 32, height: 90)
+                           value: hr.map { "\($0)" } ?? "—",
+                           unit: "bpm", valueSize: 32, height: 90,
+                           alert: settings.hrWarningEnabled && (hr ?? 0) >= settings.hrWarningBpm)
                 MetricTile(title: "Calories",
                            value: ride.caloriesKcal >= 1 ? "\(Int(ride.caloriesKcal))" : "—",
                            unit: "kcal", valueSize: 32, height: 90)

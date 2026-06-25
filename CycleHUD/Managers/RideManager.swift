@@ -395,7 +395,8 @@ final class RideManager: ObservableObject {
                          rideStatusRaw: demoActive ? "running" : statusRaw,
                          threatLevel: levels.max() ?? -1,
                          nearestThreatMeters: nearest,
-                         radarLost: demoActive ? (demoRadarLostUntil != nil) : radarConfiguredButDown)
+                         radarLost: demoActive ? (demoRadarLostUntil != nil) : radarConfiguredButDown,
+                         hrWarningBpm: settings.effectiveHRWarningBpm)
     }
 
     /// True when a radar is set up but not currently connected — the state that

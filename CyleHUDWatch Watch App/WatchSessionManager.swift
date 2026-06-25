@@ -18,6 +18,10 @@ final class WatchSessionManager: NSObject, ObservableObject {
     @Published var nearestThreatMeters: Int?
     @Published var heartRate: Int = 0
     @Published var radarLost: Bool = false   // radar dropped out mid-ride
+    @Published private(set) var hrWarningActive = false   // HR at/over the warning threshold
+
+    private var hrWarningBpm = 0             // warning threshold from the phone (0 = off)
+    private var lastHRWarnAt: Date?
 
     // Diagnostics surfaced on-screen so we can see where the HR chain breaks.
     @Published var healthRequested = false
@@ -109,6 +113,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
             DispatchQueue.main.async {
                 self.heartRate = Int(hr.rounded())
                 self.sendHeartRate(hr)
+                self.evaluateHRWarning()
             }
         }
         let query = HKAnchoredObjectQuery(type: hrType, predicate: predicate, anchor: nil,
@@ -169,12 +174,45 @@ final class WatchSessionManager: NSObject, ObservableObject {
         if let v = data["threat"] as? Int { threatLevel = v }
         nearestThreatMeters = data["nearest"] as? Int
         if let v = data["radarLost"] as? Bool { radarLost = v }
+        if let v = data["hrWarn"] as? Int { hrWarningBpm = v }
         if let s = data["status"] as? String {
             statusRaw = s
             rideActive = (s != "idle")
             updateWorkout()
         }
         updateHapticLoop()
+        evaluateHRWarning()
+    }
+
+    // MARK: - Heart-rate warning
+    //
+    // When the rider sets a max heart rate on the phone, the watch double-buzzes
+    // and flips the HR readout red once their heart rate reaches it.
+
+    /// Re-evaluate against the latest heart rate / threshold. Double-buzzes on
+    /// the rising edge and again every 30 s while sustained; the red state clears
+    /// once HR falls a few bpm back below (hysteresis stops it flickering).
+    private func evaluateHRWarning() {
+        let over = hrWarningBpm > 0 && heartRate >= hrWarningBpm
+        if over {
+            hrWarningActive = true
+        } else if heartRate < hrWarningBpm - 3 {
+            hrWarningActive = false
+            lastHRWarnAt = nil               // re-arm so the next crossing buzzes
+        }
+        guard rideActive, over else { return }
+        let now = Date()
+        if lastHRWarnAt.map({ now.timeIntervalSince($0) >= 30 }) ?? true {
+            playHeartRateWarningHaptic()
+            lastHRWarnAt = now
+        }
+    }
+
+    /// Distinct from car taps: a double notification buzz meaning "heart rate high".
+    private func playHeartRateWarningHaptic() {
+        let device = WKInterfaceDevice.current()
+        device.play(.notification)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { device.play(.notification) }
     }
 
     // MARK: - Proximity haptics
@@ -296,6 +334,8 @@ extension WatchSessionManager: HKWorkoutSessionDelegate {
         builder = nil
         workoutActive = false
         heartRate = 0
+        hrWarningActive = false
+        lastHRWarnAt = nil
     }
 
     func workoutSession(_ session: HKWorkoutSession, didFailWithError error: Error) {
@@ -321,6 +361,7 @@ extension WatchSessionManager: HKLiveWorkoutBuilderDelegate {
         DispatchQueue.main.async {
             self.heartRate = Int(hr.rounded())
             self.sendHeartRate(hr)
+            self.evaluateHRWarning()
         }
     }
 }

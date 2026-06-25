@@ -15,6 +15,8 @@ final class AppSettings: ObservableObject {
         static let hasChosenUnits = "hasChosenUnits"
         static let radarDebugEnabled = "radarDebugEnabled"
         static let landscapeEnabled = "landscapeEnabled"
+        static let hrWarningEnabled = "hrWarningEnabled"
+        static let hrWarningBpm = "hrWarningBpm"
     }
 
     private let defaults = UserDefaults.standard
@@ -34,6 +36,14 @@ final class AppSettings: ObservableObject {
     /// side-by-side (radar on the left, ride data on the right). Off keeps the
     /// app portrait-only as before.
     @Published var landscapeEnabled: Bool { didSet { defaults.set(landscapeEnabled, forKey: Keys.landscapeEnabled) } }
+    /// When on, the heart-rate display turns red and the Watch double-buzzes once
+    /// the rider's heart rate reaches `hrWarningBpm`.
+    @Published var hrWarningEnabled: Bool { didSet { defaults.set(hrWarningEnabled, forKey: Keys.hrWarningEnabled) } }
+    /// Heart-rate warning threshold in bpm (selected in 5-bpm steps, 120–220).
+    @Published var hrWarningBpm: Int { didSet { defaults.set(hrWarningBpm, forKey: Keys.hrWarningBpm) } }
+
+    /// The warning threshold to broadcast to the Watch — 0 when disabled.
+    var effectiveHRWarningBpm: Int { hrWarningEnabled ? hrWarningBpm : 0 }
 
     init() {
         defaults.register(defaults: [
@@ -46,7 +56,9 @@ final class AppSettings: ObservableObject {
             Keys.keepScreenOn: true,
             Keys.hasChosenUnits: false,
             Keys.radarDebugEnabled: false,
-            Keys.landscapeEnabled: false
+            Keys.landscapeEnabled: false,
+            Keys.hrWarningEnabled: false,
+            Keys.hrWarningBpm: 200
         ])
 
         speedUnit = SpeedUnit(rawValue: defaults.string(forKey: Keys.speedUnit) ?? "") ?? .kmh
@@ -59,6 +71,8 @@ final class AppSettings: ObservableObject {
         hasChosenUnits = defaults.bool(forKey: Keys.hasChosenUnits)
         radarDebugEnabled = defaults.bool(forKey: Keys.radarDebugEnabled)
         landscapeEnabled = defaults.bool(forKey: Keys.landscapeEnabled)
+        hrWarningEnabled = defaults.bool(forKey: Keys.hrWarningEnabled)
+        hrWarningBpm = defaults.integer(forKey: Keys.hrWarningBpm)
     }
 
     var wheelCircumferenceMeters: Double { wheelCircumferenceMM / 1000.0 }

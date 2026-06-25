@@ -17,7 +17,8 @@ struct WatchContentView: View {
                 .foregroundStyle(.secondary)
 
             HStack {
-                metric(label: "HR", value: session.heartRate > 0 ? "\(session.heartRate)" : "—")
+                metric(label: "HR", value: session.heartRate > 0 ? "\(session.heartRate)" : "—",
+                       alert: session.hrWarningActive)
                 Spacer()
                 metric(label: "KM", value: String(format: "%.2f", session.distanceMeters / 1000))
             }
@@ -61,11 +62,20 @@ struct WatchContentView: View {
         }
     }
 
-    private func metric(label: String, value: String) -> some View {
+    private func metric(label: String, value: String, alert: Bool = false) -> some View {
         VStack(spacing: 0) {
-            Text(label).font(.system(size: 10, weight: .semibold)).foregroundStyle(.secondary)
-            Text(value).font(.system(size: 18, weight: .bold, design: .rounded)).monospacedDigit()
+            Text(label)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(alert ? Color.white.opacity(0.9) : .secondary)
+            Text(value)
+                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .monospacedDigit()
+                .foregroundStyle(alert ? .white : .primary)
         }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 2)
+        .background(alert ? Color(red: 0.95, green: 0.20, blue: 0.22) : .clear,
+                    in: RoundedRectangle(cornerRadius: 8))
     }
 
     private var bannerColor: Color {
