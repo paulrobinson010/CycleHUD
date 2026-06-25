@@ -143,6 +143,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     // Liveness: a sensor counts as connected only while it's actually streaming
     // data (CoreBluetooth can report a powered-off sensor as connected for ages).
     private var lastDataAt: [UUID: Date] = [:]
+    // When a *radar frame* last arrived. Distinct from lastDataAt (which is also
+    // seeded on connect and bumped by battery reads) so the radar only reads as
+    // connected while it's genuinely streaming — never on a bare BLE link.
+    private var lastRadarFrameAt: [UUID: Date] = [:]
     private var livenessTimer: Timer?
     private let dataTimeout: TimeInterval = 10        // CSC sensors (can be sparse)
     // Radar streams a ~2 Hz heartbeat, so a few seconds of silence means it's
@@ -210,7 +214,20 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         let matching = savedDevices.filter { $0.roles.contains(role) }
         guard !matching.isEmpty else { return .notConfigured }
         if !poweredOn { return .failed }
-        let states = matching.map { connectionStates[$0.id] ?? .retrying }
+        let now = Date()
+        let states: [ConnectionState] = matching.map { dev in
+            let s = connectionStates[dev.id] ?? .retrying
+            // A radar that's BLE-linked but not actually streaming isn't watching
+            // the road — e.g. switched off while iOS still reports the link, or a
+            // momentary auto-reconnect with no data. Require a recent radar frame
+            // before calling it connected, so the status can't flicker green when
+            // the radar is really off. (Other sensors keep the simple link check.)
+            if role == .radar, s == .connected,
+               now.timeIntervalSince(lastRadarFrameAt[dev.id] ?? .distantPast) > radarDataTimeout {
+                return .connecting
+            }
+            return s
+        }
         if states.contains(.connected) { return .connected }
         if states.contains(.connecting) { return .connecting }
         return .retrying
@@ -346,6 +363,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral,
                         error: Error?) {
         clearRadarControl(for: peripheral.identifier)   // re-armed on re-discovery
+        lastRadarFrameAt[peripheral.identifier] = nil   // require fresh frames after reconnect
         if (peripheral.services ?? []).contains(where: {
             BluetoothManager.radarServiceUUIDs.contains($0.uuid)
         }) {
@@ -484,6 +502,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         }
         if BluetoothManager.radarMeasurementUUIDs.contains(characteristic.uuid) {
             parseRadar(data)
+            lastRadarFrameAt[peripheral.identifier] = Date()
             return
         }
         if characteristic.uuid == BluetoothManager.cscMeasurement {
@@ -494,7 +513,9 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         // Decode them; always also log the raw bytes (throttled per UUID) so the
         // threat layout can be confirmed/refined from a ride.
         if characteristic.uuid == BluetoothManager.coospoRadarData {
-            parseCoospoRadar(data)
+            // Only a *valid* frame (heartbeat or threat page) counts as the radar
+            // streaming — a bare reconnect with no real data must not read green.
+            if parseCoospoRadar(data) { lastRadarFrameAt[peripheral.identifier] = Date() }
         }
         captureLog(characteristic.uuid, peripheral.name ?? "?", data)
     }
