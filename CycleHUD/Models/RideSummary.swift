@@ -20,6 +20,7 @@ struct RideSummary: Identifiable, Codable, Equatable {
     let averageHeartRate: Int?
     let maxHeartRate: Int?
     let routePoints: [Coord]?       // downsampled GPS track for the summary map
+    let radarPoints: [Coord]?       // where vehicles were detected behind the rider
 
     var averageSpeedMps: Double {
         movingTimeSeconds > 0 ? distanceMeters / movingTimeSeconds : 0
@@ -27,5 +28,9 @@ struct RideSummary: Identifiable, Codable, Equatable {
 
     var coordinates: [CLLocationCoordinate2D] {
         (routePoints ?? []).map { CLLocationCoordinate2D(latitude: $0.lat, longitude: $0.lon) }
+    }
+
+    var radarCoordinates: [CLLocationCoordinate2D] {
+        (radarPoints ?? []).map { CLLocationCoordinate2D(latitude: $0.lat, longitude: $0.lon) }
     }
 }

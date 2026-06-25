@@ -59,6 +59,9 @@ struct RideSummaryView: View {
                 Map(initialPosition: .region(Self.region(for: coords))) {
                     MapPolyline(coordinates: coords)
                         .stroke(Theme.accent, lineWidth: 4)
+                    ForEach(Array(summary.radarCoordinates.enumerated()), id: \.offset) { _, c in
+                        Annotation("", coordinate: c) { Self.radarDot }
+                    }
                 }
                 .frame(height: 180)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -74,9 +77,17 @@ struct RideSummaryView: View {
             }
             .buttonStyle(.plain)
             .fullScreenCover(isPresented: $showRouteMap) {
-                RouteMapView(coordinates: coords)
+                RouteMapView(coordinates: coords, radarCoordinates: summary.radarCoordinates)
             }
         }
+    }
+
+    /// A small dot marking where a vehicle was detected behind the rider.
+    static var radarDot: some View {
+        Circle()
+            .fill(Theme.threatHigh)
+            .frame(width: 9, height: 9)
+            .overlay(Circle().stroke(.white, lineWidth: 1.5))
     }
 
     private var statGrid: some View {
@@ -98,6 +109,9 @@ struct RideSummaryView: View {
         }
         s.append(("Ascent", ascentValue, settings.distanceUnit.shortLabel))
         s.append(("Calories", caloriesValue, "kcal"))
+        if let radar = summary.radarPoints, !radar.isEmpty {
+            s.append(("Vehicles", "\(radar.count)", ""))
+        }
         return s
     }
 

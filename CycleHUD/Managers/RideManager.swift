@@ -65,6 +65,9 @@ final class RideManager: ObservableObject {
 
     // Recorded GPS track + body metrics for the workout / calories.
     private var route: [CLLocation] = []
+    /// Locations where a new vehicle was detected behind the rider, overlaid on
+    /// the ride summary map. Capped so a very busy ride can't grow unbounded.
+    private var radarPoints: [Coord] = []
     private var rideStart: Date?
     private var bodyWeightKg = 75.0
     private var bodyAgeYears = 40.0
@@ -107,7 +110,10 @@ final class RideManager: ObservableObject {
         self.history = history
         self.location.onLocation = { [weak self] loc in self?.accumulate(loc) }
         self.ble.onDemoFinished = { [weak self] in self?.demoFramesFinished() }
-        self.ble.onNewCar = { [weak self] in self?.watch.sendNewCarHaptic() }
+        self.ble.onNewCar = { [weak self] in
+            self?.watch.sendNewCarHaptic()
+            self?.recordRadarDetection()
+        }
         // Only alert (beep + wrist haptic) while actually riding or in the demo —
         // not while idle with the radar connected.
         self.ble.alertsAllowed = { [weak self] in self?.alertsLive ?? false }
@@ -126,6 +132,7 @@ final class RideManager: ObservableObject {
         currentHeartRate = nil
         hrSum = 0; hrCount = 0; hrMax = 0
         route = []
+        radarPoints = []
         rideStart = Date()
         stationarySeconds = 0
         movingSeconds = 0
@@ -178,6 +185,7 @@ final class RideManager: ObservableObject {
         let savedAscent = elevationGainMeters
         let savedCalories = caloriesKcal
         let savedRoute = route
+        let savedRadarPoints = radarPoints
 
         status = .idle
         stopTicker()
@@ -204,7 +212,8 @@ final class RideManager: ObservableObject {
                                       caloriesKcal: savedCalories,
                                       averageHeartRate: hrCount > 0 ? Int((hrSum / Double(hrCount)).rounded()) : nil,
                                       maxHeartRate: hrMax > 0 ? hrMax : nil,
-                                      routePoints: points.isEmpty ? nil : points)
+                                      routePoints: points.isEmpty ? nil : points,
+                                      radarPoints: savedRadarPoints.isEmpty ? nil : savedRadarPoints)
             history.add(summary)
             finishedSummary = summary
             if settings.saveWorkouts {
@@ -217,6 +226,7 @@ final class RideManager: ObservableObject {
         }
 
         route = []
+        radarPoints = []
         rideStart = nil
         clearPersistence()
     }
@@ -510,6 +520,14 @@ final class RideManager: ObservableObject {
             }
             lastGpsAltitude = loc.altitude
         }
+    }
+
+    /// Log where a vehicle was first detected behind the rider, using the most
+    /// recent good GPS fix. Real rides only (not the demo) and only with a fix.
+    private func recordRadarDetection() {
+        guard !demoActive, status == .running || status == .autoPaused else { return }
+        guard radarPoints.count < 1000, let loc = route.last else { return }
+        radarPoints.append(Coord(lat: loc.coordinate.latitude, lon: loc.coordinate.longitude))
     }
 
     /// Reduce the GPS track to ~250 points for a lightweight stored summary map.

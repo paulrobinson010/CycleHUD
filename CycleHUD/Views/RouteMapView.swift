@@ -6,6 +6,7 @@ import MapKit
 /// render the recorded line, so that just centres Maps on the ride).
 struct RouteMapView: View {
     let coordinates: [CLLocationCoordinate2D]
+    var radarCoordinates: [CLLocationCoordinate2D] = []
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -13,6 +14,16 @@ struct RouteMapView: View {
             Map(initialPosition: .region(RideSummaryView.region(for: coordinates))) {
                 MapPolyline(coordinates: coordinates)
                     .stroke(Theme.accent, lineWidth: 5)
+                ForEach(Array(radarCoordinates.enumerated()), id: \.offset) { _, c in
+                    Annotation("Vehicle", coordinate: c) {
+                        Image(systemName: "car.fill")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(.white)
+                            .padding(5)
+                            .background(Theme.threatHigh, in: Circle())
+                            .overlay(Circle().stroke(.white, lineWidth: 1))
+                    }
+                }
                 if let start = coordinates.first {
                     Marker("Start", systemImage: "flag.fill", coordinate: start)
                         .tint(Theme.good)
