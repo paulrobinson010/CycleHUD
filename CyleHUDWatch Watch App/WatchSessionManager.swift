@@ -232,7 +232,13 @@ final class WatchSessionManager: NSObject, ObservableObject {
 
 extension WatchSessionManager: WCSessionDelegate {
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState,
-                 error: Error?) {}
+                 error: Error?) {
+        // Apply the last-known state immediately, so opening the app mid-ride
+        // picks up the running status (and starts the HR session) without waiting
+        // for the next push from the phone.
+        let ctx = session.receivedApplicationContext
+        if !ctx.isEmpty { DispatchQueue.main.async { self.apply(ctx) } }
+    }
 
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
         DispatchQueue.main.async { self.apply(applicationContext) }
