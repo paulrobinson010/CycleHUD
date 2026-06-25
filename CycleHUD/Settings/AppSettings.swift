@@ -17,6 +17,7 @@ final class AppSettings: ObservableObject {
         static let landscapeEnabled = "landscapeEnabled"
         static let hrWarningEnabled = "hrWarningEnabled"
         static let hrWarningBpm = "hrWarningBpm"
+        static let saveWorkouts = "saveWorkouts"
     }
 
     private let defaults = UserDefaults.standard
@@ -42,6 +43,9 @@ final class AppSettings: ObservableObject {
     /// Heart-rate warning threshold in bpm (selected in 5-bpm steps, 120–220).
     @Published var hrWarningBpm: Int { didSet { defaults.set(hrWarningBpm, forKey: Keys.hrWarningBpm) } }
 
+    /// When on, each finished ride is saved as an Apple Health workout.
+    @Published var saveWorkouts: Bool { didSet { defaults.set(saveWorkouts, forKey: Keys.saveWorkouts) } }
+
     /// The warning threshold to broadcast to the Watch — 0 when disabled.
     var effectiveHRWarningBpm: Int { hrWarningEnabled ? hrWarningBpm : 0 }
 
@@ -58,7 +62,8 @@ final class AppSettings: ObservableObject {
             Keys.radarDebugEnabled: false,
             Keys.landscapeEnabled: false,
             Keys.hrWarningEnabled: false,
-            Keys.hrWarningBpm: 200
+            Keys.hrWarningBpm: 200,
+            Keys.saveWorkouts: true
         ])
 
         speedUnit = SpeedUnit(rawValue: defaults.string(forKey: Keys.speedUnit) ?? "") ?? .kmh
@@ -73,6 +78,7 @@ final class AppSettings: ObservableObject {
         landscapeEnabled = defaults.bool(forKey: Keys.landscapeEnabled)
         hrWarningEnabled = defaults.bool(forKey: Keys.hrWarningEnabled)
         hrWarningBpm = defaults.integer(forKey: Keys.hrWarningBpm)
+        saveWorkouts = defaults.bool(forKey: Keys.saveWorkouts)
     }
 
     var wheelCircumferenceMeters: Double { wheelCircumferenceMM / 1000.0 }

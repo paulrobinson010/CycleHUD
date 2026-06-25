@@ -79,10 +79,11 @@ struct SettingsView: View {
                     Toggle("Beep on new vehicle", isOn: $settings.beepEnabled)
                     Toggle("Auto-pause when stopped", isOn: $settings.autoPauseEnabled)
                     Toggle("Keep screen on while riding", isOn: $settings.keepScreenOn)
+                    Toggle("Save rides as workouts", isOn: $settings.saveWorkouts)
                 } header: {
                     Text("Alerts & Ride")
                 } footer: {
-                    Text("The new-vehicle beep plays through the phone. A paired Apple Watch also taps your wrist — once for each new vehicle, faster as one closes in, and a distinct double-buzz if the radar drops out mid-ride.")
+                    Text("The new-vehicle beep plays through the phone, and alerts only fire while you're riding (not when idle with the radar on). A paired Apple Watch taps your wrist — once for each new vehicle, faster as one closes in, and a distinct double-buzz if the radar drops out mid-ride. When “Save rides as workouts” is on, each ride is written to Apple Health.")
                 }
 
                 Section {

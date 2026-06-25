@@ -223,8 +223,9 @@ final class WatchSessionManager: NSObject, ObservableObject {
     private var hapticTimer: Timer?
 
     /// Start the wrist-tap loop when a car appears, stop it when the lane clears.
+    /// Gated on an active ride so a stale mirror can't tap the wrist while idle.
     private func updateHapticLoop() {
-        let carPresent = threatLevel >= 0
+        let carPresent = threatLevel >= 0 && rideActive
         if carPresent {
             if hapticTimer == nil { scheduleNextHaptic(after: 0) }   // tap right away
         } else if hapticTimer != nil {

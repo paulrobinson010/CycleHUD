@@ -645,7 +645,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         let existingIDs = Set(threats.map(\.id))
         let hasNewCar = sorted.contains { !existingIDs.contains($0.id) }
         threats = sorted
-        if hasNewCar {
+        if hasNewCar, alertsAllowed?() ?? true {
             if settings.beepEnabled { AudioAlerts.shared.playNewCar() }
             onNewCar?()
         }
@@ -665,6 +665,12 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     /// Called when a *new* vehicle is detected (for the Watch wrist haptic).
     var onNewCar: (() -> Void)?
+
+    /// Gate for new-vehicle alerts (beep + wrist haptic): the radar streams
+    /// whenever it's connected, but we only want to alert during an actual ride
+    /// (or the demo), not while the app sits idle with the radar on. Supplied by
+    /// RideManager; defaults to allowing alerts if unset.
+    var alertsAllowed: (() -> Bool)?
 
     // (id, distance m, approach speed km/h) → level is derived in Threat.level.
     private let demoFrames: [[(Int, Double, Double)]] = [

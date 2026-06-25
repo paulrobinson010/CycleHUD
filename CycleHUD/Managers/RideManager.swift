@@ -108,6 +108,9 @@ final class RideManager: ObservableObject {
         self.location.onLocation = { [weak self] loc in self?.accumulate(loc) }
         self.ble.onDemoFinished = { [weak self] in self?.demoFramesFinished() }
         self.ble.onNewCar = { [weak self] in self?.watch.sendNewCarHaptic() }
+        // Only alert (beep + wrist haptic) while actually riding or in the demo —
+        // not while idle with the radar connected.
+        self.ble.alertsAllowed = { [weak self] in self?.alertsLive ?? false }
         restoreActiveRide()
     }
 
@@ -204,10 +207,12 @@ final class RideManager: ObservableObject {
                                       routePoints: points.isEmpty ? nil : points)
             history.add(summary)
             finishedSummary = summary
-            Task { [health] in
-                await health.saveRide(start: start, end: end,
-                                      distanceMeters: savedDistance,
-                                      calories: savedCalories, route: savedRoute)
+            if settings.saveWorkouts {
+                Task { [health] in
+                    await health.saveRide(start: start, end: end,
+                                          distanceMeters: savedDistance,
+                                          calories: savedCalories, route: savedRoute)
+                }
             }
         }
 
@@ -397,6 +402,12 @@ final class RideManager: ObservableObject {
                          nearestThreatMeters: nearest,
                          radarLost: demoActive ? (demoRadarLostUntil != nil) : radarConfiguredButDown,
                          hrWarningBpm: settings.effectiveHRWarningBpm)
+    }
+
+    /// Whether new-vehicle alerts should fire: only during an active ride (incl.
+    /// auto-pause at a light, where a car behind still matters) or the demo.
+    private var alertsLive: Bool {
+        demoActive || status == .running || status == .autoPaused
     }
 
     /// True when a radar is set up but not currently connected — the state that
