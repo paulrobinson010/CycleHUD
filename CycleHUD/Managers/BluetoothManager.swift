@@ -580,12 +580,23 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     /// page; other pages (e.g. 0x03 status/heartbeat, 0x05 keepalive ack) carry
     /// no threats and are ignored.
     ///
-    /// Page 0x24 layout, decoded from a real ride past traffic (an 18-byte frame
-    /// reporting the primary/nearest target):
-    ///   byte 3  = the radar's own threat level (0 = none, rises as it nears)
-    ///   byte 9  = distance in metres (counts down as a vehicle approaches)
-    ///   byte 13 = approach speed in metres per second
+    /// Page 0x24 layout, decoded from real rides/walks past traffic. The frame
+    /// carries a payload of fixed-size target blocks between the 3-byte header
+    /// ([0xC8][len][page]) and the trailing checksum. Every capture so far is a
+    /// single 14-byte block (an 18-byte frame) reporting the nearest target:
+    ///   block[0]  (frame byte 3)  = the radar's own threat level (0 = none)
+    ///   block[6]  (frame byte 9)  = distance in metres (counts down on approach)
+    ///   block[10] (frame byte 13) = approach speed in metres per second
     /// All-zero (distance 0) means the road is clear.
+    ///
+    /// Multi-car is SPECULATIVE: across every capture the TR70 has only ever sent
+    /// one block, so we have no real two-car frame to confirm a second slot's
+    /// position. We therefore parse the payload as *repeating 14-byte blocks
+    /// driven by the frame length* — for the known 18-byte frame this is
+    /// byte-for-byte identical to single-target decoding (one block), and only a
+    /// genuinely longer frame would surface extra targets. Each extra block is
+    /// sanity-bounded so a malformed/garbage frame can't render phantom cars.
+    private static let radarBlockSize = 14
     @discardableResult
     private func parseCoospoRadar(_ data: Data) -> Bool {
         guard !demoActive else { return false }
@@ -600,15 +611,30 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
         guard bytes[2] == BluetoothManager.coospoRadarThreatPage, bytes.count >= 18 else { return true }
 
-        let distanceM = Double(bytes[9])
-        guard distanceM > 0 else { applyThreats([]); return true }   // road clear
+        // Payload sits between the 3-byte header and the 1-byte checksum.
+        let payload = Array(bytes[3 ..< bytes.count - 1])
+        var parsed: [Threat] = []
+        var off = 0
+        while off + BluetoothManager.radarBlockSize <= payload.count {
+            let distanceM = Double(payload[off + 6])
+            let speedKmh = Double(payload[off + 10]) * 3.6
+            // Sanity bounds: a real rear-radar target is within range and below a
+            // plausible closing speed. Slot 0 with distance 0 is "road clear".
+            if distanceM >= 1, distanceM <= 200, speedKmh <= 160 {
+                parsed.append(Threat(id: off / BluetoothManager.radarBlockSize,
+                                     distanceMeters: distanceM,
+                                     approachSpeedKmh: speedKmh, lastSeen: Date()))
+            }
+            off += BluetoothManager.radarBlockSize
+        }
+
+        guard !parsed.isEmpty else { applyThreats([]); return true }   // road clear
 
         // A real target — log every such frame so the protocol stays verifiable.
-        AppLog.shared.log("RADAR FDB1 threat \(bytes.count)B: \(lastRadarHex)")
-        let speedKmh = Double(bytes[13]) * 3.6
-        let threat = Threat(id: 0, distanceMeters: distanceM,
-                            approachSpeedKmh: speedKmh, lastSeen: Date())
-        applyThreats([threat])
+        // (Frames > 18 bytes would prove a real multi-car slot; flag them loudly.)
+        let tag = bytes.count > 18 ? "MULTI \(parsed.count)" : "threat"
+        AppLog.shared.log("RADAR FDB1 \(tag) \(bytes.count)B: \(lastRadarHex)")
+        applyThreats(parsed)
         return true
     }
 
