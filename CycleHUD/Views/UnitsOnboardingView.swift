@@ -33,14 +33,21 @@ struct UnitsOnboardingView: View {
                     }
                     .pickerStyle(.segmented)
                 }
-                pickerRow(title: "Weight (for calories)") {
-                    HStack {
-                        TextField("kg", value: $settings.riderWeightKg, format: .number)
-                            .keyboardType(.decimalPad)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 100)
-                        Text("kg").foregroundStyle(.secondary)
-                        Spacer()
+                VStack(alignment: .leading, spacing: 10) {
+                    Toggle("Save rides as Apple Health workouts", isOn: $settings.saveWorkouts)
+                        .font(.subheadline.weight(.semibold))
+                    if settings.saveWorkouts {
+                        HStack(spacing: 8) {
+                            TextField("Weight", text: weightText)
+                                .keyboardType(.decimalPad)
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 120)
+                            Text("kg").foregroundStyle(.secondary)
+                            Spacer()
+                        }
+                        Text("Your weight is used with Apple Watch heart rate to estimate calories. Read from Apple Health when available; without a weight, calories aren't shown.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 pickerRow(title: "Appearance") {
@@ -68,6 +75,14 @@ struct UnitsOnboardingView: View {
             .padding(.horizontal, 28)
             .padding(.bottom, 24)
         }
+    }
+
+    /// Weight as text so the field is empty (not "0") until a value is entered.
+    private var weightText: Binding<String> {
+        Binding(
+            get: { settings.riderWeightKg > 0 ? String(format: "%g", settings.riderWeightKg) : "" },
+            set: { settings.riderWeightKg = Double($0) ?? 0 }
+        )
     }
 
     private func pickerRow<Content: View>(title: String,

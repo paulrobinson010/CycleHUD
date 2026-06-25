@@ -39,8 +39,9 @@ and standard BLE speed/cadence sensors work too.
   double-buzzes, repeating every 30 s while you stay above it.
 - **Apple Health workout** — tapping Stop saves a cycling workout (distance,
   duration, calories, GPS route) to Apple Health. On by default; turn *Save rides
-  as workouts* off in Settings to keep rides local-only. Requires the HealthKit
-  capability (see Setup).
+  as workouts* off in Settings to keep rides local-only. Calories need your
+  weight (asked once when workouts are on, or read from Apple Health) — without
+  it, calories simply aren't shown. Requires the HealthKit capability (see Setup).
 - **Ride summary & history** — every ride ends with a summary card (distance,
   time, average/peak speed, heart rate, ascent, calories) over a map of your
   route. Past rides are listed under **Settings → Previous rides** and reopen the

@@ -406,7 +406,10 @@ final class RideManager: ObservableObject {
 
     /// Calories. Uses heart rate (Keytel) when the Watch supplies one, otherwise
     /// falls back to a speed-based estimate so calories still work without a Watch.
+    /// Only computed when rides are saved as workouts and a body weight is known —
+    /// without a weight the estimate would be meaningless, so calories stay hidden.
     private func accumulateCalories(dt: Double) {
+        guard settings.saveWorkouts, bodyWeightKg > 0 else { return }
         let perMinute: Double
         if let hr = currentHeartRate, hr > 0 {
             perMinute = Calories.kcalPerMinute(heartRate: Double(hr), weightKg: bodyWeightKg,

@@ -60,30 +60,32 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    HStack {
-                        Text("Weight")
-                        Spacer()
-                        TextField("kg", value: $settings.riderWeightKg, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
-                        Text("kg").foregroundStyle(.secondary)
+                    Toggle("Save rides as workouts", isOn: $settings.saveWorkouts)
+                    if settings.saveWorkouts {
+                        HStack {
+                            Text("Weight")
+                            Spacer()
+                            TextField("kg", text: weightText)
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.trailing)
+                                .frame(width: 80)
+                            Text("kg").foregroundStyle(.secondary)
+                        }
                     }
                 } header: {
-                    Text("Rider")
+                    Text("Workouts")
                 } footer: {
-                    Text("Used with heart rate from a paired Apple Watch to estimate calories. Read from Apple Health when available.")
+                    Text("Each ride is saved to Apple Health. Your weight is used with Apple Watch heart rate to estimate calories — without a weight, calories aren't shown. Read from Apple Health when available.")
                 }
 
                 Section {
                     Toggle("Beep on new vehicle", isOn: $settings.beepEnabled)
                     Toggle("Auto-pause when stopped", isOn: $settings.autoPauseEnabled)
                     Toggle("Keep screen on while riding", isOn: $settings.keepScreenOn)
-                    Toggle("Save rides as workouts", isOn: $settings.saveWorkouts)
                 } header: {
                     Text("Alerts & Ride")
                 } footer: {
-                    Text("The new-vehicle beep plays through the phone, and alerts only fire while you're riding (not when idle with the radar on). A paired Apple Watch taps your wrist — once for each new vehicle, faster as one closes in, and a distinct double-buzz if the radar drops out mid-ride. When “Save rides as workouts” is on, each ride is written to Apple Health.")
+                    Text("The new-vehicle beep plays through the phone, and alerts only fire while you're riding (not when idle with the radar on). A paired Apple Watch taps your wrist — once for each new vehicle, faster as one closes in, and a distinct double-buzz if the radar drops out mid-ride.")
                 }
 
                 Section {
@@ -154,6 +156,14 @@ struct SettingsView: View {
                 }
             }
         }
+    }
+
+    /// Weight as text so the field is empty (not "0") until a value is entered.
+    private var weightText: Binding<String> {
+        Binding(
+            get: { settings.riderWeightKg > 0 ? String(format: "%g", settings.riderWeightKg) : "" },
+            set: { settings.riderWeightKg = Double($0) ?? 0 }
+        )
     }
 
     private var wheelPresetBinding: Binding<Double> {

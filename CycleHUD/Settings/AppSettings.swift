@@ -57,7 +57,7 @@ final class AppSettings: ObservableObject {
             Keys.speedUnit: SpeedUnit.kmh.rawValue,
             Keys.distanceUnit: DistanceUnit.km.rawValue,
             Keys.wheelCircumferenceMM: 2105.0,   // 700x25c default
-            Keys.riderWeightKg: 75.0,
+            Keys.riderWeightKg: 0.0,             // 0 = not entered (no calories shown)
             Keys.beepEnabled: true,
             Keys.autoPauseEnabled: true,
             Keys.keepScreenOn: true,
