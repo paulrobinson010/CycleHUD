@@ -35,4 +35,15 @@ enum Calories {
         }
         return met * 3.5 * weightKg / 200.0
     }
+
+    /// Extra kilocalories from climbing `ascentMeters`. A flat speed-based MET
+    /// estimate ignores hills, so this adds the metabolic cost of the climb:
+    /// gravitational energy (m·g·h) divided by cycling's ~24% gross efficiency.
+    /// Only added to the speed-based estimate — a heart-rate estimate already
+    /// reflects climbing effort. Descents add nothing (no energy comes back).
+    static func climbKcal(ascentMeters: Double, weightKg: Double) -> Double {
+        guard ascentMeters > 0, weightKg > 0 else { return 0 }
+        let joules = weightKg * 9.81 * ascentMeters
+        return joules / 0.24 / 4184.0
+    }
 }

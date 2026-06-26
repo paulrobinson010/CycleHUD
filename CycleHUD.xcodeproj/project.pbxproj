@@ -573,6 +573,7 @@
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Used to record your workout.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.paulrobinson.CycleHUD;
+				INFOPLIST_KEY_WKBackgroundModes = "workout-processing";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -609,6 +610,7 @@
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Used to record your workout.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.paulrobinson.CycleHUD;
+				INFOPLIST_KEY_WKBackgroundModes = "workout-processing";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

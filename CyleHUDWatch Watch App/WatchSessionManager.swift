@@ -133,13 +133,22 @@ final class WatchSessionManager: NSObject, ObservableObject {
         config.locationType = .outdoor
         do {
             let session = try HKWorkoutSession(healthStore: healthStore, configuration: config)
+            let builder = session.associatedWorkoutBuilder()
+            builder.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore,
+                                                         workoutConfiguration: config)
             session.delegate = self
+            builder.delegate = self
             workoutSession = session
-            session.startActivity(with: Date())
-            // Deliberately NO HKLiveWorkoutBuilder / beginCollection: the session
-            // is run only to raise heart-rate sampling, and HR is read via the
-            // live query below. With nothing collecting samples, the watch never
-            // has a workout to save — the phone owns the authoritative workout.
+            self.builder = builder
+            let start = Date()
+            session.startActivity(with: start)
+            // Collect into the builder so watchOS keeps the app running in an
+            // active workout — this is what stops the "Start a workout?" prompt and
+            // the app suspending when you lower your wrist (which was breaking the
+            // live mirror, speed and heart-rate updates). The workout is ALWAYS
+            // discarded at the end (see the session-state delegate), so the watch
+            // never saves one — the phone owns the authoritative workout.
+            builder.beginCollection(withStart: start) { _, _ in }
             workoutActive = true
             startHeartRateQuery()
         } catch {

@@ -80,6 +80,7 @@ final class RideManager: ObservableObject {
     private var bodyWeightKg = 75.0
     private var bodyAgeYears = 40.0
     private var bodyIsFemale = false
+    private var lastCalorieAscent = 0.0   // ascent already counted toward calories
     private var mirrorTick = 0
     private var saveTick = 0
     private var radarWasConnected = false   // edge-detect radar drop-out for the Watch alert
@@ -139,6 +140,7 @@ final class RideManager: ObservableObject {
         caloriesKcal = 0
         currentHeartRate = nil
         hrSum = 0; hrCount = 0; hrMax = 0
+        lastCalorieAscent = 0
         route = []
         radarPoints = []
         passes = []
@@ -410,14 +412,20 @@ final class RideManager: ObservableObject {
     /// without a weight the estimate would be meaningless, so calories stay hidden.
     private func accumulateCalories(dt: Double) {
         guard settings.saveWorkouts, bodyWeightKg > 0 else { return }
-        let perMinute: Double
         if let hr = currentHeartRate, hr > 0 {
-            perMinute = Calories.kcalPerMinute(heartRate: Double(hr), weightKg: bodyWeightKg,
-                                               ageYears: bodyAgeYears, isFemale: bodyIsFemale)
+            // Heart rate already reflects climbing effort — no ascent term.
+            let perMinute = Calories.kcalPerMinute(heartRate: Double(hr), weightKg: bodyWeightKg,
+                                                   ageYears: bodyAgeYears, isFemale: bodyIsFemale)
+            caloriesKcal += perMinute * (dt / 60.0)
         } else {
-            perMinute = Calories.kcalPerMinute(speedMps: currentSpeedMps, weightKg: bodyWeightKg)
+            // No heart rate: speed-based MET, plus the climbing energy for any
+            // ascent gained this interval so hilly legs aren't undercounted.
+            let perMinute = Calories.kcalPerMinute(speedMps: currentSpeedMps, weightKg: bodyWeightKg)
+            caloriesKcal += perMinute * (dt / 60.0)
+            let climbed = max(0, elevationGainMeters - lastCalorieAscent)
+            caloriesKcal += Calories.climbKcal(ascentMeters: climbed, weightKg: bodyWeightKg)
         }
-        caloriesKcal += perMinute * (dt / 60.0)
+        lastCalorieAscent = elevationGainMeters
     }
 
     private func sendMirror() {
@@ -647,6 +655,7 @@ final class RideManager: ObservableObject {
         movingTimeSeconds = snap.movingTime
         elevationGainMeters = snap.elevation
         caloriesKcal = snap.calories
+        lastCalorieAscent = snap.elevation   // don't re-count ascent already banked
         rideStart = start
         route = loadRoute()
         switch snap.statusRaw {
