@@ -21,9 +21,10 @@ Your rear radar on a clean lane you can read at a glance, with Apple Watch wrist
 
 ## Keywords (max 100, comma-separated, no spaces)
 ```
-radar,bike,cycling,bicycle,rear radar,road safety,commute,cadence,heart rate,speed,watch,ride,gps
+radar,bike,cycling,rear radar,road safety,commute,cadence,heart rate,speed,watch,ride,gps,tr70
 ```
-(~97 chars. See note on Varia/Coospo below.)
+(94 chars. `tr70` targets owners of the radar directly. Dropped `bicycle`
+as redundant with `bike`/`cycling` to make room. See note on brands below.)
 
 ## Description (max 4000)
 ```
@@ -64,9 +65,10 @@ First release of CycleHUD: a rear-radar heads-up display with Apple Watch wrist 
 ## Category
 - Primary: Health & Fitness  (Secondary: Sports)
 
-## Note on "Varia" / "Coospo" keywords
-These are trademarks. Stating factual compatibility in the **description** is
-fine and useful. Putting trademarked brand names in the **keywords** field can
-occasionally trigger a metadata rejection, so they're left out above. If you
-want the search traffic, you can try adding `varia,coospo` to keywords — just be
-ready to remove them if review flags it.
+## Note on brand keywords
+`tr70` is a model number (lower trademark risk) and targets radar owners
+directly, so it's included. The brand names `varia` and `coospo` are
+trademarks — stating factual compatibility in the **description** is fine, but
+brand names in the **keywords** field can occasionally trigger a metadata
+rejection, so they're left out. If you want the extra search traffic you can try
+adding `coospo,varia`, just be ready to remove them if review flags it.
