@@ -136,6 +136,7 @@ struct SettingsView: View {
                 Section {
                     NavigationLink {
                         DiagnosticsView().environmentObject(ble).environmentObject(settings)
+                            .environmentObject(history)
                     } label: {
                         Label("Sensor diagnostics", systemImage: "stethoscope")
                     }

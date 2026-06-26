@@ -6,7 +6,9 @@ import SwiftUI
 struct DiagnosticsView: View {
     @EnvironmentObject var ble: BluetoothManager
     @EnvironmentObject var settings: AppSettings
+    @EnvironmentObject var history: RideHistory
     @State private var logText = ""
+    @State private var sampleAdded = false
 
     var body: some View {
         List {
@@ -44,6 +46,22 @@ struct DiagnosticsView: View {
                 Text("Onboarding")
             } footer: {
                 Text("Re-shows the first-launch welcome/units screen. Close Settings (or relaunch the app) to see it. Your rides and other settings are kept.")
+            }
+
+            Section {
+                Button {
+                    history.add(SampleRide.centralPark(now: Date()))
+                    sampleAdded = true
+                } label: {
+                    Label(sampleAdded ? "Sample ride added" : "Add sample ride (Central Park)",
+                          systemImage: sampleAdded ? "checkmark.circle.fill" : "map")
+                        .foregroundStyle(sampleAdded ? Theme.good : Theme.accent)
+                }
+                .disabled(sampleAdded)
+            } header: {
+                Text("Sample data")
+            } footer: {
+                Text("Adds one demo ride (a Central Park loop with a GPS route, radar detections and vehicle passes) to Previous rides — handy for screenshots. Swipe to delete it there when you're done.")
             }
 
             Section("Recent log") {
