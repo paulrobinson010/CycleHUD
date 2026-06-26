@@ -740,7 +740,15 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
         // Run once through the sequence, then stop on the final (clear) frame.
         guard demoStep < demoFrames.count else {
-            stopDemo()
+            // Stop the radar side (so the phone shows the radar-off preview) but
+            // leave the cadence value fresh — it was just set above, so its 4 s
+            // freshness window covers the ride's ~3.5 s radar-off tail and the
+            // Cadence tile keeps showing instead of flashing "—" at the end.
+            demoActive = false
+            demoPaused = false
+            demoTimer?.invalidate()
+            demoTimer = nil
+            threats = []
             onDemoFinished?()
             return
         }
