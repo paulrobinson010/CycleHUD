@@ -31,6 +31,19 @@ final class WatchSessionManager: NSObject, ObservableObject {
     private var workoutSession: HKWorkoutSession?
     private var builder: HKLiveWorkoutBuilder?
 
+    // Discard lifecycle (mirrors a proven implementation): between stop() and the
+    // session's `.ended` delegate we hold the refs and discard there — never via
+    // endCollection/finish, which would let watchOS save the workout. A timeout
+    // force-finalises the discard if the `.ended` callback never arrives.
+    private var pendingDiscard = false
+    private var discardTimeoutTimer: Timer?
+    private static let discardTimeout: TimeInterval = 5
+
+    // HKWorkoutSession.startActivity silently fails if called before the HealthKit
+    // auth request resolves, so a start that arrives early is deferred until then.
+    private var authorizationComplete = false
+    private var startWhenAuthorized = false
+
     private let hrType = HKQuantityType(.heartRate)
     private let hrUnit = HKUnit.count().unitDivided(by: .minute())
 
@@ -72,7 +85,9 @@ final class WatchSessionManager: NSObject, ObservableObject {
                 self.builder = session.associatedWorkoutBuilder()
                 session.delegate = self
                 self.builder?.delegate = self
-                session.end()   // → didChangeTo .ended → endCollection + discardWorkout
+                self.pendingDiscard = true
+                self.startDiscardTimeout()
+                session.end()   // → didChangeTo .ended → finalizeDiscard (discards)
             }
         }
     }
@@ -87,11 +102,27 @@ final class WatchSessionManager: NSObject, ObservableObject {
 
     private func requestHealthAuthorization() {
         guard HKHealthStore.isHealthDataAvailable(), healthUsageStringsPresent else { return }
+        guard !healthRequested else { return }   // already asked; the completion resolves it
         healthRequested = true
-        let share: Set<HKSampleType> = [HKQuantityType(.activeEnergyBurned), hrType]
+        // Workout-type WRITE access is required for HKWorkoutSession.startActivity
+        // to succeed on watchOS — without it the session silently fails to start
+        // and watchOS offers its own workout. (The watch still never saves one;
+        // it always discards.) Energy/HR share lets the live builder collect HR.
+        let share: Set<HKSampleType> = [HKObjectType.workoutType(),
+                                        HKQuantityType(.activeEnergyBurned), hrType]
         let read: Set<HKObjectType> = [hrType]
         healthStore.requestAuthorization(toShare: share, read: read) { [weak self] success, _ in
-            if success { self?.startHeartRateQuery() }
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.authorizationComplete = true
+                if success { self.startHeartRateQuery() }
+                // A ride may have started while auth was still in flight; run the
+                // deferred workout start now that startActivity won't silently fail.
+                if self.startWhenAuthorized {
+                    self.startWhenAuthorized = false
+                    self.updateWorkout()
+                }
+            }
         }
     }
 
@@ -126,8 +157,15 @@ final class WatchSessionManager: NSObject, ObservableObject {
     // MARK: - Workout session (heart rate source)
 
     private func startWorkout() {
-        guard workoutSession == nil, HKHealthStore.isHealthDataAvailable(),
+        guard workoutSession == nil, !pendingDiscard, HKHealthStore.isHealthDataAvailable(),
               healthUsageStringsPresent else { return }
+        // Don't start until the HealthKit auth request has resolved, or
+        // startActivity silently fails (no HR, watchOS offers its own workout).
+        guard authorizationComplete else {
+            startWhenAuthorized = true
+            requestHealthAuthorization()   // no-op if already asked; completion re-runs the start
+            return
+        }
         let config = HKWorkoutConfiguration()
         config.activityType = .cycling
         config.locationType = .outdoor
@@ -157,9 +195,32 @@ final class WatchSessionManager: NSObject, ObservableObject {
     }
 
     private func stopWorkout() {
-        // Actual teardown (finish + discard) happens in the session-state
-        // delegate, so a system-initiated end is handled the same way.
-        workoutSession?.end()
+        guard let session = workoutSession, !pendingDiscard else { return }
+        pendingDiscard = true
+        startDiscardTimeout()
+        session.end()   // → didChangeTo .ended → finalizeDiscard (discards, never saves)
+    }
+
+    /// Discard the watch's workout once the session has ended — called from the
+    /// `.ended`/failure delegate and from the safety timeout. Discards DIRECTLY:
+    /// never endCollection/finishWorkout, which is what makes watchOS save it.
+    /// The existence guard keeps a double call (delegate + timeout) idempotent.
+    private func finalizeDiscard() {
+        guard workoutSession != nil || builder != nil || pendingDiscard else { return }
+        pendingDiscard = false
+        discardTimeoutTimer?.invalidate()
+        discardTimeoutTimer = nil
+        builder?.discardWorkout()
+        clearWorkout()
+        updateWorkout()   // if a ride is somehow still active, start a fresh session
+    }
+
+    private func startDiscardTimeout() {
+        discardTimeoutTimer?.invalidate()
+        discardTimeoutTimer = Timer.scheduledTimer(withTimeInterval: Self.discardTimeout,
+                                                   repeats: false) { [weak self] _ in
+            self?.finalizeDiscard()
+        }
     }
 
     private var hrSeq = 0
@@ -325,17 +386,10 @@ extension WatchSessionManager: HKWorkoutSessionDelegate {
     func workoutSession(_ session: HKWorkoutSession,
                         didChangeTo toState: HKWorkoutSessionState,
                         from fromState: HKWorkoutSessionState, date: Date) {
-        guard toState == .ended else { return }
         // DISCARD, never finish — the phone saves the authoritative workout (with
-        // the GPS route), so the watch must never save its own. Niling the
-        // session lets it auto-restart if the ride is still going.
-        guard let builder else {
-            DispatchQueue.main.async { self.clearWorkout() }
-            return
-        }
-        builder.endCollection(withEnd: Date()) { [weak self] _, _ in
-            self?.builder?.discardWorkout()
-            DispatchQueue.main.async { self?.clearWorkout() }
+        // the GPS route), so the watch must never save its own.
+        if toState == .ended {
+            DispatchQueue.main.async { [weak self] in self?.finalizeDiscard() }
         }
     }
 
@@ -349,11 +403,8 @@ extension WatchSessionManager: HKWorkoutSessionDelegate {
     }
 
     func workoutSession(_ session: HKWorkoutSession, didFailWithError error: Error) {
-        DispatchQueue.main.async {
-            self.workoutSession = nil
-            self.builder = nil
-            self.workoutActive = false
-        }
+        // Treat a failed session like an end — discard so nothing is saved.
+        DispatchQueue.main.async { [weak self] in self?.finalizeDiscard() }
     }
 }
 
