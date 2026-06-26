@@ -273,6 +273,10 @@ final class RideManager: ObservableObject {
         distanceMeters = avg * elapsed                      // so avg matches exactly
         elevationGainMeters = Double(Int.random(in: 60...420))
         currentSpeedMps = avg
+        // Plausible riding heart rate and a calorie total consistent with the
+        // elapsed time, so the demo (and App Store screenshots) show full data.
+        currentHeartRate = Int.random(in: 132...148)
+        caloriesKcal = (elapsed / 60.0) * Double.random(in: 9...12)
         lastTick = Date()
         demoTimer?.invalidate()
         demoTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
@@ -291,6 +295,8 @@ final class RideManager: ObservableObject {
         movingTimeSeconds = 0
         elevationGainMeters = 0
         currentSpeedMps = 0
+        currentHeartRate = nil
+        caloriesKcal = 0
         // Tell the Watch it's over: resets speed, clears threats, ends its
         // workout (which zeroes the heart rate).
         sendMirror()
@@ -332,6 +338,11 @@ final class RideManager: ObservableObject {
         if Double.random(in: 0...1) < 0.5 {
             elevationGainMeters += Double.random(in: 0...0.7)
         }
+        // Keep HR/calories alive too. Drift HR within a believable band and tick
+        // calories up at ~10 kcal/min so nothing reads "—" during the demo.
+        let hr = (currentHeartRate ?? 140) + Int.random(in: -1...1)
+        currentHeartRate = min(155, max(126, hr))
+        caloriesKcal += (10.0 / 60.0) * dt
         sendMirror()   // drive the Watch (mirror + escalating haptics) during the demo too
     }
 
