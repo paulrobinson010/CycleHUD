@@ -139,6 +139,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     private var central: CBCentralManager!
     private var connected: [UUID: CBPeripheral] = [:]
     private var discoveredPeripherals: [UUID: CBPeripheral] = [:]
+    // True while the app is backgrounded and NOT riding: sensor connections are
+    // dropped so the bluetooth-central background mode can't keep the app alive
+    // processing the radar's stream. Reconnected on return to the foreground.
+    private var backgroundSuspended = false
 
     // Liveness: a sensor counts as connected only while it's actually streaming
     // data (CoreBluetooth can report a powered-off sensor as connected for ages).
@@ -331,6 +335,28 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         }
     }
 
+    /// App backgrounded while not riding: drop sensor connections so we aren't
+    /// kept alive in the background processing their BLE streams. Auto-reconnect
+    /// is gated off (see didDisconnect) until `resumeFromBackground`.
+    func suspendForBackground() {
+        guard !backgroundSuspended else { return }
+        backgroundSuspended = true
+        stopScan()
+        radarKeepAliveTimer?.invalidate()
+        radarKeepAliveTimer = nil
+        for (id, peripheral) in connected {
+            central.cancelPeripheralConnection(peripheral)
+            connectionStates[id] = .retrying   // shows "reconnecting" until resumed
+        }
+    }
+
+    /// Back in the foreground: reconnect the saved sensors.
+    func resumeFromBackground() {
+        guard backgroundSuspended else { return }
+        backgroundSuspended = false
+        reconnectSavedDevices()
+    }
+
     // MARK: - CBCentralManagerDelegate
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -381,10 +407,11 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             radarBatteryPercent = nil   // unknown until the radar reconnects
         }
         recomputeRadarThreatsIfNeeded()
-        // Auto-reconnect remembered devices indefinitely (sensors drop in/out a lot).
+        // Auto-reconnect remembered devices indefinitely (sensors drop in/out a
+        // lot) — unless we deliberately backgrounded; then wait for resume.
         if savedDevices.contains(where: { $0.id == peripheral.identifier }) {
             connectionStates[peripheral.identifier] = .retrying
-            central.connect(peripheral, options: nil)
+            if !backgroundSuspended { central.connect(peripheral, options: nil) }
         } else {
             connectionStates[peripheral.identifier] = nil
         }
@@ -394,7 +421,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
                         error: Error?) {
         if savedDevices.contains(where: { $0.id == peripheral.identifier }) {
             connectionStates[peripheral.identifier] = .retrying
-            central.connect(peripheral, options: nil)   // keep trying
+            if !backgroundSuspended { central.connect(peripheral, options: nil) }   // keep trying
         } else {
             connectionStates[peripheral.identifier] = nil
         }

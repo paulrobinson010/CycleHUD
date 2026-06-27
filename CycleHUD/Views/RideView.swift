@@ -61,7 +61,20 @@ struct RideView: View {
         }
         .onAppear { updateOrientation(); checkPermissions() }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { checkPermissions() }
+            switch phase {
+            case .active:
+                checkPermissions()
+                ble.resumeFromBackground()        // reconnect sensors we dropped
+            case .background:
+                // Not riding? Drop sensor connections so the app isn't kept alive
+                // in the background processing the radar stream. During a ride
+                // (screen off / pocketed) we keep them — the ride needs them.
+                if ride.status == .idle && !ride.demoActive {
+                    ble.suspendForBackground()
+                }
+            default:
+                break
+            }
         }
         .onChange(of: settings.saveWorkouts) { _, _ in checkPermissions(force: true) }
         .alert(currentIssue?.title ?? "Permission needed",
