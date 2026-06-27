@@ -69,6 +69,8 @@ struct CycleHUDApp: App {
                     location.requestAuthorization()
                     location.setMode(.idle)        // low-power fix until a ride starts
                     health.requestAuthorization()
+                    NotificationManager.shared.configure()
+                    NotificationManager.shared.requestAuthorization()
                 }
         }
     }

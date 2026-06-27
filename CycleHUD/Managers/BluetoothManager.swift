@@ -2,6 +2,7 @@ import Foundation
 import CoreBluetooth
 import SwiftUI
 import Combine
+import UIKit
 
 enum DeviceRole: String, Codable, CaseIterable {
     case radar = "Radar"
@@ -143,6 +144,14 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     // dropped so the bluetooth-central background mode can't keep the app alive
     // processing the radar's stream. Reconnected on return to the foreground.
     private var backgroundSuspended = false
+
+    // After a ride ends we watch (up to 5 min) whether the sensors are still on,
+    // and if so remind the rider to switch them off (they have their own
+    // batteries). The check piggybacks on the sensors' own stream, so it costs
+    // nothing once they're actually switched off.
+    private var sensorMonitorStartedAt: Date?
+    private var sensorReminderSent = false
+    private static let sensorReminderDelay: TimeInterval = 300   // 5 minutes
 
     // Liveness: a sensor counts as connected only while it's actually streaming
     // data (CoreBluetooth can report a powered-off sensor as connected for ages).
@@ -340,6 +349,9 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     /// is gated off (see didDisconnect) until `resumeFromBackground`.
     func suspendForBackground() {
         guard !backgroundSuspended else { return }
+        // While monitoring for left-on sensors, keep them connected so we can
+        // detect it and remind (bounded to 5 min by the reminder itself).
+        if sensorMonitorStartedAt != nil, !sensorReminderSent { return }
         backgroundSuspended = true
         stopScan()
         radarKeepAliveTimer?.invalidate()
@@ -355,6 +367,47 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         guard backgroundSuspended else { return }
         backgroundSuspended = false
         reconnectSavedDevices()
+    }
+
+    // MARK: - "Sensors left on" reminder
+
+    /// Begin watching, after a ride, whether the sensors get left switched on.
+    /// No-op if nothing is connected (nothing to leave on).
+    func beginSensorMonitor() {
+        // Only worth keeping sensors alive to watch them if we can actually remind.
+        guard NotificationManager.shared.isAuthorized,
+              !connectedSensorNames().isEmpty else { sensorMonitorStartedAt = nil; return }
+        sensorMonitorStartedAt = Date()
+        sensorReminderSent = false
+    }
+
+    func cancelSensorMonitor() {
+        sensorMonitorStartedAt = nil
+        sensorReminderSent = false
+    }
+
+    /// Called from the sensor data stream (so it only runs while a sensor is
+    /// actually on and feeding us). Once 5 min have passed with a sensor still
+    /// connected, remind the rider and drop the connections.
+    private func checkSensorReminder() {
+        guard let startedAt = sensorMonitorStartedAt, !sensorReminderSent,
+              Date().timeIntervalSince(startedAt) >= BluetoothManager.sensorReminderDelay else { return }
+        let names = connectedSensorNames()
+        sensorMonitorStartedAt = nil
+        guard !names.isEmpty else { return }
+        sensorReminderSent = true
+        NotificationManager.shared.notifySensorsLeftOn(names)
+        // They've been reminded — stop the background drain by dropping them.
+        if UIApplication.shared.applicationState != .active { suspendForBackground() }
+    }
+
+    /// Human role names of sensors currently connected (e.g. ["Radar", "Cadence"]).
+    private func connectedSensorNames() -> [String] {
+        var roles = Set<DeviceRole>()
+        for dev in savedDevices where connectionStates[dev.id] == .connected {
+            dev.roles.forEach { roles.insert($0) }
+        }
+        return DeviceRole.allCases.filter { roles.contains($0) }.map(\.rawValue)
     }
 
     // MARK: - CBCentralManagerDelegate
@@ -529,6 +582,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         if connectionStates[peripheral.identifier] == .retrying {
             connectionStates[peripheral.identifier] = .connected
         }
+        checkSensorReminder()   // sensor still streaming after a ride? maybe remind
         if characteristic.uuid == BluetoothManager.batteryLevel {
             if let level = data.first,
                (peripheral.services ?? []).contains(where: {

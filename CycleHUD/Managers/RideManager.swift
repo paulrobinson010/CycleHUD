@@ -134,6 +134,7 @@ final class RideManager: ObservableObject {
         guard status == .idle else { return }
         stopDemo()
         ble.stopScan()             // never leave a power-hungry BLE scan running on a ride
+        ble.cancelSensorMonitor()  // a new ride — no "sensors left on" reminder needed
         distanceMeters = 0
         movingTimeSeconds = 0
         elevationGainMeters = 0
@@ -247,6 +248,7 @@ final class RideManager: ObservableObject {
         passes = []
         rideStart = nil
         clearPersistence()
+        ble.beginSensorMonitor()   // remind later if the sensors are left switched on
     }
 
     // MARK: - Demo metrics
