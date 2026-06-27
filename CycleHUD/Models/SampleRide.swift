@@ -72,10 +72,10 @@ enum SampleRide {
         // (closest m, peak closing km/h, rider km/h, route index)
         let specs: [(Double, Double, Double, Int)] = [
             (28, 22, 24, 40),
-            (9,  31, 23, 95),    // close pass
+            (9,  31, 23, 95),    // close + fast pass
             (18, 19, 25, 150),
             (34, 16, 26, 60),
-            (12, 27, 22, 178),
+            (12, 27, 22, 178),   // fast pass
         ]
         var passes: [VehiclePass] = []
         for (i, spec) in specs.enumerated() {

@@ -2,19 +2,20 @@ import SwiftUI
 import Charts
 
 /// A reviewable list of every vehicle that approached during a ride, newest
-/// first, with close passes (within 15 m) flagged. Tap a row for the full trace.
+/// first, with fast passes (high closing speed) flagged. Tap a row for the full
+/// trace.
 struct VehiclePassesView: View {
     let passes: [VehiclePass]
     @EnvironmentObject var settings: AppSettings
 
     private var ordered: [VehiclePass] { passes.sorted { $0.date > $1.date } }
-    private var closeCount: Int { passes.filter(\.isClose).count }
+    private var fastCount: Int { passes.filter { $0.level == .high }.count }
 
     var body: some View {
         List {
-            if closeCount > 0 {
+            if fastCount > 0 {
                 Section {
-                    Label("\(closeCount) close \(closeCount == 1 ? "pass" : "passes") (within 15 m)",
+                    Label("\(fastCount) fast \(fastCount == 1 ? "pass" : "passes")",
                           systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(Theme.threatHigh)
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
@@ -38,16 +39,27 @@ struct VehiclePassesView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
+    /// Row tint, driven by closing speed: red (fast), orange (medium), neutral
+    /// for a gentle pass — so a quick, dangerous overtake stands out even when
+    /// the vehicle also happened to be close.
+    private func tint(_ pass: VehiclePass) -> Color {
+        switch pass.level {
+        case .high: return Theme.threatHigh
+        case .medium: return Theme.threatMedium
+        case .low: return Theme.textSecondary
+        }
+    }
+
     private func row(_ pass: VehiclePass) -> some View {
         HStack(spacing: 12) {
-            Image(systemName: pass.isClose ? "car.fill" : "car")
+            Image(systemName: pass.level == .low ? "car" : "car.fill")
                 .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(pass.isClose ? Theme.threatHigh : Theme.textSecondary)
+                .foregroundStyle(tint(pass))
                 .frame(width: 26)
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
                     Text(closest(pass)).fontWeight(.bold)
-                        .foregroundStyle(pass.isClose ? Theme.threatHigh : Theme.textPrimary)
+                        .foregroundStyle(pass.level == .low ? Theme.textPrimary : tint(pass))
                     Text("· \(estSpeed(pass))")
                         .foregroundStyle(Theme.textSecondary)
                 }
@@ -121,7 +133,7 @@ struct PassDetailView: View {
             stat("Closest", distanceStr(pass.minDistance), pass.isClose ? Theme.threatHigh : Theme.textPrimary)
             stat("Vehicle (est.)", speedStr(pass.estVehicleKmh), Theme.textPrimary)
             stat("Your speed", speedStr(pass.riderKmhAtClosest), Theme.textPrimary)
-            stat("Closing", speedStr(pass.maxClosingKmh), Theme.textPrimary)
+            stat("Closing", speedStr(pass.maxClosingKmh), pass.level.color)
             stat("Slowed by", speedStr(pass.riderSlowedKmh), pass.riderSlowedKmh >= 3 ? Theme.good : Theme.textPrimary)
             stat("Duration", String(format: "%.0f s", pass.duration), Theme.textPrimary)
         }

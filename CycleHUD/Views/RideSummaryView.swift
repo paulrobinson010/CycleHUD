@@ -101,19 +101,19 @@ struct RideSummaryView: View {
     /// Link to the per-vehicle pass review, shown only when passes were logged.
     @ViewBuilder private var passesLink: some View {
         if let passes = summary.passes, !passes.isEmpty {
-            let close = passes.filter(\.isClose).count
+            let fast = passes.filter { $0.level == .high }.count
             NavigationLink {
                 VehiclePassesView(passes: passes).environmentObject(settings)
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "car.2.fill")
                         .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(close > 0 ? Theme.threatHigh : Theme.accent)
+                        .foregroundStyle(fast > 0 ? Theme.threatHigh : Theme.accent)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Vehicle passes")
                             .font(.system(size: 16, weight: .semibold, design: .rounded))
                             .foregroundStyle(Theme.textPrimary)
-                        Text(close > 0 ? "\(passes.count) logged · \(close) close"
+                        Text(fast > 0 ? "\(passes.count) logged · \(fast) fast"
                                        : "\(passes.count) logged")
                             .font(.system(size: 13, weight: .medium, design: .rounded))
                             .foregroundStyle(Theme.textSecondary)

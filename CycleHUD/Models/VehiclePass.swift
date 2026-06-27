@@ -49,4 +49,16 @@ struct VehiclePass: Identifiable, Codable, Equatable {
 
     /// Flag a close pass worth reviewing — the vehicle came within 15 m.
     var isClose: Bool { minDistance <= 15 }
+
+    /// Danger colour for the pass, keyed on how fast the vehicle *closed* rather
+    /// than how near it got. On a road most passes are close (you share a lane),
+    /// so distance alone paints everything red; closing speed is the better
+    /// danger signal — a vehicle that comes up fast gives the least reaction
+    /// time. Closing speed is quantised to whole m/s by the radar (≈3.6 km/h
+    /// steps), so the thresholds line up with that.
+    var level: ThreatLevel {
+        if maxClosingKmh >= 25 { return .high }     // ~7 m/s+ : came up fast
+        if maxClosingKmh >= 12 { return .medium }   // ~3-6 m/s
+        return .low
+    }
 }
