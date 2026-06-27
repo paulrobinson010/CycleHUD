@@ -130,7 +130,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Demo")
                 } footer: {
-                    Text("Plays a one-time preview on the main screen — low (yellow), medium (orange) and high (red) vehicles, the new-vehicle beep, escalating Apple Watch wrist taps, and a “radar off” wrist alert at the end — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it.")
+                    Text("Plays a one-time preview on the main screen — a vehicle closing in from low (yellow) through medium (orange) to high (red), the new-vehicle beep, escalating Apple Watch wrist taps, and a “radar off” wrist alert at the end — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it.")
                 }
 
                 Section {

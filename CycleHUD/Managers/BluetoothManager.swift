@@ -789,13 +789,15 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     var alertsAllowed: (() -> Bool)?
 
     // (id, distance m, approach speed km/h) → level is derived in Threat.level.
+    // One car approaching through all three threat levels, scaled to the ~50 m
+    // lane: far (yellow) → mid (orange) → close (red) → clear.
     private let demoFrames: [[(Int, Double, Double)]] = [
-        [(1, 135, 18)],                                   // single car, far → LOW (yellow)
-        [(1, 95, 20)],                                    // closing in
-        [(2, 60, 32)],                                    // MEDIUM (orange)
-        [(3, 22, 52)],                                    // HIGH (red)
-        [(4, 140, 16), (5, 68, 30), (6, 18, 56)],         // all three levels at once
-        []                                                // CLEAR
+        [(1, 46, 10)],     // far → LOW (yellow)
+        [(1, 36, 13)],     // closing
+        [(1, 26, 18)],     // MEDIUM (orange)
+        [(1, 17, 24)],     // closer
+        [(1, 9, 30)],      // HIGH (red)
+        []                 // CLEAR
     ]
 
     private var demoPaused = false

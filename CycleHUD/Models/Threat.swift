@@ -27,8 +27,11 @@ struct Threat: Identifiable, Equatable {
 
     var level: ThreatLevel {
         // Closing fast or very close ⇒ high. Tuned for road riding.
-        if approachSpeedKmh >= 45 || distanceMeters <= 20 { return .high }
-        if approachSpeedKmh >= 25 || distanceMeters <= 50 { return .medium }
+        // Tuned for the ~50 m radar lane so the colour spans the visible range:
+        // far third yellow, middle orange, nearest red (and a fast closing speed
+        // escalates regardless of distance).
+        if approachSpeedKmh >= 35 || distanceMeters <= 15 { return .high }
+        if approachSpeedKmh >= 20 || distanceMeters <= 30 { return .medium }
         return .low
     }
 }
