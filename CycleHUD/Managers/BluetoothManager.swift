@@ -239,15 +239,26 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     // MARK: - Scanning / pairing
 
+    private var scanTimeoutTimer: Timer?
+
     func startScan() {
         guard poweredOn else { return }
         discovered.removeAll()
         central.scanForPeripherals(withServices: nil,
                                    options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
         isScanning = true
+        // BLE scanning is power-hungry; sensors appear within seconds. Auto-stop
+        // after 30 s so a leaked scan (e.g. the pairing sheet dismissing without
+        // its onDisappear firing) can't drain the battery for a whole ride.
+        scanTimeoutTimer?.invalidate()
+        scanTimeoutTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: false) { [weak self] _ in
+            self?.stopScan()
+        }
     }
 
     func stopScan() {
+        scanTimeoutTimer?.invalidate()
+        scanTimeoutTimer = nil
         central.stopScan()
         isScanning = false
     }
@@ -522,10 +533,13 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     // MARK: - Helpers
 
-    // Logs raw bytes from unknown notify characteristics (throttled per UUID)
-    // so the TR70's radar protocol can be decoded from a real ride.
+    // Logs raw bytes from unknown notify characteristics (throttled per UUID) so
+    // the TR70's radar protocol can be decoded from a real ride. This writes to
+    // disk ~1×/second for the WHOLE ride, so it's gated behind the radar-debug
+    // toggle — off for normal riders (battery), on when capturing for protocol work.
     private var lastCaptureAt: [CBUUID: Date] = [:]
     private func captureLog(_ uuid: CBUUID, _ name: String, _ data: Data) {
+        guard settings.radarDebugEnabled else { return }
         let now = Date()
         if let last = lastCaptureAt[uuid], now.timeIntervalSince(last) < 1.0 { return }
         lastCaptureAt[uuid] = now

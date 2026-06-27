@@ -81,7 +81,6 @@ final class RideManager: ObservableObject {
     private var bodyAgeYears = 40.0
     private var bodyIsFemale = false
     private var lastCalorieAscent = 0.0   // ascent already counted toward calories
-    private var mirrorTick = 0
     private var saveTick = 0
     private var radarWasConnected = false   // edge-detect radar drop-out for the Watch alert
 
@@ -134,6 +133,7 @@ final class RideManager: ObservableObject {
     func start() {
         guard status == .idle else { return }
         stopDemo()
+        ble.stopScan()             // never leave a power-hungry BLE scan running on a ride
         distanceMeters = 0
         movingTimeSeconds = 0
         elevationGainMeters = 0
@@ -373,7 +373,9 @@ final class RideManager: ObservableObject {
         // Baseline the radar state so resuming a ride doesn't fire a spurious
         // drop-out alert on the first tick.
         radarWasConnected = ble.status(for: .radar) == .connected
-        ticker = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+        // 2 Hz: plenty for the metric tiles (no one reads faster) and half the
+        // per-second UI redraws / wake-ups of the old 4 Hz tick, to save battery.
+        ticker = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             self?.tick()
         }
     }
@@ -405,16 +407,16 @@ final class RideManager: ObservableObject {
             break
         }
 
-        // Watch radar drop-out alert, then mirror state at ~2 Hz.
+        // Watch radar drop-out alert, then mirror state every tick (~2 Hz).
         checkRadarPresence()
         if status == .running || status == .autoPaused { updatePassLog(now: now) }
-        mirrorTick += 1
-        if mirrorTick % 2 == 0 { sendMirror() }
+        sendMirror()
 
-        // Persist so the ride survives the app being killed mid-ride.
+        // Persist so the ride survives the app being killed mid-ride. Tick is now
+        // 2 Hz, so these counts target ~2 s and ~15 s.
         saveTick += 1
-        if saveTick % 8 == 0 { persistSnapshot() }     // ~every 2 s
-        if saveTick % 60 == 0 { persistRoute() }        // ~every 15 s
+        if saveTick % 4 == 0 { persistSnapshot() }      // ~every 2 s
+        if saveTick % 30 == 0 { persistRoute() }        // ~every 15 s
     }
 
     /// Calories. Uses heart rate (Keytel) when the Watch supplies one, otherwise
