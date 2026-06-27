@@ -10,6 +10,8 @@ struct RadarView: View {
     let radarConnected: Bool
     var batteryPercent: Int? = nil
 
+    @Environment(\.colorScheme) private var colorScheme
+
     // The TR70's real-world detection range tops out around ~50 m, so the lane is
     // drawn to that — otherwise every car clusters in the top third and "looks
     // close". Anything further (rare) clamps to the bottom of the lane.
@@ -136,8 +138,12 @@ struct RadarView: View {
     }
 
     private func ringLines(w: CGFloat, h: CGFloat, nearWidth: CGFloat, farWidth: CGFloat) -> some View {
-        let lineColor = alertActive ? Color.black.opacity(0.28) : Theme.textSecondary.opacity(0.28)
-        let labelColor = alertActive ? Color.black.opacity(0.7) : Theme.textSecondary
+        // Rings and their distance labels are white over the coloured alert
+        // flood and over the dark theme's panel; only a *clear* panel in *light*
+        // mode falls back to the dark secondary colour, where white wouldn't read.
+        let clearLight = !alertActive && colorScheme == .light
+        let lineColor = clearLight ? Theme.textSecondary.opacity(0.28) : Color.white.opacity(0.32)
+        let labelColor = clearLight ? Theme.textSecondary : Color.white.opacity(0.9)
         return ForEach(rings, id: \.self) { distance in
             let yy = y(for: distance, h: h)
             let hw = halfWidth(atY: yy, h: h, nearWidth: nearWidth, farWidth: farWidth)
