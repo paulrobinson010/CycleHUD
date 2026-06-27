@@ -153,14 +153,14 @@ struct RadarView: View {
             let yy = y(for: threat.distanceMeters, h: h)
             let proximity = 1 - min(threat.distanceMeters, maxRange) / maxRange
             let scale = 0.95 + proximity * 0.6
-            VStack(spacing: 3) {
+            VStack(spacing: 4) {
                 CarGlyph(color: alertActive ? .black : threat.level.color)
-                    .frame(width: 60 * scale, height: 40 * scale)
+                    .frame(width: 38 * scale, height: 60 * scale)
                 Text(distanceLabel(threat.distanceMeters))
-                    .font(.system(size: 14, weight: .heavy, design: .rounded))
-                    .foregroundStyle(threat.level.color)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
+                    .font(.system(size: 16, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 3)
                     .background(Capsule().fill(Color.black))
             }
             .position(x: w / 2, y: yy)
@@ -212,25 +212,52 @@ struct RadarView: View {
     }
 }
 
-/// Simple top-down vehicle glyph with two "headlights".
+/// Top-down car (front pointing up, toward the rider). The body is filled with
+/// `color`; the windscreen and rear window are punched through so the panel
+/// shows as tinted glass — high-contrast and clearly a car at a glance.
 private struct CarGlyph: View {
     let color: Color
     var body: some View {
-        GeometryReader { geo in
-            let w = geo.size.width
-            let h = geo.size.height
-            ZStack {
-                RoundedRectangle(cornerRadius: h * 0.3)
-                    .fill(color)
-                HStack {
-                    Circle().fill(Color.white.opacity(0.9)).frame(width: h * 0.22)
-                    Spacer()
-                    Circle().fill(Color.white.opacity(0.9)).frame(width: h * 0.22)
-                }
-                .padding(.horizontal, w * 0.16)
-                .padding(.top, h * 0.12)
-                .frame(maxHeight: .infinity, alignment: .top)
-            }
+        ZStack {
+            CarBodyShape().fill(color)
+            CarWindowsShape().fill(Color.black).blendMode(.destinationOut)
         }
+        .compositingGroup()   // so destinationOut only punches the windows
+    }
+}
+
+/// The car outline: a tapered rounded body with two small wing mirrors.
+private struct CarBodyShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        let w = rect.width, h = rect.height
+        var p = Path()
+        let mirrorW = w * 0.14, mirrorH = h * 0.07, mirrorY = h * 0.20
+        p.addRoundedRect(in: CGRect(x: 0, y: mirrorY, width: mirrorW, height: mirrorH),
+                         cornerSize: CGSize(width: 3, height: 3))
+        p.addRoundedRect(in: CGRect(x: w - mirrorW, y: mirrorY, width: mirrorW, height: mirrorH),
+                         cornerSize: CGSize(width: 3, height: 3))
+        let inset = w * 0.05
+        p.addRoundedRect(in: CGRect(x: inset, y: 0, width: w - inset * 2, height: h),
+                         cornerSize: CGSize(width: w * 0.36, height: w * 0.36))
+        return p
+    }
+}
+
+/// Windscreen (front) and rear window, as trapezoids.
+private struct CarWindowsShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        let w = rect.width, h = rect.height
+        var p = Path()
+        p.move(to: CGPoint(x: w * 0.34, y: h * 0.16))
+        p.addLine(to: CGPoint(x: w * 0.66, y: h * 0.16))
+        p.addLine(to: CGPoint(x: w * 0.74, y: h * 0.31))
+        p.addLine(to: CGPoint(x: w * 0.26, y: h * 0.31))
+        p.closeSubpath()
+        p.move(to: CGPoint(x: w * 0.25, y: h * 0.47))
+        p.addLine(to: CGPoint(x: w * 0.75, y: h * 0.47))
+        p.addLine(to: CGPoint(x: w * 0.71, y: h * 0.80))
+        p.addLine(to: CGPoint(x: w * 0.29, y: h * 0.80))
+        p.closeSubpath()
+        return p
     }
 }
