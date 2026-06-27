@@ -14,7 +14,15 @@ struct RadarView: View {
     // drawn to that — otherwise every car clusters in the top third and "looks
     // close". Anything further (rare) clamps to the bottom of the lane.
     private let maxRange: Double = 50           // metres shown top-to-bottom
-    private let rings: [Double] = [10, 20, 30, 40]
+
+    /// Ring distances in metres, chosen to be round numbers in the rider's unit
+    /// (10/20/30/40 m, or 40/80/120/160 ft).
+    private var rings: [Double] {
+        switch distanceUnit {
+        case .km: return [10, 20, 30, 40]
+        case .mi: return [40, 80, 120, 160].map { $0 / 3.280839895 }
+        }
+    }
 
     private var topLevel: ThreatLevel? { threats.map(\.level).max() }
     private var alertActive: Bool { topLevel != nil }
