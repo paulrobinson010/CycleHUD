@@ -320,20 +320,14 @@ final class WatchSessionManager: NSObject, ObservableObject {
     }
 
     private func playHaptic() {
-        // Strength matches the on-screen threat colour so the wrist tells you the
-        // severity without looking: red = double tap, orange = firm tap, yellow =
-        // light tick. Cadence (how often) is handled by scheduleNextHaptic and
-        // tightens with proximity.
+        // Strongest available wrist buzz for EVERY car, at any distance (rider's
+        // request). watchOS has no amplitude control, so we use the firm
+        // `.notification` pattern played twice for maximum noticeability. Urgency
+        // is conveyed by cadence (scheduleNextHaptic), which tightens as a car
+        // closes in — not by varying the strength.
         let device = WKInterfaceDevice.current()
-        switch threatLevel {
-        case 2:   // high — red
-            device.play(.notification)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.16) { device.play(.notification) }
-        case 1:   // medium — orange
-            device.play(.notification)
-        default:  // low — yellow
-            device.play(.click)
-        }
+        device.play(.notification)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { device.play(.notification) }
     }
 }
 

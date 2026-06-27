@@ -10,8 +10,11 @@ struct RadarView: View {
     let radarConnected: Bool
     var batteryPercent: Int? = nil
 
-    private let maxRange: Double = 150          // metres shown top-to-bottom
-    private let rings: [Double] = [30, 60, 90, 120]
+    // The TR70's real-world detection range tops out around ~50 m, so the lane is
+    // drawn to that — otherwise every car clusters in the top third and "looks
+    // close". Anything further (rare) clamps to the bottom of the lane.
+    private let maxRange: Double = 50           // metres shown top-to-bottom
+    private let rings: [Double] = [10, 20, 30, 40]
 
     private var topLevel: ThreatLevel? { threats.map(\.level).max() }
     private var alertActive: Bool { topLevel != nil }

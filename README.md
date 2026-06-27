@@ -130,7 +130,8 @@ These live in code and are easy to adjust:
   for accurate sensor speed.
 - **Threat severity colours** — `Threat.swift` (`level`): the speed/distance
   thresholds that map to yellow/orange/red.
-- **Radar range shown** — `RadarView.swift` (`maxRange`, default 150 m).
+- **Radar range shown** — `RadarView.swift` (`maxRange`, default 50 m, matching
+  the TR70's real-world detection range so cars fill the lane).
 - **Radar presence timeout** — `BluetoothManager.swift` (`radarDataTimeout`,
   default 4 s): how long without a heartbeat before showing NOT CONNECTED.
 - **Auto-pause timing/threshold** — `RideManager.swift`.
