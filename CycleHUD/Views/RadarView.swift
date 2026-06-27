@@ -24,10 +24,10 @@ struct RadarView: View {
         GeometryReader { geo in
             let w = geo.size.width
             let h = geo.size.height
-            // Perspective: wide at the top (near the rider), narrow at the
-            // bottom (far away).
-            let nearWidth = w * 0.80
-            let farWidth = w * 0.34
+            // Straight lane (constant width): nearer the rider is up, further is
+            // down — no perspective taper.
+            let nearWidth = w * 0.66
+            let farWidth = w * 0.66
 
             ZStack {
                 lane(w: w, h: h, nearWidth: nearWidth, farWidth: farWidth)
@@ -152,12 +152,12 @@ struct RadarView: View {
         ForEach(threats) { threat in
             let yy = y(for: threat.distanceMeters, h: h)
             let proximity = 1 - min(threat.distanceMeters, maxRange) / maxRange
-            let scale = 0.85 + proximity * 0.6
+            let scale = 0.95 + proximity * 0.6
             VStack(spacing: 3) {
                 CarGlyph(color: alertActive ? .black : threat.level.color)
-                    .frame(width: 42 * scale, height: 27 * scale)
+                    .frame(width: 60 * scale, height: 40 * scale)
                 Text(distanceLabel(threat.distanceMeters))
-                    .font(.system(size: 13, weight: .heavy, design: .rounded))
+                    .font(.system(size: 14, weight: .heavy, design: .rounded))
                     .foregroundStyle(threat.level.color)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
@@ -168,10 +168,12 @@ struct RadarView: View {
     }
 
     private func rider(w: CGFloat) -> some View {
-        Image(systemName: "bicycle")
-            .font(.system(size: 30, weight: .bold))
+        Image(systemName: "location.north.fill")
+            .font(.system(size: 22, weight: .bold))
             .foregroundStyle(riderColor)
-            .position(x: w / 2, y: 30)
+            .frame(width: 46, height: 46)
+            .overlay(Circle().stroke(riderColor, lineWidth: 3))
+            .position(x: w / 2, y: 38)
     }
 
     private var riderColor: Color {
