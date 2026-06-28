@@ -3,6 +3,7 @@ import SwiftUI
 /// Shown once on first launch to ask the rider for their preferred units.
 struct UnitsOnboardingView: View {
     @EnvironmentObject var settings: AppSettings
+    @FocusState private var weightFocused: Bool
 
     var body: some View {
         VStack(spacing: 28) {
@@ -42,6 +43,7 @@ struct UnitsOnboardingView: View {
                                 .keyboardType(.decimalPad)
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 120)
+                                .focused($weightFocused)
                             Text("kg").foregroundStyle(.secondary)
                             Spacer()
                         }
@@ -76,6 +78,12 @@ struct UnitsOnboardingView: View {
             .padding(.bottom, 24)
         }
         .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { weightFocused = false }
+            }
+        }
     }
 
     /// Weight as text so the field is empty (not "0") until a value is entered.
