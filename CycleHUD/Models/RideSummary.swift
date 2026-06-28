@@ -31,6 +31,7 @@ struct RideSummary: Identifiable, Codable, Equatable {
     let averageHeartRate: Int?
     let maxHeartRate: Int?
     let routePoints: [Coord]?       // downsampled GPS track for the summary map
+    let routeSpeeds: [Double]?      // m/s at each route point, for colouring the line by speed
     let radarPoints: [Coord]?       // where vehicles were detected behind the rider
     let passes: [VehiclePass]?      // per-vehicle approach traces for review
     let track: [TrackSample]?       // downsampled speed/HR/elevation series for graphs

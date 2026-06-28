@@ -21,17 +21,34 @@ struct VehiclePass: Identifiable, Codable, Equatable {
     let lon: Double?
     let samples: [PassSample]
 
-    var duration: Double { samples.last?.t ?? 0 }
-    var minDistance: Double { samples.map(\.distance).min() ?? 0 }
-    var maxClosingKmh: Double { samples.map(\.closingKmh).max() ?? 0 }
+    /// Plausibility bounds for a radar frame. The TR70 detects to ~50 m and
+    /// reports closing speed in whole m/s; a single frame occasionally decodes to
+    /// a wild value (e.g. 190 m at 122 km/h) that would spike the charts and
+    /// inflate the headline speeds. Anything outside these is dropped.
+    static let maxPlausibleDistance = 60.0      // metres (radar real max ~50)
+    static let maxPlausibleClosingKmh = 90.0    // km/h closing differential
+
+    /// Samples with obviously-bad radar frames removed. All stats and charts use
+    /// these so one glitchy reading can't distort the pass.
+    var cleanSamples: [PassSample] {
+        let good = samples.filter {
+            $0.distance > 0 && $0.distance <= Self.maxPlausibleDistance
+                && $0.closingKmh >= 0 && $0.closingKmh <= Self.maxPlausibleClosingKmh
+        }
+        return good.isEmpty ? samples : good   // never blank the trace entirely
+    }
+
+    var duration: Double { cleanSamples.last?.t ?? 0 }
+    var minDistance: Double { cleanSamples.map(\.distance).min() ?? 0 }
+    var maxClosingKmh: Double { cleanSamples.map(\.closingKmh).max() ?? 0 }
 
     /// The sample at the closest point of approach.
-    var closestSample: PassSample? { samples.min(by: { $0.distance < $1.distance }) }
+    var closestSample: PassSample? { cleanSamples.min(by: { $0.distance < $1.distance }) }
 
     /// Rider speed at the closest point of approach.
     var riderKmhAtClosest: Double { closestSample?.riderKmh ?? 0 }
     /// Fastest rider speed during the encounter — used to tell if they slowed.
-    var riderKmhPeak: Double { samples.map(\.riderKmh).max() ?? 0 }
+    var riderKmhPeak: Double { cleanSamples.map(\.riderKmh).max() ?? 0 }
     /// How much the rider slowed from their peak to the closest point (km/h).
     var riderSlowedKmh: Double { max(0, riderKmhPeak - riderKmhAtClosest) }
 

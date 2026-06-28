@@ -60,8 +60,11 @@ struct RideSummaryView: View {
         if coords.count >= 2 {
             Button { showRouteMap = true } label: {
                 Map(initialPosition: .region(Self.region(for: coords))) {
-                    MapPolyline(coordinates: coords)
-                        .stroke(Theme.accent, lineWidth: 4)
+                    if let speeds = summary.routeSpeeds, speeds.count == coords.count {
+                        Self.speedColoredRoute(coords, speeds: speeds, lineWidth: 4)
+                    } else {
+                        MapPolyline(coordinates: coords).stroke(Theme.accent, lineWidth: 4)
+                    }
                     ForEach(Array(summary.radarCoordinates.enumerated()), id: \.offset) { _, c in
                         Annotation("", coordinate: c) { Self.radarDot }
                     }
@@ -81,6 +84,7 @@ struct RideSummaryView: View {
             .buttonStyle(.plain)
             .fullScreenCover(isPresented: $showRouteMap) {
                 RouteMapView(coordinates: coords,
+                             routeSpeeds: summary.routeSpeeds ?? [],
                              radarCoordinates: summary.radarCoordinates,
                              passes: summary.passes ?? [])
                     .environmentObject(settings)
@@ -235,6 +239,39 @@ struct RideSummaryView: View {
         .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
         .padding(.horizontal, 16)
         .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
+    }
+
+    // MARK: - Speed-coloured route
+
+    /// Draw the route as per-segment polylines coloured by speed (blue = slow →
+    /// red = fast), normalised to the ride. Falls back handled by the caller when
+    /// no speed data is present.
+    @MapContentBuilder
+    static func speedColoredRoute(_ coords: [CLLocationCoordinate2D], speeds: [Double],
+                                  lineWidth: CGFloat) -> some MapContent {
+        let bounds = speedBounds(speeds)
+        ForEach(Array(coords.indices.dropLast()), id: \.self) { i in
+            let a = speeds[min(i, speeds.count - 1)]
+            let b = speeds[min(i + 1, speeds.count - 1)]
+            MapPolyline(coordinates: [coords[i], coords[i + 1]])
+                .stroke(speedColor((a + b) / 2, lo: bounds.0, hi: bounds.1), lineWidth: lineWidth)
+        }
+    }
+
+    /// Colour on a blue(slow)→red(fast) ramp for a speed within the ride's range.
+    static func speedColor(_ speed: Double, lo: Double, hi: Double) -> Color {
+        let t = hi > lo ? min(1, max(0, (speed - lo) / (hi - lo))) : 0.5
+        return Color(hue: 0.6 * (1 - t), saturation: 0.85, brightness: 0.95)
+    }
+
+    /// Robust slow/fast bounds (10th–90th percentile) so a GPS spike doesn't
+    /// flatten the whole colour range.
+    static func speedBounds(_ speeds: [Double]) -> (Double, Double) {
+        let s = speeds.filter { $0 > 0 }.sorted()
+        guard s.count >= 2 else { return (0, 1) }
+        let lo = s[Int(Double(s.count) * 0.1)]
+        let hi = s[Int(Double(s.count) * 0.9)]
+        return lo < hi ? (lo, hi) : (s.first!, max(s.first! + 0.1, s.last!))
     }
 
     // MARK: - Map region

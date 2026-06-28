@@ -22,10 +22,23 @@ enum SampleRide {
             averageHeartRate: 143,
             maxHeartRate: 169,
             routePoints: route,
+            routeSpeeds: routeSpeeds(for: route),
             radarPoints: radar.isEmpty ? nil : radar,
             passes: passes.isEmpty ? nil : passes,
             track: trackSamples(movingTime: movingTime)
         )
+    }
+
+    /// A plausible speed (m/s) at each route point so the map line colours by
+    /// speed: slower on the rolling climbs, faster on the descents.
+    private static func routeSpeeds(for route: [Coord]) -> [Double] {
+        let n = max(1, route.count - 1)
+        return route.indices.map { i in
+            let p = Double(i) / Double(n)
+            let hill = sin(p * .pi * 4)                  // -1…1, matches the elevation profile
+            let kmh = 26 - hill * 8 + sin(Double(i) / 7) * 1.2
+            return max(3, kmh) / 3.6
+        }
     }
 
     /// A plausible speed / heart-rate / elevation series over the ride so the

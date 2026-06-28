@@ -174,7 +174,7 @@ struct PassDetailView: View {
     }
 
     private var distanceChart: some View {
-        Chart(pass.samples, id: \.t) { s in
+        Chart(pass.cleanSamples, id: \.t) { s in
             LineMark(x: .value("Seconds", s.t),
                      y: .value("Distance", distanceVal(s.distance)))
                 .foregroundStyle(Theme.accent)
@@ -185,14 +185,14 @@ struct PassDetailView: View {
 
     private var speedChart: some View {
         Chart {
-            ForEach(pass.samples, id: \.t) { s in
+            ForEach(pass.cleanSamples, id: \.t) { s in
                 LineMark(x: .value("Seconds", s.t),
                          y: .value("Speed", speedVal(s.riderKmh)),
                          series: .value("Series", "You"))
                     .foregroundStyle(by: .value("Series", "You"))
                     .interpolationMethod(.monotone)
             }
-            ForEach(pass.samples, id: \.t) { s in
+            ForEach(pass.cleanSamples, id: \.t) { s in
                 LineMark(x: .value("Seconds", s.t),
                          y: .value("Speed", speedVal(s.riderKmh + s.closingKmh)),
                          series: .value("Series", "Vehicle (est.)"))

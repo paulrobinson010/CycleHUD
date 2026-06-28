@@ -6,10 +6,12 @@ import MapKit
 /// render the recorded line, so that just centres Maps on the ride).
 struct RouteMapView: View {
     let coordinates: [CLLocationCoordinate2D]
+    var routeSpeeds: [Double] = []
     var radarCoordinates: [CLLocationCoordinate2D] = []
     var passes: [VehiclePass] = []
     @EnvironmentObject var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
+    @State private var selectedPassID: VehiclePass.ID?
     @State private var selectedPass: VehiclePass?
 
     /// Logged passes that have a location, shown as tappable pins.
@@ -17,21 +19,27 @@ struct RouteMapView: View {
 
     var body: some View {
         NavigationStack {
-            Map(initialPosition: .region(RideSummaryView.region(for: coordinates))) {
-                MapPolyline(coordinates: coordinates)
-                    .stroke(Theme.accent, lineWidth: 5)
+            Map(initialPosition: .region(RideSummaryView.region(for: coordinates)),
+                selection: $selectedPassID) {
+                if routeSpeeds.count == coordinates.count {
+                    RideSummaryView.speedColoredRoute(coordinates, speeds: routeSpeeds, lineWidth: 5)
+                } else {
+                    MapPolyline(coordinates: coordinates).stroke(Theme.accent, lineWidth: 5)
+                }
                 if mappablePasses.isEmpty {
                     // No reviewable passes — just mark where vehicles were seen.
                     ForEach(Array(radarCoordinates.enumerated()), id: \.offset) { _, c in
                         Annotation("Vehicle", coordinate: c) { vehiclePin(color: Theme.threatHigh) }
                     }
                 } else {
-                    // Tappable pins, coloured by closing speed; tap opens the pass.
+                    // Tappable pins, coloured by closing speed; selecting one opens
+                    // the pass (native map selection — a Button here would let the
+                    // map's tap dismiss the sheet the instant it appears).
                     ForEach(mappablePasses) { pass in
                         Annotation("Vehicle", coordinate: pass.coordinate!) {
-                            Button { selectedPass = pass } label: { vehiclePin(color: pass.level.color) }
-                            .buttonStyle(.plain)
+                            vehiclePin(color: pass.level.color)
                         }
+                        .tag(pass.id)
                     }
                 }
                 if let start = coordinates.first {
@@ -43,10 +51,14 @@ struct RouteMapView: View {
                         .tint(Theme.threatHigh)
                 }
             }
+            .overlay(alignment: .bottomLeading) { speedLegend }
             .ignoresSafeArea(edges: .bottom)
             .navigationTitle("Route")
             .navigationBarTitleDisplayMode(.inline)
-            .sheet(item: $selectedPass) { pass in
+            .onChange(of: selectedPassID) { _, id in
+                selectedPass = mappablePasses.first { $0.id == id }
+            }
+            .sheet(item: $selectedPass, onDismiss: { selectedPassID = nil }) { pass in
                 NavigationStack {
                     PassDetailView(pass: pass)
                         .environmentObject(settings)
@@ -67,6 +79,27 @@ struct RouteMapView: View {
                     }
                 }
             }
+        }
+    }
+
+    /// Small "slow → fast" key for the speed-coloured route line.
+    @ViewBuilder private var speedLegend: some View {
+        if routeSpeeds.count == coordinates.count {
+            HStack(spacing: 6) {
+                Text("slow").font(.system(size: 11, weight: .semibold, design: .rounded))
+                LinearGradient(
+                    colors: stride(from: 0.0, through: 1.0, by: 0.2)
+                        .map { RideSummaryView.speedColor($0, lo: 0, hi: 1) },
+                    startPoint: .leading, endPoint: .trailing)
+                    .frame(width: 70, height: 6)
+                    .clipShape(Capsule())
+                Text("fast").font(.system(size: 11, weight: .semibold, design: .rounded))
+            }
+            .foregroundStyle(Theme.textPrimary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 7)
+            .background(.ultraThinMaterial, in: Capsule())
+            .padding(12)
         }
     }
 

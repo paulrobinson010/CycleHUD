@@ -236,13 +236,15 @@ final class RideManager: ObservableObject {
         // Record any ride worth keeping: local history + end-of-ride summary, and
         // the authoritative Apple Health workout.
         if savedDistance >= 50 {
-            let points = downsampledRoute(savedRoute)
+            let routeDown = downsampledRoute(savedRoute)
+            let points = routeDown.points
             let summary = RideSummary(id: UUID(), date: start, distanceMeters: savedDistance,
                                       movingTimeSeconds: savedTime, elevationGainMeters: savedAscent,
                                       caloriesKcal: savedCalories,
                                       averageHeartRate: hrCount > 0 ? Int((hrSum / Double(hrCount)).rounded()) : nil,
                                       maxHeartRate: hrMax > 0 ? hrMax : nil,
                                       routePoints: points.isEmpty ? nil : points,
+                                      routeSpeeds: routeDown.speeds.isEmpty ? nil : routeDown.speeds,
                                       radarPoints: savedRadarPoints.isEmpty ? nil : savedRadarPoints,
                                       passes: savedPasses.isEmpty ? nil : savedPasses,
                                       track: savedTrack.isEmpty ? nil : savedTrack)
@@ -619,7 +621,14 @@ final class RideManager: ObservableObject {
             }
             // Only append on a genuinely new radar frame (lastSeen advances), and
             // cap the sample count so a long tail-gating car can't grow unbounded.
-            if nearest.lastSeen != lastPassFrameSeen, var p = openPass, p.samples.count < 240 {
+            // Skip frames that decode to an implausible distance/closing speed —
+            // a single glitchy frame would otherwise spike the saved trace.
+            let plausible = nearest.distanceMeters > 0
+                && nearest.distanceMeters <= VehiclePass.maxPlausibleDistance
+                && nearest.approachSpeedKmh >= 0
+                && nearest.approachSpeedKmh <= VehiclePass.maxPlausibleClosingKmh
+            if plausible, nearest.lastSeen != lastPassFrameSeen,
+               var p = openPass, p.samples.count < 240 {
                 p.samples.append(PassSample(t: now.timeIntervalSince(p.start),
                                             distance: nearest.distanceMeters,
                                             closingKmh: nearest.approachSpeedKmh,
@@ -652,18 +661,23 @@ final class RideManager: ObservableObject {
         return samples.enumerated().compactMap { idx, s in idx % stride == 0 ? s : nil }
     }
 
-    /// Reduce the GPS track to ~250 points for a lightweight stored summary map.
-    private func downsampledRoute(_ locations: [CLLocation]) -> [Coord] {
-        guard !locations.isEmpty else { return [] }
+    /// Reduce the GPS track to ~250 points (plus a per-point speed in m/s, for
+    /// colouring the route line) for a lightweight stored summary map.
+    private func downsampledRoute(_ locations: [CLLocation]) -> (points: [Coord], speeds: [Double]) {
+        guard !locations.isEmpty else { return ([], []) }
         let stride = max(1, locations.count / 250)
-        var points = locations.enumerated().compactMap { idx, loc in
-            idx % stride == 0 ? Coord(lat: loc.coordinate.latitude, lon: loc.coordinate.longitude) : nil
+        var kept = locations.enumerated().compactMap { idx, loc in idx % stride == 0 ? loc : nil }
+        if let last = locations.last, kept.last !== last { kept.append(last) }   // keep the true endpoint
+
+        let points = kept.map { Coord(lat: $0.coordinate.latitude, lon: $0.coordinate.longitude) }
+        let speeds: [Double] = kept.enumerated().map { i, loc in
+            if loc.speed >= 0 { return loc.speed }            // GPS speed when valid
+            guard i > 0 else { return 0 }                     // else derive from the previous point
+            let prev = kept[i - 1]
+            let dt = loc.timestamp.timeIntervalSince(prev.timestamp)
+            return dt > 0 ? loc.distance(from: prev) / dt : 0
         }
-        if let last = locations.last {
-            let end = Coord(lat: last.coordinate.latitude, lon: last.coordinate.longitude)
-            if points.last != end { points.append(end) }   // keep the true endpoint
-        }
-        return points
+        return (points, speeds)
     }
 
     private func applyScreenLock() {
