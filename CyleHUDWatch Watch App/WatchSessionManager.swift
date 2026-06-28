@@ -19,6 +19,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
     @Published var heartRate: Int = 0
     @Published var radarLost: Bool = false   // radar dropped out mid-ride
     @Published private(set) var hrWarningActive = false   // HR at/over the warning threshold
+    private var hapticsMuted = false         // rider muted vehicle wrist taps from the phone
 
     private var hrWarningBpm = 0             // warning threshold from the phone (0 = off)
     private var lastHRWarnAt: Date?
@@ -245,6 +246,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
         nearestThreatMeters = data["nearest"] as? Int
         if let v = data["radarLost"] as? Bool { radarLost = v }
         if let v = data["hrWarn"] as? Int { hrWarningBpm = v }
+        if let v = data["hapticsMuted"] as? Bool { hapticsMuted = v }
         if let s = data["status"] as? String {
             statusRaw = s
             rideActive = (s != "idle")
@@ -295,7 +297,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
     /// Start the wrist-tap loop when a car appears, stop it when the lane clears.
     /// Gated on an active ride so a stale mirror can't tap the wrist while idle.
     private func updateHapticLoop() {
-        let carPresent = threatLevel >= 0 && rideActive
+        let carPresent = threatLevel >= 0 && rideActive && !hapticsMuted
         if carPresent {
             if hapticTimer == nil { scheduleNextHaptic(after: 0) }   // tap right away
         } else if hapticTimer != nil {

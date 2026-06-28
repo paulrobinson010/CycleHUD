@@ -10,6 +10,7 @@ final class AppSettings: ObservableObject {
         static let wheelCircumferenceMM = "wheelCircumferenceMM"
         static let riderWeightKg = "riderWeightKg"
         static let beepEnabled = "beepEnabled"
+        static let hapticsEnabled = "hapticsEnabled"
         static let autoPauseEnabled = "autoPauseEnabled"
         static let keepScreenOn = "keepScreenOn"
         static let hasChosenUnits = "hasChosenUnits"
@@ -28,6 +29,9 @@ final class AppSettings: ObservableObject {
     @Published var wheelCircumferenceMM: Double { didSet { defaults.set(wheelCircumferenceMM, forKey: Keys.wheelCircumferenceMM) } }
     @Published var riderWeightKg: Double { didSet { defaults.set(riderWeightKg, forKey: Keys.riderWeightKg) } }
     @Published var beepEnabled: Bool { didSet { defaults.set(beepEnabled, forKey: Keys.beepEnabled) } }
+    /// When on, a paired Apple Watch taps the wrist for vehicles behind you.
+    /// Muted from the radar screen (or here) to quieten busy-town riding.
+    @Published var hapticsEnabled: Bool { didSet { defaults.set(hapticsEnabled, forKey: Keys.hapticsEnabled) } }
     @Published var autoPauseEnabled: Bool { didSet { defaults.set(autoPauseEnabled, forKey: Keys.autoPauseEnabled) } }
     @Published var keepScreenOn: Bool { didSet { defaults.set(keepScreenOn, forKey: Keys.keepScreenOn) } }
     @Published var hasChosenUnits: Bool { didSet { defaults.set(hasChosenUnits, forKey: Keys.hasChosenUnits) } }
@@ -59,6 +63,7 @@ final class AppSettings: ObservableObject {
             Keys.wheelCircumferenceMM: 2105.0,   // 700x25c default
             Keys.riderWeightKg: 0.0,             // 0 = not entered (no calories shown)
             Keys.beepEnabled: true,
+            Keys.hapticsEnabled: true,
             Keys.autoPauseEnabled: true,
             Keys.keepScreenOn: true,
             Keys.hasChosenUnits: false,
@@ -75,6 +80,7 @@ final class AppSettings: ObservableObject {
         wheelCircumferenceMM = defaults.double(forKey: Keys.wheelCircumferenceMM)
         riderWeightKg = defaults.double(forKey: Keys.riderWeightKg)
         beepEnabled = defaults.bool(forKey: Keys.beepEnabled)
+        hapticsEnabled = defaults.bool(forKey: Keys.hapticsEnabled)
         autoPauseEnabled = defaults.bool(forKey: Keys.autoPauseEnabled)
         keepScreenOn = defaults.bool(forKey: Keys.keepScreenOn)
         hasChosenUnits = defaults.bool(forKey: Keys.hasChosenUnits)

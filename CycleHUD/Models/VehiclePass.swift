@@ -21,21 +21,37 @@ struct VehiclePass: Identifiable, Codable, Equatable {
     let lon: Double?
     let samples: [PassSample]
 
-    /// Plausibility bounds for a radar frame. The TR70 detects to ~50 m and
-    /// reports closing speed in whole m/s; a single frame occasionally decodes to
-    /// a wild value (e.g. 190 m at 122 km/h) that would spike the charts and
-    /// inflate the headline speeds. Anything outside these is dropped.
-    static let maxPlausibleDistance = 60.0      // metres (radar real max ~50)
-    static let maxPlausibleClosingKmh = 90.0    // km/h closing differential
-
-    /// Samples with obviously-bad radar frames removed. All stats and charts use
-    /// these so one glitchy reading can't distort the pass.
+    /// Samples with single-frame radar glitches removed. The radar occasionally
+    /// decodes one frame to a wild value (e.g. 190 m mid-approach, or a closing
+    /// speed far above the rest), which would spike the charts and inflate the
+    /// headline speeds. Rather than capping by an absolute limit — high closing
+    /// speeds are genuine on fast roads — a sample is dropped only when it's a
+    /// local outlier: far from the median of its immediate neighbours. A genuine
+    /// approach changes smoothly frame-to-frame, so real data is preserved while
+    /// lone spikes are removed. All stats and charts use these so already-saved
+    /// rides also render correctly.
     var cleanSamples: [PassSample] {
-        let good = samples.filter {
-            $0.distance > 0 && $0.distance <= Self.maxPlausibleDistance
-                && $0.closingKmh >= 0 && $0.closingKmh <= Self.maxPlausibleClosingKmh
-        }
-        return good.isEmpty ? samples : good   // never blank the trace entirely
+        guard samples.count >= 5 else { return samples }
+        let kept = samples.indices.filter { i in
+            let lo = max(0, i - 2), hi = min(samples.count - 1, i + 2)
+            let neighbours = (lo...hi).filter { $0 != i }
+            let s = samples[i]
+            let md = Self.median(neighbours.map { samples[$0].distance })
+            let mc = Self.median(neighbours.map { samples[$0].closingKmh })
+            // Within ~150% of the neighbours' median (with a floor so small,
+            // legitimately-varying values near zero aren't over-trimmed).
+            let distOK = abs(s.distance - md) <= max(10, md * 1.5)
+            let closeOK = abs(s.closingKmh - mc) <= max(15, mc * 1.5)
+            return distOK && closeOK
+        }.map { samples[$0] }
+        return kept.count >= 3 ? kept : samples   // never blank the trace entirely
+    }
+
+    private static func median(_ xs: [Double]) -> Double {
+        let s = xs.sorted()
+        guard !s.isEmpty else { return 0 }
+        let n = s.count
+        return n.isMultiple(of: 2) ? (s[n/2 - 1] + s[n/2]) / 2 : s[n/2]
     }
 
     var duration: Double { cleanSamples.last?.t ?? 0 }

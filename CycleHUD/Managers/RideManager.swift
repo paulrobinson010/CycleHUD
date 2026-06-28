@@ -127,8 +127,9 @@ final class RideManager: ObservableObject {
         self.location.onLocation = { [weak self] loc in self?.accumulate(loc) }
         self.ble.onDemoFinished = { [weak self] in self?.demoFramesFinished() }
         self.ble.onNewCar = { [weak self] in
-            self?.watch.sendNewCarHaptic()
-            self?.recordRadarDetection()
+            guard let self else { return }
+            if self.settings.hapticsEnabled { self.watch.sendNewCarHaptic() }
+            self.recordRadarDetection()
         }
         // Only alert (beep + wrist haptic) while actually riding or in the demo —
         // not while idle with the radar connected.
@@ -487,7 +488,8 @@ final class RideManager: ObservableObject {
                          threatLevel: levels.max() ?? -1,
                          nearestThreatMeters: nearest,
                          radarLost: demoActive ? (demoRadarLostUntil != nil) : radarConfiguredButDown,
-                         hrWarningBpm: settings.effectiveHRWarningBpm)
+                         hrWarningBpm: settings.effectiveHRWarningBpm,
+                         hapticsMuted: !settings.hapticsEnabled)
     }
 
     /// Whether new-vehicle alerts should fire: only during an active ride (incl.
@@ -621,13 +623,10 @@ final class RideManager: ObservableObject {
             }
             // Only append on a genuinely new radar frame (lastSeen advances), and
             // cap the sample count so a long tail-gating car can't grow unbounded.
-            // Skip frames that decode to an implausible distance/closing speed —
-            // a single glitchy frame would otherwise spike the saved trace.
-            let plausible = nearest.distanceMeters > 0
-                && nearest.distanceMeters <= VehiclePass.maxPlausibleDistance
-                && nearest.approachSpeedKmh >= 0
-                && nearest.approachSpeedKmh <= VehiclePass.maxPlausibleClosingKmh
-            if plausible, nearest.lastSeen != lastPassFrameSeen,
+            // Raw frames are stored as-is (no value cap, since high closing speeds
+            // are real on fast roads); lone glitch frames are removed later by
+            // VehiclePass.cleanSamples as statistical outliers.
+            if nearest.distanceMeters > 0, nearest.lastSeen != lastPassFrameSeen,
                var p = openPass, p.samples.count < 240 {
                 p.samples.append(PassSample(t: now.timeIntervalSince(p.start),
                                             distance: nearest.distanceMeters,

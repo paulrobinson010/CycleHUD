@@ -190,6 +190,9 @@ struct RideView: View {
         RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
                   radarConnected: ble.status(for: .radar) == .connected,
                   batteryPercent: ble.radarBatteryPercent)
+            .overlay(alignment: .topTrailing) {
+                MuteControls(settings: settings).padding(10)
+            }
             .overlay(alignment: .bottomTrailing) {
                 if settings.radarDebugEnabled { carMarkButton }
             }

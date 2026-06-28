@@ -88,12 +88,13 @@ struct SettingsView: View {
 
                 Section {
                     Toggle("Beep on new vehicle", isOn: $settings.beepEnabled)
+                    Toggle("Wrist haptics", isOn: $settings.hapticsEnabled)
                     Toggle("Auto-pause when stopped", isOn: $settings.autoPauseEnabled)
                     Toggle("Keep screen on while riding", isOn: $settings.keepScreenOn)
                 } header: {
                     Text("Alerts & Ride")
                 } footer: {
-                    Text("The new-vehicle beep plays through the phone, and alerts only fire while you're riding (not when idle with the radar on). A paired Apple Watch taps your wrist — once for each new vehicle, faster as one closes in, and a distinct double-buzz if the radar drops out mid-ride.")
+                    Text("The new-vehicle beep plays through the phone, and alerts only fire while you're riding (not when idle with the radar on). A paired Apple Watch taps your wrist — once for each new vehicle, faster as one closes in, and a distinct double-buzz if the radar drops out mid-ride. You can mute the beep and the wrist taps (separately or together) straight from the radar screen while riding.")
                 }
 
                 Section {
