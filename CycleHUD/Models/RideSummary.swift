@@ -7,6 +7,17 @@ struct Coord: Codable, Equatable {
     let lon: Double
 }
 
+/// A periodic snapshot during a ride, for the summary's speed / heart-rate /
+/// elevation graphs. Sampled every couple of seconds while riding and
+/// downsampled on save. Speed in m/s; altitude in metres *relative to the ride's
+/// start* (climbs positive, descents negative).
+struct TrackSample: Codable, Equatable {
+    let t: Double            // seconds since ride start
+    let speedMps: Double
+    let hr: Int?
+    let altitude: Double
+}
+
 /// A completed ride's headline stats, shown in the end-of-ride summary and the
 /// previous-rides list. Persisted locally so history works without Apple Health.
 struct RideSummary: Identifiable, Codable, Equatable {
@@ -22,6 +33,7 @@ struct RideSummary: Identifiable, Codable, Equatable {
     let routePoints: [Coord]?       // downsampled GPS track for the summary map
     let radarPoints: [Coord]?       // where vehicles were detected behind the rider
     let passes: [VehiclePass]?      // per-vehicle approach traces for review
+    let track: [TrackSample]?       // downsampled speed/HR/elevation series for graphs
 
     var averageSpeedMps: Double {
         movingTimeSeconds > 0 ? distanceMeters / movingTimeSeconds : 0

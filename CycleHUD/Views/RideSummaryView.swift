@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import Charts
 
 /// A ride's stats, shown as a sheet both at the end of a ride and when tapping a
 /// ride in the history list. Self-contained with its own close button.
@@ -16,6 +17,7 @@ struct RideSummaryView: View {
                     header
                     routeMap
                     statGrid
+                    graphs
                     passesLink
                 }
                 .padding()
@@ -78,7 +80,10 @@ struct RideSummaryView: View {
             }
             .buttonStyle(.plain)
             .fullScreenCover(isPresented: $showRouteMap) {
-                RouteMapView(coordinates: coords, radarCoordinates: summary.radarCoordinates)
+                RouteMapView(coordinates: coords,
+                             radarCoordinates: summary.radarCoordinates,
+                             passes: summary.passes ?? [])
+                    .environmentObject(settings)
             }
         }
     }
@@ -127,6 +132,68 @@ struct RideSummaryView: View {
                 .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
             }
             .buttonStyle(.plain)
+        }
+    }
+
+    /// Speed / heart-rate / elevation over the ride, as stacked line charts that
+    /// share a minutes x-axis. Heart rate is only shown if the ride captured any.
+    @ViewBuilder private var graphs: some View {
+        if let track = summary.track, track.count >= 2 {
+            VStack(spacing: 16) {
+                metricChart(title: "Speed", unit: settings.speedUnit.label,
+                            color: Theme.accent,
+                            points: track.map { ($0.t, settings.speedUnit.value(fromMps: $0.speedMps)) })
+                if track.contains(where: { ($0.hr ?? 0) > 0 }) {
+                    metricChart(title: "Heart rate", unit: "bpm", color: Theme.threatHigh,
+                                points: track.compactMap { s in s.hr.map { (s.t, Double($0)) } })
+                }
+                metricChart(title: "Elevation", unit: settings.distanceUnit.shortLabel,
+                            color: Theme.good, filled: true,
+                            points: track.map { ($0.t, settings.distanceUnit.shortValue(fromMeters: $0.altitude)) })
+            }
+            .padding(16)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
+        }
+    }
+
+    private func metricChart(title: String, unit: String, color: Color,
+                             filled: Bool = false,
+                             points: [(Double, Double)]) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(title)
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(Theme.textPrimary)
+                Spacer()
+                Text(unit)
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Theme.textSecondary)
+            }
+            Chart {
+                ForEach(points.indices, id: \.self) { i in
+                    if filled {
+                        AreaMark(x: .value("min", points[i].0 / 60.0),
+                                 y: .value(title, points[i].1))
+                            .foregroundStyle(color.opacity(0.16))
+                            .interpolationMethod(.monotone)
+                    }
+                    LineMark(x: .value("min", points[i].0 / 60.0),
+                             y: .value(title, points[i].1))
+                        .foregroundStyle(color)
+                        .interpolationMethod(.monotone)
+                }
+            }
+            .chartXAxis {
+                AxisMarks { value in
+                    AxisGridLine()
+                    AxisValueLabel {
+                        if let m = value.as(Double.self) {
+                            Text("\(Int(m))′")
+                        }
+                    }
+                }
+            }
+            .frame(height: 96)
         }
     }
 

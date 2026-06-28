@@ -107,6 +107,14 @@ final class RideManager: ObservableObject {
     private var usingBarometer = false
     private var lastRelativeAltitude: Double?
     private var lastGpsAltitude: Double?
+    /// Current altitude relative to the ride's start (climbs +, descents −), fed
+    /// into the elevation graph. Barometer when available, GPS otherwise.
+    private var relativeAltitude: Double = 0
+    private var firstGpsAltitude: Double?
+
+    // Periodic speed/HR/elevation samples for the summary graphs.
+    private var track: [TrackSample] = []
+    private var lastTrackAt: Date?
 
     init(ble: BluetoothManager, location: LocationManager, settings: AppSettings,
          health: HealthKitManager, watch: WatchConnectivityManager, history: RideHistory) {
@@ -154,6 +162,10 @@ final class RideManager: ObservableObject {
         lastGatedLocation = nil
         lastGpsAltitude = nil
         lastRelativeAltitude = nil
+        relativeAltitude = 0
+        firstGpsAltitude = nil
+        track = []
+        lastTrackAt = nil
         lastTick = Date()
         loadBodyMetrics()
         status = .running
@@ -203,6 +215,7 @@ final class RideManager: ObservableObject {
         let savedRoute = route
         let savedRadarPoints = radarPoints
         let savedPasses = passes
+        let savedTrack = downsampledTrack(track)
 
         status = .idle
         stopTicker()
@@ -231,7 +244,8 @@ final class RideManager: ObservableObject {
                                       maxHeartRate: hrMax > 0 ? hrMax : nil,
                                       routePoints: points.isEmpty ? nil : points,
                                       radarPoints: savedRadarPoints.isEmpty ? nil : savedRadarPoints,
-                                      passes: savedPasses.isEmpty ? nil : savedPasses)
+                                      passes: savedPasses.isEmpty ? nil : savedPasses,
+                                      track: savedTrack.isEmpty ? nil : savedTrack)
             history.add(summary)
             finishedSummary = summary
             if settings.saveWorkouts {
@@ -246,6 +260,7 @@ final class RideManager: ObservableObject {
         route = []
         radarPoints = []
         passes = []
+        track = []
         rideStart = nil
         clearPersistence()
         ble.beginSensorMonitor()   // remind later if the sensors are left switched on
@@ -356,6 +371,7 @@ final class RideManager: ObservableObject {
         altimeter.startRelativeAltitudeUpdates(to: .main) { [weak self] data, _ in
             guard let self, let data else { return }
             let alt = data.relativeAltitude.doubleValue   // metres relative to start
+            self.relativeAltitude = alt
             defer { self.lastRelativeAltitude = alt }
             guard self.status == .running, let last = self.lastRelativeAltitude else { return }
             let delta = alt - last
@@ -403,6 +419,7 @@ final class RideManager: ObservableObject {
             movingTimeSeconds += dt
             accumulateCalories(dt: dt)
             updateAutoPause(dt: dt)
+            sampleTrack(now: now)
         case .autoPaused:
             updateAutoResume(dt: dt)
         case .paused, .idle:
@@ -419,6 +436,20 @@ final class RideManager: ObservableObject {
         saveTick += 1
         if saveTick % 4 == 0 { persistSnapshot() }      // ~every 2 s
         if saveTick % 30 == 0 { persistRoute() }        // ~every 15 s
+    }
+
+    /// Record a speed/HR/elevation sample roughly every 2 s while riding, for the
+    /// summary graphs. Bounded so a very long ride can't grow without limit
+    /// (downsampled again to ~250 points when the ride is saved).
+    private func sampleTrack(now: Date) {
+        guard let start = rideStart else { return }
+        if let last = lastTrackAt, now.timeIntervalSince(last) < 2 { return }
+        lastTrackAt = now
+        guard track.count < 3000 else { return }
+        track.append(TrackSample(t: now.timeIntervalSince(start),
+                                 speedMps: currentSpeedMps,
+                                 hr: currentHeartRate,
+                                 altitude: relativeAltitude))
     }
 
     /// Calories. Uses heart rate (Keytel) when the Watch supplies one, otherwise
@@ -562,6 +593,8 @@ final class RideManager: ObservableObject {
                 if dAlt > 1.0 { elevationGainMeters += dAlt }   // 1 m threshold filters noise
             }
             lastGpsAltitude = loc.altitude
+            if firstGpsAltitude == nil { firstGpsAltitude = loc.altitude }
+            relativeAltitude = loc.altitude - (firstGpsAltitude ?? loc.altitude)
         }
     }
 
@@ -610,6 +643,13 @@ final class RideManager: ObservableObject {
         openPass = nil
         lastPassFrameSeen = nil
         lastThreatPresentAt = nil
+    }
+
+    /// Reduce the speed/HR/elevation series to ~250 samples for storage.
+    private func downsampledTrack(_ samples: [TrackSample]) -> [TrackSample] {
+        guard samples.count > 250 else { return samples }
+        let stride = samples.count / 250
+        return samples.enumerated().compactMap { idx, s in idx % stride == 0 ? s : nil }
     }
 
     /// Reduce the GPS track to ~250 points for a lightweight stored summary map.

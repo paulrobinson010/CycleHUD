@@ -44,11 +44,13 @@ and standard BLE speed/cadence sensors work too.
   it, calories simply aren't shown. Requires the HealthKit capability (see Setup).
 - **Ride summary & history** — every ride ends with a summary card (distance,
   time, average/peak speed, heart rate, ascent, calories) over a map of your
-  route. Past rides are listed under **Settings → Previous rides** and reopen the
-  same summary.
+  route, plus **speed, heart-rate and elevation graphs** for the whole ride. Past
+  rides are listed under **Settings → Previous rides** and reopen the same
+  summary.
 - **Vehicles on the map** — each vehicle the radar flags during a ride is dropped
   as a pin on that ride's route map, with a count, so you can see where traffic
-  came up behind you.
+  came up behind you. Open the full-screen map and **tap a vehicle** to pull up
+  that pass's full trace (distance, your speed and the closing speed over time).
 - **"Sensors left on" reminder** — if your radar or speed/cadence sensors are
   still switched on 5 minutes after a ride ends, a notification names which ones
   so you can switch them off and save their batteries.

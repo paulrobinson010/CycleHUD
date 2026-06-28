@@ -23,8 +23,30 @@ enum SampleRide {
             maxHeartRate: 169,
             routePoints: route,
             radarPoints: radar.isEmpty ? nil : radar,
-            passes: passes.isEmpty ? nil : passes
+            passes: passes.isEmpty ? nil : passes,
+            track: trackSamples(movingTime: movingTime)
         )
+    }
+
+    /// A plausible speed / heart-rate / elevation series over the ride so the
+    /// summary graphs have something to draw: a couple of climbs (HR rising with
+    /// gradient, speed dipping) and descents.
+    private static func trackSamples(movingTime: Double) -> [TrackSample] {
+        var samples: [TrackSample] = []
+        let step = 6.0
+        var t = 0.0
+        while t <= movingTime {
+            let p = t / movingTime                      // 0…1 through the ride
+            // Two rolling climbs over the loop.
+            let hill = sin(p * .pi * 4)                 // -1…1
+            let altitude = 22 * (1 - cos(p * .pi * 4)) + hill * 6   // metres, rolling
+            let speedKmh = 26 - hill * 7 + sin(t / 40) * 1.5        // slower uphill
+            let hr = Int((138 + hill * 18 + sin(t / 55) * 4).rounded())
+            samples.append(TrackSample(t: t, speedMps: max(2, speedKmh) / 3.6,
+                                       hr: hr, altitude: altitude))
+            t += step
+        }
+        return samples
     }
 
     /// Perimeter loop of Central Park, clockwise from Columbus Circle,
