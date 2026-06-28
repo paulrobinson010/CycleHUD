@@ -10,10 +10,16 @@ ideas **parked pending validation**, so the reasoning isn't lost.
 of cars (and ideally bikes) approaching from behind. Radar held by a 3D-printed
 clip on a waistband/race-belt. Possibly **watch-only** (no phone needed on a run).
 
-**Verdict: feasible and potentially genuinely useful** (runners already use Garmin
-Varia radars this way), but must be **field-validated before investing** in a
-mount or a standalone watch build. The software is mostly reuse; the risks are
-physical and, if watch-only, platform constraints.
+**Verdict: feasible and potentially genuinely useful**, but must be
+**field-validated before investing** in a mount or a standalone watch build. The
+software is mostly reuse; the risks are physical and, if watch-only, platform
+constraints.
+
+(Precedent unverified: an earlier assumption that runners already repurpose
+Garmin Varia radars this way did *not* hold up to a quick web search — results
+were all cycling reviews, with no clear evidence of running adoption. The closest
+finding is that radars *detect* runners as overtaking objects, not that runners
+use them. So treat this as standing on its own merits, not on prior art.)
 
 Mostly free:
 - The TR70 BLE protocol is already decoded (`BluetoothManager`) — reusable as-is.
