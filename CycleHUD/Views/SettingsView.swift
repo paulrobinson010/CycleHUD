@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct SettingsView: View {
     @EnvironmentObject var settings: AppSettings
@@ -6,6 +7,12 @@ struct SettingsView: View {
     @EnvironmentObject var ride: RideManager
     @EnvironmentObject var history: RideHistory
     @Environment(\.dismiss) private var dismiss
+
+    /// Set when the rider explicitly picks "Custom" in the wheel-size picker, so
+    /// the picker stays on Custom (letting them type a value) even if that value
+    /// happens to coincide with a preset.
+    @State private var wheelIsCustom = false
+    @FocusState private var circumferenceFocused: Bool
 
     struct WheelPreset: Identifiable {
         let name: String
@@ -51,6 +58,7 @@ struct SettingsView: View {
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 80)
+                            .focused($circumferenceFocused)
                         Text("mm").foregroundStyle(.secondary)
                     }
                 } header: {
@@ -155,6 +163,15 @@ struct SettingsView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
                 }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        circumferenceFocused = false
+                        UIApplication.shared.sendAction(
+                            #selector(UIResponder.resignFirstResponder),
+                            to: nil, from: nil, for: nil)
+                    }
+                }
             }
         }
         .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
@@ -171,10 +188,19 @@ struct SettingsView: View {
     private var wheelPresetBinding: Binding<Double> {
         Binding(
             get: {
-                wheelPresets.first { $0.mm == settings.wheelCircumferenceMM }?.mm ?? -1
+                if wheelIsCustom { return -1 }
+                return wheelPresets.first { $0.mm == settings.wheelCircumferenceMM }?.mm ?? -1
             },
             set: { newValue in
-                if newValue > 0 { settings.wheelCircumferenceMM = newValue }
+                if newValue > 0 {
+                    wheelIsCustom = false
+                    settings.wheelCircumferenceMM = newValue
+                } else {
+                    // "Custom": keep the current value but let the field drive it,
+                    // and jump the keyboard straight to the circumference field.
+                    wheelIsCustom = true
+                    circumferenceFocused = true
+                }
             }
         )
     }
