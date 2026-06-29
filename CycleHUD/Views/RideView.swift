@@ -345,7 +345,7 @@ struct RideView: View {
         }
     }
 
-    private func primaryButton(title: String, system: String, color: Color,
+    private func primaryButton(title: LocalizedStringKey, system: String, color: Color,
                                action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 8) {
@@ -375,7 +375,7 @@ struct RideView: View {
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: "car.fill")
-                Text(carMarkFlash ? "Marked \(ble.carMarkCount)" : "Mark car")
+                Text(carMarkFlash ? String(localized: "Marked \(ble.carMarkCount)") : String(localized: "Mark car"))
             }
             .font(.system(size: 15, weight: .bold, design: .rounded))
             .foregroundStyle(.white)

@@ -122,8 +122,8 @@ struct RideSummaryView: View {
                         Text("Vehicle passes")
                             .font(.system(size: 16, weight: .semibold, design: .rounded))
                             .foregroundStyle(Theme.textPrimary)
-                        Text(fast > 0 ? "\(passes.count) logged · \(fast) fast"
-                                       : "\(passes.count) logged")
+                        Text(fast > 0 ? String(localized: "\(passes.count) logged · \(fast) fast")
+                                       : String(localized: "\(passes.count) logged"))
                             .font(.system(size: 13, weight: .medium, design: .rounded))
                             .foregroundStyle(Theme.textSecondary)
                     }
@@ -144,14 +144,14 @@ struct RideSummaryView: View {
     @ViewBuilder private var graphs: some View {
         if let track = summary.track, track.count >= 2 {
             VStack(spacing: 16) {
-                metricChart(title: "Speed", unit: settings.speedUnit.label,
+                metricChart(title: String(localized: "Speed"), unit: settings.speedUnit.label,
                             color: Theme.accent,
                             points: track.map { ($0.t, settings.speedUnit.value(fromMps: $0.speedMps)) })
                 if track.contains(where: { ($0.hr ?? 0) > 0 }) {
-                    metricChart(title: "Heart rate", unit: "bpm", color: Theme.threatHigh,
+                    metricChart(title: String(localized: "Heart rate"), unit: "bpm", color: Theme.threatHigh,
                                 points: track.compactMap { s in s.hr.map { (s.t, Double($0)) } })
                 }
-                metricChart(title: "Elevation", unit: settings.distanceUnit.shortLabel,
+                metricChart(title: String(localized: "Elevation"), unit: settings.distanceUnit.shortLabel,
                             color: Theme.good, filled: true,
                             points: track.map { ($0.t, settings.distanceUnit.shortValue(fromMeters: $0.altitude)) })
             }
@@ -204,17 +204,17 @@ struct RideSummaryView: View {
     /// Stat cells, including heart rate only when the ride captured it.
     private var stats: [(String, String, String)] {
         var s: [(String, String, String)] = [
-            ("Time", timeValue, ""),
-            ("Avg Speed", avgSpeedValue, settings.speedUnit.label),
+            (String(localized: "Time"), timeValue, ""),
+            (String(localized: "Avg Speed"), avgSpeedValue, settings.speedUnit.label),
         ]
         if let avg = summary.averageHeartRate {
-            s.append(("Avg HR", "\(avg)", "bpm"))
-            s.append(("Max HR", summary.maxHeartRate.map { "\($0)" } ?? "—", "bpm"))
+            s.append((String(localized: "Avg HR"), Fmt.int(avg), "bpm"))
+            s.append((String(localized: "Max HR"), summary.maxHeartRate.map { Fmt.int($0) } ?? "—", "bpm"))
         }
-        s.append(("Ascent", ascentValue, settings.distanceUnit.shortLabel))
-        s.append(("Calories", caloriesValue, "kcal"))
+        s.append((String(localized: "Ascent"), ascentValue, settings.distanceUnit.shortLabel))
+        s.append((String(localized: "Calories"), caloriesValue, "kcal"))
         if let radar = summary.radarPoints, !radar.isEmpty {
-            s.append(("Vehicles", "\(radar.count)", ""))
+            s.append((String(localized: "Vehicles"), Fmt.int(radar.count), ""))
         }
         return s
     }

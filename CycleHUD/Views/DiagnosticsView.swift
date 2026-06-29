@@ -100,7 +100,7 @@ struct DiagnosticsView: View {
 
             Section("Radar") {
                 LabeledContent("Updates received", value: Fmt.int(ble.radarPacketCount))
-                Text(ble.radarPacketCount > 0 ? "Radar is sending data ✓" : "No radar data yet")
+                Text(ble.radarPacketCount > 0 ? String(localized: "Radar is sending data ✓") : String(localized: "No radar data yet"))
                     .foregroundStyle(ble.radarPacketCount > 0 ? Theme.good : .orange)
                 if !ble.lastRadarHex.isEmpty {
                     VStack(alignment: .leading, spacing: 2) {

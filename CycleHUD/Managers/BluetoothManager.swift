@@ -47,11 +47,11 @@ enum RoleStatus {
 
     var detail: String {
         switch self {
-        case .notConfigured: return "Not set up"
-        case .connecting: return "Connecting…"
-        case .connected: return "Connected"
-        case .retrying: return "Reconnecting…"
-        case .failed: return "Unavailable"
+        case .notConfigured: return String(localized: "Not set up")
+        case .connecting: return String(localized: "Connecting…")
+        case .connected: return String(localized: "Connected")
+        case .retrying: return String(localized: "Reconnecting…")
+        case .failed: return String(localized: "Unavailable")
         }
     }
 }

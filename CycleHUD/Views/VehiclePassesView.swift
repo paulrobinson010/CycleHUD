@@ -139,9 +139,10 @@ struct PassDetailView: View {
         }
     }
 
-    private func stat(_ title: String, _ value: String, _ color: Color) -> some View {
+    private func stat(_ title: LocalizedStringKey, _ value: String, _ color: Color) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(title.uppercased())
+            Text(title)
+                .textCase(.uppercase)
                 .font(Theme.labelFont)
                 .foregroundStyle(Theme.textSecondary)
             Text(value)

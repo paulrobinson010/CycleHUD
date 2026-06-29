@@ -41,7 +41,7 @@ struct PairingView: View {
                         }
                     }
                     if discoverable.isEmpty {
-                        Text(ble.isScanning ? "Searching…" : "No new devices found.")
+                        Text(ble.isScanning ? String(localized: "Searching…") : String(localized: "No new devices found."))
                             .foregroundStyle(.secondary)
                     }
                 } header: {

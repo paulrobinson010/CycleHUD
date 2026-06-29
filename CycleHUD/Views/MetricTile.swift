@@ -3,7 +3,7 @@ import SwiftUI
 /// A single labelled metric (value + unit). All tiles in a row share the same
 /// `valueSize` and `height` so the grid stays visually uniform.
 struct MetricTile: View {
-    let title: String
+    let title: LocalizedStringKey
     let value: String
     let unit: String
     var valueSize: CGFloat = 28
@@ -13,7 +13,8 @@ struct MetricTile: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(title.uppercased())
+            Text(title)
+                .textCase(.uppercase)
                 .font(Theme.labelFont)
                 .foregroundStyle(alert ? Color.white.opacity(0.85) : Theme.textSecondary)
             HStack(alignment: .firstTextBaseline, spacing: 4) {
