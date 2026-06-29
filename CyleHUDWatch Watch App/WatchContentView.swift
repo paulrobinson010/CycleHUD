@@ -9,10 +9,10 @@ struct WatchContentView: View {
         VStack(spacing: 6) {
             threatBanner
 
-            Text(Fmt.decimal(session.speedMps * 3.6, 1))
+            Text(Fmt.decimal(session.speedDisplay, 1))
                 .font(.system(size: 46, weight: .bold, design: .rounded))
                 .monospacedDigit()
-            Text("km/h")
+            Text(session.speedUnitLabel)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
                 .foregroundStyle(.secondary)
 
@@ -21,7 +21,8 @@ struct WatchContentView: View {
                        value: session.heartRate > 0 ? Fmt.int(session.heartRate) : "—",
                        alert: session.hrWarningActive)
                 Spacer()
-                metric(label: "KM", value: Fmt.decimal(session.distanceMeters / 1000, 2))
+                metric(label: session.distanceUnitLabel.uppercased(),
+                       value: Fmt.decimal(session.distanceDisplay, 2))
             }
             .padding(.top, 2)
         }
@@ -34,7 +35,7 @@ struct WatchContentView: View {
             if session.threatLevel >= 0 {
                 HStack(spacing: 6) {
                     Image(systemName: "car.fill")
-                    Text(session.nearestThreatMeters.map { "\(Fmt.int($0)) m" } ?? String(localized: "Car"))
+                    Text(nearestThreatText ?? String(localized: "Car"))
                         .fontWeight(.bold)
                 }
                 .font(.system(size: 16, weight: .bold, design: .rounded))
@@ -86,6 +87,17 @@ struct WatchContentView: View {
         case 0: return Color(red: 1.0, green: 0.85, blue: 0.25)
         default: return .black
         }
+    }
+
+    /// Nearest-vehicle distance for the banner, shown in feet for imperial riders
+    /// (matching their distance unit) or metres otherwise. The raw value stays in
+    /// metres on `session` so the haptic cadence is unaffected.
+    private var nearestThreatText: String? {
+        guard let m = session.nearestThreatMeters else { return nil }
+        if session.distanceUnitLabel == "mi" {
+            return "\(Fmt.int(Double(m) * 3.280839895)) ft"
+        }
+        return "\(Fmt.int(m)) m"
     }
 
     private var statusLabel: String {

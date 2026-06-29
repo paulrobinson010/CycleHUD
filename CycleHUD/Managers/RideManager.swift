@@ -482,8 +482,10 @@ final class RideManager: ObservableObject {
         let nearest = ble.threats.map { Int($0.distanceMeters.rounded()) }.min()
         // During the demo, present as "running" so the Watch starts its workout
         // session (real HR) for testing without a full ride.
-        watch.sendMirror(speedMps: currentSpeedMps,
-                         distanceMeters: distanceMeters,
+        watch.sendMirror(speedDisplay: settings.speedUnit.value(fromMps: currentSpeedMps),
+                         speedUnit: settings.speedUnit.label,
+                         distanceDisplay: settings.distanceUnit.value(fromMeters: distanceMeters),
+                         distanceUnit: settings.distanceUnit.label,
                          rideStatusRaw: demoActive ? "running" : statusRaw,
                          threatLevel: levels.max() ?? -1,
                          nearestThreatMeters: nearest,

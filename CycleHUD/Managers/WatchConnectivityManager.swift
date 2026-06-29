@@ -48,14 +48,19 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
     // MARK: - Outgoing
 
     /// Push the current ride state to the Watch face (best-effort, low priority).
-    func sendMirror(speedMps: Double, distanceMeters: Double, rideStatusRaw: String,
+    func sendMirror(speedDisplay: Double, speedUnit: String,
+                    distanceDisplay: Double, distanceUnit: String, rideStatusRaw: String,
                     threatLevel: Int, nearestThreatMeters: Int?, radarLost: Bool,
                     hrWarningBpm: Int, hapticsMuted: Bool) {
         #if canImport(WatchConnectivity)
         guard let session, session.activationState == .activated else { return }
+        // Speed/distance are sent already converted to the rider's units (the phone
+        // owns the unit setting), with their labels, so the Watch just displays them.
         var payload: [String: Any] = [
-            "speed": speedMps,
-            "distance": distanceMeters,
+            "spdV": speedDisplay,
+            "spdU": speedUnit,
+            "dstV": distanceDisplay,
+            "dstU": distanceUnit,
             "status": rideStatusRaw,
             "threat": threatLevel,
             "radarLost": radarLost,

@@ -11,8 +11,11 @@ import WatchKit
 /// authoritative Health workout (it has the GPS route).
 final class WatchSessionManager: NSObject, ObservableObject {
 
-    @Published var speedMps: Double = 0
-    @Published var distanceMeters: Double = 0
+    // Speed/distance arrive already in the rider's units (converted by the phone).
+    @Published var speedDisplay: Double = 0
+    @Published var speedUnitLabel: String = "km/h"
+    @Published var distanceDisplay: Double = 0
+    @Published var distanceUnitLabel: String = "km"
     @Published var statusRaw: String = "idle"
     @Published var threatLevel: Int = -1
     @Published var nearestThreatMeters: Int?
@@ -240,8 +243,10 @@ final class WatchSessionManager: NSObject, ObservableObject {
     // MARK: - Apply mirrored state
 
     private func apply(_ data: [String: Any]) {
-        if let v = data["speed"] as? Double { speedMps = v }
-        if let v = data["distance"] as? Double { distanceMeters = v }
+        if let v = data["spdV"] as? Double { speedDisplay = v }
+        if let v = data["spdU"] as? String { speedUnitLabel = v }
+        if let v = data["dstV"] as? Double { distanceDisplay = v }
+        if let v = data["dstU"] as? String { distanceUnitLabel = v }
         if let v = data["threat"] as? Int { threatLevel = v }
         nearestThreatMeters = data["nearest"] as? Int
         if let v = data["radarLost"] as? Bool { radarLost = v }
