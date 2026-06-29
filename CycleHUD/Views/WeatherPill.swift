@@ -5,6 +5,7 @@ import SwiftUI
 /// and the required Apple Weather attribution. Tap for a little detail sheet.
 struct WeatherPill: View {
     let nowcast: RainNowcast?
+    var status: WeatherManager.Status = .idle
     var compact = false
     @State private var showDetail = false
 
@@ -16,7 +17,34 @@ struct WeatherPill: View {
                     WeatherDetailView(nowcast: n)
                         .presentationDetents([.height(260)])
                 }
+        } else if nowcast == nil, !compact, let s = statusText {
+            // No forecast yet — show a muted status (only when idle) so the
+            // feature is visibly "on" rather than silently absent.
+            statusPill(s)
         }
+    }
+
+    /// Muted feedback while there's no forecast (idle screen only).
+    private var statusText: String? {
+        switch status {
+        case .loading, .idle: return "Checking weather…"
+        case .unavailable:    return "Weather unavailable"
+        case .ready:          return nil
+        }
+    }
+
+    private func statusPill(_ text: String) -> some View {
+        HStack(spacing: 7) {
+            Image(systemName: status == .unavailable ? "cloud.slash" : "cloud")
+                .font(.system(size: 14, weight: .bold))
+            Text(text)
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
+        }
+        .foregroundStyle(Theme.textSecondary)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
+        .background(Capsule().fill(.ultraThinMaterial))
+        .overlay(Capsule().stroke(Theme.textSecondary.opacity(0.15), lineWidth: 1))
     }
 
     private func pill(_ n: RainNowcast) -> some View {

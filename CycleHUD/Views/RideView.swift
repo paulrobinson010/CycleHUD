@@ -44,7 +44,7 @@ struct RideView: View {
                 switch sheet {
                 case .pairing: PairingView(showAccessHint: pairingFromOnboarding).environmentObject(ble)
                 case .settings: SettingsView().environmentObject(settings).environmentObject(ble)
-                        .environmentObject(ride).environmentObject(history)
+                        .environmentObject(ride).environmentObject(history).environmentObject(weather)
                 }
             }
             .preferredColorScheme(appColorScheme)
@@ -173,9 +173,10 @@ struct RideView: View {
     /// rain is current/coming) while riding so it doesn't clutter the HUD. Renders
     /// nothing — and takes no space — when there's nothing to show.
     @ViewBuilder private var weatherRow: some View {
-        if settings.weatherEnabled, weather.nowcast != nil {
+        if settings.weatherEnabled {
             HStack {
-                WeatherPill(nowcast: weather.nowcast, compact: ride.status != .idle)
+                WeatherPill(nowcast: weather.nowcast, status: weather.status,
+                            compact: ride.status != .idle)
                 Spacer(minLength: 0)
             }
         }

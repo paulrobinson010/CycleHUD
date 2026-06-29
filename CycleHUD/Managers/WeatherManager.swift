@@ -20,6 +20,9 @@ final class WeatherManager: ObservableObject {
 
     @Published private(set) var nowcast: RainNowcast?
     @Published private(set) var status: Status = .idle
+    /// Human-readable last error / state, surfaced in Diagnostics for debugging.
+    @Published private(set) var lastErrorText: String?
+    @Published private(set) var lastUpdated: Date?
 
     /// Supplied by the app: the current coordinate and whether weather is enabled.
     var locationProvider: (() -> CLLocation?)?
@@ -51,8 +54,13 @@ final class WeatherManager: ObservableObject {
 
     /// Refresh if enabled, located, and the throttle has elapsed (or forced).
     func refresh(force: Bool = false) async {
-        guard isEnabled?() ?? false else { nowcast = nil; status = .idle; return }
-        guard let loc = locationProvider?() else { return }   // no fix yet; try again later
+        guard isEnabled?() ?? false else {
+            nowcast = nil; status = .idle; lastErrorText = nil; return
+        }
+        guard let loc = locationProvider?() else {
+            lastErrorText = "Waiting for a location fix…"   // can't fetch without a coordinate
+            return
+        }
         if !force, let last = lastFetch, Date().timeIntervalSince(last) < minInterval { return }
 
         #if canImport(WeatherKit)
@@ -60,16 +68,20 @@ final class WeatherManager: ObservableObject {
         do {
             let result = try await fetchNowcast(for: loc)
             lastFetch = Date()
+            lastUpdated = Date()
+            lastErrorText = nil
             nowcast = result
             status = .ready
             fireAlertIfNeeded(result)
         } catch {
             // Leave the last good value; only flag unavailable if we have nothing.
             if nowcast == nil { status = .unavailable }
+            lastErrorText = error.localizedDescription
             AppLog.shared.log("Weather fetch failed: \(error.localizedDescription)")
         }
         #else
         status = .unavailable
+        lastErrorText = "WeatherKit not available in this build."
         #endif
     }
 

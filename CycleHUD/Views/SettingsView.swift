@@ -6,6 +6,7 @@ struct SettingsView: View {
     @EnvironmentObject var ble: BluetoothManager
     @EnvironmentObject var ride: RideManager
     @EnvironmentObject var history: RideHistory
+    @EnvironmentObject var weather: WeatherManager
     @Environment(\.dismiss) private var dismiss
 
     /// Set when the rider explicitly picks "Custom" in the wheel-size picker, so
@@ -156,7 +157,7 @@ struct SettingsView: View {
                 Section {
                     NavigationLink {
                         DiagnosticsView().environmentObject(ble).environmentObject(settings)
-                            .environmentObject(history)
+                            .environmentObject(history).environmentObject(weather)
                     } label: {
                         Label("Sensor diagnostics", systemImage: "stethoscope")
                     }

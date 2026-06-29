@@ -7,6 +7,7 @@ struct DiagnosticsView: View {
     @EnvironmentObject var ble: BluetoothManager
     @EnvironmentObject var settings: AppSettings
     @EnvironmentObject var history: RideHistory
+    @EnvironmentObject var weather: WeatherManager
     @State private var logText = ""
     @State private var sampleAdded = false
 
@@ -69,6 +70,34 @@ struct DiagnosticsView: View {
                     .font(.system(.caption2, design: .monospaced))
                     .textSelection(.enabled)
             }
+            Section {
+                LabeledContent("Enabled", value: settings.weatherEnabled ? "Yes" : "No")
+                LabeledContent("Status", value: weatherStatus)
+                if let u = weather.lastUpdated {
+                    LabeledContent("Last updated",
+                                   value: u.formatted(date: .omitted, time: .standard))
+                }
+                if let n = weather.nowcast {
+                    Text(n.alertMessage).foregroundStyle(Theme.good)
+                }
+                if let e = weather.lastErrorText {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Last message").font(.caption).foregroundStyle(.secondary)
+                        Text(e).font(.system(.footnote, design: .monospaced))
+                            .foregroundStyle(.orange).textSelection(.enabled)
+                    }
+                }
+                Button {
+                    Task { await weather.refresh(force: true) }
+                } label: {
+                    Label("Refresh weather now", systemImage: "arrow.clockwise")
+                }
+            } header: {
+                Text("Weather")
+            } footer: {
+                Text("If status stays “unavailable”, the WeatherKit service may still be provisioning on your App ID (can take a few hours after enabling), or the app needs a location fix — go outside and tap Refresh. The exact error appears above.")
+            }
+
             Section("Radar data") {
                 LabeledContent("Packets received", value: "\(ble.radarPacketCount)")
                 Text(ble.radarPacketCount > 0 ? "Radar is streaming ✓" : "No radar data received yet")
@@ -103,6 +132,15 @@ struct DiagnosticsView: View {
             logText = lastLines(AppLog.shared.contents(), 120)
         }
         .refreshable { logText = lastLines(AppLog.shared.contents(), 120) }
+    }
+
+    private var weatherStatus: String {
+        switch weather.status {
+        case .idle: return "Idle"
+        case .loading: return "Checking…"
+        case .ready: return "OK"
+        case .unavailable: return "Unavailable"
+        }
     }
 
     /// Show only the most recent lines so the view stays light.
