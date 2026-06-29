@@ -22,6 +22,12 @@ struct UnitsOnboardingView: View {
             }
 
             VStack(alignment: .leading, spacing: 18) {
+                pickerRow(title: "Language") {
+                    Picker("Language", selection: $settings.appLanguage) {
+                        ForEach(AppSettings.supportedLanguages) { Text($0.name).tag($0.code) }
+                    }
+                    .pickerStyle(.menu)
+                }
                 pickerRow(title: "Speed") {
                     Picker("Speed", selection: $settings.speedUnit) {
                         ForEach(SpeedUnit.allCases) { Text($0.label).tag($0) }

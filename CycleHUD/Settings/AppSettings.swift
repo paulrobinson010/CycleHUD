@@ -22,7 +22,25 @@ final class AppSettings: ObservableObject {
         static let darkModeEnabled = "darkModeEnabled"
         static let weatherEnabled = "weatherEnabled"
         static let weatherAlertsEnabled = "weatherAlertsEnabled"
+        static let appLanguage = "appLanguage"
     }
+
+    /// A language the rider can pick in-app. Empty code = follow the device.
+    struct AppLanguage: Identifiable {
+        let code: String
+        let name: String
+        var id: String { code }
+    }
+
+    static let supportedLanguages: [AppLanguage] = [
+        .init(code: "", name: "System"),
+        .init(code: "en-GB", name: "English (UK)"),
+        .init(code: "en-US", name: "English (US)"),
+        .init(code: "de-DE", name: "Deutsch"),
+        .init(code: "fr-FR", name: "Français"),
+        .init(code: "it-IT", name: "Italiano"),
+        .init(code: "es-ES", name: "Español"),
+    ]
 
     private let defaults = UserDefaults.standard
 
@@ -58,6 +76,27 @@ final class AppSettings: ObservableObject {
     @Published var weatherEnabled: Bool { didSet { defaults.set(weatherEnabled, forKey: Keys.weatherEnabled) } }
     /// Notify (and buzz the Watch) when rain is imminent.
     @Published var weatherAlertsEnabled: Bool { didSet { defaults.set(weatherAlertsEnabled, forKey: Keys.weatherAlertsEnabled) } }
+    /// In-app language override (BCP-47 code, or "" to follow the device).
+    @Published var appLanguage: String {
+        didSet { defaults.set(appLanguage, forKey: Keys.appLanguage); applyLanguage() }
+    }
+
+    /// The locale the app should display in — the override, or the device default.
+    var appLocale: Locale {
+        appLanguage.isEmpty ? .autoupdatingCurrent : Locale(identifier: appLanguage)
+    }
+
+    /// Apply the language override: tell the system which localization to load
+    /// (also takes full effect on next launch, incl. system permission dialogs)
+    /// and point number formatting at the chosen locale immediately.
+    private func applyLanguage() {
+        if appLanguage.isEmpty {
+            defaults.removeObject(forKey: "AppleLanguages")
+        } else {
+            defaults.set([appLanguage], forKey: "AppleLanguages")
+        }
+        Fmt.locale = appLocale
+    }
 
     /// The warning threshold to broadcast to the Watch — 0 when disabled.
     var effectiveHRWarningBpm: Int { hrWarningEnabled ? hrWarningBpm : 0 }
@@ -80,7 +119,8 @@ final class AppSettings: ObservableObject {
             Keys.saveWorkouts: true,
             Keys.darkModeEnabled: false,
             Keys.weatherEnabled: true,
-            Keys.weatherAlertsEnabled: true
+            Keys.weatherAlertsEnabled: true,
+            Keys.appLanguage: ""
         ])
 
         speedUnit = SpeedUnit(rawValue: defaults.string(forKey: Keys.speedUnit) ?? "") ?? .kmh
@@ -100,6 +140,8 @@ final class AppSettings: ObservableObject {
         darkModeEnabled = defaults.bool(forKey: Keys.darkModeEnabled)
         weatherEnabled = defaults.bool(forKey: Keys.weatherEnabled)
         weatherAlertsEnabled = defaults.bool(forKey: Keys.weatherAlertsEnabled)
+        appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
+        applyLanguage()
     }
 
     var wheelCircumferenceMeters: Double { wheelCircumferenceMM / 1000.0 }

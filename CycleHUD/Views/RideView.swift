@@ -39,6 +39,7 @@ struct RideView: View {
                 .frame(width: geo.size.width, height: geo.size.height)
             }
         }
+        .environment(\.locale, settings.appLocale)
         .sheet(item: $activeSheet) { sheet in
             Group {
                 switch sheet {
@@ -47,18 +48,18 @@ struct RideView: View {
                         .environmentObject(ride).environmentObject(history).environmentObject(weather)
                 }
             }
-            .preferredColorScheme(appColorScheme)
+            .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
         }
         .sheet(item: $ride.finishedSummary) { summary in
             RideSummaryView(summary: summary).environmentObject(settings)
-                .preferredColorScheme(appColorScheme)
+                .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
         }
         .fullScreenCover(isPresented: Binding(
             get: { !settings.hasChosenUnits },
             set: { _ in }
         )) {
             UnitsOnboardingView().environmentObject(settings)
-                .preferredColorScheme(appColorScheme)
+                .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
         }
         .onAppear { updateOrientation(); checkPermissions() }
         .onChange(of: scenePhase) { _, phase in
@@ -203,9 +204,12 @@ struct RideView: View {
 
     private var statusBar: some View {
         HStack(spacing: 6) {
-            RolePill(label: "RAD", fullName: "Radar", status: ble.status(for: .radar))
-            RolePill(label: "SPD", fullName: "Speed", status: ble.status(for: .speed))
-            RolePill(label: "CAD", fullName: "Cadence", status: ble.status(for: .cadence))
+            RolePill(label: String(localized: "RAD", comment: "3-letter pill for the Radar sensor"),
+                     fullName: String(localized: "Radar"), status: ble.status(for: .radar))
+            RolePill(label: String(localized: "SPD", comment: "3-letter pill for the Speed sensor"),
+                     fullName: String(localized: "Speed"), status: ble.status(for: .speed))
+            RolePill(label: String(localized: "CAD", comment: "3-letter pill for the Cadence sensor"),
+                     fullName: String(localized: "Cadence"), status: ble.status(for: .cadence))
             gpsPill
 
             Spacer(minLength: 4)

@@ -49,6 +49,16 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Picker("Language", selection: $settings.appLanguage) {
+                        ForEach(AppSettings.supportedLanguages) { Text($0.name).tag($0.code) }
+                    }
+                } header: {
+                    Text("Language")
+                } footer: {
+                    Text("Choose the app's language, or follow your device. Some text (such as system permission prompts) updates after you reopen the app.")
+                }
+
+                Section {
                     Picker("Wheel size", selection: wheelPresetBinding) {
                         ForEach(wheelPresets) { Text($0.name).tag($0.mm) }
                     }

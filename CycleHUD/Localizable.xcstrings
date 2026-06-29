@@ -1,0 +1,6886 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    " for about %@": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " for about %@"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " for about %@"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " für etwa %@"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " pendant environ %@"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " per circa %@"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " durante unos %@"
+          }
+        }
+      }
+    },
+    "%@ %@ still connected after your ride. Switch %@ off to save battery.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@ still connected after your ride. Switch %@ off to save battery."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@ still connected after your ride. Switch %@ off to save battery."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@ nach deiner Fahrt noch verbunden. Schalte %@ aus, um Akku zu sparen."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@ encore connecté(s) après votre sortie. Éteignez %@ pour économiser la batterie."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@ ancora connesso/i dopo l'uscita. Spegni %@ per risparmiare batteria."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@ aún conectado(s) tras tu ruta. Apaga %@ para ahorrar batería."
+          }
+        }
+      }
+    },
+    "%@ hours": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ hours"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ hours"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Std."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ h"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ore"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ h"
+          }
+        }
+      }
+    },
+    "%@ min": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ min"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ min"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Min."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ min"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ min"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ min"
+          }
+        }
+      }
+    },
+    ", lasting about %@": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", lasting about %@"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", lasting about %@"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", dauert etwa %@"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", pendant environ %@"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", per circa %@"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", durante unos %@"
+          }
+        }
+      }
+    },
+    "<1h": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "<1h"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "<1h"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "<1 Std."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "<1 h"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "<1 h"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "<1 h"
+          }
+        }
+      }
+    },
+    "A record of your rides and sensor activity, kept on your device. If something didn't work as expected, you can share it so the problem can be looked into.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A record of your rides and sensor activity, kept on your device. If something didn't work as expected, you can share it so the problem can be looked into."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A record of your rides and sensor activity, kept on your device. If something didn't work as expected, you can share it so the problem can be looked into."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine Aufzeichnung deiner Fahrten und Sensoraktivität, lokal auf deinem Gerät. Falls etwas nicht wie erwartet funktioniert hat, kannst du sie teilen, damit das Problem untersucht werden kann."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un historique de vos sorties et de l'activité des capteurs, conservé sur votre appareil. Si quelque chose n'a pas fonctionné comme prévu, vous pouvez le partager pour que le problème soit examiné."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un registro delle tue uscite e dell'attività dei sensori, conservato sul dispositivo. Se qualcosa non ha funzionato come previsto, puoi condividerlo per far esaminare il problema."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un registro de tus rutas y de la actividad de los sensores, guardado en tu dispositivo. Si algo no funcionó como esperabas, puedes compartirlo para que se revise el problema."
+          }
+        }
+      }
+    },
+    "A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts. Uses Apple Weather and your location. The alert sends a notification (which also reaches your Apple Watch) when rain is within ~15 minutes.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts. Uses Apple Weather and your location. The alert sends a notification (which also reaches your Apple Watch) when rain is within ~15 minutes."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts. Uses Apple Weather and your location. The alert sends a notification (which also reaches your Apple Watch) when rain is within ~15 minutes."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine Kurzvorhersage für Regen (nächste Stunde) erscheint im Fahrtbildschirm — wenn Regen kommt, mit Intensität, Beginn und Dauer. Nutzt Apple Wetter und deinen Standort. Die Warnung sendet eine Mitteilung (auch an deine Apple Watch), wenn Regen in ~15 Minuten zu erwarten ist."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une prévision de pluie à court terme (prochaine heure) apparaît sur l'écran de sortie — quand la pluie arrive, avec son intensité, son début et sa durée. Utilise Apple Météo et votre position. L'alerte envoie une notification (aussi sur votre Apple Watch) quand la pluie est à ~15 minutes."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una previsione di pioggia a breve termine (prossima ora) appare nella schermata dell'uscita — quando arriva la pioggia, con intensità, inizio e durata. Usa Apple Meteo e la tua posizione. L'avviso invia una notifica (anche al tuo Apple Watch) quando la pioggia è entro ~15 minuti."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aparece un pronóstico de lluvia a corto plazo (próxima hora) en la pantalla de ruta: cuándo llega la lluvia, su intensidad, cuándo empieza y cuánto dura. Usa Apple Tiempo y tu ubicación. El aviso envía una notificación (también a tu Apple Watch) cuando la lluvia está a ~15 minutos."
+          }
+        }
+      }
+    },
+    "AUTO-PAUSED": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AUTO-PAUSED"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AUTO-PAUSED"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AUTO-PAUSE"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PAUSE AUTO"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PAUSA AUTO"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PAUSA AUTO"
+          }
+        }
+      }
+    },
+    "Activity log": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activity log"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activity log"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivitätsprotokoll"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Journal d'activité"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registro attività"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registro de actividad"
+          }
+        }
+      }
+    },
+    "Adds a “Mark car” button to the ride screen so you can tag the moment a vehicle passes — handy for checking radar timing. Most riders can leave this off.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adds a “Mark car” button to the ride screen so you can tag the moment a vehicle passes — handy for checking radar timing. Most riders can leave this off."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adds a “Mark car” button to the ride screen so you can tag the moment a vehicle passes — handy for checking radar timing. Most riders can leave this off."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fügt dem Fahrtbildschirm eine Schaltfläche „Auto markieren“ hinzu, um den Moment einer Vorbeifahrt zu markieren — praktisch zum Prüfen des Radar-Timings. Die meisten können das ausgeschaltet lassen."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoute un bouton « Marquer voiture » à l'écran de sortie pour marquer le passage d'un véhicule — pratique pour vérifier le timing du radar. La plupart des cyclistes peuvent le laisser désactivé."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiunge un pulsante « Segna auto » alla schermata dell'uscita per segnare il momento di un passaggio — utile per verificare i tempi del radar. La maggior parte può lasciarlo disattivato."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añade un botón « Marcar coche » a la pantalla de ruta para marcar cuándo pasa un vehículo: útil para comprobar el sincronismo del radar. La mayoría puede dejarlo desactivado."
+          }
+        }
+      }
+    },
+    "Adds one example ride (a Central Park loop with a route, vehicles on the map and vehicle passes) to Previous rides, so you can see how a completed ride looks. Swipe to delete it there when you're done.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adds one example ride (a Central Park loop with a route, vehicles on the map and vehicle passes) to Previous rides, so you can see how a completed ride looks. Swipe to delete it there when you're done."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adds one example ride (a Central Park loop with a route, vehicles on the map and vehicle passes) to Previous rides, so you can see how a completed ride looks. Swipe to delete it there when you're done."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fügt eine Beispielfahrt (eine Runde durch den Central Park mit Route, Fahrzeugen auf der Karte und Vorbeifahrten) zu „Frühere Fahrten“ hinzu, damit du siehst, wie eine abgeschlossene Fahrt aussieht. Dort zum Löschen wischen, wenn du fertig bist."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoute une sortie d'exemple (une boucle de Central Park avec itinéraire, véhicules sur la carte et dépassements) aux Sorties précédentes, pour voir à quoi ressemble une sortie terminée. Balayez pour la supprimer ensuite."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiunge un'uscita di esempio (un giro a Central Park con percorso, veicoli sulla mappa e sorpassi) a Uscite precedenti, così vedi com'è un'uscita completata. Scorri per eliminarla quando hai finito."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añade una ruta de ejemplo (una vuelta a Central Park con recorrido, vehículos en el mapa y adelantamientos) a Rutas anteriores, para ver cómo se ve una ruta completada. Desliza para eliminarla cuando termines."
+          }
+        }
+      }
+    },
+    "Advanced": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Advanced"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Advanced"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erweitert"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avancé"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avanzate"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avanzado"
+          }
+        }
+      }
+    },
+    "Alert me when rain is imminent": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alert me when rain is imminent"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alert me when rain is imminent"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warnen, wenn Regen bevorsteht"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "M'alerter quand la pluie est imminente"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avvisami quando sta per piovere"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avisarme cuando la lluvia sea inminente"
+          }
+        }
+      }
+    },
+    "Alerts & Ride": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alerts & Ride"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alerts & Ride"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warnungen & Fahrt"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alertes et sortie"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avvisi e uscita"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alertas y ruta"
+          }
+        }
+      }
+    },
+    "Appearance": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Darstellung"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apparence"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aspetto"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apariencia"
+          }
+        }
+      }
+    },
+    "Ascent": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ascent"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ascent"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anstieg"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dénivelé"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dislivello"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desnivel"
+          }
+        }
+      }
+    },
+    "Auto-pause when stopped": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-pause when stopped"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-pause when stopped"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatisch pausieren beim Anhalten"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause auto à l'arrêt"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausa automatica da fermo"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausa automática al detenerse"
+          }
+        }
+      }
+    },
+    "Auto-paused": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-paused"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-paused"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatisch pausiert"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause auto"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausa automatica"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausa automática"
+          }
+        }
+      }
+    },
+    "Available": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Available"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Available"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verfügbar"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disponible"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disponibile"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disponible"
+          }
+        }
+      }
+    },
+    "Avg HR": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avg HR"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avg HR"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ø HF"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC moy."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC media"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC media"
+          }
+        }
+      }
+    },
+    "Avg Speed": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avg Speed"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avg Speed"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ø Geschw."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vit. moy."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vel. media"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vel. media"
+          }
+        }
+      }
+    },
+    "Beep on new vehicle": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beep on new vehicle"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beep on new vehicle"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signalton bei neuem Fahrzeug"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bip à chaque nouveau véhicule"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bip per nuovo veicolo"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pitido con vehículo nuevo"
+          }
+        }
+      }
+    },
+    "Bluetooth is off": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth is off"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth is off"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth ist aus"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le Bluetooth est désactivé"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il Bluetooth è disattivato"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El Bluetooth está desactivado"
+          }
+        }
+      }
+    },
+    "CAD": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CAD"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CAD"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KAD"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CAD"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CAD"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CAD"
+          }
+        }
+      }
+    },
+    "Cadence": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cadence"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cadence"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trittfrequenz"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cadence"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cadenza"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cadencia"
+          }
+        }
+      }
+    },
+    "Calories": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calories"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calories"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kalorien"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calories"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calorie"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calorías"
+          }
+        }
+      }
+    },
+    "Car": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Car"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Car"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voiture"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coche"
+          }
+        }
+      }
+    },
+    "Checking…": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking…"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking…"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüfe…"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérification…"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verifica…"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprobando…"
+          }
+        }
+      }
+    },
+    "Choose the app's language, or follow your device. Some text (such as system permission prompts) updates after you reopen the app.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose the app's language, or follow your device. Some text (such as system permission prompts) updates after you reopen the app."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose the app's language, or follow your device. Some text (such as system permission prompts) updates after you reopen the app."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle die Sprache der App oder folge deinem Gerät. Manche Texte (etwa System-Berechtigungsdialoge) werden erst nach erneutem Öffnen der App aktualisiert."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez la langue de l'app ou suivez votre appareil. Certains textes (comme les demandes d'autorisation système) se mettent à jour après réouverture de l'app."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scegli la lingua dell'app o segui il dispositivo. Alcuni testi (come le richieste di autorizzazione di sistema) si aggiornano dopo aver riaperto l'app."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige el idioma de la app o sigue tu dispositivo. Algunos textos (como los avisos de permisos del sistema) se actualizan al reabrir la app."
+          }
+        }
+      }
+    },
+    "Choose your preferred units. You can change these any time in Settings.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose your preferred units. You can change these any time in Settings."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose your preferred units. You can change these any time in Settings."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle deine bevorzugten Einheiten. Du kannst sie jederzeit in den Einstellungen ändern."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez vos unités préférées. Vous pouvez les modifier à tout moment dans les Réglages."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scegli le unità che preferisci. Puoi cambiarle in qualsiasi momento nelle Impostazioni."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige tus unidades preferidas. Puedes cambiarlas en cualquier momento en Ajustes."
+          }
+        }
+      }
+    },
+    "Circumference": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Circumference"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Circumference"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umfang"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Circonférence"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Circonferenza"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Circunferencia"
+          }
+        }
+      }
+    },
+    "Clear": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frei"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dégagé"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Libero"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Despejado"
+          }
+        }
+      }
+    },
+    "Clear log": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear log"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear log"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protokoll löschen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effacer le journal"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancella registro"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borrar registro"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schließen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fermer"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chiudi"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar"
+          }
+        }
+      }
+    },
+    "Closest": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closest"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closest"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nächster"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le plus proche"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Più vicino"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más cercano"
+          }
+        }
+      }
+    },
+    "Closing": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closing"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closing"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annäherung"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approche"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avvicinamento"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aproximación"
+          }
+        }
+      }
+    },
+    "Connect a sensor from the Sensors screen to see its connection details here.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect a sensor from the Sensors screen to see its connection details here."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect a sensor from the Sensors screen to see its connection details here."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbinde einen Sensor über den Sensoren-Bildschirm, um hier seine Verbindungsdetails zu sehen."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connectez un capteur depuis l'écran Capteurs pour voir ses détails de connexion ici."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connetti un sensore dalla schermata Sensori per vederne qui i dettagli di connessione."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conecta un sensor desde la pantalla Sensores para ver aquí sus detalles de conexión."
+          }
+        }
+      }
+    },
+    "Connected": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbunden"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecté"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connesso"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conectado"
+          }
+        }
+      }
+    },
+    "Connecting": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecting"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecting"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbinde"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connexion"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connessione"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conectando"
+          }
+        }
+      }
+    },
+    "Connection details and live sensor activity — handy if a sensor connects but isn't showing data.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection details and live sensor activity — handy if a sensor connects but isn't showing data."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection details and live sensor activity — handy if a sensor connects but isn't showing data."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbindungsdetails und Live-Sensoraktivität — praktisch, wenn ein Sensor verbindet, aber keine Daten zeigt."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Détails de connexion et activité en direct des capteurs — pratique si un capteur se connecte mais n'affiche pas de données."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dettagli di connessione e attività dei sensori in tempo reale — utili se un sensore si connette ma non mostra dati."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detalles de conexión y actividad de los sensores en vivo: útil si un sensor se conecta pero no muestra datos."
+          }
+        }
+      }
+    },
+    "CycleHUD is a personal quality-of-life cycling HUD built around the Coospo TR70 rear radar. Vehicles behind you appear on a clear radar lane with Apple Watch wrist alerts, and each ride is saved as an Apple Health workout. Also works with Garmin Varia–compatible radars and standard CSC speed/cadence sensors.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CycleHUD is a personal quality-of-life cycling HUD built around the Coospo TR70 rear radar. Vehicles behind you appear on a clear radar lane with Apple Watch wrist alerts, and each ride is saved as an Apple Health workout. Also works with Garmin Varia–compatible radars and standard CSC speed/cadence sensors."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CycleHUD is a personal quality-of-life cycling HUD built around the Coospo TR70 rear radar. Vehicles behind you appear on a clear radar lane with Apple Watch wrist alerts, and each ride is saved as an Apple Health workout. Also works with Garmin Varia–compatible radars and standard CSC speed/cadence sensors."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CycleHUD ist ein persönliches Komfort-HUD fürs Radfahren rund um das Coospo-TR70-Heckradar. Fahrzeuge hinter dir erscheinen auf einer klaren Radar-Spur mit Apple-Watch-Warnungen, und jede Fahrt wird als Apple-Health-Training gespeichert. Funktioniert auch mit Garmin-Varia-kompatiblen Radargeräten und Standard-CSC-Geschwindigkeits-/Trittfrequenzsensoren."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CycleHUD est un HUD vélo personnel et pratique conçu autour du radar arrière Coospo TR70. Les véhicules derrière vous apparaissent sur une voie radar claire avec des alertes Apple Watch, et chaque sortie est enregistrée comme entraînement Apple Santé. Compatible aussi avec les radars compatibles Garmin Varia et les capteurs de vitesse/cadence CSC standard."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CycleHUD è un HUD personale per la bici basato sul radar posteriore Coospo TR70. I veicoli dietro di te appaiono su una corsia radar chiara con avvisi sull'Apple Watch e ogni uscita viene salvata come allenamento Apple Salute. Funziona anche con radar compatibili Garmin Varia e sensori di velocità/cadenza CSC standard."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CycleHUD es un HUD personal para ciclismo basado en el radar trasero Coospo TR70. Los vehículos detrás de ti aparecen en un carril de radar claro con avisos en el Apple Watch, y cada ruta se guarda como entrenamiento de Apple Salud. También funciona con radares compatibles con Garmin Varia y sensores de velocidad/cadencia CSC estándar."
+          }
+        }
+      }
+    },
+    "Dark": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dunkel"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sombre"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scuro"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oscuro"
+          }
+        }
+      }
+    },
+    "Dark mode": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark mode"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark mode"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dunkelmodus"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mode sombre"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modo scuro"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modo oscuro"
+          }
+        }
+      }
+    },
+    "Dark mode uses a black background; off is a light theme. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark mode uses a black background; off is a light theme. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark mode uses a black background; off is a light theme. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Dunkelmodus nutzt einen schwarzen Hintergrund; aus ist ein helles Design. Das Querformat fixiert den Fahrtbildschirm im Querformat — Radar links, Fahrdaten und Steuerung rechts — und dreht sich nicht beim Drehen des Telefons; Einstellungen und andere Bildschirme bleiben im Hochformat."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le mode sombre utilise un fond noir ; désactivé, un thème clair. Le mode paysage fixe l'écran de sortie en paysage — radar à gauche, données et commandes à droite — sans basculer quand vous tournez le téléphone ; les Réglages et autres écrans restent en portrait."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il modo scuro usa uno sfondo nero; disattivato è un tema chiaro. Il layout orizzontale blocca la schermata dell'uscita in orizzontale — radar a sinistra, dati e comandi a destra — e non ruota quando giri il telefono; le Impostazioni e le altre schermate restano in verticale."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El modo oscuro usa un fondo negro; desactivado es un tema claro. El diseño horizontal fija la pantalla de ruta en horizontal —radar a la izquierda, datos y controles a la derecha— y no gira al rotar el teléfono; los Ajustes y otras pantallas permanecen en vertical."
+          }
+        }
+      }
+    },
+    "Demo": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démo"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo"
+          }
+        }
+      }
+    },
+    "Diagnostics": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostics"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostics"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnose"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostic"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostica"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnóstico"
+          }
+        }
+      }
+    },
+    "Display": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Display"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Display"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anzeige"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Affichage"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schermo"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pantalla"
+          }
+        }
+      }
+    },
+    "Distance": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distance"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distance"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distanz"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distance"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distanza"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distancia"
+          }
+        }
+      }
+    },
+    "Distance and closing speed are measured by the radar (~2 readings/second). Estimated vehicle speed adds your own speed onto the closing speed and is an approximation.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distance and closing speed are measured by the radar (~2 readings/second). Estimated vehicle speed adds your own speed onto the closing speed and is an approximation."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distance and closing speed are measured by the radar (~2 readings/second). Estimated vehicle speed adds your own speed onto the closing speed and is an approximation."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distanz und Annäherungsgeschwindigkeit werden vom Radar gemessen (~2 Messungen/Sekunde). Die geschätzte Fahrzeuggeschwindigkeit addiert deine eigene Geschwindigkeit und ist ein Näherungswert."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La distance et la vitesse d'approche sont mesurées par le radar (~2 mesures/seconde). La vitesse estimée du véhicule ajoute votre propre vitesse et reste approximative."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distanza e velocità di avvicinamento sono misurate dal radar (~2 letture/secondo). La velocità stimata del veicolo aggiunge la tua velocità ed è un'approssimazione."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La distancia y la velocidad de aproximación las mide el radar (~2 lecturas/segundo). La velocidad estimada del vehículo suma tu propia velocidad y es una aproximación."
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fertig"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminé"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fatto"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hecho"
+          }
+        }
+      }
+    },
+    "Don’t save workouts": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Don’t save workouts"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Don’t save workouts"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trainings nicht speichern"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ne pas enregistrer"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non salvare"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No guardar entrenamientos"
+          }
+        }
+      }
+    },
+    "Duration": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duration"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duration"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dauer"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durée"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durata"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duración"
+          }
+        }
+      }
+    },
+    "Each ride is saved to Apple Health. Your weight is used with Apple Watch heart rate to estimate calories — without a weight, calories aren't shown. Read from Apple Health when available.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each ride is saved to Apple Health. Your weight is used with Apple Watch heart rate to estimate calories — without a weight, calories aren't shown. Read from Apple Health when available."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each ride is saved to Apple Health. Your weight is used with Apple Watch heart rate to estimate calories — without a weight, calories aren't shown. Read from Apple Health when available."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jede Fahrt wird in Apple Health gespeichert. Dein Gewicht wird mit der Apple-Watch-Herzfrequenz zur Kalorienschätzung genutzt — ohne Gewicht werden keine Kalorien angezeigt. Wird, wenn verfügbar, aus Apple Health gelesen."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chaque sortie est enregistrée dans Apple Santé. Votre poids est utilisé avec la fréquence cardiaque de l'Apple Watch pour estimer les calories — sans poids, les calories ne s'affichent pas. Lu depuis Apple Santé si disponible."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ogni uscita viene salvata in Apple Salute. Il tuo peso è usato con la frequenza cardiaca dell'Apple Watch per stimare le calorie — senza peso, le calorie non vengono mostrate. Letto da Apple Salute se disponibile."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada ruta se guarda en Apple Salud. Tu peso se usa con la frecuencia cardíaca del Apple Watch para estimar las calorías; sin peso, no se muestran. Se lee de Apple Salud cuando está disponible."
+          }
+        }
+      }
+    },
+    "Elevation": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elevation"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elevation"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Höhe"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Altitude"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Altitudine"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Altitud"
+          }
+        }
+      }
+    },
+    "Enabled": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enabled"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enabled"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiviert"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activé"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attivo"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activado"
+          }
+        }
+      }
+    },
+    "Forget": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forget"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forget"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oublier"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dimentica"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Olvidar"
+          }
+        }
+      }
+    },
+    "HR": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HR"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HR"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HF"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC"
+          }
+        }
+      }
+    },
+    "Health access is off": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health access is off"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health access is off"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health-Zugriff ist aus"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'accès à Santé est désactivé"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'accesso a Salute è disattivato"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El acceso a Salud está desactivado"
+          }
+        }
+      }
+    },
+    "Heart Rate": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart Rate"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart Rate"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herzfrequenz"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fréquence cardiaque"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frequenza cardiaca"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frecuencia cardíaca"
+          }
+        }
+      }
+    },
+    "Heart rate": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart rate"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart rate"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herzfrequenz"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fréquence cardiaque"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frequenza cardiaca"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frecuencia cardíaca"
+          }
+        }
+      }
+    },
+    "Heart-rate warning": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart-rate warning"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart-rate warning"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herzfrequenz-Warnung"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alerte de fréquence cardiaque"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avviso frequenza cardiaca"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aviso de frecuencia cardíaca"
+          }
+        }
+      }
+    },
+    "Idle": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Idle"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Idle"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inaktiv"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inactif"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inattivo"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inactivo"
+          }
+        }
+      }
+    },
+    "It's raining now (%@)%@.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It's raining now (%@)%@."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It's raining now (%@)%@."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es regnet jetzt (%@)%@."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il pleut maintenant (%@)%@."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sta piovendo ora (%@)%@."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Está lloviendo ahora (%@)%@."
+          }
+        }
+      }
+    },
+    "Keep screen on while riding": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep screen on while riding"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep screen on while riding"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildschirm beim Fahren anlassen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garder l'écran allumé en roulant"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tieni lo schermo acceso durante la pedalata"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantener la pantalla encendida al rodar"
+          }
+        }
+      }
+    },
+    "Landscape layout": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Landscape layout"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Landscape layout"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Querformat"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mode paysage"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Layout orizzontale"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diseño horizontal"
+          }
+        }
+      }
+    },
+    "Language": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprache"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langue"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lingua"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Idioma"
+          }
+        }
+      }
+    },
+    "Last updated": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last updated"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last updated"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zuletzt aktualisiert"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dernière mise à jour"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ultimo aggiornamento"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Última actualización"
+          }
+        }
+      }
+    },
+    "Later": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Later"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Later"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Später"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus tard"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Più tardi"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más tarde"
+          }
+        }
+      }
+    },
+    "Latest signal (technical)": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latest signal (technical)"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latest signal (technical)"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letztes Signal (technisch)"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dernier signal (technique)"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ultimo segnale (tecnico)"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Última señal (técnica)"
+          }
+        }
+      }
+    },
+    "Light": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hell"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clair"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chiaro"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claro"
+          }
+        }
+      }
+    },
+    "Location is off": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location is off"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location is off"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standort ist aus"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La localisation est désactivée"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La posizione è disattivata"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La ubicación está desactivada"
+          }
+        }
+      }
+    },
+    "Mark car": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark car"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark car"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto markieren"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marquer voiture"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segna auto"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar coche"
+          }
+        }
+      }
+    },
+    "Mark that a car just passed": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark that a car just passed"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark that a car just passed"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markieren, dass gerade ein Auto vorbeifuhr"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marquer qu'une voiture vient de passer"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segna che è appena passata un'auto"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar que acaba de pasar un coche"
+          }
+        }
+      }
+    },
+    "Max HR": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max HR"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max HR"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max. HF"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC max"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC max"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC máx"
+          }
+        }
+      }
+    },
+    "NOT CONNECTED": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOT CONNECTED"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOT CONNECTED"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NICHT VERBUNDEN"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NON CONNECTÉ"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NON CONNESSO"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NO CONECTADO"
+          }
+        }
+      }
+    },
+    "No": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nein"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No"
+          }
+        }
+      }
+    },
+    "No new devices found.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No new devices found."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No new devices found."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine neuen Geräte gefunden."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun nouvel appareil trouvé."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessun nuovo dispositivo trovato."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se encontraron dispositivos nuevos."
+          }
+        }
+      }
+    },
+    "No rain expected in the next hour.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No rain expected in the next hour."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No rain expected in the next hour."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In der nächsten Stunde kein Regen erwartet."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune pluie prévue dans l'heure."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna pioggia prevista nella prossima ora."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se espera lluvia en la próxima hora."
+          }
+        }
+      }
+    },
+    "No rides yet. Your completed rides will appear here.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No rides yet. Your completed rides will appear here."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No rides yet. Your completed rides will appear here."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Fahrten. Deine abgeschlossenen Fahrten erscheinen hier."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune sortie pour l'instant. Vos sorties terminées apparaîtront ici."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ancora nessuna uscita. Le uscite completate appariranno qui."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay rutas. Tus rutas completadas aparecerán aquí."
+          }
+        }
+      }
+    },
+    "None": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "None"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "None"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keiner"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ninguna"
+          }
+        }
+      }
+    },
+    "Now": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Now"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Now"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jetzt"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maintenant"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ora"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora"
+          }
+        }
+      }
+    },
+    "OK": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "Onboarding": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onboarding"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onboarding"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einführung"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Présentation"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Introduzione"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Introducción"
+          }
+        }
+      }
+    },
+    "Open Settings": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einstellungen öffnen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir les Réglages"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri Impostazioni"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir Ajustes"
+          }
+        }
+      }
+    },
+    "Open in Maps": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in Maps"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in Maps"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Karten öffnen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir dans Plans"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri in Mappe"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir en Mapas"
+          }
+        }
+      }
+    },
+    "PAUSED": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PAUSED"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PAUSED"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PAUSE"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PAUSE"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IN PAUSA"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EN PAUSA"
+          }
+        }
+      }
+    },
+    "Paused": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paused"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paused"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausiert"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En pause"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In pausa"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En pausa"
+          }
+        }
+      }
+    },
+    "Permission needed": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permission needed"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permission needed"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Berechtigung erforderlich"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autorisation requise"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autorizzazione necessaria"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permiso necesario"
+          }
+        }
+      }
+    },
+    "Plays a one-time preview on the main screen — a vehicle closing in from low (yellow) through medium (orange) to high (red), the new-vehicle beep, escalating Apple Watch wrist taps, and a “radar off” wrist alert at the end — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a one-time preview on the main screen — a vehicle closing in from low (yellow) through medium (orange) to high (red), the new-vehicle beep, escalating Apple Watch wrist taps, and a “radar off” wrist alert at the end — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a one-time preview on the main screen — a vehicle closing in from low (yellow) through medium (orange) to high (red), the new-vehicle beep, escalating Apple Watch wrist taps, and a “radar off” wrist alert at the end — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt eine einmalige Vorschau auf dem Hauptbildschirm — ein Fahrzeug, das von niedrig (gelb) über mittel (orange) zu hoch (rot) näher kommt, der Signalton für neue Fahrzeuge, stärker werdende Apple-Watch-Tipps und am Ende eine „Radar aus“-Warnung — damit du jede Warnung vor der Fahrt fühlen und feinjustieren kannst. Läuft einmal durch und stoppt; der Start einer Fahrt beendet sie ebenfalls."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lance un aperçu unique sur l'écran principal — un véhicule qui approche de faible (jaune) à moyen (orange) puis élevé (rouge), le bip de nouveau véhicule, des tapotements d'Apple Watch de plus en plus rapides et une alerte « radar éteint » à la fin — pour ressentir et régler chaque alerte avant une sortie. Il se joue une fois puis s'arrête ; démarrer une sortie l'arrête aussi."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riproduce un'anteprima singola nella schermata principale — un veicolo che si avvicina da basso (giallo) a medio (arancione) ad alto (rosso), il bip per i nuovi veicoli, tocchi dell'Apple Watch sempre più rapidi e un avviso « radar spento » alla fine — così puoi sentire e regolare ogni avviso prima di un'uscita. Si esegue una volta e si ferma; anche avviare un'uscita lo interrompe."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reproduce una vista previa única en la pantalla principal: un vehículo que se acerca de bajo (amarillo) a medio (naranja) y alto (rojo), el pitido de vehículo nuevo, toques cada vez más rápidos del Apple Watch y un aviso « radar apagado » al final, para que sientas y ajustes cada alerta antes de rodar. Se reproduce una vez y se detiene; iniciar una ruta también lo detiene."
+          }
+        }
+      }
+    },
+    "Previous Rides": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous Rides"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous Rides"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frühere Fahrten"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorties précédentes"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uscite precedenti"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rutas anteriores"
+          }
+        }
+      }
+    },
+    "Previous rides": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous rides"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous rides"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frühere Fahrten"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorties précédentes"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uscite precedenti"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rutas anteriores"
+          }
+        }
+      }
+    },
+    "RAD": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAD"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAD"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAD"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAD"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAD"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAD"
+          }
+        }
+      }
+    },
+    "RADAR OFF": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RADAR OFF"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RADAR OFF"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RADAR AUS"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RADAR ÉTEINT"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RADAR OFF"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RADAR APAGADO"
+          }
+        }
+      }
+    },
+    "RAIN": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAIN"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAIN"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REGEN"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PLUIE"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PIOGGIA"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LLUVIA"
+          }
+        }
+      }
+    },
+    "REC": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REC"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REC"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REC"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REC"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REC"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REC"
+          }
+        }
+      }
+    },
+    "Radar": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Radar"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Radar"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Radar"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Radar"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Radar"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Radar"
+          }
+        }
+      }
+    },
+    "Rain expected %@ — %@%@.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain expected %@ — %@%@."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain expected %@ — %@%@."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regen erwartet %@ — %@%@."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pluie attendue %@ — %@%@."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pioggia prevista %@ — %@%@."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lluvia prevista %@ — %@%@."
+          }
+        }
+      }
+    },
+    "Rain expected %@%@.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain expected %@%@."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain expected %@%@."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regen erwartet %@%@."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pluie attendue %@%@."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pioggia prevista %@%@."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lluvia prevista %@%@."
+          }
+        }
+      }
+    },
+    "Rain expected soon.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain expected soon."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain expected soon."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bald Regen erwartet."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pluie attendue bientôt."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pioggia prevista a breve."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se espera lluvia pronto."
+          }
+        }
+      }
+    },
+    "Rain has started%@.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain has started%@."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain has started%@."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es hat zu regnen begonnen%@."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La pluie a commencé%@."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ha iniziato a piovere%@."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ha empezado a llover%@."
+          }
+        }
+      }
+    },
+    "Rain incoming": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain incoming"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain incoming"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regen im Anzug"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pluie en approche"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pioggia in arrivo"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lluvia en camino"
+          }
+        }
+      }
+    },
+    "Rain nowcast": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain nowcast"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain nowcast"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regen-Kurzvorhersage"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prévision de pluie"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previsione pioggia"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pronóstico de lluvia"
+          }
+        }
+      }
+    },
+    "Re-shows the welcome screen you saw when you first opened the app. Close Settings (or reopen the app) to see it. Your rides and other settings are kept.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Re-shows the welcome screen you saw when you first opened the app. Close Settings (or reopen the app) to see it. Your rides and other settings are kept."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Re-shows the welcome screen you saw when you first opened the app. Close Settings (or reopen the app) to see it. Your rides and other settings are kept."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeigt den Begrüßungsbildschirm erneut, den du beim ersten Öffnen der App gesehen hast. Schließe die Einstellungen (oder öffne die App neu), um ihn zu sehen. Deine Fahrten und übrigen Einstellungen bleiben erhalten."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réaffiche l'écran d'accueil vu à la première ouverture de l'app. Fermez les Réglages (ou rouvrez l'app) pour le voir. Vos sorties et autres réglages sont conservés."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra di nuovo la schermata di benvenuto vista al primo avvio dell'app. Chiudi le Impostazioni (o riapri l'app) per vederla. Le tue uscite e le altre impostazioni vengono mantenute."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vuelve a mostrar la pantalla de bienvenida que viste al abrir la app por primera vez. Cierra Ajustes (o reabre la app) para verla. Tus rutas y demás ajustes se conservan."
+          }
+        }
+      }
+    },
+    "Ready": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bereit"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prêt"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pronto"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listo"
+          }
+        }
+      }
+    },
+    "Recent log": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent log"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent log"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letztes Protokoll"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Journal récent"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registro recente"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registro reciente"
+          }
+        }
+      }
+    },
+    "Refresh": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisieren"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualiser"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar"
+          }
+        }
+      }
+    },
+    "Refresh weather now": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh weather now"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh weather now"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wetter jetzt aktualisieren"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualiser la météo"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiorna meteo ora"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar el tiempo ahora"
+          }
+        }
+      }
+    },
+    "Remembered": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remembered"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remembered"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespeichert"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mémorisé"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Memorizzato"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recordado"
+          }
+        }
+      }
+    },
+    "Retrying": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retrying"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retrying"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erneuter Versuch"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvel essai"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuovo tentativo"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reintentando"
+          }
+        }
+      }
+    },
+    "Ride Summary": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ride Summary"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ride Summary"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fahrtübersicht"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Résumé de la sortie"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riepilogo uscita"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resumen de la ruta"
+          }
+        }
+      }
+    },
+    "Route": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Route"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Route"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Route"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Itinéraire"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Percorso"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ruta"
+          }
+        }
+      }
+    },
+    "SPD": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SPD"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SPD"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TMP"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VIT"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VEL"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VEL"
+          }
+        }
+      }
+    },
+    "STOPPED": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STOPPED"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STOPPED"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GESTOPPT"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ARRÊTÉ"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FERMO"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DETENIDO"
+          }
+        }
+      }
+    },
+    "Sample data": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sample data"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sample data"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beispieldaten"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Données d'exemple"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dati di esempio"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datos de ejemplo"
+          }
+        }
+      }
+    },
+    "Save rides as Apple Health workouts": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save rides as Apple Health workouts"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save rides as Apple Health workouts"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fahrten als Apple-Health-Trainings speichern"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer les sorties comme entraînements Apple Santé"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salva le uscite come allenamenti Apple Health"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar rutas como entrenamientos de Apple Salud"
+          }
+        }
+      }
+    },
+    "Save rides as workouts": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save rides as workouts"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save rides as workouts"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fahrten als Trainings speichern"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer les sorties comme entraînements"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salva le uscite come allenamenti"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar rutas como entrenamientos"
+          }
+        }
+      }
+    },
+    "Scan": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suchen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scanner"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerca"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar"
+          }
+        }
+      }
+    },
+    "Searching…": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searching…"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searching…"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche…"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recherche…"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ricerca…"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscando…"
+          }
+        }
+      }
+    },
+    "Sensor details": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensor details"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensor details"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensordetails"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Détails du capteur"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dettagli sensore"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detalles del sensor"
+          }
+        }
+      }
+    },
+    "Sensor diagnostics": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensor diagnostics"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensor diagnostics"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensordiagnose"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostic des capteurs"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostica sensori"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnóstico de sensores"
+          }
+        }
+      }
+    },
+    "Sensors": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensors"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensors"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensoren"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capteurs"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensori"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensores"
+          }
+        }
+      }
+    },
+    "Sensors still on": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensors still on"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensors still on"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensoren noch aktiv"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capteurs encore allumés"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensori ancora accesi"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensores aún encendidos"
+          }
+        }
+      }
+    },
+    "Settings": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einstellungen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réglages"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostazioni"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajustes"
+          }
+        }
+      }
+    },
+    "Share log file": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share log file"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share log file"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protokolldatei teilen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partager le journal"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Condividi il registro"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compartir registro"
+          }
+        }
+      }
+    },
+    "Show welcome screen again": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show welcome screen again"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show welcome screen again"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Begrüßungsbildschirm erneut anzeigen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revoir l'écran d'accueil"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra di nuovo la schermata di benvenuto"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar de nuevo la pantalla de bienvenida"
+          }
+        }
+      }
+    },
+    "Show “Mark car” button": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show “Mark car” button"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show “Mark car” button"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schaltfläche „Auto markieren“ anzeigen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le bouton « Marquer voiture »"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra il pulsante « Segna auto »"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar el botón « Marcar coche »"
+          }
+        }
+      }
+    },
+    "Slowed by": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slowed by"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slowed by"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlangsamt um"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ralenti de"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rallentato di"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reducido en"
+          }
+        }
+      }
+    },
+    "Speed": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speed"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speed"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geschwindigkeit"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vitesse"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Velocità"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Velocidad"
+          }
+        }
+      }
+    },
+    "Speed Sensor": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speed Sensor"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speed Sensor"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geschwindigkeitssensor"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capteur de vitesse"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensore di velocità"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensor de velocidad"
+          }
+        }
+      }
+    },
+    "Start Riding": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start Riding"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start Riding"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Losfahren"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commencer à rouler"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inizia a pedalare"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empezar a rodar"
+          }
+        }
+      }
+    },
+    "Status": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "État"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stato"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estado"
+          }
+        }
+      }
+    },
+    "Stop": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stopp"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ferma"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detener"
+          }
+        }
+      }
+    },
+    "Tap to connect": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to connect"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to connect"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Verbinden tippen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toucher pour connecter"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tocca per connettere"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toca para conectar"
+          }
+        }
+      }
+    },
+    "Technical details": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Technical details"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Technical details"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Technische Details"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Détails techniques"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dettagli tecnici"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detalles técnicos"
+          }
+        }
+      }
+    },
+    "The new-vehicle beep plays through the phone, and alerts only fire while you're riding (not when idle with the radar on). A paired Apple Watch taps your wrist — once for each new vehicle, faster as one closes in, and a distinct double-buzz if the radar drops out mid-ride. You can mute the beep and the wrist taps (separately or together) straight from the radar screen while riding.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The new-vehicle beep plays through the phone, and alerts only fire while you're riding (not when idle with the radar on). A paired Apple Watch taps your wrist — once for each new vehicle, faster as one closes in, and a distinct double-buzz if the radar drops out mid-ride. You can mute the beep and the wrist taps (separately or together) straight from the radar screen while riding."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The new-vehicle beep plays through the phone, and alerts only fire while you're riding (not when idle with the radar on). A paired Apple Watch taps your wrist — once for each new vehicle, faster as one closes in, and a distinct double-buzz if the radar drops out mid-ride. You can mute the beep and the wrist taps (separately or together) straight from the radar screen while riding."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Signalton für neue Fahrzeuge ertönt über das Telefon, und Warnungen erfolgen nur während der Fahrt (nicht im Leerlauf bei eingeschaltetem Radar). Eine gekoppelte Apple Watch tippt dein Handgelenk an — einmal pro neuem Fahrzeug, schneller beim Näherkommen, und mit deutlichem Doppel-Buzz, falls das Radar während der Fahrt ausfällt. Du kannst den Ton und die Handgelenk-Tipps (einzeln oder zusammen) direkt im Radarbildschirm während der Fahrt stummschalten."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le bip de nouveau véhicule passe par le téléphone, et les alertes ne se déclenchent qu'en roulant (pas à l'arrêt avec le radar allumé). Une Apple Watch jumelée tapote votre poignet — une fois par nouveau véhicule, plus vite à l'approche, et un double-buzz distinct si le radar se coupe en route. Vous pouvez couper le bip et les tapotements (séparément ou ensemble) directement depuis l'écran radar en roulant."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il bip per i nuovi veicoli viene riprodotto dal telefono e gli avvisi scattano solo mentre pedali (non da fermo con il radar acceso). Un Apple Watch abbinato ti tocca il polso — una volta per ogni nuovo veicolo, più veloce all'avvicinarsi, e con un doppio buzz distinto se il radar si interrompe durante l'uscita. Puoi silenziare il bip e i tocchi al polso (separatamente o insieme) direttamente dalla schermata radar mentre pedali."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El pitido de vehículo nuevo suena por el teléfono, y las alertas solo se activan mientras ruedas (no en reposo con el radar encendido). Un Apple Watch emparejado te toca la muñeca: una vez por cada vehículo nuevo, más rápido al acercarse, y con un doble zumbido distinto si el radar se corta durante la ruta. Puedes silenciar el pitido y los toques en la muñeca (por separado o juntos) desde la pantalla del radar mientras ruedas."
+          }
+        }
+      }
+    },
+    "The rain forecast uses Apple Weather and needs your location and an internet connection. If it shows “unavailable”, it's usually temporary — make sure you're online with a GPS signal and tap Refresh. You can turn the forecast off in Settings → Weather.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The rain forecast uses Apple Weather and needs your location and an internet connection. If it shows “unavailable”, it's usually temporary — make sure you're online with a GPS signal and tap Refresh. You can turn the forecast off in Settings → Weather."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The rain forecast uses Apple Weather and needs your location and an internet connection. If it shows “unavailable”, it's usually temporary — make sure you're online with a GPS signal and tap Refresh. You can turn the forecast off in Settings → Weather."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Regenvorhersage nutzt Apple Wetter und benötigt deinen Standort und eine Internetverbindung. Wird „nicht verfügbar“ angezeigt, ist das meist vorübergehend — stelle sicher, dass du online bist und GPS-Empfang hast, und tippe auf Aktualisieren. Du kannst die Vorhersage unter Einstellungen → Wetter deaktivieren."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La prévision de pluie utilise Apple Météo et nécessite votre position et une connexion Internet. Si « indisponible » s'affiche, c'est généralement temporaire — vérifiez votre connexion et le signal GPS, puis touchez Actualiser. Vous pouvez désactiver la prévision dans Réglages → Météo."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La previsione usa Apple Meteo e richiede la tua posizione e una connessione Internet. Se appare « non disponibile », di solito è temporaneo — assicurati di essere online con segnale GPS e tocca Aggiorna. Puoi disattivare la previsione in Impostazioni → Meteo."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El pronóstico usa Apple Tiempo y necesita tu ubicación y conexión a Internet. Si aparece « no disponible », suele ser temporal: asegúrate de tener conexión y señal GPS y toca Actualizar. Puedes desactivar el pronóstico en Ajustes → Tiempo."
+          }
+        }
+      }
+    },
+    "Time": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeit"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temps"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tempo"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiempo"
+          }
+        }
+      }
+    },
+    "Turn on Bluetooth to find your sensors.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn on Bluetooth to find your sensors."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn on Bluetooth to find your sensors."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiviere Bluetooth, um deine Sensoren zu finden."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activez le Bluetooth pour trouver vos capteurs."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attiva il Bluetooth per trovare i sensori."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activa el Bluetooth para encontrar tus sensores."
+          }
+        }
+      }
+    },
+    "Unavailable": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unavailable"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unavailable"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht verfügbar"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indisponible"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non disponibile"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No disponible"
+          }
+        }
+      }
+    },
+    "Units": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Units"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Units"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einheiten"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unités"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unità"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unidades"
+          }
+        }
+      }
+    },
+    "Updates received": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updates received"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updates received"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfangene Aktualisierungen"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mises à jour reçues"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiornamenti ricevuti"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizaciones recibidas"
+          }
+        }
+      }
+    },
+    "Used to convert wheel revolutions into speed. GPS is used when no speed sensor is connected.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Used to convert wheel revolutions into speed. GPS is used when no speed sensor is connected."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Used to convert wheel revolutions into speed. GPS is used when no speed sensor is connected."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dient zur Umrechnung der Radumdrehungen in Geschwindigkeit. Ohne Geschwindigkeitssensor wird GPS verwendet."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sert à convertir les tours de roue en vitesse. Le GPS est utilisé sans capteur de vitesse."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serve a convertire i giri della ruota in velocità. Senza sensore di velocità si usa il GPS."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sirve para convertir las vueltas de rueda en velocidad. Se usa el GPS si no hay sensor de velocidad."
+          }
+        }
+      }
+    },
+    "Vehicle (est.)": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vehicle (est.)"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vehicle (est.)"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fahrzeug (gesch.)"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Véhicule (est.)"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veicolo (stim.)"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vehículo (est.)"
+          }
+        }
+      }
+    },
+    "Vehicle passes": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vehicle passes"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vehicle passes"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fahrzeug-Vorbeifahrten"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dépassements"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorpassi"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adelantamientos"
+          }
+        }
+      }
+    },
+    "Vehicles": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vehicles"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vehicles"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fahrzeuge"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Véhicules"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veicoli"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vehículos"
+          }
+        }
+      }
+    },
+    "Warn above": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warn above"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warn above"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warnen über"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alerter au-dessus de"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avvisa oltre"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avisar por encima de"
+          }
+        }
+      }
+    },
+    "Weather": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weather"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weather"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wetter"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Météo"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meteo"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiempo"
+          }
+        }
+      }
+    },
+    "Weight": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weight"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weight"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gewicht"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poids"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peso"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peso"
+          }
+        }
+      }
+    },
+    "Welcome to CycleHUD": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to CycleHUD"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to CycleHUD"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Willkommen bei CycleHUD"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bienvenue dans CycleHUD"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benvenuto in CycleHUD"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Te damos la bienvenida a CycleHUD"
+          }
+        }
+      }
+    },
+    "Wheel size": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wheel size"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wheel size"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Radgröße"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taille de roue"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dimensione ruota"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tamaño de rueda"
+          }
+        }
+      }
+    },
+    "When your heart rate reaches this, the heart-rate readout turns red and a paired Apple Watch double-buzzes — repeating every 30 seconds while it stays high.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When your heart rate reaches this, the heart-rate readout turns red and a paired Apple Watch double-buzzes — repeating every 30 seconds while it stays high."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When your heart rate reaches this, the heart-rate readout turns red and a paired Apple Watch double-buzzes — repeating every 30 seconds while it stays high."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn deine Herzfrequenz diesen Wert erreicht, wird die Anzeige rot und eine gekoppelte Apple Watch vibriert doppelt — alle 30 Sekunden, solange sie hoch bleibt."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lorsque votre fréquence cardiaque atteint ce seuil, l'affichage devient rouge et une Apple Watch jumelée vibre deux fois — toutes les 30 secondes tant qu'elle reste élevée."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quando la frequenza cardiaca raggiunge questo valore, il dato diventa rosso e un Apple Watch abbinato vibra due volte — ogni 30 secondi finché resta alta."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuando tu frecuencia cardíaca alcanza este valor, la lectura se vuelve roja y un Apple Watch emparejado vibra dos veces, repitiéndose cada 30 segundos mientras siga alta."
+          }
+        }
+      }
+    },
+    "Workouts": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Workouts"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Workouts"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trainings"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entraînements"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allenamenti"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrenamientos"
+          }
+        }
+      }
+    },
+    "Wrist haptics": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wrist haptics"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wrist haptics"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haptik am Handgelenk"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vibrations au poignet"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vibrazioni al polso"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vibración en la muñeca"
+          }
+        }
+      }
+    },
+    "Yes": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yes"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yes"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ja"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oui"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sì"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sí"
+          }
+        }
+      }
+    },
+    "Your speed": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your speed"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your speed"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Geschw."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre vitesse"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La tua velocità"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu velocidad"
+          }
+        }
+      }
+    },
+    "Your weight is used with Apple Watch heart rate to estimate calories. Read from Apple Health when available; without a weight, calories aren't shown.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your weight is used with Apple Watch heart rate to estimate calories. Read from Apple Health when available; without a weight, calories aren't shown."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your weight is used with Apple Watch heart rate to estimate calories. Read from Apple Health when available; without a weight, calories aren't shown."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Gewicht wird mit der Apple-Watch-Herzfrequenz zur Kalorienschätzung genutzt. Wird, wenn verfügbar, aus Apple Health gelesen; ohne Gewicht werden keine Kalorien angezeigt."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre poids est utilisé avec la fréquence cardiaque de l'Apple Watch pour estimer les calories. Lu depuis Apple Santé si disponible ; sans poids, les calories ne s'affichent pas."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il tuo peso è usato con la frequenza cardiaca dell'Apple Watch per stimare le calorie. Letto da Apple Salute se disponibile; senza peso, le calorie non vengono mostrate."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu peso se usa con la frecuencia cardíaca del Apple Watch para estimar las calorías. Se lee de Apple Salud cuando está disponible; sin peso, no se muestran."
+          }
+        }
+      }
+    },
+    "are": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "are"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "are"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sind"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sont"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sono"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "están"
+          }
+        }
+      }
+    },
+    "fast": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fast"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fast"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "schnell"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rapide"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "veloce"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rápido"
+          }
+        }
+      }
+    },
+    "heavy": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "heavy"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "heavy"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stark"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "forte"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "forte"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fuerte"
+          }
+        }
+      }
+    },
+    "in about %@ min": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "in about %@ min"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "in about %@ min"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "in etwa %@ Min."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dans environ %@ min"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tra circa %@ min"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "en unos %@ min"
+          }
+        }
+      }
+    },
+    "is": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "is"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "is"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ist"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "est"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "è"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "está"
+          }
+        }
+      }
+    },
+    "it": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "it"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "it"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "es"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "le"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lo"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lo"
+          }
+        }
+      }
+    },
+    "light": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "light"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "light"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "leicht"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "faible"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "leggera"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ligera"
+          }
+        }
+      }
+    },
+    "moderate": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "moderate"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "moderate"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mäßig"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "modérée"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "moderata"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "moderada"
+          }
+        }
+      }
+    },
+    "n/a": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "n/a"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "n/a"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "k. A."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "s.o."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "n/d"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "n/d"
+          }
+        }
+      }
+    },
+    "slow": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "slow"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "slow"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "langsam"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lent"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lento"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lento"
+          }
+        }
+      }
+    },
+    "slowed %@ %@": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "slowed %@ %@"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "slowed %@ %@"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "verlangsamt %@ %@"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ralenti %@ %@"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rallentato %@ %@"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "reducción %@ %@"
+          }
+        }
+      }
+    },
+    "them": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "them"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "them"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sie"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "les"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "li"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "los"
+          }
+        }
+      }
+    },
+    "within the hour": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "within the hour"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "within the hour"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "innerhalb einer Stunde"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "d'ici une heure"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "entro un'ora"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dentro de una hora"
+          }
+        }
+      }
+    },
+    "you %@": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "you %@"
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "you %@"
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "du %@"
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vous %@"
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tu %@"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tú %@"
+          }
+        }
+      }
+    },
+    "“Closing speed” is what the radar measured as the vehicle approached. Estimated vehicle speed adds your own speed back on, since a car overtaking from behind closes at its speed minus yours.": {
+      "localizations": {
+        "en-GB": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Closing speed” is what the radar measured as the vehicle approached. Estimated vehicle speed adds your own speed back on, since a car overtaking from behind closes at its speed minus yours."
+          }
+        },
+        "en-US": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Closing speed” is what the radar measured as the vehicle approached. Estimated vehicle speed adds your own speed back on, since a car overtaking from behind closes at its speed minus yours."
+          }
+        },
+        "de-DE": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die „Annäherungsgeschwindigkeit“ ist das, was das Radar beim Näherkommen des Fahrzeugs gemessen hat. Die geschätzte Fahrzeuggeschwindigkeit addiert deine eigene Geschwindigkeit, da ein von hinten überholendes Auto mit seiner Geschwindigkeit minus deiner aufschließt."
+          }
+        },
+        "fr-FR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La « vitesse d'approche » est ce que le radar a mesuré à l'approche du véhicule. La vitesse estimée du véhicule y ajoute votre propre vitesse, car une voiture qui double par l'arrière approche à sa vitesse moins la vôtre."
+          }
+        },
+        "it-IT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La « velocità di avvicinamento » è ciò che il radar ha misurato all'avvicinarsi del veicolo. La velocità stimata del veicolo aggiunge la tua velocità, poiché un'auto che sorpassa da dietro si avvicina alla sua velocità meno la tua."
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La « velocidad de aproximación » es lo que midió el radar al acercarse el vehículo. La velocidad estimada del vehículo le suma tu propia velocidad, ya que un coche que adelanta por detrás se acerca a su velocidad menos la tuya."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}
