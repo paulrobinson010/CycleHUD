@@ -10,6 +10,7 @@ struct RideView: View {
     @EnvironmentObject var ride: RideManager
     @EnvironmentObject var watch: WatchConnectivityManager
     @EnvironmentObject var history: RideHistory
+    @EnvironmentObject var weather: WeatherManager
 
     private enum ActiveSheet: Int, Identifiable {
         case pairing, settings
@@ -161,9 +162,22 @@ struct RideView: View {
     private var portraitLayout: some View {
         VStack(spacing: 12) {
             statusBar
+            weatherRow
             radarPanel.frame(maxHeight: .infinity)
             metricsGrid
             controlBar
+        }
+    }
+
+    /// Rain nowcast pill. Full (incl. a muted "dry") when idle; compact (only when
+    /// rain is current/coming) while riding so it doesn't clutter the HUD. Renders
+    /// nothing — and takes no space — when there's nothing to show.
+    @ViewBuilder private var weatherRow: some View {
+        if settings.weatherEnabled, weather.nowcast != nil {
+            HStack {
+                WeatherPill(nowcast: weather.nowcast, compact: ride.status != .idle)
+                Spacer(minLength: 0)
+            }
         }
     }
 
@@ -173,6 +187,7 @@ struct RideView: View {
         HStack(spacing: 12) {
             VStack(spacing: 8) {
                 statusBar
+                weatherRow
                 radarPanel.frame(maxHeight: .infinity)
             }
             .frame(maxWidth: .infinity)

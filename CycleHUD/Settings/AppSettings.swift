@@ -20,6 +20,8 @@ final class AppSettings: ObservableObject {
         static let hrWarningBpm = "hrWarningBpm"
         static let saveWorkouts = "saveWorkouts"
         static let darkModeEnabled = "darkModeEnabled"
+        static let weatherEnabled = "weatherEnabled"
+        static let weatherAlertsEnabled = "weatherAlertsEnabled"
     }
 
     private let defaults = UserDefaults.standard
@@ -52,6 +54,10 @@ final class AppSettings: ObservableObject {
     @Published var saveWorkouts: Bool { didSet { defaults.set(saveWorkouts, forKey: Keys.saveWorkouts) } }
     /// App appearance: off = light (white background), on = dark.
     @Published var darkModeEnabled: Bool { didSet { defaults.set(darkModeEnabled, forKey: Keys.darkModeEnabled) } }
+    /// Short-term rain nowcast (Apple WeatherKit) shown on the ride screen.
+    @Published var weatherEnabled: Bool { didSet { defaults.set(weatherEnabled, forKey: Keys.weatherEnabled) } }
+    /// Notify (and buzz the Watch) when rain is imminent.
+    @Published var weatherAlertsEnabled: Bool { didSet { defaults.set(weatherAlertsEnabled, forKey: Keys.weatherAlertsEnabled) } }
 
     /// The warning threshold to broadcast to the Watch — 0 when disabled.
     var effectiveHRWarningBpm: Int { hrWarningEnabled ? hrWarningBpm : 0 }
@@ -72,7 +78,9 @@ final class AppSettings: ObservableObject {
             Keys.hrWarningEnabled: false,
             Keys.hrWarningBpm: 200,
             Keys.saveWorkouts: true,
-            Keys.darkModeEnabled: false
+            Keys.darkModeEnabled: false,
+            Keys.weatherEnabled: true,
+            Keys.weatherAlertsEnabled: true
         ])
 
         speedUnit = SpeedUnit(rawValue: defaults.string(forKey: Keys.speedUnit) ?? "") ?? .kmh
@@ -90,6 +98,8 @@ final class AppSettings: ObservableObject {
         hrWarningBpm = defaults.integer(forKey: Keys.hrWarningBpm)
         saveWorkouts = defaults.bool(forKey: Keys.saveWorkouts)
         darkModeEnabled = defaults.bool(forKey: Keys.darkModeEnabled)
+        weatherEnabled = defaults.bool(forKey: Keys.weatherEnabled)
+        weatherAlertsEnabled = defaults.bool(forKey: Keys.weatherAlertsEnabled)
     }
 
     var wheelCircumferenceMeters: Double { wheelCircumferenceMM / 1000.0 }

@@ -52,6 +52,31 @@ calories, GPS route) to Apple Health.
   banner if the radar drops out mid-ride.
 - Tap **Stop** → the ride is saved to Apple Health with its route.
 
+## 3a. WeatherKit (rain nowcast — optional)
+
+The ride screen can show a short-term rain forecast (Apple WeatherKit). The code
++ entitlement are already in place; you just enable the service once:
+
+1. **developer.apple.com → Certificates, Identifiers & Profiles → Identifiers →**
+   your **App ID** → tick **WeatherKit** under Capabilities, Save. (Allow a few
+   hours after first enabling — Apple's docs note WeatherKit can take time to
+   start serving for a new App ID.)
+2. In Xcode, **CycleHUD target → Signing & Capabilities → + Capability →
+   WeatherKit** (the `com.apple.developer.weatherkit` entitlement is already in
+   `CycleHUD.entitlements`).
+3. Build/run. The rain pill appears on the ride screen when rain is current or
+   coming; turn it off under **Settings → Weather**.
+
+Notes:
+- **Free** up to 500k calls/month with your Apple Developer membership.
+- **Attribution** to Apple Weather is shown in the pill's detail sheet (required
+  by Apple).
+- **Region:** minute-by-minute precipitation isn't available everywhere; where
+  it's missing the app falls back to an hourly estimate automatically.
+- **To verify on first run:** that `WeatherManager.mmPerHour(_:)` produces
+  sensible mm/hr values (the one unit worth sanity-checking on a real device),
+  and that `minuteForecast` returns data in your area.
+
 ## 4. Watch-face complication (optional)
 
 The app icon is already wired up (`CyleHUDWatch Watch App/Assets.xcassets/AppIcon`),

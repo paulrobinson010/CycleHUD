@@ -17,6 +17,11 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     /// Called for every accepted location fix (used for distance accumulation).
     var onLocation: ((CLLocation) -> Void)?
 
+    /// The most recent accepted fix, kept across mode changes for one-off needs
+    /// like a weather lookup (distinct from `lastAcceptedLocation`, which resets
+    /// per ride for speed derivation).
+    private(set) var currentLocation: CLLocation?
+
     private var lastAcceptedLocation: CLLocation?   // for position-derived speed
 
     /// Power profile for GPS. Full-accuracy navigation GPS is a heavy battery
@@ -103,6 +108,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         }
         speedMps = speed
         lastAcceptedLocation = loc
+        currentLocation = loc
 
         if loc.verticalAccuracy > 0 { altitudeMeters = loc.altitude }
         onLocation?(loc)

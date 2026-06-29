@@ -33,6 +33,7 @@ struct CycleHUDApp: App {
     @StateObject private var watch: WatchConnectivityManager
     @StateObject private var history: RideHistory
     @StateObject private var ride: RideManager
+    @StateObject private var weather: WeatherManager
 
     init() {
         AppLog.shared.installCrashHandlers()
@@ -46,6 +47,7 @@ struct CycleHUDApp: App {
         let history = RideHistory()
         let ride = RideManager(ble: ble, location: location, settings: settings,
                                health: health, watch: watch, history: history)
+        let weather = WeatherManager()
         _settings = StateObject(wrappedValue: settings)
         _ble = StateObject(wrappedValue: ble)
         _location = StateObject(wrappedValue: location)
@@ -53,6 +55,7 @@ struct CycleHUDApp: App {
         _watch = StateObject(wrappedValue: watch)
         _history = StateObject(wrappedValue: history)
         _ride = StateObject(wrappedValue: ride)
+        _weather = StateObject(wrappedValue: weather)
     }
 
     var body: some Scene {
@@ -64,6 +67,7 @@ struct CycleHUDApp: App {
                 .environmentObject(ride)
                 .environmentObject(watch)
                 .environmentObject(history)
+                .environmentObject(weather)
                 .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
                 .onAppear {
                     location.requestAuthorization()
@@ -71,6 +75,13 @@ struct CycleHUDApp: App {
                     health.requestAuthorization()
                     NotificationManager.shared.configure()
                     NotificationManager.shared.requestAuthorization()
+                    weather.locationProvider = { location.currentLocation }
+                    weather.isEnabled = { settings.weatherEnabled }
+                    weather.onImminentRain = { nowcast in
+                        guard settings.weatherAlertsEnabled else { return }
+                        NotificationManager.shared.notifyRain(nowcast.alertMessage)
+                    }
+                    weather.start()
                 }
         }
     }

@@ -98,6 +98,17 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Toggle("Rain nowcast", isOn: $settings.weatherEnabled)
+                    if settings.weatherEnabled {
+                        Toggle("Alert me when rain is imminent", isOn: $settings.weatherAlertsEnabled)
+                    }
+                } header: {
+                    Text("Weather")
+                } footer: {
+                    Text("A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts. Uses Apple Weather and your location. The alert sends a notification (which also reaches your Apple Watch) when rain is within ~15 minutes.")
+                }
+
+                Section {
                     Toggle("Dark mode", isOn: $settings.darkModeEnabled)
                     Toggle("Landscape layout", isOn: $settings.landscapeEnabled)
                 } header: {
