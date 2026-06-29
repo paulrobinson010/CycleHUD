@@ -95,7 +95,7 @@ struct DiagnosticsView: View {
             } header: {
                 Text("Weather")
             } footer: {
-                Text("If status stays “unavailable”, the WeatherKit service may still be provisioning on your App ID (can take a few hours after enabling), or the app needs a location fix — go outside and tap Refresh. The exact error appears above.")
+                Text("The rain forecast uses Apple Weather and needs your location and an internet connection. If it shows “unavailable”, it's usually temporary — make sure you're online with a GPS signal and tap Refresh. You can turn the forecast off in Settings → Weather.")
             }
 
             Section("Radar data") {
