@@ -24,17 +24,17 @@ struct DiagnosticsView: View {
                     Label("Clear log", systemImage: "trash")
                 }
             } header: {
-                Text("Event log")
+                Text("Activity log")
             } footer: {
-                Text("Records ride events, sensor activity and any crash. Share this file after a ride that misbehaved.")
+                Text("A record of your rides and sensor activity, kept on your device. If something didn't work as expected, you can share it so the problem can be looked into.")
             }
 
             Section {
                 Toggle("Show “Mark car” button", isOn: $settings.radarDebugEnabled)
             } header: {
-                Text("Radar debug")
+                Text("Advanced")
             } footer: {
-                Text("Adds a “Mark car” button to the ride screen that timestamps the log as each vehicle passes. Enable this only when debugging a new or misbehaving radar — it's not needed for normal riding.")
+                Text("Adds a “Mark car” button to the ride screen so you can tag the moment a vehicle passes — handy for checking radar timing. Most riders can leave this off.")
             }
 
             Section {
@@ -46,7 +46,7 @@ struct DiagnosticsView: View {
             } header: {
                 Text("Onboarding")
             } footer: {
-                Text("Re-shows the first-launch welcome/units screen. Close Settings (or relaunch the app) to see it. Your rides and other settings are kept.")
+                Text("Re-shows the welcome screen you saw when you first opened the app. Close Settings (or reopen the app) to see it. Your rides and other settings are kept.")
             }
 
             Section {
@@ -62,7 +62,7 @@ struct DiagnosticsView: View {
             } header: {
                 Text("Sample data")
             } footer: {
-                Text("Adds one demo ride (a Central Park loop with a GPS route, radar detections and vehicle passes) to Previous rides — handy for screenshots. Swipe to delete it there when you're done.")
+                Text("Adds one example ride (a Central Park loop with a route, vehicles on the map and vehicle passes) to Previous rides, so you can see how a completed ride looks. Swipe to delete it there when you're done.")
             }
 
             Section("Recent log") {
@@ -82,7 +82,7 @@ struct DiagnosticsView: View {
                 }
                 if let e = weather.lastErrorText {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Last message").font(.caption).foregroundStyle(.secondary)
+                        Text("Technical details").font(.caption).foregroundStyle(.secondary)
                         Text(e).font(.system(.footnote, design: .monospaced))
                             .foregroundStyle(.orange).textSelection(.enabled)
                     }
@@ -98,13 +98,13 @@ struct DiagnosticsView: View {
                 Text("The rain forecast uses Apple Weather and needs your location and an internet connection. If it shows “unavailable”, it's usually temporary — make sure you're online with a GPS signal and tap Refresh. You can turn the forecast off in Settings → Weather.")
             }
 
-            Section("Radar data") {
-                LabeledContent("Packets received", value: "\(ble.radarPacketCount)")
-                Text(ble.radarPacketCount > 0 ? "Radar is streaming ✓" : "No radar data received yet")
+            Section("Radar") {
+                LabeledContent("Updates received", value: "\(ble.radarPacketCount)")
+                Text(ble.radarPacketCount > 0 ? "Radar is sending data ✓" : "No radar data yet")
                     .foregroundStyle(ble.radarPacketCount > 0 ? Theme.good : .orange)
                 if !ble.lastRadarHex.isEmpty {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Last packet (hex)").font(.caption).foregroundStyle(.secondary)
+                        Text("Latest signal (technical)").font(.caption).foregroundStyle(.secondary)
                         Text(ble.lastRadarHex)
                             .font(.system(.footnote, design: .monospaced))
                             .textSelection(.enabled)
@@ -112,9 +112,9 @@ struct DiagnosticsView: View {
                 }
             }
 
-            Section("Discovered Bluetooth") {
+            Section("Sensor details") {
                 if ble.diagnostics.isEmpty {
-                    Text("Connect a sensor (Sensors screen) to list its services and characteristics here.")
+                    Text("Connect a sensor from the Sensors screen to see its connection details here.")
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(Array(ble.diagnostics.enumerated()), id: \.offset) { _, line in

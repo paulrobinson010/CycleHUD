@@ -162,7 +162,7 @@ struct SettingsView: View {
                         Label("Sensor diagnostics", systemImage: "stethoscope")
                     }
                 } footer: {
-                    Text("Shows the Bluetooth services your sensors expose and live radar packets — useful if the radar connects but shows nothing.")
+                    Text("Connection details and live sensor activity — handy if a sensor connects but isn't showing data.")
                 }
 
                 Section {
