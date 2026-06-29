@@ -162,23 +162,9 @@ struct RideView: View {
     private var portraitLayout: some View {
         VStack(spacing: 12) {
             statusBar
-            weatherRow
             radarPanel.frame(maxHeight: .infinity)
             metricsGrid
             controlBar
-        }
-    }
-
-    /// Rain nowcast pill. Full (incl. a muted "dry") when idle; compact (only when
-    /// rain is current/coming) while riding so it doesn't clutter the HUD. Renders
-    /// nothing — and takes no space — when there's nothing to show.
-    @ViewBuilder private var weatherRow: some View {
-        if settings.weatherEnabled {
-            HStack {
-                WeatherPill(nowcast: weather.nowcast, status: weather.status,
-                            compact: ride.status != .idle)
-                Spacer(minLength: 0)
-            }
         }
     }
 
@@ -188,7 +174,6 @@ struct RideView: View {
         HStack(spacing: 12) {
             VStack(spacing: 8) {
                 statusBar
-                weatherRow
                 radarPanel.frame(maxHeight: .infinity)
             }
             .frame(maxWidth: .infinity)
@@ -322,6 +307,9 @@ struct RideView: View {
                 MetricTile(title: "Calories",
                            value: ride.caloriesKcal >= 1 ? "\(Int(ride.caloriesKcal))" : "—",
                            unit: "kcal", valueSize: 32, height: 90)
+                if settings.weatherEnabled {
+                    WeatherTile(nowcast: weather.nowcast, status: weather.status, height: 90)
+                }
             }
         }
     }
