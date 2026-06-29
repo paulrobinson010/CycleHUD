@@ -291,16 +291,16 @@ struct RideSummaryView: View {
     // MARK: - Formatting
 
     private var distanceValue: String {
-        String(format: "%.2f", settings.distanceUnit.value(fromMeters: summary.distanceMeters))
+        Fmt.decimal(settings.distanceUnit.value(fromMeters: summary.distanceMeters), 2)
     }
     private var avgSpeedValue: String {
-        String(format: "%.1f", settings.speedUnit.value(fromMps: summary.averageSpeedMps))
+        Fmt.decimal(settings.speedUnit.value(fromMps: summary.averageSpeedMps), 1)
     }
     private var ascentValue: String {
-        "\(Int(settings.distanceUnit.shortValue(fromMeters: summary.elevationGainMeters).rounded()))"
+        Fmt.int(settings.distanceUnit.shortValue(fromMeters: summary.elevationGainMeters))
     }
     private var caloriesValue: String {
-        summary.caloriesKcal >= 1 ? "\(Int(summary.caloriesKcal))" : "—"
+        summary.caloriesKcal >= 1 ? Fmt.int(summary.caloriesKcal) : "—"
     }
     private var timeValue: String {
         let s = Int(summary.movingTimeSeconds)

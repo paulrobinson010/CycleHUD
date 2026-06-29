@@ -77,9 +77,9 @@ struct VehiclePassesView: View {
     }
 
     private func subtitle(_ pass: VehiclePass) -> String {
-        var parts = ["you \(speedString(pass.riderKmhAtClosest))"]
+        var parts = [String(localized: "you \(speedString(pass.riderKmhAtClosest))")]
         if pass.riderSlowedKmh >= 3 {
-            parts.append("slowed \(Int(slowedDisplay(pass).rounded())) \(settings.speedUnit.label)")
+            parts.append(String(localized: "slowed \(Fmt.int(slowedDisplay(pass))) \(settings.speedUnit.label)"))
         }
         return parts.joined(separator: " · ")
     }
@@ -87,11 +87,11 @@ struct VehiclePassesView: View {
     // MARK: - Formatting (model stores metres + km/h; convert to the user's units)
 
     private func closest(_ p: VehiclePass) -> String {
-        "\(Int(settings.distanceUnit.shortValue(fromMeters: p.minDistance).rounded())) \(settings.distanceUnit.shortLabel)"
+        "\(Fmt.int(settings.distanceUnit.shortValue(fromMeters: p.minDistance))) \(settings.distanceUnit.shortLabel)"
     }
     private func estSpeed(_ p: VehiclePass) -> String { speedString(p.estVehicleKmh) }
     private func speedString(_ kmh: Double) -> String {
-        "\(Int(settings.speedUnit.value(fromMps: kmh / 3.6).rounded())) \(settings.speedUnit.label)"
+        "\(Fmt.int(settings.speedUnit.value(fromMps: kmh / 3.6))) \(settings.speedUnit.label)"
     }
     private func slowedDisplay(_ p: VehiclePass) -> Double {
         settings.speedUnit.value(fromMps: p.riderSlowedKmh / 3.6)
@@ -135,7 +135,7 @@ struct PassDetailView: View {
             stat("Your speed", speedStr(pass.riderKmhAtClosest), Theme.textPrimary)
             stat("Closing", speedStr(pass.maxClosingKmh), pass.level.color)
             stat("Slowed by", speedStr(pass.riderSlowedKmh), pass.riderSlowedKmh >= 3 ? Theme.good : Theme.textPrimary)
-            stat("Duration", String(format: "%.0f s", pass.duration), Theme.textPrimary)
+            stat("Duration", "\(Fmt.int(pass.duration)) s", Theme.textPrimary)
         }
     }
 
@@ -209,9 +209,9 @@ struct PassDetailView: View {
     private func distanceVal(_ m: Double) -> Double { settings.distanceUnit.shortValue(fromMeters: m) }
     private func speedVal(_ kmh: Double) -> Double { settings.speedUnit.value(fromMps: kmh / 3.6) }
     private func distanceStr(_ m: Double) -> String {
-        "\(Int(distanceVal(m).rounded())) \(settings.distanceUnit.shortLabel)"
+        "\(Fmt.int(distanceVal(m))) \(settings.distanceUnit.shortLabel)"
     }
     private func speedStr(_ kmh: Double) -> String {
-        "\(Int(speedVal(kmh).rounded())) \(settings.speedUnit.label)"
+        "\(Fmt.int(speedVal(kmh))) \(settings.speedUnit.label)"
     }
 }

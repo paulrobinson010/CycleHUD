@@ -77,6 +77,21 @@ Notes:
   sensible mm/hr values (the one unit worth sanity-checking on a real device),
   and that `minuteForecast` returns data in your area.
 
+## 3b. Translations (optional)
+
+The app is localization-ready. To add languages:
+
+1. **File → New → File → String Catalog**, name it **Localizable**, add to the
+   **CycleHUD** target. Build once — Xcode auto-extracts every UI string (all the
+   `Text("…")` and `String(localized: "…")` literals) into `Localizable.xcstrings`.
+2. In the catalog editor, hit **+** to add a language and fill in translations
+   (or export XLIFF for a translator and re-import).
+
+Numbers are already locale-aware: `Fmt` (in `Format.swift`) formats values with
+the device's decimal mark and digit grouping (e.g. `24,3` / `1 234`). The
+rider's chosen **units** (km vs mi) stay separate and user-controlled. The Watch
+app would take its own String Catalog in the watch target the same way.
+
 ## 4. Watch-face complication (optional)
 
 The app icon is already wired up (`CyleHUDWatch Watch App/Assets.xcassets/AppIcon`),

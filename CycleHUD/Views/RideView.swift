@@ -257,10 +257,10 @@ struct RideView: View {
 
     private var statusText: String {
         switch controlStatus {
-        case .idle: return "STOPPED"
-        case .running: return "● REC"
-        case .paused: return "PAUSED"
-        case .autoPaused: return "AUTO-PAUSED"
+        case .idle: return String(localized: "STOPPED")
+        case .running: return "● " + String(localized: "REC")
+        case .paused: return String(localized: "PAUSED")
+        case .autoPaused: return String(localized: "AUTO-PAUSED")
         }
     }
 
@@ -284,7 +284,7 @@ struct RideView: View {
                            value: speedString(ride.averageSpeedMps),
                            unit: settings.speedUnit.label, valueSize: 32, height: 90)
                 MetricTile(title: "Cadence",
-                           value: ble.freshCadence.map { "\($0)" } ?? "—",
+                           value: ble.freshCadence.map { Fmt.int($0) } ?? "—",
                            unit: "rpm", valueSize: 32, height: 90)
             }
             HStack(spacing: 8) {
@@ -301,11 +301,11 @@ struct RideView: View {
             HStack(spacing: 8) {
                 let hr = watch.displayHeartRate ?? ride.currentHeartRate
                 MetricTile(title: "Heart Rate",
-                           value: hr.map { "\($0)" } ?? "—",
+                           value: hr.map { Fmt.int($0) } ?? "—",
                            unit: "bpm", valueSize: 32, height: 90,
                            alert: settings.hrWarningEnabled && (hr ?? 0) >= settings.hrWarningBpm)
                 MetricTile(title: "Calories",
-                           value: ride.caloriesKcal >= 1 ? "\(Int(ride.caloriesKcal))" : "—",
+                           value: ride.caloriesKcal >= 1 ? Fmt.int(ride.caloriesKcal) : "—",
                            unit: "kcal", valueSize: 32, height: 90)
                 if settings.weatherEnabled {
                     WeatherTile(nowcast: weather.nowcast, status: weather.status, height: 90)
@@ -387,16 +387,16 @@ struct RideView: View {
     // MARK: - Formatting
 
     private func speedString(_ mps: Double) -> String {
-        String(format: "%.1f", settings.speedUnit.value(fromMps: mps))
+        Fmt.decimal(settings.speedUnit.value(fromMps: mps), 1)
     }
 
     private func distanceString(_ meters: Double) -> String {
-        String(format: "%.2f", settings.distanceUnit.value(fromMeters: meters))
+        Fmt.decimal(settings.distanceUnit.value(fromMeters: meters), 2)
     }
 
     private func elevationString(_ meters: Double?) -> String {
         guard let meters else { return "—" }
-        return "\(Int(settings.distanceUnit.shortValue(fromMeters: meters).rounded()))"
+        return Fmt.int(settings.distanceUnit.shortValue(fromMeters: meters))
     }
 
     private func timeString(_ seconds: Double) -> String {

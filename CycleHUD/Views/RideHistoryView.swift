@@ -45,8 +45,7 @@ struct RideHistoryView: View {
     }
 
     private func distance(_ ride: RideSummary) -> String {
-        String(format: "%.2f %@", settings.distanceUnit.value(fromMeters: ride.distanceMeters),
-               settings.distanceUnit.label)
+        "\(Fmt.decimal(settings.distanceUnit.value(fromMeters: ride.distanceMeters), 2)) \(settings.distanceUnit.label)"
     }
     private func time(_ ride: RideSummary) -> String {
         let s = Int(ride.movingTimeSeconds)

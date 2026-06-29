@@ -26,7 +26,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     func notifySensorsLeftOn(_ names: [String]) {
         guard !names.isEmpty else { return }
         let content = UNMutableNotificationContent()
-        content.title = "Sensors still on"
+        content.title = String(localized: "Sensors still on")
         content.body = Self.body(for: names)
         content.sound = .default
         let request = UNNotificationRequest(identifier: "sensors-still-on",
@@ -38,7 +38,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     /// changing forecast doesn't stack up.
     func notifyRain(_ message: String) {
         let content = UNMutableNotificationContent()
-        content.title = "Rain incoming"
+        content.title = String(localized: "Rain incoming")
         content.body = message
         content.sound = .default
         let request = UNNotificationRequest(identifier: "rain-incoming",
@@ -53,9 +53,9 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         case 2:  list = "\(names[0]) and \(names[1])"
         default: list = names.dropLast().joined(separator: ", ") + " and \(names.last!)"
         }
-        let isAre = names.count == 1 ? "is" : "are"
-        let itThem = names.count == 1 ? "it" : "them"
-        return "\(list) \(isAre) still connected after your ride. Switch \(itThem) off to save battery."
+        let isAre = names.count == 1 ? String(localized: "is") : String(localized: "are")
+        let itThem = names.count == 1 ? String(localized: "it") : String(localized: "them")
+        return String(localized: "\(list) \(isAre) still connected after your ride. Switch \(itThem) off to save battery.")
     }
 
     // Show the reminder even if the app happens to be in the foreground.

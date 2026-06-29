@@ -48,13 +48,13 @@ struct WeatherTile: View {
     private var value: String {
         guard let n = nowcast else {
             switch status {
-            case .unavailable: return "n/a"
+            case .unavailable: return String(localized: "n/a")
             default: return "…"
             }
         }
-        if n.isRaining { return "Now" }
-        if let m = n.startsInMinutes { return n.usedMinuteData ? "\(m)" : "<1h" }
-        return "None"
+        if n.isRaining { return String(localized: "Now") }
+        if let m = n.startsInMinutes { return n.usedMinuteData ? Fmt.int(m) : String(localized: "<1h") }
+        return String(localized: "None")
     }
 
     private var unit: String {
@@ -117,18 +117,20 @@ struct WeatherDetailView: View {
 
     private var detail: String {
         if nowcast.isRaining {
-            let d = nowcast.durationMinutes.map { " for about \(format($0))" } ?? ""
-            return "It's raining now (\(nowcast.peak.label))\(d)."
+            let d = nowcast.durationMinutes.map { String(localized: " for about \(format($0))") } ?? ""
+            return String(localized: "It's raining now (\(nowcast.peak.label))\(d).")
         }
         if let m = nowcast.startsInMinutes {
-            let when = nowcast.usedMinuteData ? "in about \(m) min" : "within the hour"
-            let d = nowcast.durationMinutes.map { ", lasting about \(format($0))" } ?? ""
-            return "Rain expected \(when) — \(nowcast.peak.label)\(d)."
+            let when = nowcast.usedMinuteData ? String(localized: "in about \(Fmt.int(m)) min")
+                                              : String(localized: "within the hour")
+            let d = nowcast.durationMinutes.map { String(localized: ", lasting about \(format($0))") } ?? ""
+            return String(localized: "Rain expected \(when) — \(nowcast.peak.label)\(d).")
         }
-        return "No rain expected in the next hour."
+        return String(localized: "No rain expected in the next hour.")
     }
 
     private func format(_ minutes: Int) -> String {
-        minutes >= 90 ? "\(Int((Double(minutes)/60).rounded())) hours" : "\(minutes) min"
+        minutes >= 90 ? String(localized: "\(Fmt.int(Double(minutes) / 60)) hours")
+                      : String(localized: "\(Fmt.int(minutes)) min")
     }
 }

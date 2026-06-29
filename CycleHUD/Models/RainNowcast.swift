@@ -20,9 +20,9 @@ struct RainNowcast: Equatable {
         var label: String {
             switch self {
             case .none: return "—"
-            case .light: return "light"
-            case .moderate: return "moderate"
-            case .heavy: return "heavy"
+            case .light: return String(localized: "light")
+            case .moderate: return String(localized: "moderate")
+            case .heavy: return String(localized: "heavy")
             }
         }
     }
@@ -53,11 +53,12 @@ struct RainNowcast: Equatable {
     /// One-line text for the imminent-rain notification.
     var alertMessage: String {
         let hard = peak != .none ? " (\(peak.label))" : ""
-        if isRaining { return "Rain has started\(hard)." }
+        if isRaining { return String(localized: "Rain has started\(hard).") }
         if let m = startsInMinutes {
-            let when = usedMinuteData ? "in about \(m) min" : "within the hour"
-            return "Rain expected \(when)\(hard)."
+            let when = usedMinuteData ? String(localized: "in about \(Fmt.int(m)) min")
+                                      : String(localized: "within the hour")
+            return String(localized: "Rain expected \(when)\(hard).")
         }
-        return "Rain expected soon."
+        return String(localized: "Rain expected soon.")
     }
 }

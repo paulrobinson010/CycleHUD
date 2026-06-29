@@ -71,7 +71,7 @@ struct DiagnosticsView: View {
                     .textSelection(.enabled)
             }
             Section {
-                LabeledContent("Enabled", value: settings.weatherEnabled ? "Yes" : "No")
+                LabeledContent("Enabled", value: settings.weatherEnabled ? String(localized: "Yes") : String(localized: "No"))
                 LabeledContent("Status", value: weatherStatus)
                 if let u = weather.lastUpdated {
                     LabeledContent("Last updated",
@@ -99,7 +99,7 @@ struct DiagnosticsView: View {
             }
 
             Section("Radar") {
-                LabeledContent("Updates received", value: "\(ble.radarPacketCount)")
+                LabeledContent("Updates received", value: Fmt.int(ble.radarPacketCount))
                 Text(ble.radarPacketCount > 0 ? "Radar is sending data ✓" : "No radar data yet")
                     .foregroundStyle(ble.radarPacketCount > 0 ? Theme.good : .orange)
                 if !ble.lastRadarHex.isEmpty {
@@ -136,10 +136,10 @@ struct DiagnosticsView: View {
 
     private var weatherStatus: String {
         switch weather.status {
-        case .idle: return "Idle"
-        case .loading: return "Checking…"
-        case .ready: return "OK"
-        case .unavailable: return "Unavailable"
+        case .idle: return String(localized: "Idle")
+        case .loading: return String(localized: "Checking…")
+        case .ready: return String(localized: "OK")
+        case .unavailable: return String(localized: "Unavailable")
         }
     }
 

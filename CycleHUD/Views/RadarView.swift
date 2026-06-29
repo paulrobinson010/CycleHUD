@@ -222,7 +222,7 @@ struct RadarView: View {
 
     private func distanceLabel(_ meters: Double) -> String {
         let v = distanceUnit.shortValue(fromMeters: meters)
-        return "\(Int(v.rounded())) \(distanceUnit.shortLabel)"
+        return "\(Fmt.int(v)) \(distanceUnit.shortLabel)"
     }
 }
 

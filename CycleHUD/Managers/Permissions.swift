@@ -27,8 +27,8 @@ enum Permissions {
         switch locationManager.authorizationStatus {
         case .denied, .restricted:
             issues.append(.init(id: "location",
-                title: "Location is off",
-                message: "CycleHUD needs Location to record your speed, distance and route. Turn it on in Settings → CycleHUD → Location, set to “While Using the App”.",
+                title: String(localized: "Location is off"),
+                message: String(localized: "CycleHUD needs Location to record your speed, distance and route. Turn it on in Settings → CycleHUD → Location, set to “While Using the App”."),
                 opensAppSettings: true))
         default: break
         }
@@ -36,8 +36,8 @@ enum Permissions {
         switch CBManager.authorization {
         case .denied, .restricted:
             issues.append(.init(id: "bluetooth",
-                title: "Bluetooth is off",
-                message: "CycleHUD needs Bluetooth to connect to your radar and sensors. Allow it in Settings → CycleHUD → Bluetooth.",
+                title: String(localized: "Bluetooth is off"),
+                message: String(localized: "CycleHUD needs Bluetooth to connect to your radar and sensors. Allow it in Settings → CycleHUD → Bluetooth."),
                 opensAppSettings: true))
         default: break
         }
@@ -47,8 +47,8 @@ enum Permissions {
             let energyDenied = healthStore.authorizationStatus(for: HKQuantityType(.activeEnergyBurned)) == .sharingDenied
             if workoutDenied || energyDenied {
                 issues.append(.init(id: "health",
-                    title: "Health access is off",
-                    message: "CycleHUD can't save your rides as workouts. Open the Health app → Sharing → Apps → CycleHUD and allow Workouts and Active Energy — or turn off “Save rides as workouts”.",
+                    title: String(localized: "Health access is off"),
+                    message: String(localized: "CycleHUD can't save your rides as workouts. Open the Health app → Sharing → Apps → CycleHUD and allow Workouts and Active Energy — or turn off “Save rides as workouts”."),
                     opensAppSettings: false))
             }
         }
