@@ -9,7 +9,7 @@ struct WatchContentView: View {
         VStack(spacing: 6) {
             threatBanner
 
-            Text(String(format: "%.1f", session.speedMps * 3.6))
+            Text(Fmt.decimal(session.speedMps * 3.6, 1))
                 .font(.system(size: 46, weight: .bold, design: .rounded))
                 .monospacedDigit()
             Text("km/h")
@@ -17,10 +17,11 @@ struct WatchContentView: View {
                 .foregroundStyle(.secondary)
 
             HStack {
-                metric(label: "HR", value: session.heartRate > 0 ? "\(session.heartRate)" : "—",
+                metric(label: String(localized: "HR"),
+                       value: session.heartRate > 0 ? Fmt.int(session.heartRate) : "—",
                        alert: session.hrWarningActive)
                 Spacer()
-                metric(label: "KM", value: String(format: "%.2f", session.distanceMeters / 1000))
+                metric(label: "KM", value: Fmt.decimal(session.distanceMeters / 1000, 2))
             }
             .padding(.top, 2)
         }
@@ -33,7 +34,7 @@ struct WatchContentView: View {
             if session.threatLevel >= 0 {
                 HStack(spacing: 6) {
                     Image(systemName: "car.fill")
-                    Text(session.nearestThreatMeters.map { "\($0) m" } ?? "Car")
+                    Text(session.nearestThreatMeters.map { "\(Fmt.int($0)) m" } ?? String(localized: "Car"))
                         .fontWeight(.bold)
                 }
                 .font(.system(size: 16, weight: .bold, design: .rounded))
@@ -54,7 +55,7 @@ struct WatchContentView: View {
                 .padding(.vertical, 6)
                 .background(Capsule().fill(Color(red: 0.95, green: 0.20, blue: 0.22)))
             } else {
-                Text(session.statusRaw == "running" ? "Clear" : statusLabel)
+                Text(session.statusRaw == "running" ? String(localized: "Clear") : statusLabel)
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundStyle(.green)
                     .frame(maxWidth: .infinity)
@@ -89,9 +90,9 @@ struct WatchContentView: View {
 
     private var statusLabel: String {
         switch session.statusRaw {
-        case "paused": return "Paused"
-        case "autoPaused": return "Auto-paused"
-        default: return "Ready"
+        case "paused": return String(localized: "Paused")
+        case "autoPaused": return String(localized: "Auto-paused")
+        default: return String(localized: "Ready")
         }
     }
 }

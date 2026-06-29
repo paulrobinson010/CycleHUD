@@ -87,10 +87,12 @@ The app is localization-ready. To add languages:
 2. In the catalog editor, hit **+** to add a language and fill in translations
    (or export XLIFF for a translator and re-import).
 
-Numbers are already locale-aware: `Fmt` (in `Format.swift`) formats values with
-the device's decimal mark and digit grouping (e.g. `24,3` / `1 234`). The
-rider's chosen **units** (km vs mi) stay separate and user-controlled. The Watch
-app would take its own String Catalog in the watch target the same way.
+Numbers are already locale-aware: `Fmt` (in `Format.swift`, one per target)
+formats values with the device's decimal mark and digit grouping (e.g. `24,3` /
+`1 234`). The rider's chosen **units** (km vs mi) stay separate and
+user-controlled. The **Watch app is prepped the same way** — add a second String
+Catalog to the watch target (its strings already use `Text`/`String(localized:)`
+and its numbers use the watch `Fmt`).
 
 ## 4. Watch-face complication (optional)
 
