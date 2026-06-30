@@ -11,6 +11,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     @Published var speedMps: Double = 0          // GPS-derived ground speed (>= 0)
     @Published var altitudeMeters: Double?       // GPS altitude above sea level
     @Published var courseDegrees: Double?        // direction of travel (last valid)
+    @Published var headingDegrees: Double?       // compass heading (works at standstill)
     @Published var hasFix: Bool = false
     @Published var horizontalAccuracy: Double = -1
     @Published var authorization: CLAuthorizationStatus = .notDetermined
@@ -35,6 +36,11 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         super.init()
         manager.delegate = self
         manager.activityType = .fitness
+        // Compass heading is cheap and gives a "which way am I facing" reference
+        // for headwind/tailwind even at a standstill (GPS course needs movement).
+        if CLLocationManager.headingAvailable() {
+            manager.startUpdatingHeading()
+        }
     }
 
     func requestAuthorization() {
@@ -116,6 +122,12 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         // momentary stop doesn't blank the headwind/tailwind reading.
         if loc.course >= 0, loc.speed > 0.8 { courseDegrees = loc.course }
         onLocation?(loc)
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        // Prefer true (geographic) north; fall back to magnetic if uncalibrated.
+        let h = newHeading.trueHeading >= 0 ? newHeading.trueHeading : newHeading.magneticHeading
+        if h >= 0 { headingDegrees = h }
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

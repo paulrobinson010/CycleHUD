@@ -33,7 +33,7 @@ struct RideView: View {
             GeometryReader { geo in
                 let landscape = settings.landscapeEnabled && geo.size.width > geo.size.height
                 Group {
-                    if landscape { landscapeLayout } else { portraitLayout }
+                    if landscape { landscapeLayout(geo: geo) } else { portraitLayout }
                 }
                 .padding(.horizontal, 14)
                 .padding(.top, 6)
@@ -200,26 +200,36 @@ struct RideView: View {
     // MARK: - Layouts
 
     /// Default stacked layout: status, radar, metrics, controls top-to-bottom.
+    /// The radar flexes; tiles keep their full height (portrait has room).
     private var portraitLayout: some View {
         VStack(spacing: 12) {
             statusBar
             radarPanel.frame(maxHeight: .infinity)
-            metricsGrid
+            metricsGrid(tileHeight: 90)
             controlBar
         }
     }
 
     /// Landscape split: the top half (status + radar) on the left, the bottom
-    /// half (metrics + controls) on the right.
-    private var landscapeLayout: some View {
-        HStack(spacing: 12) {
+    /// half (metrics + controls) on the right. The right column is height-bound,
+    /// so the tiles are shrunk to fit however many rows the rider has chosen —
+    /// otherwise a tall grid would clip the top row and push the controls off.
+    private func landscapeLayout(geo: GeometryProxy) -> some View {
+        let rowCount = max(1, Int(ceil(Double(visibleMetricKinds.count) / 3.0)))
+        // Right column height ≈ total minus the vertical padding, the control
+        // bar and the inter-element spacing.
+        let available = geo.size.height - 16 - 58 - 10 - 8
+        let rowSpacing: CGFloat = 8
+        let fitted = (available - CGFloat(rowCount - 1) * rowSpacing) / CGFloat(rowCount)
+        let tileHeight = max(48, min(90, fitted))
+        return HStack(spacing: 12) {
             VStack(spacing: 8) {
                 statusBar
                 radarPanel.frame(maxHeight: .infinity)
             }
             .frame(maxWidth: .infinity)
             VStack(spacing: 10) {
-                metricsGrid
+                metricsGrid(tileHeight: tileHeight)
                 Spacer(minLength: 0)
                 controlBar
             }
@@ -318,19 +328,24 @@ struct RideView: View {
 
     // MARK: - Metrics
 
-    /// The rider's chosen tiles, laid out three per row. Weather tiles are hidden
-    /// when Weather is off. Short rows are padded so tile widths stay uniform.
-    private var metricsGrid: some View {
-        let kinds = settings.metricKinds.filter { !$0.requiresWeather || settings.weatherEnabled }
-        let rows = kinds.chunked(into: 3)
+    /// The rider's chosen tiles, hidden weather tiles removed, ready to lay out.
+    private var visibleMetricKinds: [MetricKind] {
+        settings.metricKinds.filter { !$0.requiresWeather || settings.weatherEnabled }
+    }
+
+    /// The rider's chosen tiles, laid out three per row at `tileHeight`. Weather
+    /// tiles are hidden when Weather is off; short rows are padded so tile widths
+    /// stay uniform.
+    private func metricsGrid(tileHeight: CGFloat) -> some View {
+        let rows = visibleMetricKinds.chunked(into: 3)
         return VStack(spacing: 8) {
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                 HStack(spacing: 8) {
                     ForEach(0..<3, id: \.self) { i in
                         if i < row.count {
-                            metricTile(for: row[i])
+                            metricTile(for: row[i], height: tileHeight)
                         } else {
-                            Color.clear.frame(maxWidth: .infinity).frame(height: 90)
+                            Color.clear.frame(maxWidth: .infinity).frame(height: tileHeight)
                         }
                     }
                 }
@@ -338,52 +353,58 @@ struct RideView: View {
         }
     }
 
+    /// Value font scaled to the tile height so shrunken landscape tiles still fit.
+    private func valueSize(for height: CGFloat) -> CGFloat {
+        max(22, min(32, height * 0.42))
+    }
+
     /// Build the tile for one metric, pulling live values from the managers.
     @ViewBuilder
-    private func metricTile(for kind: MetricKind) -> some View {
+    private func metricTile(for kind: MetricKind, height: CGFloat) -> some View {
+        let vs = valueSize(for: height)
         switch kind {
         case .speed:
             MetricTile(title: kind.title, value: speedString(ride.currentSpeedMps),
-                       unit: settings.speedUnit.label, valueSize: 32, height: 90)
+                       unit: settings.speedUnit.label, valueSize: vs, height: height)
         case .avgSpeed:
             MetricTile(title: kind.title, value: speedString(ride.averageSpeedMps),
-                       unit: settings.speedUnit.label, valueSize: 32, height: 90)
+                       unit: settings.speedUnit.label, valueSize: vs, height: height)
         case .maxSpeed:
             MetricTile(title: kind.title, value: speedString(ride.maxSpeedMps),
-                       unit: settings.speedUnit.label, valueSize: 32, height: 90)
+                       unit: settings.speedUnit.label, valueSize: vs, height: height)
         case .cadence:
             MetricTile(title: kind.title, value: ble.freshCadence.map { Fmt.int($0) } ?? "—",
-                       unit: "rpm", valueSize: 32, height: 90)
+                       unit: "rpm", valueSize: vs, height: height)
         case .distance:
             MetricTile(title: kind.title, value: distanceString(ride.distanceMeters),
-                       unit: settings.distanceUnit.label, valueSize: 32, height: 90)
+                       unit: settings.distanceUnit.label, valueSize: vs, height: height)
         case .time:
             MetricTile(title: kind.title, value: timeString(ride.movingTimeSeconds),
-                       unit: "", valueSize: 32, height: 90)
+                       unit: "", valueSize: vs, height: height)
         case .ascent:
             MetricTile(title: kind.title, value: elevationString(ride.elevationGainMeters),
-                       unit: settings.distanceUnit.shortLabel, valueSize: 32, height: 90)
+                       unit: settings.distanceUnit.shortLabel, valueSize: vs, height: height)
         case .heartRate:
             let hr = watch.displayHeartRate ?? ride.currentHeartRate ?? ble.freshSensorHeartRate()
             MetricTile(title: kind.title, value: hr.map { Fmt.int($0) } ?? "—",
-                       unit: "bpm", valueSize: 32, height: 90,
+                       unit: "bpm", valueSize: vs, height: height,
                        alert: settings.hrWarningEnabled && (hr ?? 0) >= settings.hrWarningBpm)
         case .calories:
             MetricTile(title: kind.title, value: ride.caloriesKcal >= 1 ? Fmt.int(ride.caloriesKcal) : "—",
-                       unit: "kcal", valueSize: 32, height: 90)
+                       unit: "kcal", valueSize: vs, height: height)
         case .gradient:
             MetricTile(title: kind.title, value: gradientString, unit: "%",
-                       valueSize: 32, height: 90)
+                       valueSize: vs, height: height)
         case .lapTime:
             MetricTile(title: kind.title, value: timeString(ride.currentLapTimeSeconds),
-                       unit: "", valueSize: 32, height: 90)
+                       unit: "", valueSize: vs, height: height)
         case .temperature:
             MetricTile(title: kind.title, value: temperatureValue, unit: temperatureUnit,
-                       valueSize: 32, height: 90)
+                       valueSize: vs, height: height)
         case .wind:
-            windTile
+            windTile(height: height, valueSize: vs)
         case .rain:
-            WeatherTile(nowcast: weather.nowcast, status: weather.status, height: 90)
+            WeatherTile(nowcast: weather.nowcast, status: weather.status, height: height)
         }
     }
 
@@ -402,21 +423,23 @@ struct RideView: View {
         return Fmt.int(t)
     }
 
-    /// Headwind / tailwind along the rider's heading, or absolute wind speed when
-    /// no heading is available yet.
-    private var windTile: some View {
+    /// Headwind / tailwind along the rider's heading (GPS course while moving, or
+    /// the compass heading when stationary), or absolute wind speed if no heading
+    /// is available at all.
+    private func windTile(height: CGFloat, valueSize vs: CGFloat) -> some View {
         let speedLabel = settings.speedUnit.label
-        if let c = weather.conditions, let course = location.courseDegrees {
-            let head = c.headwindMps(course: course)
+        let heading = location.courseDegrees ?? location.headingDegrees
+        if let c = weather.conditions, let heading {
+            let head = c.headwindMps(course: heading)
             let value = Fmt.int(settings.speedUnit.value(fromMps: abs(head)))
             return MetricTile(title: head >= 0 ? "Headwind" : "Tailwind",
-                              value: value, unit: speedLabel, valueSize: 32, height: 90)
+                              value: value, unit: speedLabel, valueSize: vs, height: height)
         } else if let c = weather.conditions {
             return MetricTile(title: "Wind",
                               value: Fmt.int(settings.speedUnit.value(fromMps: c.windSpeedMps)),
-                              unit: speedLabel, valueSize: 32, height: 90)
+                              unit: speedLabel, valueSize: vs, height: height)
         } else {
-            return MetricTile(title: "Wind", value: "—", unit: "", valueSize: 32, height: 90)
+            return MetricTile(title: "Wind", value: "—", unit: "", valueSize: vs, height: height)
         }
     }
 
