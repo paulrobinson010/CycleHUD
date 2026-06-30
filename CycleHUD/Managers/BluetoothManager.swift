@@ -759,12 +759,34 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     private func applyThreats(_ incoming: [Threat]) {
         let sorted = incoming.sorted { $0.distanceMeters < $1.distanceMeters }
         let existingIDs = Set(threats.map(\.id))
-        let hasNewCar = sorted.contains { !existingIDs.contains($0.id) }
+        let newThreats = sorted.filter { !existingIDs.contains($0.id) }
         threats = sorted
-        if hasNewCar, alertsAllowed?() ?? true {
+        if !newThreats.isEmpty, alertsAllowed?() ?? true {
             if settings.beepEnabled { AudioAlerts.shared.playNewCar() }
+            if settings.voiceAlertsEnabled {
+                AudioAlerts.shared.speak(voiceCallout(for: newThreats.first),
+                                         language: voiceLanguageCode)
+            }
             onNewCar?()
         }
+    }
+
+    /// The spoken call-out for a newly-detected vehicle: "Car behind" plus its
+    /// distance in the rider's units, localized to the app's language.
+    private func voiceCallout(for threat: Threat?) -> String {
+        guard let threat, threat.distanceMeters >= 1 else {
+            return String(localized: "Car behind", bundle: Lang.bundle)
+        }
+        let v = Fmt.int(settings.distanceUnit.shortValue(fromMeters: threat.distanceMeters))
+        switch settings.distanceUnit {
+        case .km: return String(localized: "Car behind, \(v) metres", bundle: Lang.bundle)
+        case .mi: return String(localized: "Car behind, \(v) feet", bundle: Lang.bundle)
+        }
+    }
+
+    /// BCP-47 language for the speech voice — the app override, or the device's.
+    private var voiceLanguageCode: String {
+        settings.appLanguage.isEmpty ? Locale.current.identifier : settings.appLanguage
     }
 
     // MARK: - Demo mode

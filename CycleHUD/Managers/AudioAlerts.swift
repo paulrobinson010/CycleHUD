@@ -8,12 +8,16 @@ import UIKit
 /// The tone is synthesised into an in-memory WAV so there are no asset files to
 /// manage, and the audio session uses the `.playback` category so the beep is
 /// heard even when the ringer/silent switch is off and ducks any music playing.
-final class AudioAlerts: NSObject, AVAudioPlayerDelegate {
+final class AudioAlerts: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesizerDelegate {
 
     static let shared = AudioAlerts()
 
     private var player: AVAudioPlayer?
     private var configured = false
+
+    /// Spoken vehicle call-outs (for riders using bone-conduction headphones who
+    /// want a voice instead of, or alongside, the beep).
+    private let synthesizer = AVSpeechSynthesizer()
 
     // Hidden system-volume control used to force the output to maximum so the
     // car-behind alert is always loud, regardless of the current volume.
@@ -22,6 +26,7 @@ final class AudioAlerts: NSObject, AVAudioPlayerDelegate {
     private override init() {
         super.init()
         prepare()
+        synthesizer.delegate = self
     }
 
     private func prepare() {
@@ -47,6 +52,24 @@ final class AudioAlerts: NSObject, AVAudioPlayerDelegate {
             self.player?.volume = 1.0
             self.player?.currentTime = 0
             self.player?.play()
+        }
+    }
+
+    /// Speak a short vehicle call-out. Skips if a call-out is already in progress
+    /// so heavy traffic can't make the voice pile up and lag behind the road.
+    /// `language` is a BCP-47 code (e.g. "de-DE") to match the app's language.
+    func speak(_ text: String, language: String?) {
+        DispatchQueue.main.async {
+            guard !self.synthesizer.isSpeaking else { return }
+            self.configureSessionIfNeeded()
+            self.forceMaxVolume()
+            try? AVAudioSession.sharedInstance().setActive(true)
+            let utterance = AVSpeechUtterance(string: text)
+            if let language, let voice = AVSpeechSynthesisVoice(language: language) {
+                utterance.voice = voice
+            }
+            utterance.rate = AVSpeechUtteranceDefaultSpeechRate
+            self.synthesizer.speak(utterance)
         }
     }
 
@@ -77,7 +100,19 @@ final class AudioAlerts: NSObject, AVAudioPlayerDelegate {
     }
 
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        // Release the session so other audio (music/podcasts) un-ducks promptly.
+        releaseSessionIfQuiet()
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
+                           didFinish utterance: AVSpeechUtterance) {
+        releaseSessionIfQuiet()
+    }
+
+    /// Release the audio session so other audio (music/podcasts) un-ducks
+    /// promptly — but only once neither the beep nor the voice is still playing,
+    /// so they don't cut each other off when both alerts are enabled.
+    private func releaseSessionIfQuiet() {
+        guard !(player?.isPlaying ?? false), !synthesizer.isSpeaking else { return }
         try? AVAudioSession.sharedInstance().setActive(false, options: [.notifyOthersOnDeactivation])
     }
 
