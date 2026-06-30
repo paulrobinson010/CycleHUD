@@ -1,526 +1,532 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "Auto-paused": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auto-paused"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Auto-paused" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatisch pausiert"
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auto-paused"
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-paused"
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Automatisch pausiert"
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-paused"
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pause auto"
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausa automática"
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pausa automatica"
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause auto"
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pausa automática"
-          }
-        }
-      }
-    },
-    "Car": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Car"
-          }
-        },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Car"
-          }
-        },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auto"
-          }
-        },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Voiture"
-          }
-        },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auto"
-          }
-        },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Coche"
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausa automatica"
           }
         }
       }
     },
-    "Clear": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear"
+    "Car" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto"
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear"
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Car"
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Frei"
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Car"
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dégagé"
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coche"
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Libero"
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voiture"
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Despejado"
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto"
           }
         }
       }
     },
-    "HR": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HR"
+    "Clear" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frei"
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HR"
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear"
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HF"
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear"
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FC"
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Despejado"
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FC"
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dégagé"
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FC"
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Libero"
           }
         }
       }
     },
-    "None": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "None"
+    "heavy" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "stark"
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "None"
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "heavy"
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keiner"
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "heavy"
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aucune"
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fuerte"
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nessuna"
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "forte"
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ninguna"
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "forte"
           }
         }
       }
     },
-    "Now": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Now"
+    "HR" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HF"
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Now"
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HR"
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jetzt"
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HR"
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maintenant"
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FC"
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ora"
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FC"
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ahora"
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FC"
           }
         }
       }
     },
-    "Paused": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Paused"
+    "light" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "leicht"
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Paused"
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "light"
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pausiert"
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "light"
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "En pause"
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ligera"
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "In pausa"
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "faible"
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "En pausa"
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "leggera"
           }
         }
       }
     },
-    "RADAR OFF": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RADAR OFF"
+    "moderate" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mäßig"
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RADAR OFF"
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "moderate"
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RADAR AUS"
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "moderate"
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RADAR ÉTEINT"
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "moderada"
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RADAR OFF"
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "modérée"
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RADAR APAGADO"
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "moderata"
           }
         }
       }
     },
-    "Ready": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ready"
+    "n/a" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "k. A."
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ready"
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/a"
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bereit"
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/a"
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prêt"
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pronto"
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "s.o."
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Listo"
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
           }
         }
       }
     },
-    "heavy": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "heavy"
+    "None" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keiner"
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "heavy"
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "stark"
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "forte"
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna"
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "forte"
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune"
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "fuerte"
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna"
           }
         }
       }
     },
-    "light": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "light"
+    "Now" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt"
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "light"
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now"
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "leicht"
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now"
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "faible"
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora"
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "leggera"
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenant"
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ligera"
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ora"
           }
         }
       }
     },
-    "moderate": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "moderate"
+    "Paused" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausiert"
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "moderate"
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paused"
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "mäßig"
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paused"
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "modérée"
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En pausa"
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "moderata"
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En pause"
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "moderada"
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In pausa"
           }
         }
       }
     },
-    "n/a": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "n/a"
+    "RADAR OFF" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RADAR AUS"
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "n/a"
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RADAR OFF"
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "k. A."
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RADAR OFF"
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "s.o."
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RADAR APAGADO"
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "n/d"
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RADAR ÉTEINT"
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "n/d"
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RADAR OFF"
+          }
+        }
+      }
+    },
+    "Ready" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bereit"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listo"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prêt"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pronto"
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

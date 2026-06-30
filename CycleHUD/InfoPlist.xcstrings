@@ -1,252 +1,318 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "NSBluetoothAlwaysUsageDescription": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD connects to your rear radar and speed/cadence sensors over Bluetooth to show approaching vehicles and your riding data."
-          }
-        },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD connects to your rear radar and speed/cadence sensors over Bluetooth to show approaching vehicles and your riding data."
-          }
-        },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD verbindet sich über Bluetooth mit deinem Heckradar und Geschwindigkeits-/Trittfrequenzsensoren, um herannahende Fahrzeuge und deine Fahrdaten anzuzeigen."
-          }
-        },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD se connecte en Bluetooth à votre radar arrière et à vos capteurs de vitesse/cadence pour afficher les véhicules qui approchent et vos données."
-          }
-        },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD si connette via Bluetooth al radar posteriore e ai sensori di velocità/cadenza per mostrare i veicoli in avvicinamento e i tuoi dati."
-          }
-        },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD se conecta por Bluetooth a tu radar trasero y a los sensores de velocidad/cadencia para mostrar los vehículos que se acercan y tus datos."
+  "sourceLanguage" : "en",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "CycleHUD"
           }
         }
-      },
-      "comment": "Permission usage description"
+      }
     },
-    "NSHealthShareUsageDescription": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD reads your heart rate and body metrics to estimate calories burned during a ride."
-          }
-        },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD reads your heart rate and body metrics to estimate calories burned during a ride."
-          }
-        },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD liest deine Herzfrequenz und Körperdaten, um die verbrannten Kalorien während einer Fahrt zu schätzen."
-          }
-        },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD lit votre fréquence cardiaque et vos données corporelles pour estimer les calories brûlées pendant une sortie."
-          }
-        },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD legge la frequenza cardiaca e i dati corporei per stimare le calorie bruciate durante un'uscita."
-          }
-        },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD lee tu frecuencia cardíaca y datos corporales para estimar las calorías quemadas durante una ruta."
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "CycleHUD"
           }
         }
-      },
-      "comment": "Permission usage description"
+      }
     },
-    "NSHealthUpdateUsageDescription": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD saves your ride as a cycling workout, including distance, calories and route, to Apple Health."
+    "NSBluetoothAlwaysUsageDescription" : {
+      "comment" : "Permission usage description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD verbindet sich über Bluetooth mit deinem Heckradar und Geschwindigkeits-/Trittfrequenzsensoren, um herannahende Fahrzeuge und deine Fahrdaten anzuzeigen."
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD saves your ride as a cycling workout, including distance, calories and route, to Apple Health."
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "CycleHUD connects to your rear radar and speed/cadence sensors over Bluetooth to show approaching vehicles and your riding data."
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD speichert deine Fahrt als Radtraining mit Distanz, Kalorien und Route in Apple Health."
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD connects to your rear radar and speed/cadence sensors over Bluetooth to show approaching vehicles and your riding data."
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD enregistre votre sortie comme entraînement de vélo, avec distance, calories et itinéraire, dans Apple Santé."
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD connects to your rear radar and speed/cadence sensors over Bluetooth to show approaching vehicles and your riding data."
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD salva la tua uscita come allenamento di ciclismo, con distanza, calorie e percorso, in Apple Salute."
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD se conecta por Bluetooth a tu radar trasero y a los sensores de velocidad/cadencia para mostrar los vehículos que se acercan y tus datos."
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD guarda tu ruta como entrenamiento de ciclismo, con distancia, calorías y recorrido, en Apple Salud."
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD se connecte en Bluetooth à votre radar arrière et à vos capteurs de vitesse/cadence pour afficher les véhicules qui approchent et vos données."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD si connette via Bluetooth al radar posteriore e ai sensori di velocità/cadenza per mostrare i veicoli in avvicinamento e i tuoi dati."
           }
         }
-      },
-      "comment": "Permission usage description"
+      }
     },
-    "NSLocationAlwaysAndWhenInUseUsageDescription": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD uses GPS to record your speed and distance during a ride, including while the screen is off."
+    "NSHealthShareUsageDescription" : {
+      "comment" : "Permission usage description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD liest deine Herzfrequenz und Körperdaten, um die verbrannten Kalorien während einer Fahrt zu schätzen."
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD uses GPS to record your speed and distance during a ride, including while the screen is off."
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "CycleHUD reads your heart rate and body metrics to estimate calories burned during a ride."
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD nutzt GPS, um deine Geschwindigkeit und Distanz während der Fahrt aufzuzeichnen, auch bei ausgeschaltetem Bildschirm."
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD reads your heart rate and body metrics to estimate calories burned during a ride."
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD utilise le GPS pour enregistrer votre vitesse et votre distance pendant une sortie, même écran éteint."
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD reads your heart rate and body metrics to estimate calories burned during a ride."
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD utilizza il GPS per registrare velocità e distanza durante un'uscita, anche con lo schermo spento."
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD lee tu frecuencia cardíaca y datos corporales para estimar las calorías quemadas durante una ruta."
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD usa el GPS para registrar tu velocidad y distancia durante una ruta, incluso con la pantalla apagada."
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD lit votre fréquence cardiaque et vos données corporelles pour estimer les calories brûlées pendant une sortie."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD legge la frequenza cardiaca e i dati corporei per stimare le calorie bruciate durante un'uscita."
           }
         }
-      },
-      "comment": "Permission usage description"
+      }
     },
-    "NSLocationWhenInUseUsageDescription": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD uses GPS to record your speed and distance during a ride, including while the screen is off."
+    "NSHealthUpdateUsageDescription" : {
+      "comment" : "Permission usage description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD speichert deine Fahrt als Radtraining mit Distanz, Kalorien und Route in Apple Health."
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD uses GPS to record your speed and distance during a ride, including while the screen is off."
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "CycleHUD saves your ride as a cycling workout, including distance, calories and route, to Apple Health."
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD nutzt GPS, um deine Geschwindigkeit und Distanz während der Fahrt aufzuzeichnen, auch bei ausgeschaltetem Bildschirm."
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD saves your ride as a cycling workout, including distance, calories and route, to Apple Health."
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD utilise le GPS pour enregistrer votre vitesse et votre distance pendant une sortie, même écran éteint."
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD saves your ride as a cycling workout, including distance, calories and route, to Apple Health."
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD usa il GPS per registrare velocità e distanza durante un'uscita, anche con lo schermo spento."
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD guarda tu ruta como entrenamiento de ciclismo, con distancia, calorías y recorrido, en Apple Salud."
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD usa el GPS para registrar tu velocidad y distancia durante una ruta, incluso con la pantalla apagada."
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD enregistre votre sortie comme entraînement de vélo, avec distance, calories et itinéraire, dans Apple Santé."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD salva la tua uscita come allenamento di ciclismo, con distanza, calorie e percorso, in Apple Salute."
           }
         }
-      },
-      "comment": "Permission usage description"
+      }
     },
-    "NSMotionUsageDescription": {
-      "localizations": {
-        "en-GB": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD uses the barometer to measure your elevation gain accurately during a ride."
+    "NSLocationAlwaysAndWhenInUseUsageDescription" : {
+      "comment" : "Permission usage description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD nutzt GPS, um deine Geschwindigkeit und Distanz während der Fahrt aufzuzeichnen, auch bei ausgeschaltetem Bildschirm."
           }
         },
-        "en-US": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD uses the barometer to measure your elevation gain accurately during a ride."
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "CycleHUD uses GPS to record your speed and distance during a ride, including while the screen is off."
           }
         },
-        "de-DE": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD nutzt das Barometer, um deinen Höhengewinn während einer Fahrt genau zu messen."
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD uses GPS to record your speed and distance during a ride, including while the screen is off."
           }
         },
-        "fr-FR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD utilise le baromètre pour mesurer précisément votre dénivelé pendant une sortie."
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD uses GPS to record your speed and distance during a ride, including while the screen is off."
           }
         },
-        "it-IT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD usa il barometro per misurare con precisione il dislivello durante un'uscita."
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD usa el GPS para registrar tu velocidad y distancia durante una ruta, incluso con la pantalla apagada."
           }
         },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CycleHUD usa el barómetro para medir con precisión tu desnivel durante una ruta."
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD utilise le GPS pour enregistrer votre vitesse et votre distance pendant une sortie, même écran éteint."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD utilizza il GPS per registrare velocità e distanza durante un'uscita, anche con lo schermo spento."
           }
         }
-      },
-      "comment": "Permission usage description"
+      }
+    },
+    "NSLocationWhenInUseUsageDescription" : {
+      "comment" : "Permission usage description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD nutzt GPS, um deine Geschwindigkeit und Distanz während der Fahrt aufzuzeichnen, auch bei ausgeschaltetem Bildschirm."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "CycleHUD uses GPS to record your speed and distance during a ride, including while the screen is off."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD uses GPS to record your speed and distance during a ride, including while the screen is off."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD uses GPS to record your speed and distance during a ride, including while the screen is off."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD usa el GPS para registrar tu velocidad y distancia durante una ruta, incluso con la pantalla apagada."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD utilise le GPS pour enregistrer votre vitesse et votre distance pendant une sortie, même écran éteint."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD usa il GPS per registrare velocità e distanza durante un'uscita, anche con lo schermo spento."
+          }
+        }
+      }
+    },
+    "NSMotionUsageDescription" : {
+      "comment" : "Permission usage description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD nutzt das Barometer, um deinen Höhengewinn während einer Fahrt genau zu messen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "CycleHUD uses the barometer to measure your elevation gain accurately during a ride."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD uses the barometer to measure your elevation gain accurately during a ride."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD uses the barometer to measure your elevation gain accurately during a ride."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD usa el barómetro para medir con precisión tu desnivel durante una ruta."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD utilise le baromètre pour mesurer précisément votre dénivelé pendant une sortie."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "CycleHUD usa il barometro per misurare con precisione il dislivello durante un'uscita."
+          }
+        }
+      }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }
