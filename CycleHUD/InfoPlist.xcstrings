@@ -278,7 +278,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "CycleHUD uses the barometer to measure your elevation gain accurately during a ride."
+            "value" : "CycleHUD uses the barometer to measure your elevation gain accurately, and the accelerometer to detect a crash during a ride."
           }
         },
         "en-GB" : {
