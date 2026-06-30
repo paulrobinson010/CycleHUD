@@ -3,8 +3,8 @@
 A personal, quality-of-life cycling HUD for iPhone + Apple Watch, built around
 the **Coospo TR70** rear radar. The focus is a **clear, glanceable UI**,
 **wrist haptics** so you can keep your eyes on the road, and a clean finish that
-saves each ride as an **Apple Health workout**. Garmin Varia–compatible radars
-and standard BLE speed/cadence sensors work too.
+saves each ride as an **Apple Health workout**. Garmin Varia–compatible radars,
+standard BLE speed/cadence sensors and heart-rate straps work too.
 
 <p align="center">
   <img src="docs/shots/alert-red.png" alt="CycleHUD main riding screen, with the radar panel flooded red as a vehicle closes in" width="300">
@@ -28,20 +28,41 @@ and standard BLE speed/cadence sensors work too.
   over music and ignoring the silent switch. Toggle in Settings. The beep and the
   wrist taps fire **only while you're riding**, not when the app sits idle with
   the radar switched on.
+- **Spoken vehicle call-outs** *(optional)* — a voice announces each new vehicle
+  and its distance ("car behind, 40 metres"), in your units and language. Aimed
+  at riders using bone-conduction headphones; works alongside or instead of the
+  beep.
 - **Live metrics** — current speed, average speed (moving time only), distance,
   elapsed moving time, cadence, total ascent (barometer-based when available,
-  GPS-altitude fallback otherwise), plus heart rate and calories when an Apple
-  Watch is paired.
+  GPS-altitude fallback otherwise), live road **gradient**, plus heart rate and
+  calories. Heart rate comes from a paired Apple Watch **or a standard Bluetooth
+  heart-rate strap** (service 0x180D).
+- **Customisable tiles** — choose which metric tiles appear on the ride screen,
+  and in what order, from **Settings → Ride screen tiles**. Options include
+  speed, average/max speed, cadence, distance, time, ascent, gradient, lap time,
+  heart rate, calories, and the weather tiles (rain, temperature, wind).
+- **Manual laps** — tap the lap button while riding to split the ride; each lap's
+  time, distance and average speed are shown in the ride summary.
+- **Ride export** — share any ride (end-of-ride or from history) as a **GPX or
+  TCX** file via the system share sheet — to Strava, Komoot, Ride with GPS,
+  Files, and more. *(This is a manual share, not an automatic upload — see note
+  below.)*
+- **Crash detection → SOS** *(optional)* — if a hard impact is detected while
+  riding, a 20-second countdown starts; if you don't cancel it, CycleHUD opens a
+  pre-filled text to your emergency contact with your location, ready to send.
+  Set it up in **Settings → Safety**. (iOS won't let an app send a text on its
+  own, so the message opens ready for you — or a bystander — to send.)
 - **Radar battery** — the TR70's battery level is shown on the radar panel, so
   you know before you set off.
 - **Heart-rate warning** *(optional)* — set a max heart rate (120–220 bpm). When
   you reach it the heart-rate readout turns red and your Apple Watch
   double-buzzes, repeating every 30 s while you stay above it.
-- **Rain nowcast** *(optional)* — a short-term forecast (next hour, Apple
-  WeatherKit) shows on the ride screen when rain is current or coming, with its
-  intensity, how soon it starts and how long it lasts. It refreshes every minute
-  while the app is open, so the "rain in N min" countdown stays live. Turn off in
-  Settings. Requires the WeatherKit capability (see Setup).
+- **Weather & wind** *(optional)* — a short-term rain nowcast (next hour, Apple
+  WeatherKit) shows when rain is current or coming, with its intensity, how soon
+  it starts and how long it lasts, refreshing every minute. Alongside it, a
+  **temperature** tile and a **wind** tile that resolves the wind against your
+  GPS heading and shows it as a headwind or tailwind. Turn off in Settings.
+  Requires the WeatherKit capability (see Setup).
 - **Apple Health workout** — tapping Stop saves a cycling workout (distance,
   duration, calories, GPS route) to Apple Health. On by default; turn *Save rides
   as workouts* off in Settings to keep rides local-only. Calories need your
@@ -79,6 +100,16 @@ and standard BLE speed/cadence sensors work too.
   beep, the **escalating wrist taps**, and a closing **radar-off** wrist alert —
   so you can feel and fine-tune every alert before a ride. It runs through once
   and stops; starting a ride also stops it.
+
+### Sending rides to Strava
+
+Ride export is a **manual share, not an automatic upload** — finishing a ride
+does *not* silently push it to Strava. Open a ride's summary, tap the share
+button, pick **GPX** or **TCX**, and send it to Strava (or Komoot, Ride with
+GPS, Files, etc.) through the share sheet. Automatic, hands-free upload to
+Strava would require registering a Strava API application (OAuth client ID +
+secret + redirect) and storing per-rider tokens; that can be added later if
+wanted, but it isn't part of the current share-sheet export.
 
 ## Screenshots
 
@@ -147,6 +178,9 @@ labels each device as *Radar* or *Speed / Cadence* once connected.
   3 bytes per threat: `[id, distance(m), approach speed(km/h)]`.
 - **Speed / cadence** — standard Bluetooth SIG CSC service `0x1816`,
   measurement characteristic `0x2A5B`.
+- **Heart-rate strap** — standard Bluetooth SIG Heart Rate service `0x180D`,
+  measurement characteristic `0x2A37`. Used when no Apple Watch heart rate is
+  available.
 
 New vehicles are detected by a previously-unseen threat id; the **Sensor
 diagnostics** screen (Settings) shows live services, characteristics and raw
@@ -167,7 +201,11 @@ These live in code and are easy to adjust:
 - **Auto-pause timing/threshold** — `RideManager.swift`.
 - **Watch haptic patterns** — `WatchSessionManager.swift` (`playHaptic` for the
   new-car/proximity taps, `playEventHaptic` for the radar-off double-buzz).
-- **New-vehicle beep** — `AudioAlerts.swift` (`makeDoubleBeepWAV`).
+- **New-vehicle beep / SOS tone** — `AudioAlerts.swift` (`makeDoubleBeepWAV`,
+  `makeSOSWAV`).
+- **Crash-detection sensitivity** — `CrashDetector.swift` (`impactThresholdG`,
+  default 4 g) and the SOS countdown length in `SOSManager.swift`.
+- **Live gradient window** — `RideManager.swift` (`updateGradient`).
 
 > The page `0x24` distance/speed/level bytes are decoded from real traffic (a
 > pedestrian is below a car radar's detection threshold, so the page only
@@ -183,26 +221,32 @@ These live in code and are easy to adjust:
 CycleHUD/
   CycleHUDApp.swift          App entry, wires managers together
   Theme.swift                Colours & fonts
-  Models/                    Units, Threat, RideSummary
+  Models/                    Units, Threat, RideSummary/Lap, MetricKind, WeatherConditions
   Settings/                  AppSettings (persisted)
   Managers/
-    BluetoothManager.swift   Scanning, TR70 + Varia radar, CSC, radar liveness
-    LocationManager.swift    GPS speed & distance fixes
-    RideManager.swift        Ride state machine, auto-pause, demo, Watch mirror
+    BluetoothManager.swift   Scanning, TR70 + Varia radar, CSC, HR strap, liveness
+    LocationManager.swift    GPS speed, distance, heading
+    RideManager.swift        Ride state machine, auto-pause, demo, gradient, laps, Watch mirror
     WatchConnectivityManager.swift  iPhone⇄Watch link (HR in, alerts out)
     HealthKitManager.swift   Saves the cycling workout to Apple Health
+    WeatherManager.swift     WeatherKit rain nowcast + temperature/wind
+    RideExporter.swift       GPX / TCX export from a ride summary
+    CrashDetector.swift      Core Motion impact detection
+    SOSManager.swift         Crash-SOS countdown + emergency message
     RideHistory.swift        Local store of past ride summaries (JSON)
-    AudioAlerts.swift        Synthesised new-vehicle beep
+    AudioAlerts.swift        Synthesised new-vehicle beep / SOS tone / voice call-outs
     Calories.swift           HR-based calorie estimate
     AppLog.swift             On-device diagnostics log
   Views/
     RideView.swift           Main radar-first screen (portrait + landscape)
     RadarView.swift          The radar lane visualisation (+ battery badge)
     MetricTile.swift         Metric tiles
+    MetricTilesView.swift    Customise which tiles show, and their order
     PairingView.swift        Sensor pairing
     SettingsView.swift       Settings
+    SOSCountdownView.swift   Full-screen crash-alert countdown
     DiagnosticsView.swift    Live BLE services / radar packets
-    RideSummaryView.swift    End-of-ride / history summary card + route map
+    RideSummaryView.swift    End-of-ride / history summary card + route map (+ export, laps)
     RouteMapView.swift       Full-screen route map (+ vehicle pins, Open in Maps)
     RideHistoryView.swift    Previous-rides list
     UnitsOnboardingView.swift First-launch units prompt
