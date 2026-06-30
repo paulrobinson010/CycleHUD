@@ -159,6 +159,25 @@
       </nav>
     </div>
   </footer>
-  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+
+  <div class="lightbox" id="lightbox"><img alt="Screenshot"></div>
+
+  <script>
+    document.getElementById('yr').textContent = new Date().getFullYear();
+    (function () {
+      var lb = document.getElementById('lightbox');
+      var lbImg = lb.querySelector('img');
+      document.querySelectorAll('.shots img').forEach(function (img) {
+        img.addEventListener('click', function () {
+          lbImg.src = img.src;
+          lbImg.alt = img.alt;
+          lb.classList.add('open');
+        });
+      });
+      function close() { lb.classList.remove('open'); }
+      lb.addEventListener('click', close);
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    })();
+  </script>
 </body>
 </html>
