@@ -93,6 +93,7 @@ final class AppSettings: ObservableObject {
             defaults.set([appLanguage], forKey: "AppleLanguages")
         }
         Fmt.locale = appLocale
+        Lang.apply(appLanguage)   // redirect String(localized:)/Text lookups live
     }
 
     /// The warning threshold to broadcast to the Watch — 0 when disabled.

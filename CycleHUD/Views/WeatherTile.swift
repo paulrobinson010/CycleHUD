@@ -48,13 +48,15 @@ struct WeatherTile: View {
     private var value: String {
         guard let n = nowcast else {
             switch status {
-            case .unavailable: return String(localized: "n/a")
+            case .unavailable: return String(localized: "n/a", bundle: Lang.bundle)
             default: return "…"
             }
         }
-        if n.isRaining { return String(localized: "Now") }
-        if let m = n.startsInMinutes { return n.usedMinuteData ? Fmt.int(m) : String(localized: "<1h") }
-        return String(localized: "None")
+        if n.isRaining { return String(localized: "Now", bundle: Lang.bundle) }
+        if let m = n.startsInMinutes {
+            return n.usedMinuteData ? Fmt.int(m) : String(localized: "<1h", bundle: Lang.bundle)
+        }
+        return String(localized: "None", bundle: Lang.bundle)
     }
 
     private var unit: String {
@@ -117,20 +119,20 @@ struct WeatherDetailView: View {
 
     private var detail: String {
         if nowcast.isRaining {
-            let d = nowcast.durationMinutes.map { String(localized: " for about \(format($0))") } ?? ""
-            return String(localized: "It's raining now (\(nowcast.peak.label))\(d).")
+            let d = nowcast.durationMinutes.map { String(localized: " for about \(format($0))", bundle: Lang.bundle) } ?? ""
+            return String(localized: "It's raining now (\(nowcast.peak.label))\(d).", bundle: Lang.bundle)
         }
         if let m = nowcast.startsInMinutes {
-            let when = nowcast.usedMinuteData ? String(localized: "in about \(Fmt.int(m)) min")
-                                              : String(localized: "within the hour")
-            let d = nowcast.durationMinutes.map { String(localized: ", lasting about \(format($0))") } ?? ""
-            return String(localized: "Rain expected \(when) — \(nowcast.peak.label)\(d).")
+            let when = nowcast.usedMinuteData ? String(localized: "in about \(Fmt.int(m)) min", bundle: Lang.bundle)
+                                              : String(localized: "within the hour", bundle: Lang.bundle)
+            let d = nowcast.durationMinutes.map { String(localized: ", lasting about \(format($0))", bundle: Lang.bundle) } ?? ""
+            return String(localized: "Rain expected \(when) — \(nowcast.peak.label)\(d).", bundle: Lang.bundle)
         }
-        return String(localized: "No rain expected in the next hour.")
+        return String(localized: "No rain expected in the next hour.", bundle: Lang.bundle)
     }
 
     private func format(_ minutes: Int) -> String {
-        minutes >= 90 ? String(localized: "\(Fmt.int(Double(minutes) / 60)) hours")
-                      : String(localized: "\(Fmt.int(minutes)) min")
+        minutes >= 90 ? String(localized: "\(Fmt.int(Double(minutes) / 60)) hours", bundle: Lang.bundle)
+                      : String(localized: "\(Fmt.int(minutes)) min", bundle: Lang.bundle)
     }
 }

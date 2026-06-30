@@ -20,9 +20,9 @@ struct RainNowcast: Equatable {
         var label: String {
             switch self {
             case .none: return "—"
-            case .light: return String(localized: "light")
-            case .moderate: return String(localized: "moderate")
-            case .heavy: return String(localized: "heavy")
+            case .light: return String(localized: "light", bundle: Lang.bundle)
+            case .moderate: return String(localized: "moderate", bundle: Lang.bundle)
+            case .heavy: return String(localized: "heavy", bundle: Lang.bundle)
             }
         }
     }
@@ -46,12 +46,12 @@ struct RainNowcast: Equatable {
     /// Plain-language one-liner for all states, including dry — used in diagnostics.
     var summary: String {
         let hard = peak != .none ? " (\(peak.label))" : ""
-        if isRaining { return String(localized: "Raining now\(hard).") }
+        if isRaining { return String(localized: "Raining now\(hard).", bundle: Lang.bundle) }
         if let m = startsInMinutes {
-            let when = usedMinuteData ? String(localized: "in about \(Fmt.int(m)) min")
-                                      : String(localized: "within the hour")
-            return String(localized: "Rain expected \(when)\(hard).")
+            let when = usedMinuteData ? String(localized: "in about \(Fmt.int(m)) min", bundle: Lang.bundle)
+                                      : String(localized: "within the hour", bundle: Lang.bundle)
+            return String(localized: "Rain expected \(when)\(hard).", bundle: Lang.bundle)
         }
-        return String(localized: "No rain expected in the next hour.")
+        return String(localized: "No rain expected in the next hour.", bundle: Lang.bundle)
     }
 }
