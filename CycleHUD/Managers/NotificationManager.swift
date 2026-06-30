@@ -34,18 +34,6 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         UNUserNotificationCenter.current().add(request)
     }
 
-    /// Fire an imminent-rain heads-up. Replaces any prior rain notification so a
-    /// changing forecast doesn't stack up.
-    func notifyRain(_ message: String) {
-        let content = UNMutableNotificationContent()
-        content.title = String(localized: "Rain incoming")
-        content.body = message
-        content.sound = .default
-        let request = UNNotificationRequest(identifier: "rain-incoming",
-                                            content: content, trigger: nil)   // deliver now
-        UNUserNotificationCenter.current().add(request)
-    }
-
     static func body(for names: [String]) -> String {
         let list: String
         switch names.count {

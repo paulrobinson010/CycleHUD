@@ -21,7 +21,6 @@ final class AppSettings: ObservableObject {
         static let saveWorkouts = "saveWorkouts"
         static let darkModeEnabled = "darkModeEnabled"
         static let weatherEnabled = "weatherEnabled"
-        static let weatherAlertsEnabled = "weatherAlertsEnabled"
         static let appLanguage = "appLanguage"
     }
 
@@ -74,8 +73,6 @@ final class AppSettings: ObservableObject {
     @Published var darkModeEnabled: Bool { didSet { defaults.set(darkModeEnabled, forKey: Keys.darkModeEnabled) } }
     /// Short-term rain nowcast (Apple WeatherKit) shown on the ride screen.
     @Published var weatherEnabled: Bool { didSet { defaults.set(weatherEnabled, forKey: Keys.weatherEnabled) } }
-    /// Notify (and buzz the Watch) when rain is imminent.
-    @Published var weatherAlertsEnabled: Bool { didSet { defaults.set(weatherAlertsEnabled, forKey: Keys.weatherAlertsEnabled) } }
     /// In-app language override (BCP-47 code, or "" to follow the device).
     @Published var appLanguage: String {
         didSet { defaults.set(appLanguage, forKey: Keys.appLanguage); applyLanguage() }
@@ -119,7 +116,6 @@ final class AppSettings: ObservableObject {
             Keys.saveWorkouts: true,
             Keys.darkModeEnabled: false,
             Keys.weatherEnabled: true,
-            Keys.weatherAlertsEnabled: true,
             Keys.appLanguage: ""
         ])
 
@@ -139,7 +135,6 @@ final class AppSettings: ObservableObject {
         saveWorkouts = defaults.bool(forKey: Keys.saveWorkouts)
         darkModeEnabled = defaults.bool(forKey: Keys.darkModeEnabled)
         weatherEnabled = defaults.bool(forKey: Keys.weatherEnabled)
-        weatherAlertsEnabled = defaults.bool(forKey: Keys.weatherAlertsEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
         applyLanguage()
     }

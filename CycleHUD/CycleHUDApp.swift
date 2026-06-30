@@ -77,10 +77,6 @@ struct CycleHUDApp: App {
                     NotificationManager.shared.requestAuthorization()
                     weather.locationProvider = { location.currentLocation }
                     weather.isEnabled = { settings.weatherEnabled }
-                    weather.onImminentRain = { nowcast in
-                        guard settings.weatherAlertsEnabled else { return }
-                        NotificationManager.shared.notifyRain(nowcast.alertMessage)
-                    }
                     weather.start()
                 }
         }

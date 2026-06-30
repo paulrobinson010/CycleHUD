@@ -67,6 +67,7 @@ struct RideView: View {
             case .active:
                 checkPermissions()
                 ble.resumeFromBackground()        // reconnect sensors we dropped
+                Task { await weather.refresh(force: true) }   // fresh rain value on return
             case .background:
                 // Not riding? Drop sensor connections so the app isn't kept alive
                 // in the background processing the radar stream. During a ride

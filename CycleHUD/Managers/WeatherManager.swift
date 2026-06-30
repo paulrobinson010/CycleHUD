@@ -29,17 +29,17 @@ final class WeatherManager: ObservableObject {
     var isEnabled: (() -> Bool)?
 
     private var lastFetch: Date?
-    private var lastImminentOnset: Date?     // de-dupe rain alerts for one event
-    private let minInterval: TimeInterval = 10 * 60   // don't refetch within 10 min
+    /// Minimum gap between network fetches. Just below the 60 s tick so each tick
+    /// actually refreshes (the nowcast — and its "rain in N min" countdown — is
+    /// only as current as the last fetch, so we refresh every minute while shown).
+    private let minInterval: TimeInterval = 45
     private var timer: Timer?
 
-    /// Begin periodic refreshes (idempotent). The 2-minute tick is cheap — the
-    /// 10-minute throttle in `refresh` means a network call happens at most that
-    /// often, but the short tick lets the first fetch fire as soon as a GPS fix
-    /// and/or WeatherKit becomes available after launch.
+    /// Begin minute-by-minute refreshes (idempotent). WeatherKit's minute forecast
+    /// is designed for exactly this polling, and it keeps the countdown live.
     func start() {
         guard timer == nil else { return }
-        timer = Timer.scheduledTimer(withTimeInterval: 120, repeats: true) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
             Task { await self?.refresh() }
         }
         Task { await refresh() }
@@ -48,9 +48,6 @@ final class WeatherManager: ObservableObject {
     #if canImport(WeatherKit)
     private let service = WeatherService.shared
     #endif
-
-    /// Optional callback when rain becomes imminent (for a notification/haptic).
-    var onImminentRain: ((RainNowcast) -> Void)?
 
     /// Refresh if enabled, located, and the throttle has elapsed (or forced).
     func refresh(force: Bool = false) async {
@@ -72,7 +69,6 @@ final class WeatherManager: ObservableObject {
             lastErrorText = nil
             nowcast = result
             status = .ready
-            fireAlertIfNeeded(result)
         } catch {
             // Leave the last good value; only flag unavailable if we have nothing.
             if nowcast == nil { status = .unavailable }
@@ -83,19 +79,6 @@ final class WeatherManager: ObservableObject {
         status = .unavailable
         lastErrorText = "WeatherKit not available in this build."
         #endif
-    }
-
-    private func fireAlertIfNeeded(_ n: RainNowcast) {
-        guard n.isImminent, let onset = imminentOnsetDate(n) else { return }
-        // Only alert once per distinct onset (within ~5 min tolerance).
-        if let last = lastImminentOnset, abs(last.timeIntervalSince(onset)) < 300 { return }
-        lastImminentOnset = onset
-        onImminentRain?(n)
-    }
-
-    private func imminentOnsetDate(_ n: RainNowcast) -> Date? {
-        if n.isRaining { return n.asOf }
-        return n.startsInMinutes.map { n.asOf.addingTimeInterval(Double($0) * 60) }
     }
 
     #if canImport(WeatherKit)

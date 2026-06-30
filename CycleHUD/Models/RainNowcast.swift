@@ -43,28 +43,7 @@ struct RainNowcast: Equatable {
     /// Any rain to surface at all (now or soon).
     var hasRain: Bool { isRaining || startsInMinutes != nil }
 
-    /// "Imminent" — within the next 15 minutes — used to fire an alert.
-    var isImminent: Bool {
-        if isRaining { return true }
-        if let m = startsInMinutes { return m <= 15 }
-        return false
-    }
-
-    /// One-line text for the imminent-rain notification.
-    var alertMessage: String {
-        let hard = peak != .none ? " (\(peak.label))" : ""
-        if isRaining { return String(localized: "Rain has started\(hard).") }
-        if let m = startsInMinutes {
-            let when = usedMinuteData ? String(localized: "in about \(Fmt.int(m)) min")
-                                      : String(localized: "within the hour")
-            return String(localized: "Rain expected \(when)\(hard).")
-        }
-        return String(localized: "Rain expected soon.")
-    }
-
-    /// Plain-language one-liner for all states, including dry — used in
-    /// diagnostics (unlike `alertMessage`, which is only shown for imminent rain
-    /// and therefore assumes rain is coming).
+    /// Plain-language one-liner for all states, including dry — used in diagnostics.
     var summary: String {
         let hard = peak != .none ? " (\(peak.label))" : ""
         if isRaining { return String(localized: "Raining now\(hard).") }

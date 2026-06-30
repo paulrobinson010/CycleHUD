@@ -39,8 +39,8 @@ and standard BLE speed/cadence sensors work too.
   double-buzzes, repeating every 30 s while you stay above it.
 - **Rain nowcast** *(optional)* — a short-term forecast (next hour, Apple
   WeatherKit) shows on the ride screen when rain is current or coming, with its
-  intensity, how soon it starts and how long it lasts. An optional alert
-  notifies you (and your wrist) when rain is within ~15 minutes. Turn off in
+  intensity, how soon it starts and how long it lasts. It refreshes every minute
+  while the app is open, so the "rain in N min" countdown stays live. Turn off in
   Settings. Requires the WeatherKit capability (see Setup).
 - **Apple Health workout** — tapping Stop saves a cycling workout (distance,
   duration, calories, GPS route) to Apple Health. On by default; turn *Save rides
