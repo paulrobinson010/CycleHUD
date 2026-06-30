@@ -316,6 +316,48 @@ struct RideView: View {
                     WeatherTile(nowcast: weather.nowcast, status: weather.status, height: 90)
                 }
             }
+            if settings.weatherEnabled {
+                HStack(spacing: 8) {
+                    MetricTile(title: "Gradient", value: gradientString, unit: "%",
+                               valueSize: 32, height: 90)
+                    MetricTile(title: "Temp", value: temperatureValue, unit: temperatureUnit,
+                               valueSize: 32, height: 90)
+                    windTile
+                }
+            }
+        }
+    }
+
+    /// Live road gradient as a signed percentage (— until enough travel).
+    private var gradientString: String {
+        guard let g = ride.currentGradientPercent else { return "—" }
+        return Fmt.decimal(g, 1)
+    }
+
+    /// Imperial temperature (°F) when the rider uses miles, otherwise °C.
+    private var imperialTemperature: Bool { settings.distanceUnit == .mi }
+    private var temperatureUnit: String { imperialTemperature ? "°F" : "°C" }
+    private var temperatureValue: String {
+        guard let c = weather.conditions else { return "—" }
+        let t = imperialTemperature ? c.temperatureC * 9 / 5 + 32 : c.temperatureC
+        return Fmt.int(t)
+    }
+
+    /// Headwind / tailwind along the rider's heading, or absolute wind speed when
+    /// no heading is available yet.
+    private var windTile: some View {
+        let speedLabel = settings.speedUnit.label
+        if let c = weather.conditions, let course = location.courseDegrees {
+            let head = c.headwindMps(course: course)
+            let value = Fmt.int(settings.speedUnit.value(fromMps: abs(head)))
+            return MetricTile(title: head >= 0 ? "Headwind" : "Tailwind",
+                              value: value, unit: speedLabel, valueSize: 32, height: 90)
+        } else if let c = weather.conditions {
+            return MetricTile(title: "Wind",
+                              value: Fmt.int(settings.speedUnit.value(fromMps: c.windSpeedMps)),
+                              unit: speedLabel, valueSize: 32, height: 90)
+        } else {
+            return MetricTile(title: "Wind", value: "—", unit: "", valueSize: 32, height: 90)
         }
     }
 

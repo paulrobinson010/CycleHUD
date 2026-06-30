@@ -19,6 +19,8 @@ final class WeatherManager: ObservableObject {
     enum Status: Equatable { case idle, loading, ready, unavailable }
 
     @Published private(set) var nowcast: RainNowcast?
+    /// Current temperature and wind for the ride tiles (nil until first fetch).
+    @Published private(set) var conditions: WeatherConditions?
     @Published private(set) var status: Status = .idle
     /// Human-readable last error / state, surfaced in Diagnostics for debugging.
     @Published private(set) var lastErrorText: String?
@@ -52,7 +54,7 @@ final class WeatherManager: ObservableObject {
     /// Refresh if enabled, located, and the throttle has elapsed (or forced).
     func refresh(force: Bool = false) async {
         guard isEnabled?() ?? false else {
-            nowcast = nil; status = .idle; lastErrorText = nil; return
+            nowcast = nil; conditions = nil; status = .idle; lastErrorText = nil; return
         }
         guard let loc = locationProvider?() else {
             lastErrorText = "Waiting for a location fix…"   // can't fetch without a coordinate
@@ -63,11 +65,12 @@ final class WeatherManager: ObservableObject {
         #if canImport(WeatherKit)
         status = nowcast == nil ? .loading : status
         do {
-            let result = try await fetchNowcast(for: loc)
+            let (rain, current) = try await fetchWeather(for: loc)
             lastFetch = Date()
             lastUpdated = Date()
             lastErrorText = nil
-            nowcast = result
+            nowcast = rain
+            conditions = current
             status = .ready
         } catch {
             // Leave the last good value; only flag unavailable if we have nothing.
@@ -84,13 +87,23 @@ final class WeatherManager: ObservableObject {
     #if canImport(WeatherKit)
     // MARK: - WeatherKit → RainNowcast
 
-    private func fetchNowcast(for location: CLLocation) async throws -> RainNowcast {
+    private func fetchWeather(for location: CLLocation) async throws
+        -> (RainNowcast, WeatherConditions) {
         let weather = try await service.weather(for: location)
         let now = Date()
+        let rain: RainNowcast
         if let minute = weather.minuteForecast, !minute.isEmpty {
-            return Self.fromMinute(Array(minute), now: now)
+            rain = Self.fromMinute(Array(minute), now: now)
+        } else {
+            rain = Self.fromHourly(Array(weather.hourlyForecast), now: now)
         }
-        return Self.fromHourly(Array(weather.hourlyForecast), now: now)
+        let cur = weather.currentWeather
+        let conditions = WeatherConditions(
+            temperatureC: cur.temperature.converted(to: .celsius).value,
+            windSpeedMps: cur.wind.speed.converted(to: .metersPerSecond).value,
+            windFromDegrees: cur.wind.direction.converted(to: .degrees).value,
+            asOf: now)
+        return (rain, conditions)
     }
 
     /// Minute-by-minute path (best). A minute counts as "wet" when the chance of

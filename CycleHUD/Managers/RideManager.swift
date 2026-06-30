@@ -47,6 +47,7 @@ final class RideManager: ObservableObject {
     @Published private(set) var elevationGainMeters: Double = 0   // total ascent this ride
     @Published private(set) var caloriesKcal: Double = 0
     @Published private(set) var currentHeartRate: Int?            // from the Watch, if present
+    @Published private(set) var currentGradientPercent: Double?   // live road gradient (%)
 
     var averageSpeedMps: Double {
         movingTimeSeconds > 0 ? distanceMeters / movingTimeSeconds : 0
@@ -116,6 +117,10 @@ final class RideManager: ObservableObject {
     private var track: [TrackSample] = []
     private var lastTrackAt: Date?
 
+    // Rolling (distance, altitude) buffer for the live gradient, computed over a
+    // short trailing window so the reading is stable but responsive.
+    private var gradientWindow: [(dist: Double, alt: Double)] = []
+
     init(ble: BluetoothManager, location: LocationManager, settings: AppSettings,
          health: HealthKitManager, watch: WatchConnectivityManager, history: RideHistory) {
         self.ble = ble
@@ -167,6 +172,8 @@ final class RideManager: ObservableObject {
         firstGpsAltitude = nil
         track = []
         lastTrackAt = nil
+        gradientWindow = []
+        currentGradientPercent = nil
         lastTick = Date()
         loadBodyMetrics()
         status = .running
@@ -231,6 +238,8 @@ final class RideManager: ObservableObject {
         elevationGainMeters = 0
         caloriesKcal = 0
         currentHeartRate = nil
+        currentGradientPercent = nil
+        gradientWindow = []
         UIApplication.shared.isIdleTimerDisabled = false
         sendMirror()
 
@@ -297,6 +306,7 @@ final class RideManager: ObservableObject {
         // elapsed time, so the demo (and App Store screenshots) show full data.
         currentHeartRate = Int.random(in: 132...148)
         caloriesKcal = (elapsed / 60.0) * Double.random(in: 9...12)
+        currentGradientPercent = Double.random(in: -2...4)
         lastTick = Date()
         demoTimer?.invalidate()
         demoTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
@@ -317,6 +327,7 @@ final class RideManager: ObservableObject {
         currentSpeedMps = 0
         currentHeartRate = nil
         caloriesKcal = 0
+        currentGradientPercent = nil
         // Tell the Watch it's over: resets speed, clears threats, ends its
         // workout (which zeroes the heart rate).
         sendMirror()
@@ -363,6 +374,7 @@ final class RideManager: ObservableObject {
         let hr = (currentHeartRate ?? 140) + Int.random(in: -1...1)
         currentHeartRate = min(155, max(126, hr))
         caloriesKcal += (10.0 / 60.0) * dt
+        currentGradientPercent = sin(movingTimeSeconds / 18.0) * 4 + Double.random(in: -0.4...0.4)
         sendMirror()   // drive the Watch (mirror + escalating haptics) during the demo too
     }
 
@@ -425,6 +437,7 @@ final class RideManager: ObservableObject {
             accumulateCalories(dt: dt)
             updateAutoPause(dt: dt)
             sampleTrack(now: now)
+            updateGradient()
         case .autoPaused:
             updateAutoResume(dt: dt)
         case .paused, .idle:
@@ -455,6 +468,24 @@ final class RideManager: ObservableObject {
                                  speedMps: currentSpeedMps,
                                  hr: currentHeartRate,
                                  altitude: relativeAltitude))
+    }
+
+    /// Live road gradient (%), as rise over run across a short trailing window of
+    /// travel. Uses the same altitude source as the elevation graph (barometer
+    /// when available, GPS otherwise) against cumulative distance. Needs a few
+    /// metres of travel before it reads, and is clamped to a sane road range.
+    private func updateGradient() {
+        let d = distanceMeters
+        gradientWindow.append((d, relativeAltitude))
+        while let first = gradientWindow.first, d - first.dist > 60 { gradientWindow.removeFirst() }
+        // Baseline ~20 m back (or the oldest sample we have); require ≥8 m of run
+        // so the percentage isn't dominated by GPS/altitude noise at low distance.
+        let base = gradientWindow.first { d - $0.dist >= 20 } ?? gradientWindow.first
+        guard let base, d - base.dist >= 8 else { currentGradientPercent = nil; return }
+        let run = d - base.dist
+        guard run > 0 else { currentGradientPercent = nil; return }
+        let g = (relativeAltitude - base.alt) / run * 100
+        currentGradientPercent = max(-30, min(30, g))
     }
 
     /// Calories. Uses heart rate (Keytel) when the Watch supplies one, otherwise
