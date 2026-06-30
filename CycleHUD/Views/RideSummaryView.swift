@@ -9,6 +9,14 @@ struct RideSummaryView: View {
     @EnvironmentObject var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
     @State private var showRouteMap = false
+    @State private var exportFile: ExportFile?
+    @State private var showExportError = false
+
+    /// Identifiable wrapper so an exported file URL can drive a `.sheet(item:)`.
+    private struct ExportFile: Identifiable {
+        let url: URL
+        var id: String { url.absoluteString }
+    }
 
     var body: some View {
         NavigationStack {
@@ -26,6 +34,9 @@ struct RideSummaryView: View {
             .navigationTitle("Ride Summary")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                if RideExporter.canExport(summary) {
+                    ToolbarItem(placement: .topBarLeading) { exportMenu }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
@@ -35,6 +46,36 @@ struct RideSummaryView: View {
                     .accessibilityLabel("Close")
                 }
             }
+            .sheet(item: $exportFile) { file in
+                ShareSheet(items: [file.url])
+            }
+            .alert("Couldn’t export this ride", isPresented: $showExportError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("This ride doesn’t have enough GPS track to export.")
+            }
+        }
+    }
+
+    /// Export the ride as a GPX or TCX file and hand it to the system share sheet,
+    /// so it can be sent to Strava, Komoot, Ride with GPS, Files, etc.
+    private var exportMenu: some View {
+        Menu {
+            Button { export(.gpx) } label: { Label("Export GPX", systemImage: "doc.text") }
+            Button { export(.tcx) } label: { Label("Export TCX", systemImage: "doc.text") }
+        } label: {
+            Image(systemName: "square.and.arrow.up")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(Theme.textPrimary)
+        }
+        .accessibilityLabel("Export or share this ride")
+    }
+
+    private func export(_ format: RideExporter.Format) {
+        if let url = RideExporter.writeTemporaryFile(for: summary, format: format) {
+            exportFile = ExportFile(url: url)
+        } else {
+            showExportError = true
         }
     }
 
