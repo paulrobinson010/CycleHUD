@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import MessageUI
 
 /// The main riding screen: radar-first, with the data grid and ride controls
 /// beneath it. No map.
@@ -11,6 +12,7 @@ struct RideView: View {
     @EnvironmentObject var watch: WatchConnectivityManager
     @EnvironmentObject var history: RideHistory
     @EnvironmentObject var weather: WeatherManager
+    @EnvironmentObject var sos: SOSManager
 
     private enum ActiveSheet: Int, Identifiable {
         case pairing, settings
@@ -46,6 +48,7 @@ struct RideView: View {
                 case .pairing: PairingView(showAccessHint: pairingFromOnboarding).environmentObject(ble)
                 case .settings: SettingsView().environmentObject(settings).environmentObject(ble)
                         .environmentObject(ride).environmentObject(history).environmentObject(weather)
+                        .environmentObject(sos)
                 }
             }
             .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
@@ -54,6 +57,13 @@ struct RideView: View {
             RideSummaryView(summary: summary).environmentObject(settings)
                 .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
         }
+        .fullScreenCover(isPresented: Binding(
+            get: { sos.isCountingDown },
+            set: { if !$0 { sos.cancel() } }
+        )) {
+            SOSCountdownView(sos: sos).environment(\.locale, settings.appLocale)
+        }
+        .sheet(isPresented: $sos.presentComposer) { sosComposer }
         .fullScreenCover(isPresented: Binding(
             get: { !settings.hasChosenUnits },
             set: { _ in }
@@ -122,6 +132,35 @@ struct RideView: View {
     /// The app-wide light/dark choice, applied to presented sheets/covers too so
     /// toggling it updates onboarding and Settings live, not just the main screen.
     private var appColorScheme: ColorScheme { settings.darkModeEnabled ? .dark : .light }
+
+    /// The SOS message composer, or a manual fallback when the device can't send
+    /// texts (no SIM/iMessage) — showing the number and message to send by hand.
+    @ViewBuilder private var sosComposer: some View {
+        if MFMessageComposeViewController.canSendText() {
+            MessageComposeView(recipients: sos.recipients, body: sos.messageBody) {
+                sos.composerFinished()
+            }
+            .ignoresSafeArea()
+        } else {
+            VStack(spacing: 16) {
+                Image(systemName: "exclamationmark.bubble")
+                    .font(.system(size: 40)).foregroundStyle(Theme.threatHigh)
+                Text("Can’t send a text from this device")
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                if let contact = settings.emergencyContact {
+                    Text(contact.name.isEmpty ? contact.phone : "\(contact.name) — \(contact.phone)")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                }
+                Text(sos.messageBody)
+                    .font(.footnote).foregroundStyle(Theme.textSecondary)
+                    .multilineTextAlignment(.center)
+                Button("Close") { sos.composerFinished() }
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .padding(.top, 8)
+            }
+            .padding(28)
+        }
+    }
 
     /// Surface any missing OS permission the app relies on. `force` re-shows even
     /// after the rider dismissed it — used when they change a setting (e.g. turn

@@ -66,6 +66,8 @@ final class RideManager: ObservableObject {
     private let health: HealthKitManager
     private let watch: WatchConnectivityManager
     private let history: RideHistory
+    private let sos: SOSManager
+    private let crash = CrashDetector()
 
     // Recorded GPS track + body metrics for the workout / calories.
     private var route: [CLLocation] = []
@@ -129,13 +131,19 @@ final class RideManager: ObservableObject {
     private var lapStartDistance: Double = 0
 
     init(ble: BluetoothManager, location: LocationManager, settings: AppSettings,
-         health: HealthKitManager, watch: WatchConnectivityManager, history: RideHistory) {
+         health: HealthKitManager, watch: WatchConnectivityManager, history: RideHistory,
+         sos: SOSManager) {
         self.ble = ble
         self.location = location
         self.settings = settings
         self.health = health
         self.watch = watch
         self.history = history
+        self.sos = sos
+        self.crash.onCrash = { [weak self] in
+            guard let self, self.status != .idle, !self.demoActive else { return }
+            self.sos.trigger()
+        }
         self.location.onLocation = { [weak self] loc in self?.accumulate(loc) }
         self.ble.onDemoFinished = { [weak self] in self?.demoFramesFinished() }
         self.ble.onNewCar = { [weak self] in
@@ -192,6 +200,7 @@ final class RideManager: ObservableObject {
         location.setMode(.recording)
         startTicker()
         startAltimeter()
+        if settings.crashDetectionEnabled { crash.start() }
         applyScreenLock()
         try? FileManager.default.removeItem(at: routeURL)
         persistSnapshot()
@@ -263,6 +272,7 @@ final class RideManager: ObservableObject {
         status = .idle
         stopTicker()
         stopAltimeter()
+        crash.stop()
         location.setMode(.idle)        // back to low-power once the ride ends
         // Reset all live metrics to a clean slate (the ride is saved to Health
         // below), THEN mirror the zeros so the Watch clears too — otherwise it
@@ -812,6 +822,7 @@ final class RideManager: ObservableObject {
         location.setMode(.recording)
         startTicker()
         startAltimeter()
+        if settings.crashDetectionEnabled { crash.start() }
         applyScreenLock()
         AppLog.shared.log("Restored in-progress ride (status=\(snap.statusRaw), dist=\(Int(distanceMeters))m) — prior session likely crashed/terminated")
     }

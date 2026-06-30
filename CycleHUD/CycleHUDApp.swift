@@ -34,6 +34,7 @@ struct CycleHUDApp: App {
     @StateObject private var history: RideHistory
     @StateObject private var ride: RideManager
     @StateObject private var weather: WeatherManager
+    @StateObject private var sos: SOSManager
 
     init() {
         AppLog.shared.installCrashHandlers()
@@ -45,8 +46,9 @@ struct CycleHUDApp: App {
         let health = HealthKitManager()
         let watch = WatchConnectivityManager()
         let history = RideHistory()
+        let sos = SOSManager()
         let ride = RideManager(ble: ble, location: location, settings: settings,
-                               health: health, watch: watch, history: history)
+                               health: health, watch: watch, history: history, sos: sos)
         let weather = WeatherManager()
         _settings = StateObject(wrappedValue: settings)
         _ble = StateObject(wrappedValue: ble)
@@ -56,6 +58,7 @@ struct CycleHUDApp: App {
         _history = StateObject(wrappedValue: history)
         _ride = StateObject(wrappedValue: ride)
         _weather = StateObject(wrappedValue: weather)
+        _sos = StateObject(wrappedValue: sos)
     }
 
     var body: some Scene {
@@ -68,6 +71,7 @@ struct CycleHUDApp: App {
                 .environmentObject(watch)
                 .environmentObject(history)
                 .environmentObject(weather)
+                .environmentObject(sos)
                 .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
                 .onAppear {
                     location.requestAuthorization()
@@ -78,6 +82,8 @@ struct CycleHUDApp: App {
                     weather.locationProvider = { location.currentLocation }
                     weather.isEnabled = { settings.weatherEnabled }
                     weather.start()
+                    sos.locationProvider = { location.currentLocation }
+                    sos.contactProvider = { settings.emergencyContact }
                 }
         }
     }

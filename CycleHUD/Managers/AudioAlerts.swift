@@ -13,6 +13,7 @@ final class AudioAlerts: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesizerDel
     static let shared = AudioAlerts()
 
     private var player: AVAudioPlayer?
+    private var sosPlayer: AVAudioPlayer?
     private var configured = false
 
     /// Spoken vehicle call-outs (for riders using bone-conduction headphones who
@@ -34,6 +35,11 @@ final class AudioAlerts: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesizerDel
         player = try? AVAudioPlayer(data: data, fileTypeHint: AVFileType.wav.rawValue)
         player?.delegate = self
         player?.prepareToPlay()
+
+        let sosData = AudioAlerts.makeSOSWAV()
+        sosPlayer = try? AVAudioPlayer(data: sosData, fileTypeHint: AVFileType.wav.rawValue)
+        sosPlayer?.delegate = self
+        sosPlayer?.prepareToPlay()
     }
 
     private func configureSessionIfNeeded() {
@@ -52,6 +58,19 @@ final class AudioAlerts: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesizerDel
             self.player?.volume = 1.0
             self.player?.currentTime = 0
             self.player?.play()
+        }
+    }
+
+    /// Fire the urgent SOS attention tone (a crash was detected). Loud and
+    /// distinct from the vehicle beep.
+    func playSOSAlert() {
+        DispatchQueue.main.async {
+            self.configureSessionIfNeeded()
+            self.forceMaxVolume()
+            try? AVAudioSession.sharedInstance().setActive(true)
+            self.sosPlayer?.volume = 1.0
+            self.sosPlayer?.currentTime = 0
+            self.sosPlayer?.play()
         }
     }
 
@@ -112,7 +131,8 @@ final class AudioAlerts: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesizerDel
     /// promptly — but only once neither the beep nor the voice is still playing,
     /// so they don't cut each other off when both alerts are enabled.
     private func releaseSessionIfQuiet() {
-        guard !(player?.isPlaying ?? false), !synthesizer.isSpeaking else { return }
+        guard !(player?.isPlaying ?? false), !(sosPlayer?.isPlaying ?? false),
+              !synthesizer.isSpeaking else { return }
         try? AVAudioSession.sharedInstance().setActive(false, options: [.notifyOthersOnDeactivation])
     }
 
@@ -125,6 +145,17 @@ final class AudioAlerts: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesizerDel
         samples += tone(frequency: 1480, duration: 0.10, sampleRate: sampleRate)
         samples += silence(duration: 0.04, sampleRate: sampleRate)
         samples += tone(frequency: 1860, duration: 0.12, sampleRate: sampleRate)
+        return wav(from: samples, sampleRate: Int(sampleRate))
+    }
+
+    /// An urgent SOS tone: three rising long beeps, distinct from the car beep.
+    private static func makeSOSWAV() -> Data {
+        let sampleRate = 44_100.0
+        var samples: [Int16] = []
+        for freq in [880.0, 1175.0, 1568.0] {
+            samples += tone(frequency: freq, duration: 0.22, sampleRate: sampleRate)
+            samples += silence(duration: 0.06, sampleRate: sampleRate)
+        }
         return wav(from: samples, sampleRate: Int(sampleRate))
     }
 

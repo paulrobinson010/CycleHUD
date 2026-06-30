@@ -7,6 +7,7 @@ struct SettingsView: View {
     @EnvironmentObject var ride: RideManager
     @EnvironmentObject var history: RideHistory
     @EnvironmentObject var weather: WeatherManager
+    @EnvironmentObject var sos: SOSManager
     @Environment(\.dismiss) private var dismiss
 
     /// Set when the rider explicitly picks "Custom" in the wheel-size picker, so
@@ -129,6 +130,36 @@ struct SettingsView: View {
                     Text("Display")
                 } footer: {
                     Text("Choose which metric tiles show on the ride screen, and in what order. Dark mode uses a black background; off is a light theme. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait.")
+                }
+
+                Section {
+                    Toggle("Crash detection", isOn: $settings.crashDetectionEnabled)
+                    if settings.crashDetectionEnabled {
+                        HStack {
+                            Text("Contact name")
+                            Spacer()
+                            TextField("Name", text: $settings.emergencyContactName)
+                                .multilineTextAlignment(.trailing)
+                        }
+                        HStack {
+                            Text("Contact phone")
+                            Spacer()
+                            TextField("Number", text: $settings.emergencyContactPhone)
+                                .keyboardType(.phonePad)
+                                .multilineTextAlignment(.trailing)
+                        }
+                        Button {
+                            dismiss()   // close Settings so the alert can present over the HUD
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { sos.trigger() }
+                        } label: {
+                            Label("Send a test alert", systemImage: "bell.badge")
+                        }
+                        .disabled(settings.emergencyContact == nil)
+                    }
+                } header: {
+                    Text("Safety")
+                } footer: {
+                    Text("If a sharp impact is detected while you're riding, a 20-second countdown starts. If you don't cancel it, CycleHUD opens a text to your emergency contact with your location, ready to send. (iOS requires you — or someone nearby — to tap Send; an app can't send a text on its own.) Test it any time with your contact set.")
                 }
 
                 Section {

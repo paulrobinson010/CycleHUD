@@ -24,6 +24,9 @@ final class AppSettings: ObservableObject {
         static let weatherEnabled = "weatherEnabled"
         static let appLanguage = "appLanguage"
         static let metricTiles = "metricTilesV1"
+        static let crashDetectionEnabled = "crashDetectionEnabled"
+        static let emergencyContactName = "emergencyContactName"
+        static let emergencyContactPhone = "emergencyContactPhone"
     }
 
     /// A language the rider can pick in-app. Empty code = follow the device.
@@ -88,6 +91,19 @@ final class AppSettings: ObservableObject {
     /// The selected metrics as `MetricKind`s, dropping any unknown raw values.
     var metricKinds: [MetricKind] { metricTiles.compactMap(MetricKind.init(rawValue:)) }
 
+    /// When on, a sharp impact during a ride starts an SOS countdown that texts
+    /// the emergency contact your location.
+    @Published var crashDetectionEnabled: Bool { didSet { defaults.set(crashDetectionEnabled, forKey: Keys.crashDetectionEnabled) } }
+    @Published var emergencyContactName: String { didSet { defaults.set(emergencyContactName, forKey: Keys.emergencyContactName) } }
+    @Published var emergencyContactPhone: String { didSet { defaults.set(emergencyContactPhone, forKey: Keys.emergencyContactPhone) } }
+
+    /// The emergency contact, or nil when no phone number has been entered.
+    var emergencyContact: (name: String, phone: String)? {
+        let phone = emergencyContactPhone.trimmingCharacters(in: .whitespaces)
+        guard !phone.isEmpty else { return nil }
+        return (emergencyContactName, phone)
+    }
+
     /// The locale the app should display in — the override, or the device default.
     var appLocale: Locale {
         appLanguage.isEmpty ? .autoupdatingCurrent : Locale(identifier: appLanguage)
@@ -129,7 +145,10 @@ final class AppSettings: ObservableObject {
             Keys.darkModeEnabled: false,
             Keys.weatherEnabled: true,
             Keys.appLanguage: "",
-            Keys.metricTiles: MetricKind.defaultOrder.map(\.rawValue)
+            Keys.metricTiles: MetricKind.defaultOrder.map(\.rawValue),
+            Keys.crashDetectionEnabled: false,
+            Keys.emergencyContactName: "",
+            Keys.emergencyContactPhone: ""
         ])
 
         speedUnit = SpeedUnit(rawValue: defaults.string(forKey: Keys.speedUnit) ?? "") ?? .kmh
@@ -154,6 +173,9 @@ final class AppSettings: ObservableObject {
         // Drop any unknown raw values; fall back to the default layout if empty.
         let validTiles = storedTiles.filter { MetricKind(rawValue: $0) != nil }
         metricTiles = validTiles.isEmpty ? MetricKind.defaultOrder.map(\.rawValue) : validTiles
+        crashDetectionEnabled = defaults.bool(forKey: Keys.crashDetectionEnabled)
+        emergencyContactName = defaults.string(forKey: Keys.emergencyContactName) ?? ""
+        emergencyContactPhone = defaults.string(forKey: Keys.emergencyContactPhone) ?? ""
         applyLanguage()
     }
 
