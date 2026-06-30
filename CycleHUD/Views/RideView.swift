@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import MessageUI
 
 /// The main riding screen: radar-first, with the data grid and ride controls
 /// beneath it. No map.
@@ -11,6 +12,7 @@ struct RideView: View {
     @EnvironmentObject var watch: WatchConnectivityManager
     @EnvironmentObject var history: RideHistory
     @EnvironmentObject var weather: WeatherManager
+    @EnvironmentObject var sos: SOSManager
 
     private enum ActiveSheet: Int, Identifiable {
         case pairing, settings
@@ -46,6 +48,7 @@ struct RideView: View {
                 case .pairing: PairingView(showAccessHint: pairingFromOnboarding).environmentObject(ble)
                 case .settings: SettingsView().environmentObject(settings).environmentObject(ble)
                         .environmentObject(ride).environmentObject(history).environmentObject(weather)
+                        .environmentObject(sos)
                 }
             }
             .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
@@ -54,6 +57,13 @@ struct RideView: View {
             RideSummaryView(summary: summary).environmentObject(settings)
                 .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
         }
+        .fullScreenCover(isPresented: Binding(
+            get: { sos.isCountingDown },
+            set: { if !$0 { sos.cancel() } }
+        )) {
+            SOSCountdownView(sos: sos).environment(\.locale, settings.appLocale)
+        }
+        .sheet(isPresented: $sos.presentComposer) { sosComposer }
         .fullScreenCover(isPresented: Binding(
             get: { !settings.hasChosenUnits },
             set: { _ in }
@@ -122,6 +132,35 @@ struct RideView: View {
     /// The app-wide light/dark choice, applied to presented sheets/covers too so
     /// toggling it updates onboarding and Settings live, not just the main screen.
     private var appColorScheme: ColorScheme { settings.darkModeEnabled ? .dark : .light }
+
+    /// The SOS message composer, or a manual fallback when the device can't send
+    /// texts (no SIM/iMessage) — showing the number and message to send by hand.
+    @ViewBuilder private var sosComposer: some View {
+        if MFMessageComposeViewController.canSendText() {
+            MessageComposeView(recipients: sos.recipients, body: sos.messageBody) {
+                sos.composerFinished()
+            }
+            .ignoresSafeArea()
+        } else {
+            VStack(spacing: 16) {
+                Image(systemName: "exclamationmark.bubble")
+                    .font(.system(size: 40)).foregroundStyle(Theme.threatHigh)
+                Text("Can’t send a text from this device")
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                if let contact = settings.emergencyContact {
+                    Text(contact.name.isEmpty ? contact.phone : "\(contact.name) — \(contact.phone)")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                }
+                Text(sos.messageBody)
+                    .font(.footnote).foregroundStyle(Theme.textSecondary)
+                    .multilineTextAlignment(.center)
+                Button("Close") { sos.composerFinished() }
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .padding(.top, 8)
+            }
+            .padding(28)
+        }
+    }
 
     /// Surface any missing OS permission the app relies on. `force` re-shows even
     /// after the rider dismissed it — used when they change a setting (e.g. turn
@@ -279,43 +318,105 @@ struct RideView: View {
 
     // MARK: - Metrics
 
+    /// The rider's chosen tiles, laid out three per row. Weather tiles are hidden
+    /// when Weather is off. Short rows are padded so tile widths stay uniform.
     private var metricsGrid: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                MetricTile(title: "Speed",
-                           value: speedString(ride.currentSpeedMps),
-                           unit: settings.speedUnit.label, valueSize: 32, height: 90)
-                MetricTile(title: "Avg Speed",
-                           value: speedString(ride.averageSpeedMps),
-                           unit: settings.speedUnit.label, valueSize: 32, height: 90)
-                MetricTile(title: "Cadence",
-                           value: ble.freshCadence.map { Fmt.int($0) } ?? "—",
-                           unit: "rpm", valueSize: 32, height: 90)
-            }
-            HStack(spacing: 8) {
-                MetricTile(title: "Distance",
-                           value: distanceString(ride.distanceMeters),
-                           unit: settings.distanceUnit.label, valueSize: 32, height: 90)
-                MetricTile(title: "Time",
-                           value: timeString(ride.movingTimeSeconds),
-                           unit: "", valueSize: 32, height: 90)
-                MetricTile(title: "Ascent",
-                           value: elevationString(ride.elevationGainMeters),
-                           unit: settings.distanceUnit.shortLabel, valueSize: 32, height: 90)
-            }
-            HStack(spacing: 8) {
-                let hr = watch.displayHeartRate ?? ride.currentHeartRate
-                MetricTile(title: "Heart Rate",
-                           value: hr.map { Fmt.int($0) } ?? "—",
-                           unit: "bpm", valueSize: 32, height: 90,
-                           alert: settings.hrWarningEnabled && (hr ?? 0) >= settings.hrWarningBpm)
-                MetricTile(title: "Calories",
-                           value: ride.caloriesKcal >= 1 ? Fmt.int(ride.caloriesKcal) : "—",
-                           unit: "kcal", valueSize: 32, height: 90)
-                if settings.weatherEnabled {
-                    WeatherTile(nowcast: weather.nowcast, status: weather.status, height: 90)
+        let kinds = settings.metricKinds.filter { !$0.requiresWeather || settings.weatherEnabled }
+        let rows = kinds.chunked(into: 3)
+        return VStack(spacing: 8) {
+            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                HStack(spacing: 8) {
+                    ForEach(0..<3, id: \.self) { i in
+                        if i < row.count {
+                            metricTile(for: row[i])
+                        } else {
+                            Color.clear.frame(maxWidth: .infinity).frame(height: 90)
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    /// Build the tile for one metric, pulling live values from the managers.
+    @ViewBuilder
+    private func metricTile(for kind: MetricKind) -> some View {
+        switch kind {
+        case .speed:
+            MetricTile(title: kind.title, value: speedString(ride.currentSpeedMps),
+                       unit: settings.speedUnit.label, valueSize: 32, height: 90)
+        case .avgSpeed:
+            MetricTile(title: kind.title, value: speedString(ride.averageSpeedMps),
+                       unit: settings.speedUnit.label, valueSize: 32, height: 90)
+        case .maxSpeed:
+            MetricTile(title: kind.title, value: speedString(ride.maxSpeedMps),
+                       unit: settings.speedUnit.label, valueSize: 32, height: 90)
+        case .cadence:
+            MetricTile(title: kind.title, value: ble.freshCadence.map { Fmt.int($0) } ?? "—",
+                       unit: "rpm", valueSize: 32, height: 90)
+        case .distance:
+            MetricTile(title: kind.title, value: distanceString(ride.distanceMeters),
+                       unit: settings.distanceUnit.label, valueSize: 32, height: 90)
+        case .time:
+            MetricTile(title: kind.title, value: timeString(ride.movingTimeSeconds),
+                       unit: "", valueSize: 32, height: 90)
+        case .ascent:
+            MetricTile(title: kind.title, value: elevationString(ride.elevationGainMeters),
+                       unit: settings.distanceUnit.shortLabel, valueSize: 32, height: 90)
+        case .heartRate:
+            let hr = watch.displayHeartRate ?? ride.currentHeartRate ?? ble.freshSensorHeartRate()
+            MetricTile(title: kind.title, value: hr.map { Fmt.int($0) } ?? "—",
+                       unit: "bpm", valueSize: 32, height: 90,
+                       alert: settings.hrWarningEnabled && (hr ?? 0) >= settings.hrWarningBpm)
+        case .calories:
+            MetricTile(title: kind.title, value: ride.caloriesKcal >= 1 ? Fmt.int(ride.caloriesKcal) : "—",
+                       unit: "kcal", valueSize: 32, height: 90)
+        case .gradient:
+            MetricTile(title: kind.title, value: gradientString, unit: "%",
+                       valueSize: 32, height: 90)
+        case .lapTime:
+            MetricTile(title: kind.title, value: timeString(ride.currentLapTimeSeconds),
+                       unit: "", valueSize: 32, height: 90)
+        case .temperature:
+            MetricTile(title: kind.title, value: temperatureValue, unit: temperatureUnit,
+                       valueSize: 32, height: 90)
+        case .wind:
+            windTile
+        case .rain:
+            WeatherTile(nowcast: weather.nowcast, status: weather.status, height: 90)
+        }
+    }
+
+    /// Live road gradient as a signed percentage (— until enough travel).
+    private var gradientString: String {
+        guard let g = ride.currentGradientPercent else { return "—" }
+        return Fmt.decimal(g, 1)
+    }
+
+    /// Imperial temperature (°F) when the rider uses miles, otherwise °C.
+    private var imperialTemperature: Bool { settings.distanceUnit == .mi }
+    private var temperatureUnit: String { imperialTemperature ? "°F" : "°C" }
+    private var temperatureValue: String {
+        guard let c = weather.conditions else { return "—" }
+        let t = imperialTemperature ? c.temperatureC * 9 / 5 + 32 : c.temperatureC
+        return Fmt.int(t)
+    }
+
+    /// Headwind / tailwind along the rider's heading, or absolute wind speed when
+    /// no heading is available yet.
+    private var windTile: some View {
+        let speedLabel = settings.speedUnit.label
+        if let c = weather.conditions, let course = location.courseDegrees {
+            let head = c.headwindMps(course: course)
+            let value = Fmt.int(settings.speedUnit.value(fromMps: abs(head)))
+            return MetricTile(title: head >= 0 ? "Headwind" : "Tailwind",
+                              value: value, unit: speedLabel, valueSize: 32, height: 90)
+        } else if let c = weather.conditions {
+            return MetricTile(title: "Wind",
+                              value: Fmt.int(settings.speedUnit.value(fromMps: c.windSpeedMps)),
+                              unit: speedLabel, valueSize: 32, height: 90)
+        } else {
+            return MetricTile(title: "Wind", value: "—", unit: "", valueSize: 32, height: 90)
         }
     }
 
@@ -329,6 +430,7 @@ struct RideView: View {
                     ride.start()
                 }
             } else {
+                if controlStatus == .running && !ride.demoActive { lapButton }
                 primaryButton(title: controlStatus == .running ? "Pause" : "Resume",
                               system: controlStatus == .running ? "pause.fill" : "play.fill",
                               color: Theme.accent) {
@@ -344,6 +446,21 @@ struct RideView: View {
                 }
             }
         }
+    }
+
+    /// Compact icon-only lap button: closes the current lap and starts a new one.
+    private var lapButton: some View {
+        Button {
+            ride.markLap()
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        } label: {
+            Image(systemName: "flag.checkered")
+                .font(.system(size: 22, weight: .bold))
+                .foregroundStyle(Theme.textPrimary)
+                .frame(width: 58, height: 58)
+                .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panelRaised))
+        }
+        .accessibilityLabel("Mark lap")
     }
 
     private func primaryButton(title: LocalizedStringKey, system: String, color: Color,

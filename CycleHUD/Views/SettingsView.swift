@@ -7,6 +7,7 @@ struct SettingsView: View {
     @EnvironmentObject var ride: RideManager
     @EnvironmentObject var history: RideHistory
     @EnvironmentObject var weather: WeatherManager
+    @EnvironmentObject var sos: SOSManager
     @Environment(\.dismiss) private var dismiss
 
     /// Set when the rider explicitly picks "Custom" in the wheel-size picker, so
@@ -99,13 +100,14 @@ struct SettingsView: View {
 
                 Section {
                     Toggle("Beep on new vehicle", isOn: $settings.beepEnabled)
+                    Toggle("Spoken vehicle call-outs", isOn: $settings.voiceAlertsEnabled)
                     Toggle("Wrist haptics", isOn: $settings.hapticsEnabled)
                     Toggle("Auto-pause when stopped", isOn: $settings.autoPauseEnabled)
                     Toggle("Keep screen on while riding", isOn: $settings.keepScreenOn)
                 } header: {
                     Text("Alerts & Ride")
                 } footer: {
-                    Text("The new-vehicle beep plays through the phone, and alerts only fire while you're riding (not when idle with the radar on). A paired Apple Watch taps your wrist — once for each new vehicle, faster as one closes in, and a distinct double-buzz if the radar drops out mid-ride. You can mute the beep and the wrist taps (separately or together) straight from the radar screen while riding.")
+                    Text("The new-vehicle beep plays through the phone, and alerts only fire while you're riding (not when idle with the radar on). Spoken call-outs announce each vehicle (\u{201C}car behind\u{201D} with its distance) — handy with bone-conduction headphones, and works alongside or instead of the beep. A paired Apple Watch taps your wrist — once for each new vehicle, faster as one closes in, and a distinct double-buzz if the radar drops out mid-ride. You can mute the beep and the wrist taps (separately or together) straight from the radar screen while riding.")
                 }
 
                 Section {
@@ -113,16 +115,51 @@ struct SettingsView: View {
                 } header: {
                     Text("Weather")
                 } footer: {
-                    Text("A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts. It updates every minute while the app is open. Uses Apple Weather and your location.")
+                    Text("A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts — alongside the temperature and the wind (shown as headwind or tailwind relative to the way you're heading). It updates every minute while the app is open. A live road-gradient tile is shown too. Uses Apple Weather and your location.")
                 }
 
                 Section {
+                    NavigationLink {
+                        MetricTilesView().environmentObject(settings)
+                    } label: {
+                        Label("Ride screen tiles", systemImage: "square.grid.2x2")
+                    }
                     Toggle("Dark mode", isOn: $settings.darkModeEnabled)
                     Toggle("Landscape layout", isOn: $settings.landscapeEnabled)
                 } header: {
                     Text("Display")
                 } footer: {
-                    Text("Dark mode uses a black background; off is a light theme. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait.")
+                    Text("Choose which metric tiles show on the ride screen, and in what order. Dark mode uses a black background; off is a light theme. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait.")
+                }
+
+                Section {
+                    Toggle("Crash detection", isOn: $settings.crashDetectionEnabled)
+                    if settings.crashDetectionEnabled {
+                        HStack {
+                            Text("Contact name")
+                            Spacer()
+                            TextField("Name", text: $settings.emergencyContactName)
+                                .multilineTextAlignment(.trailing)
+                        }
+                        HStack {
+                            Text("Contact phone")
+                            Spacer()
+                            TextField("Number", text: $settings.emergencyContactPhone)
+                                .keyboardType(.phonePad)
+                                .multilineTextAlignment(.trailing)
+                        }
+                        Button {
+                            dismiss()   // close Settings so the alert can present over the HUD
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { sos.trigger() }
+                        } label: {
+                            Label("Send a test alert", systemImage: "bell.badge")
+                        }
+                        .disabled(settings.emergencyContact == nil)
+                    }
+                } header: {
+                    Text("Safety")
+                } footer: {
+                    Text("If a sharp impact is detected while you're riding, a 20-second countdown starts. If you don't cancel it, CycleHUD opens a text to your emergency contact with your location, ready to send. (iOS requires you — or someone nearby — to tap Send; an app can't send a text on its own.) Test it any time with your contact set.")
                 }
 
                 Section {

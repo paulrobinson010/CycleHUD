@@ -10,6 +10,7 @@ final class AppSettings: ObservableObject {
         static let wheelCircumferenceMM = "wheelCircumferenceMM"
         static let riderWeightKg = "riderWeightKg"
         static let beepEnabled = "beepEnabled"
+        static let voiceAlertsEnabled = "voiceAlertsEnabled"
         static let hapticsEnabled = "hapticsEnabled"
         static let autoPauseEnabled = "autoPauseEnabled"
         static let keepScreenOn = "keepScreenOn"
@@ -22,6 +23,10 @@ final class AppSettings: ObservableObject {
         static let darkModeEnabled = "darkModeEnabled"
         static let weatherEnabled = "weatherEnabled"
         static let appLanguage = "appLanguage"
+        static let metricTiles = "metricTilesV1"
+        static let crashDetectionEnabled = "crashDetectionEnabled"
+        static let emergencyContactName = "emergencyContactName"
+        static let emergencyContactPhone = "emergencyContactPhone"
     }
 
     /// A language the rider can pick in-app. Empty code = follow the device.
@@ -48,6 +53,9 @@ final class AppSettings: ObservableObject {
     @Published var wheelCircumferenceMM: Double { didSet { defaults.set(wheelCircumferenceMM, forKey: Keys.wheelCircumferenceMM) } }
     @Published var riderWeightKg: Double { didSet { defaults.set(riderWeightKg, forKey: Keys.riderWeightKg) } }
     @Published var beepEnabled: Bool { didSet { defaults.set(beepEnabled, forKey: Keys.beepEnabled) } }
+    /// When on, a spoken call-out ("car behind" + distance) announces each new
+    /// vehicle — handy with bone-conduction headphones. Independent of the beep.
+    @Published var voiceAlertsEnabled: Bool { didSet { defaults.set(voiceAlertsEnabled, forKey: Keys.voiceAlertsEnabled) } }
     /// When on, a paired Apple Watch taps the wrist for vehicles behind you.
     /// Muted from the radar screen (or here) to quieten busy-town riding.
     @Published var hapticsEnabled: Bool { didSet { defaults.set(hapticsEnabled, forKey: Keys.hapticsEnabled) } }
@@ -76,6 +84,24 @@ final class AppSettings: ObservableObject {
     /// In-app language override (BCP-47 code, or "" to follow the device).
     @Published var appLanguage: String {
         didSet { defaults.set(appLanguage, forKey: Keys.appLanguage); applyLanguage() }
+    }
+    /// The ride-screen metric tiles to show, in order (MetricKind raw values).
+    @Published var metricTiles: [String] { didSet { defaults.set(metricTiles, forKey: Keys.metricTiles) } }
+
+    /// The selected metrics as `MetricKind`s, dropping any unknown raw values.
+    var metricKinds: [MetricKind] { metricTiles.compactMap(MetricKind.init(rawValue:)) }
+
+    /// When on, a sharp impact during a ride starts an SOS countdown that texts
+    /// the emergency contact your location.
+    @Published var crashDetectionEnabled: Bool { didSet { defaults.set(crashDetectionEnabled, forKey: Keys.crashDetectionEnabled) } }
+    @Published var emergencyContactName: String { didSet { defaults.set(emergencyContactName, forKey: Keys.emergencyContactName) } }
+    @Published var emergencyContactPhone: String { didSet { defaults.set(emergencyContactPhone, forKey: Keys.emergencyContactPhone) } }
+
+    /// The emergency contact, or nil when no phone number has been entered.
+    var emergencyContact: (name: String, phone: String)? {
+        let phone = emergencyContactPhone.trimmingCharacters(in: .whitespaces)
+        guard !phone.isEmpty else { return nil }
+        return (emergencyContactName, phone)
     }
 
     /// The locale the app should display in — the override, or the device default.
@@ -106,6 +132,7 @@ final class AppSettings: ObservableObject {
             Keys.wheelCircumferenceMM: 2105.0,   // 700x25c default
             Keys.riderWeightKg: 0.0,             // 0 = not entered (no calories shown)
             Keys.beepEnabled: true,
+            Keys.voiceAlertsEnabled: false,
             Keys.hapticsEnabled: true,
             Keys.autoPauseEnabled: true,
             Keys.keepScreenOn: true,
@@ -117,7 +144,11 @@ final class AppSettings: ObservableObject {
             Keys.saveWorkouts: true,
             Keys.darkModeEnabled: false,
             Keys.weatherEnabled: true,
-            Keys.appLanguage: ""
+            Keys.appLanguage: "",
+            Keys.metricTiles: MetricKind.defaultOrder.map(\.rawValue),
+            Keys.crashDetectionEnabled: false,
+            Keys.emergencyContactName: "",
+            Keys.emergencyContactPhone: ""
         ])
 
         speedUnit = SpeedUnit(rawValue: defaults.string(forKey: Keys.speedUnit) ?? "") ?? .kmh
@@ -125,6 +156,7 @@ final class AppSettings: ObservableObject {
         wheelCircumferenceMM = defaults.double(forKey: Keys.wheelCircumferenceMM)
         riderWeightKg = defaults.double(forKey: Keys.riderWeightKg)
         beepEnabled = defaults.bool(forKey: Keys.beepEnabled)
+        voiceAlertsEnabled = defaults.bool(forKey: Keys.voiceAlertsEnabled)
         hapticsEnabled = defaults.bool(forKey: Keys.hapticsEnabled)
         autoPauseEnabled = defaults.bool(forKey: Keys.autoPauseEnabled)
         keepScreenOn = defaults.bool(forKey: Keys.keepScreenOn)
@@ -137,6 +169,13 @@ final class AppSettings: ObservableObject {
         darkModeEnabled = defaults.bool(forKey: Keys.darkModeEnabled)
         weatherEnabled = defaults.bool(forKey: Keys.weatherEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
+        let storedTiles = defaults.stringArray(forKey: Keys.metricTiles) ?? []
+        // Drop any unknown raw values; fall back to the default layout if empty.
+        let validTiles = storedTiles.filter { MetricKind(rawValue: $0) != nil }
+        metricTiles = validTiles.isEmpty ? MetricKind.defaultOrder.map(\.rawValue) : validTiles
+        crashDetectionEnabled = defaults.bool(forKey: Keys.crashDetectionEnabled)
+        emergencyContactName = defaults.string(forKey: Keys.emergencyContactName) ?? ""
+        emergencyContactPhone = defaults.string(forKey: Keys.emergencyContactPhone) ?? ""
         applyLanguage()
     }
 

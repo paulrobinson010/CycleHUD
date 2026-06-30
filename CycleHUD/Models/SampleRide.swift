@@ -25,8 +25,17 @@ enum SampleRide {
             routeSpeeds: routeSpeeds(for: route),
             radarPoints: radar.isEmpty ? nil : radar,
             passes: passes.isEmpty ? nil : passes,
-            track: trackSamples(movingTime: movingTime)
+            track: trackSamples(movingTime: movingTime),
+            laps: sampleLaps(distance: distance, movingTime: movingTime)
         )
+    }
+
+    /// Three even laps so the summary shows the lap splits.
+    private static func sampleLaps(distance: Double, movingTime: Double) -> [Lap] {
+        (1...3).map { n in
+            Lap(id: UUID(), number: n, durationSeconds: movingTime / 3,
+                distanceMeters: distance / 3)
+        }
     }
 
     /// A plausible speed (m/s) at each route point so the map line colours by

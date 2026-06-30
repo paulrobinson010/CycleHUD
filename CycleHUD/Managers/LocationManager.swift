@@ -10,6 +10,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 
     @Published var speedMps: Double = 0          // GPS-derived ground speed (>= 0)
     @Published var altitudeMeters: Double?       // GPS altitude above sea level
+    @Published var courseDegrees: Double?        // direction of travel (last valid)
     @Published var hasFix: Bool = false
     @Published var horizontalAccuracy: Double = -1
     @Published var authorization: CLAuthorizationStatus = .notDetermined
@@ -111,6 +112,9 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         currentLocation = loc
 
         if loc.verticalAccuracy > 0 { altitudeMeters = loc.altitude }
+        // Course is only meaningful when moving; keep the last valid heading so a
+        // momentary stop doesn't blank the headwind/tailwind reading.
+        if loc.course >= 0, loc.speed > 0.8 { courseDegrees = loc.course }
         onLocation?(loc)
     }
 

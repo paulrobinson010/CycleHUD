@@ -8,12 +8,14 @@ enum DeviceRole: String, Codable, CaseIterable {
     case radar = "Radar"
     case speed = "Speed"
     case cadence = "Cadence"
+    case heartRate = "Heart Rate"
 
     var systemImage: String {
         switch self {
         case .radar: return "dot.radiowaves.left.and.right"
         case .speed: return "speedometer"
         case .cadence: return "bicycle"
+        case .heartRate: return "heart.fill"
         }
     }
 }
@@ -106,6 +108,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     static let radarServiceUUIDs: Set<CBUUID> = [radarService, radarServiceAlt, coospoRadarService]
     static let cscService = CBUUID(string: "1816")
     static let cscMeasurement = CBUUID(string: "2A5B")
+    // Standard Bluetooth SIG Heart Rate service / measurement (chest straps,
+    // armbands, etc.) — lets a HR sensor feed the ride without an Apple Watch.
+    static let heartRateService = CBUUID(string: "180D")
+    static let heartRateMeasurement = CBUUID(string: "2A37")
     static let batteryLevel = CBUUID(string: "2A19")   // standard 0–100% battery
     private let savedDevicesKey = "savedDevicesV3"
 
@@ -133,8 +139,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     @Published private(set) var sensorSpeedMps: Double?
     @Published private(set) var cadenceRpm: Int?
+    @Published private(set) var sensorHeartRate: Int?   // from a BLE HR strap, if paired
     private var sensorSpeedUpdatedAt: Date?
     private var cadenceUpdatedAt: Date?
+    private var sensorHeartRateUpdatedAt: Date?
 
     private let settings: AppSettings
     private var central: CBCentralManager!
@@ -427,9 +435,9 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         // Radar is identifiable from its advertised service; speed vs cadence
         // can only be told apart once the CSC sensor reports data.
         var roles: Set<DeviceRole> = []
-        if let services = advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID],
-           services.contains(BluetoothManager.radarService) {
-            roles.insert(.radar)
+        if let services = advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] {
+            if services.contains(BluetoothManager.radarService) { roles.insert(.radar) }
+            if services.contains(BluetoothManager.heartRateService) { roles.insert(.heartRate) }
         }
 
         let device = DiscoveredDevice(id: peripheral.identifier, name: name,
@@ -512,6 +520,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             } else if ch.uuid == BluetoothManager.cscMeasurement {
                 peripheral.setNotifyValue(true, for: ch)
                 diag("  → subscribed CSC")
+            } else if ch.uuid == BluetoothManager.heartRateMeasurement {
+                peripheral.setNotifyValue(true, for: ch)
+                upsertSavedDevice(id: peripheral.identifier, name: peripheral.name ?? "", addRole: .heartRate)
+                diag("  → subscribed Heart Rate")
             } else if ch.uuid == BluetoothManager.coospoRadarControl {
                 // The TR70 stays silent until poked here, and won't detect cars
                 // until it's put into active mode (the activate command).
@@ -599,6 +611,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         }
         if characteristic.uuid == BluetoothManager.cscMeasurement {
             parseCSC(data, from: peripheral.identifier)
+            return
+        }
+        if characteristic.uuid == BluetoothManager.heartRateMeasurement {
+            parseHeartRate(data)
             return
         }
         // The TR70 streams radar frames on FDB1 (its FDB0-service data char).
@@ -759,12 +775,34 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     private func applyThreats(_ incoming: [Threat]) {
         let sorted = incoming.sorted { $0.distanceMeters < $1.distanceMeters }
         let existingIDs = Set(threats.map(\.id))
-        let hasNewCar = sorted.contains { !existingIDs.contains($0.id) }
+        let newThreats = sorted.filter { !existingIDs.contains($0.id) }
         threats = sorted
-        if hasNewCar, alertsAllowed?() ?? true {
+        if !newThreats.isEmpty, alertsAllowed?() ?? true {
             if settings.beepEnabled { AudioAlerts.shared.playNewCar() }
+            if settings.voiceAlertsEnabled {
+                AudioAlerts.shared.speak(voiceCallout(for: newThreats.first),
+                                         language: voiceLanguageCode)
+            }
             onNewCar?()
         }
+    }
+
+    /// The spoken call-out for a newly-detected vehicle: "Car behind" plus its
+    /// distance in the rider's units, localized to the app's language.
+    private func voiceCallout(for threat: Threat?) -> String {
+        guard let threat, threat.distanceMeters >= 1 else {
+            return String(localized: "Car behind", bundle: Lang.bundle)
+        }
+        let v = Fmt.int(settings.distanceUnit.shortValue(fromMeters: threat.distanceMeters))
+        switch settings.distanceUnit {
+        case .km: return String(localized: "Car behind, \(v) metres", bundle: Lang.bundle)
+        case .mi: return String(localized: "Car behind, \(v) feet", bundle: Lang.bundle)
+        }
+    }
+
+    /// BCP-47 language for the speech voice — the app override, or the device's.
+    private var voiceLanguageCode: String {
+        settings.appLanguage.isEmpty ? Locale.current.identifier : settings.appLanguage
     }
 
     // MARK: - Demo mode
@@ -915,6 +953,31 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             lastCrankRevs = revs
             lastCrankEventTime = eventTime
         }
+    }
+
+    /// Decode a standard Heart Rate Measurement (0x2A37): flags byte, then the
+    /// rate as UInt8 or UInt16 depending on flag bit 0.
+    private func parseHeartRate(_ data: Data) {
+        let bytes = [UInt8](data)
+        guard let flags = bytes.first else { return }
+        let isU16 = flags & 0x01 != 0
+        let hr: Int
+        if isU16 {
+            guard bytes.count >= 3 else { return }
+            hr = Int(bytes[1]) | (Int(bytes[2]) << 8)
+        } else {
+            guard bytes.count >= 2 else { return }
+            hr = Int(bytes[1])
+        }
+        guard hr > 0 else { return }
+        sensorHeartRate = hr
+        sensorHeartRateUpdatedAt = Date()
+    }
+
+    /// Heart rate from a paired BLE strap, or nil if it hasn't reported recently.
+    func freshSensorHeartRate(staleAfter seconds: TimeInterval = 6) -> Int? {
+        guard let hr = sensorHeartRate, let at = sensorHeartRateUpdatedAt else { return nil }
+        return Date().timeIntervalSince(at) <= seconds ? hr : nil
     }
 
     func freshSensorSpeed(staleAfter seconds: TimeInterval = 4) -> Double? {

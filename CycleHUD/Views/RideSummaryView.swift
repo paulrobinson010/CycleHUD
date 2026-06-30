@@ -9,6 +9,14 @@ struct RideSummaryView: View {
     @EnvironmentObject var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
     @State private var showRouteMap = false
+    @State private var exportFile: ExportFile?
+    @State private var showExportError = false
+
+    /// Identifiable wrapper so an exported file URL can drive a `.sheet(item:)`.
+    private struct ExportFile: Identifiable {
+        let url: URL
+        var id: String { url.absoluteString }
+    }
 
     var body: some View {
         NavigationStack {
@@ -18,6 +26,7 @@ struct RideSummaryView: View {
                     routeMap
                     statGrid
                     graphs
+                    lapsSection
                     passesLink
                 }
                 .padding()
@@ -26,6 +35,9 @@ struct RideSummaryView: View {
             .navigationTitle("Ride Summary")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                if RideExporter.canExport(summary) {
+                    ToolbarItem(placement: .topBarLeading) { exportMenu }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
@@ -35,6 +47,36 @@ struct RideSummaryView: View {
                     .accessibilityLabel("Close")
                 }
             }
+            .sheet(item: $exportFile) { file in
+                ShareSheet(items: [file.url])
+            }
+            .alert("Couldn’t export this ride", isPresented: $showExportError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("This ride doesn’t have enough GPS track to export.")
+            }
+        }
+    }
+
+    /// Export the ride as a GPX or TCX file and hand it to the system share sheet,
+    /// so it can be sent to Strava, Komoot, Ride with GPS, Files, etc.
+    private var exportMenu: some View {
+        Menu {
+            Button { export(.gpx) } label: { Label("Export GPX", systemImage: "doc.text") }
+            Button { export(.tcx) } label: { Label("Export TCX", systemImage: "doc.text") }
+        } label: {
+            Image(systemName: "square.and.arrow.up")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(Theme.textPrimary)
+        }
+        .accessibilityLabel("Export or share this ride")
+    }
+
+    private func export(_ format: RideExporter.Format) {
+        if let url = RideExporter.writeTemporaryFile(for: summary, format: format) {
+            exportFile = ExportFile(url: url)
+        } else {
+            showExportError = true
         }
     }
 
@@ -105,6 +147,51 @@ struct RideSummaryView: View {
         return LazyVGrid(columns: cols, spacing: 12) {
             ForEach(stats, id: \.0) { stat($0.0, $0.1, $0.2) }
         }
+    }
+
+    /// Manually-marked lap splits, shown only when the rider logged any.
+    @ViewBuilder private var lapsSection: some View {
+        if let laps = summary.laps, !laps.isEmpty {
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Laps").font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(Theme.textPrimary)
+                    Spacer()
+                }
+                .padding(.bottom, 8)
+                ForEach(laps) { lap in
+                    HStack {
+                        Text("\(Fmt.int(lap.number))")
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .foregroundStyle(Theme.textSecondary)
+                            .frame(width: 28, alignment: .leading)
+                        Text(lapTimeString(lap.durationSeconds))
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .monospacedDigit()
+                            .foregroundStyle(Theme.textPrimary)
+                        Spacer()
+                        Text("\(Fmt.decimal(settings.distanceUnit.value(fromMeters: lap.distanceMeters), 2)) \(settings.distanceUnit.label)")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .foregroundStyle(Theme.textSecondary)
+                        Text("\(Fmt.decimal(settings.speedUnit.value(fromMps: lap.averageSpeedMps), 1)) \(settings.speedUnit.label)")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .foregroundStyle(Theme.textSecondary)
+                            .frame(width: 80, alignment: .trailing)
+                    }
+                    .padding(.vertical, 7)
+                    if lap.id != laps.last?.id { Divider() }
+                }
+            }
+            .padding(16)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
+        }
+    }
+
+    private func lapTimeString(_ seconds: Double) -> String {
+        let s = Int(seconds)
+        let h = s / 3600, m = (s % 3600) / 60, sec = s % 60
+        return h > 0 ? String(format: "%d:%02d:%02d", h, m, sec)
+                     : String(format: "%d:%02d", m, sec)
     }
 
     /// Link to the per-vehicle pass review, shown only when passes were logged.

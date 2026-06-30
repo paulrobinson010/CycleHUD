@@ -32,7 +32,7 @@ struct WeatherTile: View {
                     .minimumScaleFactor(0.5)
                 if !unit.isEmpty {
                     Text(unit)
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
                         .foregroundStyle(Theme.textSecondary)
                 }
             }

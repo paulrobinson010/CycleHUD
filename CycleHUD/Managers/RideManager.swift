@@ -47,6 +47,10 @@ final class RideManager: ObservableObject {
     @Published private(set) var elevationGainMeters: Double = 0   // total ascent this ride
     @Published private(set) var caloriesKcal: Double = 0
     @Published private(set) var currentHeartRate: Int?            // from the Watch, if present
+    @Published private(set) var currentGradientPercent: Double?   // live road gradient (%)
+    @Published private(set) var maxSpeedMps: Double = 0           // peak speed this ride
+    @Published private(set) var laps: [Lap] = []                  // manually-marked splits
+    @Published private(set) var currentLapTimeSeconds: Double = 0 // elapsed in the current lap
 
     var averageSpeedMps: Double {
         movingTimeSeconds > 0 ? distanceMeters / movingTimeSeconds : 0
@@ -62,6 +66,8 @@ final class RideManager: ObservableObject {
     private let health: HealthKitManager
     private let watch: WatchConnectivityManager
     private let history: RideHistory
+    private let sos: SOSManager
+    private let crash = CrashDetector()
 
     // Recorded GPS track + body metrics for the workout / calories.
     private var route: [CLLocation] = []
@@ -116,14 +122,28 @@ final class RideManager: ObservableObject {
     private var track: [TrackSample] = []
     private var lastTrackAt: Date?
 
+    // Rolling (distance, altitude) buffer for the live gradient, computed over a
+    // short trailing window so the reading is stable but responsive.
+    private var gradientWindow: [(dist: Double, alt: Double)] = []
+
+    // Lap splits: where (in moving time / distance) the current lap began.
+    private var lapStartMovingTime: Double = 0
+    private var lapStartDistance: Double = 0
+
     init(ble: BluetoothManager, location: LocationManager, settings: AppSettings,
-         health: HealthKitManager, watch: WatchConnectivityManager, history: RideHistory) {
+         health: HealthKitManager, watch: WatchConnectivityManager, history: RideHistory,
+         sos: SOSManager) {
         self.ble = ble
         self.location = location
         self.settings = settings
         self.health = health
         self.watch = watch
         self.history = history
+        self.sos = sos
+        self.crash.onCrash = { [weak self] in
+            guard let self, self.status != .idle, !self.demoActive else { return }
+            self.sos.trigger()
+        }
         self.location.onLocation = { [weak self] loc in self?.accumulate(loc) }
         self.ble.onDemoFinished = { [weak self] in self?.demoFramesFinished() }
         self.ble.onNewCar = { [weak self] in
@@ -167,12 +187,20 @@ final class RideManager: ObservableObject {
         firstGpsAltitude = nil
         track = []
         lastTrackAt = nil
+        gradientWindow = []
+        currentGradientPercent = nil
+        maxSpeedMps = 0
+        laps = []
+        currentLapTimeSeconds = 0
+        lapStartMovingTime = 0
+        lapStartDistance = 0
         lastTick = Date()
         loadBodyMetrics()
         status = .running
         location.setMode(.recording)
         startTicker()
         startAltimeter()
+        if settings.crashDetectionEnabled { crash.start() }
         applyScreenLock()
         try? FileManager.default.removeItem(at: routeURL)
         persistSnapshot()
@@ -192,6 +220,19 @@ final class RideManager: ObservableObject {
         }
     }
 
+    /// Close the current lap and start a new one. Ignored when idle, in the demo,
+    /// or on an accidental double-tap (a lap under a second long).
+    func markLap() {
+        guard status != .idle, !demoActive else { return }
+        let duration = movingTimeSeconds - lapStartMovingTime
+        guard duration >= 1 else { return }
+        laps.append(Lap(id: UUID(), number: laps.count + 1, durationSeconds: duration,
+                        distanceMeters: distanceMeters - lapStartDistance))
+        lapStartMovingTime = movingTimeSeconds
+        lapStartDistance = distanceMeters
+        currentLapTimeSeconds = 0
+    }
+
     /// Toggle between running and a manual pause.
     func togglePause() {
         switch status {
@@ -207,6 +248,16 @@ final class RideManager: ObservableObject {
     func stop() {
         AppLog.shared.log("Ride STOP (user) dist=\(Int(distanceMeters))m time=\(Int(movingTimeSeconds))s")
         finalizeOpenPass()                       // capture a pass in progress at stop
+        // If the rider marked any laps, close the final partial lap too so the
+        // splits cover the whole ride.
+        if !laps.isEmpty {
+            let duration = movingTimeSeconds - lapStartMovingTime
+            if duration >= 1 {
+                laps.append(Lap(id: UUID(), number: laps.count + 1, durationSeconds: duration,
+                                distanceMeters: distanceMeters - lapStartDistance))
+            }
+        }
+        let savedLaps = laps
         let start = rideStart ?? Date()
         let end = Date()
         let savedDistance = distanceMeters
@@ -221,6 +272,7 @@ final class RideManager: ObservableObject {
         status = .idle
         stopTicker()
         stopAltimeter()
+        crash.stop()
         location.setMode(.idle)        // back to low-power once the ride ends
         // Reset all live metrics to a clean slate (the ride is saved to Health
         // below), THEN mirror the zeros so the Watch clears too — otherwise it
@@ -231,6 +283,8 @@ final class RideManager: ObservableObject {
         elevationGainMeters = 0
         caloriesKcal = 0
         currentHeartRate = nil
+        currentGradientPercent = nil
+        gradientWindow = []
         UIApplication.shared.isIdleTimerDisabled = false
         sendMirror()
 
@@ -248,7 +302,8 @@ final class RideManager: ObservableObject {
                                       routeSpeeds: routeDown.speeds.isEmpty ? nil : routeDown.speeds,
                                       radarPoints: savedRadarPoints.isEmpty ? nil : savedRadarPoints,
                                       passes: savedPasses.isEmpty ? nil : savedPasses,
-                                      track: savedTrack.isEmpty ? nil : savedTrack)
+                                      track: savedTrack.isEmpty ? nil : savedTrack,
+                                      laps: savedLaps.isEmpty ? nil : savedLaps)
             history.add(summary)
             finishedSummary = summary
             if settings.saveWorkouts {
@@ -264,6 +319,9 @@ final class RideManager: ObservableObject {
         radarPoints = []
         passes = []
         track = []
+        laps = []
+        currentLapTimeSeconds = 0
+        maxSpeedMps = 0
         rideStart = nil
         clearPersistence()
         ble.beginSensorMonitor()   // remind later if the sensors are left switched on
@@ -297,6 +355,7 @@ final class RideManager: ObservableObject {
         // elapsed time, so the demo (and App Store screenshots) show full data.
         currentHeartRate = Int.random(in: 132...148)
         caloriesKcal = (elapsed / 60.0) * Double.random(in: 9...12)
+        currentGradientPercent = Double.random(in: -2...4)
         lastTick = Date()
         demoTimer?.invalidate()
         demoTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
@@ -317,6 +376,7 @@ final class RideManager: ObservableObject {
         currentSpeedMps = 0
         currentHeartRate = nil
         caloriesKcal = 0
+        currentGradientPercent = nil
         // Tell the Watch it's over: resets speed, clears threats, ends its
         // workout (which zeroes the heart rate).
         sendMirror()
@@ -363,6 +423,7 @@ final class RideManager: ObservableObject {
         let hr = (currentHeartRate ?? 140) + Int.random(in: -1...1)
         currentHeartRate = min(155, max(126, hr))
         caloriesKcal += (10.0 / 60.0) * dt
+        currentGradientPercent = sin(movingTimeSeconds / 18.0) * 4 + Double.random(in: -0.4...0.4)
         sendMirror()   // drive the Watch (mirror + escalating haptics) during the demo too
     }
 
@@ -412,7 +473,9 @@ final class RideManager: ObservableObject {
         lastTick = now
 
         currentSpeedMps = resolvedSpeed()
-        currentHeartRate = watch.freshHeartRate()
+        // Prefer the Apple Watch (already streaming during a ride); fall back to a
+        // paired BLE heart-rate strap so HR/calories work without a Watch.
+        currentHeartRate = watch.freshHeartRate() ?? ble.freshSensorHeartRate()
         if let hr = currentHeartRate, hr > 0 {
             hrSum += Double(hr); hrCount += 1; hrMax = max(hrMax, hr)
         }
@@ -420,9 +483,12 @@ final class RideManager: ObservableObject {
         switch status {
         case .running:
             movingTimeSeconds += dt
+            maxSpeedMps = max(maxSpeedMps, currentSpeedMps)
+            currentLapTimeSeconds = movingTimeSeconds - lapStartMovingTime
             accumulateCalories(dt: dt)
             updateAutoPause(dt: dt)
             sampleTrack(now: now)
+            updateGradient()
         case .autoPaused:
             updateAutoResume(dt: dt)
         case .paused, .idle:
@@ -453,6 +519,24 @@ final class RideManager: ObservableObject {
                                  speedMps: currentSpeedMps,
                                  hr: currentHeartRate,
                                  altitude: relativeAltitude))
+    }
+
+    /// Live road gradient (%), as rise over run across a short trailing window of
+    /// travel. Uses the same altitude source as the elevation graph (barometer
+    /// when available, GPS otherwise) against cumulative distance. Needs a few
+    /// metres of travel before it reads, and is clamped to a sane road range.
+    private func updateGradient() {
+        let d = distanceMeters
+        gradientWindow.append((d, relativeAltitude))
+        while let first = gradientWindow.first, d - first.dist > 60 { gradientWindow.removeFirst() }
+        // Baseline ~20 m back (or the oldest sample we have); require ≥8 m of run
+        // so the percentage isn't dominated by GPS/altitude noise at low distance.
+        let base = gradientWindow.first { d - $0.dist >= 20 } ?? gradientWindow.first
+        guard let base, d - base.dist >= 8 else { currentGradientPercent = nil; return }
+        let run = d - base.dist
+        guard run > 0 else { currentGradientPercent = nil; return }
+        let g = (relativeAltitude - base.alt) / run * 100
+        currentGradientPercent = max(-30, min(30, g))
     }
 
     /// Calories. Uses heart rate (Keytel) when the Watch supplies one, otherwise
@@ -738,6 +822,7 @@ final class RideManager: ObservableObject {
         location.setMode(.recording)
         startTicker()
         startAltimeter()
+        if settings.crashDetectionEnabled { crash.start() }
         applyScreenLock()
         AppLog.shared.log("Restored in-progress ride (status=\(snap.statusRaw), dist=\(Int(distanceMeters))m) — prior session likely crashed/terminated")
     }
