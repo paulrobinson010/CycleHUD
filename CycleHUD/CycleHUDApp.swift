@@ -14,7 +14,12 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     /// Restrict the app to `mask` and rotate the interface into `rotateTo` now.
     /// The landscape HUD locks to `.landscape`; portrait screens lock to
     /// `.portrait`, so the phone is fixed rather than rotation-driven.
+    ///
+    /// No-ops when the lock is already `mask`: several `onChange` hooks call this
+    /// with the same target (e.g. re-asserting portrait while Settings is open),
+    /// and re-issuing the geometry update makes the interface visibly flip twice.
     static func lock(_ mask: UIInterfaceOrientationMask, rotateTo: UIInterfaceOrientationMask) {
+        guard mask != orientationLock else { return }
         orientationLock = mask
         guard let scene = UIApplication.shared.connectedScenes
                 .first(where: { $0 is UIWindowScene }) as? UIWindowScene else { return }
