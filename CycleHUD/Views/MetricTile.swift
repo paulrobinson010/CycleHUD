@@ -25,7 +25,7 @@ struct MetricTile: View {
                     .minimumScaleFactor(0.5)
                 if !unit.isEmpty {
                     Text(unit)
-                        .font(.system(size: max(13, valueSize * 0.38),
+                        .font(.system(size: max(11, valueSize * 0.3),
                                       weight: .semibold, design: .rounded))
                         .foregroundStyle(alert ? Color.white.opacity(0.85) : Theme.textSecondary)
                 }
