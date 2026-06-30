@@ -61,4 +61,18 @@ struct RainNowcast: Equatable {
         }
         return String(localized: "Rain expected soon.")
     }
+
+    /// Plain-language one-liner for all states, including dry — used in
+    /// diagnostics (unlike `alertMessage`, which is only shown for imminent rain
+    /// and therefore assumes rain is coming).
+    var summary: String {
+        let hard = peak != .none ? " (\(peak.label))" : ""
+        if isRaining { return String(localized: "Raining now\(hard).") }
+        if let m = startsInMinutes {
+            let when = usedMinuteData ? String(localized: "in about \(Fmt.int(m)) min")
+                                      : String(localized: "within the hour")
+            return String(localized: "Rain expected \(when)\(hard).")
+        }
+        return String(localized: "No rain expected in the next hour.")
+    }
 }

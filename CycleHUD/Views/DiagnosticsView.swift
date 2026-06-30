@@ -10,6 +10,8 @@ struct DiagnosticsView: View {
     @EnvironmentObject var weather: WeatherManager
     @State private var logText = ""
     @State private var sampleAdded = false
+    @State private var logExpanded = false
+    private let collapsedLogLines = 6
 
     var body: some View {
         List {
@@ -66,9 +68,14 @@ struct DiagnosticsView: View {
             }
 
             Section("Recent log") {
-                Text(logText.isEmpty ? "No log yet." : logText)
+                Text(logText.isEmpty ? String(localized: "No log yet.") : displayedLog)
                     .font(.system(.caption2, design: .monospaced))
                     .textSelection(.enabled)
+                if logLineCount > collapsedLogLines {
+                    Button(logExpanded ? "Show less" : "Show more") {
+                        withAnimation { logExpanded.toggle() }
+                    }
+                }
             }
             Section {
                 LabeledContent("Enabled", value: settings.weatherEnabled ? String(localized: "Yes") : String(localized: "No"))
@@ -78,7 +85,7 @@ struct DiagnosticsView: View {
                                    value: u.formatted(date: .omitted, time: .standard))
                 }
                 if let n = weather.nowcast {
-                    Text(n.alertMessage).foregroundStyle(Theme.good)
+                    Text(n.summary).foregroundStyle(n.hasRain ? Theme.accent : Theme.good)
                 }
                 if let e = weather.lastErrorText {
                     VStack(alignment: .leading, spacing: 2) {
@@ -141,6 +148,16 @@ struct DiagnosticsView: View {
         case .ready: return String(localized: "OK")
         case .unavailable: return String(localized: "Unavailable")
         }
+    }
+
+    /// The log shown in the section: collapsed to the last few lines by default,
+    /// full (the loaded window) when expanded.
+    private var displayedLog: String {
+        logExpanded ? logText : lastLines(logText, collapsedLogLines)
+    }
+
+    private var logLineCount: Int {
+        logText.isEmpty ? 0 : logText.split(separator: "\n", omittingEmptySubsequences: false).count
     }
 
     /// Show only the most recent lines so the view stays light.
