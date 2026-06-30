@@ -18,6 +18,19 @@ struct TrackSample: Codable, Equatable {
     let altitude: Double
 }
 
+/// A manually-marked lap split: its duration and the distance covered since the
+/// previous lap (or the ride start).
+struct Lap: Codable, Equatable, Identifiable {
+    let id: UUID
+    let number: Int
+    let durationSeconds: Double
+    let distanceMeters: Double
+
+    var averageSpeedMps: Double {
+        durationSeconds > 0 ? distanceMeters / durationSeconds : 0
+    }
+}
+
 /// A completed ride's headline stats, shown in the end-of-ride summary and the
 /// previous-rides list. Persisted locally so history works without Apple Health.
 struct RideSummary: Identifiable, Codable, Equatable {
@@ -35,6 +48,7 @@ struct RideSummary: Identifiable, Codable, Equatable {
     let radarPoints: [Coord]?       // where vehicles were detected behind the rider
     let passes: [VehiclePass]?      // per-vehicle approach traces for review
     let track: [TrackSample]?       // downsampled speed/HR/elevation series for graphs
+    let laps: [Lap]?                // manually-marked lap splits, if any
 
     var averageSpeedMps: Double {
         movingTimeSeconds > 0 ? distanceMeters / movingTimeSeconds : 0

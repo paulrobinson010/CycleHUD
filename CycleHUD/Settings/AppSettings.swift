@@ -23,6 +23,7 @@ final class AppSettings: ObservableObject {
         static let darkModeEnabled = "darkModeEnabled"
         static let weatherEnabled = "weatherEnabled"
         static let appLanguage = "appLanguage"
+        static let metricTiles = "metricTilesV1"
     }
 
     /// A language the rider can pick in-app. Empty code = follow the device.
@@ -81,6 +82,11 @@ final class AppSettings: ObservableObject {
     @Published var appLanguage: String {
         didSet { defaults.set(appLanguage, forKey: Keys.appLanguage); applyLanguage() }
     }
+    /// The ride-screen metric tiles to show, in order (MetricKind raw values).
+    @Published var metricTiles: [String] { didSet { defaults.set(metricTiles, forKey: Keys.metricTiles) } }
+
+    /// The selected metrics as `MetricKind`s, dropping any unknown raw values.
+    var metricKinds: [MetricKind] { metricTiles.compactMap(MetricKind.init(rawValue:)) }
 
     /// The locale the app should display in — the override, or the device default.
     var appLocale: Locale {
@@ -122,7 +128,8 @@ final class AppSettings: ObservableObject {
             Keys.saveWorkouts: true,
             Keys.darkModeEnabled: false,
             Keys.weatherEnabled: true,
-            Keys.appLanguage: ""
+            Keys.appLanguage: "",
+            Keys.metricTiles: MetricKind.defaultOrder.map(\.rawValue)
         ])
 
         speedUnit = SpeedUnit(rawValue: defaults.string(forKey: Keys.speedUnit) ?? "") ?? .kmh
@@ -143,6 +150,10 @@ final class AppSettings: ObservableObject {
         darkModeEnabled = defaults.bool(forKey: Keys.darkModeEnabled)
         weatherEnabled = defaults.bool(forKey: Keys.weatherEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
+        let storedTiles = defaults.stringArray(forKey: Keys.metricTiles) ?? []
+        // Drop any unknown raw values; fall back to the default layout if empty.
+        let validTiles = storedTiles.filter { MetricKind(rawValue: $0) != nil }
+        metricTiles = validTiles.isEmpty ? MetricKind.defaultOrder.map(\.rawValue) : validTiles
         applyLanguage()
     }
 

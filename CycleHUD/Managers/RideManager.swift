@@ -48,6 +48,9 @@ final class RideManager: ObservableObject {
     @Published private(set) var caloriesKcal: Double = 0
     @Published private(set) var currentHeartRate: Int?            // from the Watch, if present
     @Published private(set) var currentGradientPercent: Double?   // live road gradient (%)
+    @Published private(set) var maxSpeedMps: Double = 0           // peak speed this ride
+    @Published private(set) var laps: [Lap] = []                  // manually-marked splits
+    @Published private(set) var currentLapTimeSeconds: Double = 0 // elapsed in the current lap
 
     var averageSpeedMps: Double {
         movingTimeSeconds > 0 ? distanceMeters / movingTimeSeconds : 0
@@ -121,6 +124,10 @@ final class RideManager: ObservableObject {
     // short trailing window so the reading is stable but responsive.
     private var gradientWindow: [(dist: Double, alt: Double)] = []
 
+    // Lap splits: where (in moving time / distance) the current lap began.
+    private var lapStartMovingTime: Double = 0
+    private var lapStartDistance: Double = 0
+
     init(ble: BluetoothManager, location: LocationManager, settings: AppSettings,
          health: HealthKitManager, watch: WatchConnectivityManager, history: RideHistory) {
         self.ble = ble
@@ -174,6 +181,11 @@ final class RideManager: ObservableObject {
         lastTrackAt = nil
         gradientWindow = []
         currentGradientPercent = nil
+        maxSpeedMps = 0
+        laps = []
+        currentLapTimeSeconds = 0
+        lapStartMovingTime = 0
+        lapStartDistance = 0
         lastTick = Date()
         loadBodyMetrics()
         status = .running
@@ -199,6 +211,19 @@ final class RideManager: ObservableObject {
         }
     }
 
+    /// Close the current lap and start a new one. Ignored when idle, in the demo,
+    /// or on an accidental double-tap (a lap under a second long).
+    func markLap() {
+        guard status != .idle, !demoActive else { return }
+        let duration = movingTimeSeconds - lapStartMovingTime
+        guard duration >= 1 else { return }
+        laps.append(Lap(id: UUID(), number: laps.count + 1, durationSeconds: duration,
+                        distanceMeters: distanceMeters - lapStartDistance))
+        lapStartMovingTime = movingTimeSeconds
+        lapStartDistance = distanceMeters
+        currentLapTimeSeconds = 0
+    }
+
     /// Toggle between running and a manual pause.
     func togglePause() {
         switch status {
@@ -214,6 +239,16 @@ final class RideManager: ObservableObject {
     func stop() {
         AppLog.shared.log("Ride STOP (user) dist=\(Int(distanceMeters))m time=\(Int(movingTimeSeconds))s")
         finalizeOpenPass()                       // capture a pass in progress at stop
+        // If the rider marked any laps, close the final partial lap too so the
+        // splits cover the whole ride.
+        if !laps.isEmpty {
+            let duration = movingTimeSeconds - lapStartMovingTime
+            if duration >= 1 {
+                laps.append(Lap(id: UUID(), number: laps.count + 1, durationSeconds: duration,
+                                distanceMeters: distanceMeters - lapStartDistance))
+            }
+        }
+        let savedLaps = laps
         let start = rideStart ?? Date()
         let end = Date()
         let savedDistance = distanceMeters
@@ -257,7 +292,8 @@ final class RideManager: ObservableObject {
                                       routeSpeeds: routeDown.speeds.isEmpty ? nil : routeDown.speeds,
                                       radarPoints: savedRadarPoints.isEmpty ? nil : savedRadarPoints,
                                       passes: savedPasses.isEmpty ? nil : savedPasses,
-                                      track: savedTrack.isEmpty ? nil : savedTrack)
+                                      track: savedTrack.isEmpty ? nil : savedTrack,
+                                      laps: savedLaps.isEmpty ? nil : savedLaps)
             history.add(summary)
             finishedSummary = summary
             if settings.saveWorkouts {
@@ -273,6 +309,9 @@ final class RideManager: ObservableObject {
         radarPoints = []
         passes = []
         track = []
+        laps = []
+        currentLapTimeSeconds = 0
+        maxSpeedMps = 0
         rideStart = nil
         clearPersistence()
         ble.beginSensorMonitor()   // remind later if the sensors are left switched on
@@ -434,6 +473,8 @@ final class RideManager: ObservableObject {
         switch status {
         case .running:
             movingTimeSeconds += dt
+            maxSpeedMps = max(maxSpeedMps, currentSpeedMps)
+            currentLapTimeSeconds = movingTimeSeconds - lapStartMovingTime
             accumulateCalories(dt: dt)
             updateAutoPause(dt: dt)
             sampleTrack(now: now)

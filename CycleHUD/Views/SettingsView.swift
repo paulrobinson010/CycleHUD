@@ -118,12 +118,17 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    NavigationLink {
+                        MetricTilesView().environmentObject(settings)
+                    } label: {
+                        Label("Ride screen tiles", systemImage: "square.grid.2x2")
+                    }
                     Toggle("Dark mode", isOn: $settings.darkModeEnabled)
                     Toggle("Landscape layout", isOn: $settings.landscapeEnabled)
                 } header: {
                     Text("Display")
                 } footer: {
-                    Text("Dark mode uses a black background; off is a light theme. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait.")
+                    Text("Choose which metric tiles show on the ride screen, and in what order. Dark mode uses a black background; off is a light theme. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait.")
                 }
 
                 Section {

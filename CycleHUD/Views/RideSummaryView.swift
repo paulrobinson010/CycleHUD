@@ -26,6 +26,7 @@ struct RideSummaryView: View {
                     routeMap
                     statGrid
                     graphs
+                    lapsSection
                     passesLink
                 }
                 .padding()
@@ -146,6 +147,51 @@ struct RideSummaryView: View {
         return LazyVGrid(columns: cols, spacing: 12) {
             ForEach(stats, id: \.0) { stat($0.0, $0.1, $0.2) }
         }
+    }
+
+    /// Manually-marked lap splits, shown only when the rider logged any.
+    @ViewBuilder private var lapsSection: some View {
+        if let laps = summary.laps, !laps.isEmpty {
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Laps").font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(Theme.textPrimary)
+                    Spacer()
+                }
+                .padding(.bottom, 8)
+                ForEach(laps) { lap in
+                    HStack {
+                        Text("\(Fmt.int(lap.number))")
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .foregroundStyle(Theme.textSecondary)
+                            .frame(width: 28, alignment: .leading)
+                        Text(lapTimeString(lap.durationSeconds))
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .monospacedDigit()
+                            .foregroundStyle(Theme.textPrimary)
+                        Spacer()
+                        Text("\(Fmt.decimal(settings.distanceUnit.value(fromMeters: lap.distanceMeters), 2)) \(settings.distanceUnit.label)")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .foregroundStyle(Theme.textSecondary)
+                        Text("\(Fmt.decimal(settings.speedUnit.value(fromMps: lap.averageSpeedMps), 1)) \(settings.speedUnit.label)")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .foregroundStyle(Theme.textSecondary)
+                            .frame(width: 80, alignment: .trailing)
+                    }
+                    .padding(.vertical, 7)
+                    if lap.id != laps.last?.id { Divider() }
+                }
+            }
+            .padding(16)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
+        }
+    }
+
+    private func lapTimeString(_ seconds: Double) -> String {
+        let s = Int(seconds)
+        let h = s / 3600, m = (s % 3600) / 60, sec = s % 60
+        return h > 0 ? String(format: "%d:%02d:%02d", h, m, sec)
+                     : String(format: "%d:%02d", m, sec)
     }
 
     /// Link to the per-vehicle pass review, shown only when passes were logged.

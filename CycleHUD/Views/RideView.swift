@@ -279,52 +279,72 @@ struct RideView: View {
 
     // MARK: - Metrics
 
+    /// The rider's chosen tiles, laid out three per row. Weather tiles are hidden
+    /// when Weather is off. Short rows are padded so tile widths stay uniform.
     private var metricsGrid: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                MetricTile(title: "Speed",
-                           value: speedString(ride.currentSpeedMps),
-                           unit: settings.speedUnit.label, valueSize: 32, height: 90)
-                MetricTile(title: "Avg Speed",
-                           value: speedString(ride.averageSpeedMps),
-                           unit: settings.speedUnit.label, valueSize: 32, height: 90)
-                MetricTile(title: "Cadence",
-                           value: ble.freshCadence.map { Fmt.int($0) } ?? "—",
-                           unit: "rpm", valueSize: 32, height: 90)
-            }
-            HStack(spacing: 8) {
-                MetricTile(title: "Distance",
-                           value: distanceString(ride.distanceMeters),
-                           unit: settings.distanceUnit.label, valueSize: 32, height: 90)
-                MetricTile(title: "Time",
-                           value: timeString(ride.movingTimeSeconds),
-                           unit: "", valueSize: 32, height: 90)
-                MetricTile(title: "Ascent",
-                           value: elevationString(ride.elevationGainMeters),
-                           unit: settings.distanceUnit.shortLabel, valueSize: 32, height: 90)
-            }
-            HStack(spacing: 8) {
-                let hr = watch.displayHeartRate ?? ride.currentHeartRate ?? ble.freshSensorHeartRate()
-                MetricTile(title: "Heart Rate",
-                           value: hr.map { Fmt.int($0) } ?? "—",
-                           unit: "bpm", valueSize: 32, height: 90,
-                           alert: settings.hrWarningEnabled && (hr ?? 0) >= settings.hrWarningBpm)
-                MetricTile(title: "Calories",
-                           value: ride.caloriesKcal >= 1 ? Fmt.int(ride.caloriesKcal) : "—",
-                           unit: "kcal", valueSize: 32, height: 90)
-                if settings.weatherEnabled {
-                    WeatherTile(nowcast: weather.nowcast, status: weather.status, height: 90)
-                }
-            }
-            if settings.weatherEnabled {
+        let kinds = settings.metricKinds.filter { !$0.requiresWeather || settings.weatherEnabled }
+        let rows = kinds.chunked(into: 3)
+        return VStack(spacing: 8) {
+            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                 HStack(spacing: 8) {
-                    MetricTile(title: "Gradient", value: gradientString, unit: "%",
-                               valueSize: 32, height: 90)
-                    MetricTile(title: "Temp", value: temperatureValue, unit: temperatureUnit,
-                               valueSize: 32, height: 90)
-                    windTile
+                    ForEach(0..<3, id: \.self) { i in
+                        if i < row.count {
+                            metricTile(for: row[i])
+                        } else {
+                            Color.clear.frame(maxWidth: .infinity).frame(height: 90)
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    /// Build the tile for one metric, pulling live values from the managers.
+    @ViewBuilder
+    private func metricTile(for kind: MetricKind) -> some View {
+        switch kind {
+        case .speed:
+            MetricTile(title: kind.title, value: speedString(ride.currentSpeedMps),
+                       unit: settings.speedUnit.label, valueSize: 32, height: 90)
+        case .avgSpeed:
+            MetricTile(title: kind.title, value: speedString(ride.averageSpeedMps),
+                       unit: settings.speedUnit.label, valueSize: 32, height: 90)
+        case .maxSpeed:
+            MetricTile(title: kind.title, value: speedString(ride.maxSpeedMps),
+                       unit: settings.speedUnit.label, valueSize: 32, height: 90)
+        case .cadence:
+            MetricTile(title: kind.title, value: ble.freshCadence.map { Fmt.int($0) } ?? "—",
+                       unit: "rpm", valueSize: 32, height: 90)
+        case .distance:
+            MetricTile(title: kind.title, value: distanceString(ride.distanceMeters),
+                       unit: settings.distanceUnit.label, valueSize: 32, height: 90)
+        case .time:
+            MetricTile(title: kind.title, value: timeString(ride.movingTimeSeconds),
+                       unit: "", valueSize: 32, height: 90)
+        case .ascent:
+            MetricTile(title: kind.title, value: elevationString(ride.elevationGainMeters),
+                       unit: settings.distanceUnit.shortLabel, valueSize: 32, height: 90)
+        case .heartRate:
+            let hr = watch.displayHeartRate ?? ride.currentHeartRate ?? ble.freshSensorHeartRate()
+            MetricTile(title: kind.title, value: hr.map { Fmt.int($0) } ?? "—",
+                       unit: "bpm", valueSize: 32, height: 90,
+                       alert: settings.hrWarningEnabled && (hr ?? 0) >= settings.hrWarningBpm)
+        case .calories:
+            MetricTile(title: kind.title, value: ride.caloriesKcal >= 1 ? Fmt.int(ride.caloriesKcal) : "—",
+                       unit: "kcal", valueSize: 32, height: 90)
+        case .gradient:
+            MetricTile(title: kind.title, value: gradientString, unit: "%",
+                       valueSize: 32, height: 90)
+        case .lapTime:
+            MetricTile(title: kind.title, value: timeString(ride.currentLapTimeSeconds),
+                       unit: "", valueSize: 32, height: 90)
+        case .temperature:
+            MetricTile(title: kind.title, value: temperatureValue, unit: temperatureUnit,
+                       valueSize: 32, height: 90)
+        case .wind:
+            windTile
+        case .rain:
+            WeatherTile(nowcast: weather.nowcast, status: weather.status, height: 90)
         }
     }
 
@@ -371,6 +391,7 @@ struct RideView: View {
                     ride.start()
                 }
             } else {
+                if controlStatus == .running && !ride.demoActive { lapButton }
                 primaryButton(title: controlStatus == .running ? "Pause" : "Resume",
                               system: controlStatus == .running ? "pause.fill" : "play.fill",
                               color: Theme.accent) {
@@ -386,6 +407,21 @@ struct RideView: View {
                 }
             }
         }
+    }
+
+    /// Compact icon-only lap button: closes the current lap and starts a new one.
+    private var lapButton: some View {
+        Button {
+            ride.markLap()
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        } label: {
+            Image(systemName: "flag.checkered")
+                .font(.system(size: 22, weight: .bold))
+                .foregroundStyle(Theme.textPrimary)
+                .frame(width: 58, height: 58)
+                .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panelRaised))
+        }
+        .accessibilityLabel("Mark lap")
     }
 
     private func primaryButton(title: LocalizedStringKey, system: String, color: Color,
