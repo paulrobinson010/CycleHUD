@@ -102,7 +102,17 @@ footer { border-top: 1px solid var(--line); padding: 30px 0 50px; color: var(--m
 footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
 footer nav { margin-left: auto; display: flex; gap: 18px; }
 
+/* Screenshot gallery */
+.shots { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; }
+.shots img {
+  width: 200px; max-width: 42vw; border-radius: 22px; border: 1px solid var(--line);
+}
+.shots.watch { margin-top: 18px; }
+.shots.watch img { width: 150px; border-radius: 18px; }
+
 @media (max-width: 600px) {
   .hero h1 { font-size: 40px; }
   .nav nav { gap: 14px; }
+  .shots img { width: 44vw; }
+  .shots.watch img { width: 40vw; }
 }

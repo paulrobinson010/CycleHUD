@@ -7,7 +7,7 @@ saves each ride as an **Apple Health workout**. Garmin Varia–compatible radars
 and standard BLE speed/cadence sensors work too.
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="CycleHUD main riding screen, with the radar panel flooded red as a vehicle closes in" width="320">
+  <img src="docs/shots/alert-red.png" alt="CycleHUD main riding screen, with the radar panel flooded red as a vehicle closes in" width="300">
 </p>
 
 ## Features
@@ -79,6 +79,26 @@ and standard BLE speed/cadence sensors work too.
   beep, the **escalating wrist taps**, and a closing **radar-off** wrist alert —
   so you can feel and fine-tune every alert before a ride. It runs through once
   and stops; starting a ride also stops it.
+
+## Screenshots
+
+<p align="center">
+  <img src="docs/shots/alert-red.png" width="190" alt="Vehicle closing in — radar flooded red">
+  <img src="docs/shots/alert-orange.png" width="190" alt="Vehicle approaching — amber">
+  <img src="docs/shots/radar-far.png" width="190" alt="Vehicle detected far back">
+  <img src="docs/shots/clear.png" width="190" alt="Road clear">
+</p>
+<p align="center">
+  <img src="docs/shots/dark.png" width="190" alt="Dark mode">
+  <img src="docs/shots/summary.png" width="190" alt="Ride summary with route map">
+  <img src="docs/shots/graphs.png" width="190" alt="Speed, heart-rate and elevation graphs">
+  <img src="docs/shots/pass.png" width="190" alt="Vehicle pass detail">
+</p>
+<p align="center">
+  <img src="docs/shots/watch-car.png" width="150" alt="Apple Watch — vehicle behind">
+  <img src="docs/shots/watch-medium.png" width="150" alt="Apple Watch — vehicle approaching">
+  <img src="docs/shots/watch-radaroff.png" width="150" alt="Apple Watch — radar-off warning">
+</p>
 
 ## Build & run
 
