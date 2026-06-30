@@ -735,7 +735,11 @@
         }
       }
     },
+    "A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts. It updates every minute while the app is open. Uses Apple Weather and your location." : {
+
+    },
     "A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts. Uses Apple Weather and your location. The alert sends a notification (which also reaches your Apple Watch) when rain is within ~15 minutes." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -978,6 +982,7 @@
       }
     },
     "Alert me when rain is imminent" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -5562,6 +5567,7 @@
       }
     },
     "Rain expected soon." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -5602,6 +5608,7 @@
       }
     },
     "Rain has started%@." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -5642,6 +5649,7 @@
       }
     },
     "Rain incoming" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
