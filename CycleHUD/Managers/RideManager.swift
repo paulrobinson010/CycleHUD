@@ -412,7 +412,9 @@ final class RideManager: ObservableObject {
         lastTick = now
 
         currentSpeedMps = resolvedSpeed()
-        currentHeartRate = watch.freshHeartRate()
+        // Prefer the Apple Watch (already streaming during a ride); fall back to a
+        // paired BLE heart-rate strap so HR/calories work without a Watch.
+        currentHeartRate = watch.freshHeartRate() ?? ble.freshSensorHeartRate()
         if let hr = currentHeartRate, hr > 0 {
             hrSum += Double(hr); hrCount += 1; hrMax = max(hrMax, hr)
         }

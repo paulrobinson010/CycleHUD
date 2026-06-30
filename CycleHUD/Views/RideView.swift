@@ -304,7 +304,7 @@ struct RideView: View {
                            unit: settings.distanceUnit.shortLabel, valueSize: 32, height: 90)
             }
             HStack(spacing: 8) {
-                let hr = watch.displayHeartRate ?? ride.currentHeartRate
+                let hr = watch.displayHeartRate ?? ride.currentHeartRate ?? ble.freshSensorHeartRate()
                 MetricTile(title: "Heart Rate",
                            value: hr.map { Fmt.int($0) } ?? "—",
                            unit: "bpm", valueSize: 32, height: 90,
