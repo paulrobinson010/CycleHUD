@@ -3,7 +3,6 @@
   "strings" : {
     "CFBundleDisplayName" : {
       "comment" : "Bundle display name",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -51,7 +50,6 @@
     },
     "CFBundleName" : {
       "comment" : "Bundle name",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -99,7 +97,6 @@
     },
     "NSBluetoothAlwaysUsageDescription" : {
       "comment" : "Permission usage description",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -147,7 +144,6 @@
     },
     "NSHealthShareUsageDescription" : {
       "comment" : "Permission usage description",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -195,7 +191,6 @@
     },
     "NSHealthUpdateUsageDescription" : {
       "comment" : "Permission usage description",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -243,7 +238,6 @@
     },
     "NSLocationAlwaysAndWhenInUseUsageDescription" : {
       "comment" : "Permission usage description",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -291,7 +285,6 @@
     },
     "NSLocationWhenInUseUsageDescription" : {
       "comment" : "Permission usage description",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -339,7 +332,6 @@
     },
     "NSMotionUsageDescription" : {
       "comment" : "Permission usage description",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
