@@ -9,13 +9,13 @@ enum MetricKind: String, CaseIterable, Identifiable, Codable {
 
     var id: String { rawValue }
 
-    /// The tiles shown by default, in order — the layout the app shipped with,
-    /// plus the gradient/weather tiles.
+    /// The tiles shown by default, in order — the original ride-screen layout.
+    /// The extra metrics (gradient, temperature, wind, max/lap) are available to
+    /// add in Settings → Ride screen tiles but aren't shown out of the box.
     static let defaultOrder: [MetricKind] = [
         .speed, .avgSpeed, .cadence,
         .distance, .time, .ascent,
-        .heartRate, .calories, .rain,
-        .gradient, .temperature, .wind
+        .heartRate, .calories, .rain
     ]
 
     var title: LocalizedStringKey {

@@ -23,7 +23,7 @@ final class AppSettings: ObservableObject {
         static let darkModeEnabled = "darkModeEnabled"
         static let weatherEnabled = "weatherEnabled"
         static let appLanguage = "appLanguage"
-        static let metricTiles = "metricTilesV1"
+        static let metricTiles = "metricTilesV2"   // V2: default back to the original tile set
         static let crashDetectionEnabled = "crashDetectionEnabled"
         static let emergencyContactName = "emergencyContactName"
         static let emergencyContactPhone = "emergencyContactPhone"
