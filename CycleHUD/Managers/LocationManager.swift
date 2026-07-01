@@ -66,6 +66,10 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
             lastAcceptedLocation = nil   // don't carry a speed reference across rides
         case .recording:
             manager.allowsBackgroundLocationUpdates = true
+            // Show the blue background-location indicator during a ride: it makes
+            // the persistent-location feature visible (and is required by App
+            // Review to justify the "location" background mode).
+            manager.showsBackgroundLocationIndicator = true
             manager.pausesLocationUpdatesAutomatically = false
             manager.desiredAccuracy = kCLLocationAccuracyBest
             manager.distanceFilter = kCLDistanceFilterNone
