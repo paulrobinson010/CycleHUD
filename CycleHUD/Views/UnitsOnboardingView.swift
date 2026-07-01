@@ -8,9 +8,11 @@ struct UnitsOnboardingView: View {
     var body: some View {
         VStack(spacing: 28) {
             Spacer()
-            Image(systemName: "bicycle.circle.fill")
-                .font(.system(size: 64))
-                .foregroundStyle(Theme.accent)
+            Image("AppLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 88, height: 88)
+                .accessibilityLabel("CycleHUD")
             VStack(spacing: 6) {
                 Text("Welcome to CycleHUD")
                     .font(.title.bold())
