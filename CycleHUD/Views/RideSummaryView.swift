@@ -11,6 +11,10 @@ struct RideSummaryView: View {
     @State private var showRouteMap = false
     @State private var exportFile: ExportFile?
     @State private var showExportError = false
+    /// Scrub position (seconds into the ride): tap/drag any graph or the map
+    /// and the same moment is highlighted on all of them — a rule line through
+    /// the charts and a marker on the route.
+    @State private var scrubT: Double?
 
     /// Identifiable wrapper so an exported file URL can drive a `.sheet(item:)`.
     private struct ExportFile: Identifiable {
@@ -96,10 +100,12 @@ struct RideSummaryView: View {
         .padding(.top, 8)
     }
 
+    /// The route mini-map. Tap or drag along the route to scrub (the marker and
+    /// the graphs' rule line follow); the corner button opens the full map.
     @ViewBuilder private var routeMap: some View {
         let coords = summary.coordinates
         if coords.count >= 2 {
-            Button { showRouteMap = true } label: {
+            MapReader { proxy in
                 Map(initialPosition: .region(Self.region(for: coords))) {
                     if let speeds = summary.routeSpeeds, speeds.count == coords.count {
                         Self.speedColoredRoute(coords, speeds: speeds, lineWidth: 4)
@@ -109,20 +115,31 @@ struct RideSummaryView: View {
                     ForEach(Array(summary.radarCoordinates.enumerated()), id: \.offset) { _, c in
                         Annotation("", coordinate: c) { Self.radarDot }
                     }
+                    if let c = scrubCoordinate {
+                        Annotation("", coordinate: c) { scrubMarker }
+                    }
                 }
+                .allowsHitTesting(false)   // fixed camera; touches go to the overlay
                 .frame(height: 180)
+                .overlay {
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .gesture(DragGesture(minimumDistance: 0).onChanged { drag in
+                            scrub(toMapPoint: drag.location, proxy: proxy, coords: coords)
+                        })
+                }
                 .clipShape(RoundedRectangle(cornerRadius: 16))
-                .allowsHitTesting(false)   // tap goes to the button (expands the map)
                 .overlay(alignment: .bottomTrailing) {
-                    Image(systemName: "arrow.up.left.and.arrow.down.right")
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundStyle(Theme.textPrimary)
-                        .padding(8)
-                        .background(.ultraThinMaterial, in: Circle())
-                        .padding(10)
+                    Button { showRouteMap = true } label: {
+                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(Theme.textPrimary)
+                            .padding(8)
+                            .background(.ultraThinMaterial, in: Circle())
+                    }
+                    .padding(10)
                 }
             }
-            .buttonStyle(.plain)
             .fullScreenCover(isPresented: $showRouteMap) {
                 RouteMapView(coordinates: coords,
                              routeSpeeds: summary.routeSpeeds ?? [],
@@ -131,6 +148,57 @@ struct RideSummaryView: View {
                     .environmentObject(settings)
             }
         }
+    }
+
+    // MARK: - Scrubbing (graphs ⇄ map)
+    //
+    // The stored route has no per-point timestamps, but GPS fixes arrive at a
+    // steady rate and both the route and the metrics track were downsampled
+    // uniformly — so a moment t maps to the route by simple time fraction.
+
+    /// The ride's time span (the metrics track's last sample, or moving time).
+    private var trackDuration: Double {
+        max(1, summary.track?.last?.t ?? summary.movingTimeSeconds)
+    }
+
+    /// Route position for the current scrub time.
+    private var scrubCoordinate: CLLocationCoordinate2D? {
+        guard let t = scrubT else { return nil }
+        let coords = summary.coordinates
+        guard coords.count >= 2 else { return nil }
+        let frac = min(max(t / trackDuration, 0), 1)
+        return coords[Int((frac * Double(coords.count - 1)).rounded())]
+    }
+
+    /// The track sample nearest the scrub time, for the readout row.
+    private var scrubSample: TrackSample? {
+        guard let t = scrubT, let track = summary.track, !track.isEmpty else { return nil }
+        return track.min(by: { abs($0.t - t) < abs($1.t - t) })
+    }
+
+    /// Map a touch on the mini-map to the nearest route point, then to time.
+    private func scrub(toMapPoint point: CGPoint, proxy: MapProxy,
+                       coords: [CLLocationCoordinate2D]) {
+        guard let tap = proxy.convert(point, from: .local) else { return }
+        let cosLat = cos(tap.latitude * .pi / 180)
+        var best = 0
+        var bestD = Double.greatestFiniteMagnitude
+        for (i, c) in coords.enumerated() {
+            let dLat = c.latitude - tap.latitude
+            let dLon = (c.longitude - tap.longitude) * cosLat
+            let d = dLat * dLat + dLon * dLon
+            if d < bestD { bestD = d; best = i }
+        }
+        scrubT = Double(best) / Double(max(1, coords.count - 1)) * trackDuration
+    }
+
+    private var scrubMarker: some View {
+        ZStack {
+            Circle().fill(Theme.accent)
+            Circle().stroke(.white, lineWidth: 2.5)
+        }
+        .frame(width: 16, height: 16)
+        .shadow(color: .black.opacity(0.4), radius: 2)
     }
 
     /// A small dot marking where a vehicle was detected behind the rider.
@@ -227,9 +295,12 @@ struct RideSummaryView: View {
 
     /// Speed / heart-rate / elevation over the ride, as stacked line charts that
     /// share a minutes x-axis. Heart rate is only shown if the ride captured any.
+    /// Tap or drag across any chart to scrub — the moment is marked on all the
+    /// charts and on the route map, with a readout of the values at that point.
     @ViewBuilder private var graphs: some View {
         if let track = summary.track, track.count >= 2 {
             VStack(spacing: 16) {
+                scrubReadout
                 metricChart(title: String(localized: "Speed"), unit: settings.speedUnit.label,
                             color: Theme.accent,
                             points: track.map { ($0.t, settings.speedUnit.value(fromMps: $0.speedMps)) })
@@ -243,6 +314,34 @@ struct RideSummaryView: View {
             }
             .padding(16)
             .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
+        }
+    }
+
+    /// The values at the scrub point (time · speed · HR · elevation) + clear.
+    @ViewBuilder private var scrubReadout: some View {
+        if let t = scrubT, let s = scrubSample {
+            HStack(spacing: 12) {
+                Text(verbatim: lapTimeString(t))
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(Theme.textPrimary)
+                Text(verbatim: "\(Fmt.decimal(settings.speedUnit.value(fromMps: s.speedMps), 1)) \(settings.speedUnit.label)")
+                    .foregroundStyle(Theme.accent)
+                if let hr = s.hr, hr > 0 {
+                    Text(verbatim: "♥ \(Fmt.int(hr))")
+                        .foregroundStyle(Theme.threatHigh)
+                }
+                Text(verbatim: "\(Fmt.int(settings.distanceUnit.shortValue(fromMeters: s.altitude))) \(settings.distanceUnit.shortLabel)")
+                    .foregroundStyle(Theme.good)
+                Spacer()
+                Button { scrubT = nil } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 17))
+                        .foregroundStyle(Theme.textSecondary)
+                }
+                .accessibilityLabel(Text(verbatim: "Clear"))
+            }
+            .font(.system(size: 13, weight: .semibold, design: .rounded))
         }
     }
 
@@ -272,6 +371,16 @@ struct RideSummaryView: View {
                         .foregroundStyle(color)
                         .interpolationMethod(.monotone)
                 }
+                if let t = scrubT {
+                    RuleMark(x: .value("min", t / 60.0))
+                        .foregroundStyle(Theme.textSecondary.opacity(0.7))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                    if let y = Self.interpolate(points, atSeconds: t) {
+                        PointMark(x: .value("min", t / 60.0), y: .value(title, y))
+                            .foregroundStyle(color)
+                            .symbolSize(70)
+                    }
+                }
             }
             .chartXAxis {
                 AxisMarks { value in
@@ -283,8 +392,37 @@ struct RideSummaryView: View {
                     }
                 }
             }
+            .chartOverlay { proxy in
+                GeometryReader { geo in
+                    Rectangle()
+                        .fill(Color.clear)
+                        .contentShape(Rectangle())
+                        .gesture(DragGesture(minimumDistance: 0).onChanged { drag in
+                            guard let pf = proxy.plotFrame else { return }
+                            let x = drag.location.x - geo[pf].origin.x
+                            if let m: Double = proxy.value(atX: x) {
+                                scrubT = min(max(0, m * 60), trackDuration)
+                            }
+                        })
+                }
+            }
             .frame(height: 96)
         }
+    }
+
+    /// Linear interpolation of a chart series at `t` seconds into the ride.
+    private static func interpolate(_ points: [(Double, Double)], atSeconds t: Double) -> Double? {
+        guard let first = points.first, let last = points.last else { return nil }
+        if t <= first.0 { return first.1 }
+        if t >= last.0 { return last.1 }
+        for i in 1..<points.count where points[i].0 >= t {
+            let (t0, v0) = points[i - 1]
+            let (t1, v1) = points[i]
+            let span = t1 - t0
+            let w = span > 0 ? (t - t0) / span : 0
+            return v0 + (v1 - v0) * w
+        }
+        return last.1
     }
 
     /// Stat cells, including heart rate only when the ride captured it.
