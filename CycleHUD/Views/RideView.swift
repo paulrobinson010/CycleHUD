@@ -233,10 +233,10 @@ struct RideView: View {
                     .foregroundStyle(Theme.textSecondary)
                 )
                 .contentShape(Rectangle())
-                .onDrop(of: [.text], delegate: TopZoneDropDelegate(dragged: $draggedTile,
-                                                                   settings: settings))
+                .onDrop(of: [.text], delegate: zoneEndDelegate(true))
         } else {
-            metricsGrid(kinds: topMetricKinds, tileHeight: 90, includeAdd: false)
+            metricsGrid(kinds: topMetricKinds, tileHeight: 90, includeAdd: false,
+                        zoneIsTop: true)
         }
     }
 
@@ -419,8 +419,11 @@ struct RideView: View {
 
     /// `kinds` laid out three per row at `tileHeight`; short rows are padded so
     /// tile widths stay uniform. Long-press any tile to edit the grid in place.
+    /// While editing, the free space — padded slots, the gaps between tiles and
+    /// the grid background — accepts drops too (move to the end of this zone),
+    /// so a drag doesn't have to land exactly on another tile.
     private func metricsGrid(kinds: [MetricKind], tileHeight: CGFloat,
-                             includeAdd: Bool) -> some View {
+                             includeAdd: Bool, zoneIsTop: Bool = false) -> some View {
         var cells: [GridCell] = kinds.map { .metric($0) }
         if includeAdd && editingTiles && !availableTileKinds.isEmpty { cells.append(.add) }
         let rows = cells.chunked(into: 3)
@@ -429,21 +432,34 @@ struct RideView: View {
                 HStack(spacing: 8) {
                     ForEach(0..<3, id: \.self) { i in
                         if i < row.count {
-                            gridCell(row[i], height: tileHeight)
+                            gridCell(row[i], height: tileHeight, zoneIsTop: zoneIsTop)
                         } else {
-                            Color.clear.frame(maxWidth: .infinity).frame(height: tileHeight)
+                            Color.clear
+                                .frame(maxWidth: .infinity)
+                                .frame(height: tileHeight)
+                                .contentShape(Rectangle())
+                                .onDrop(of: [.text], delegate: zoneEndDelegate(zoneIsTop))
                         }
                     }
                 }
             }
         }
+        .contentShape(Rectangle())
+        .onDrop(of: [.text], delegate: zoneEndDelegate(zoneIsTop))
+    }
+
+    private func zoneEndDelegate(_ zoneIsTop: Bool) -> ZoneEndDropDelegate {
+        ZoneEndDropDelegate(zoneIsTop: zoneIsTop, dragged: $draggedTile, settings: settings)
     }
 
     @ViewBuilder
-    private func gridCell(_ cell: GridCell, height: CGFloat) -> some View {
+    private func gridCell(_ cell: GridCell, height: CGFloat, zoneIsTop: Bool) -> some View {
         switch cell {
         case .metric(let kind): tileCell(for: kind, height: height)
-        case .add: addTile(height: height)
+        case .add:
+            // The "+" tile doubles as a drop target: dropping here = end of grid.
+            addTile(height: height)
+                .onDrop(of: [.text], delegate: zoneEndDelegate(zoneIsTop))
         }
     }
 
@@ -466,6 +482,9 @@ struct RideView: View {
                     .frame(height: height)
                     .contentShape(Rectangle())
             }
+            // Clip the system drag "lift" preview to the tile's rounded shape, so
+            // the snapshot doesn't carry square corners of background colour.
+            .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 16))
             .onDrag {
                 draggedTile = kind
                 return NSItemProvider(object: kind.rawValue as NSString)
@@ -799,30 +818,43 @@ private struct TileDropDelegate: DropDelegate {
     }
 }
 
-/// Drop target for the (empty) above-radar strip: moves the dragged tile to the
-/// end of the top zone and grows the split by one.
-private struct TopZoneDropDelegate: DropDelegate {
+/// Drop target for a zone's free space (padded slots, gaps, the grid backdrop,
+/// the empty top strip, the "+" tile): moves the dragged tile to the END of
+/// that zone, adjusting the above-radar split when the drag crosses zones. This
+/// is what lets a drag land in open space instead of exactly on another tile.
+private struct ZoneEndDropDelegate: DropDelegate {
+    let zoneIsTop: Bool
     @Binding var dragged: MetricKind?
     let settings: AppSettings
 
-    func dropEntered(info: DropInfo) {
-        guard let kind = dragged,
-              let from = settings.metricTiles.firstIndex(of: kind.rawValue),
-              from >= settings.topTileCount else { return }   // already up top
-        withAnimation(.easeInOut(duration: 0.2)) {
-            var tiles = settings.metricTiles
-            tiles.move(fromOffsets: IndexSet(integer: from),
-                       toOffset: min(settings.topTileCount, tiles.count))
-            settings.metricTiles = tiles
-            settings.topTileCount += 1
-        }
-    }
+    func dropEntered(info: DropInfo) { moveToZoneEnd() }
 
     func dropUpdated(info: DropInfo) -> DropProposal? { DropProposal(operation: .move) }
 
     func performDrop(info: DropInfo) -> Bool {
+        moveToZoneEnd()
         dragged = nil
         return true
+    }
+
+    private func moveToZoneEnd() {
+        guard let kind = dragged,
+              let from = settings.metricTiles.firstIndex(of: kind.rawValue) else { return }
+        let top = min(settings.topTileCount, settings.metricTiles.count)
+        let fromTop = from < top
+        // Already the last tile of this zone — nothing to move (also stops the
+        // repeated dropEntered calls from thrashing the array).
+        let zoneEnd = zoneIsTop ? top - 1 : settings.metricTiles.count - 1
+        if fromTop == zoneIsTop && from == zoneEnd { return }
+        withAnimation(.easeInOut(duration: 0.2)) {
+            var tiles = settings.metricTiles
+            tiles.move(fromOffsets: IndexSet(integer: from),
+                       toOffset: zoneIsTop ? top : tiles.count)
+            settings.metricTiles = tiles
+            if fromTop != zoneIsTop {
+                settings.topTileCount = top + (zoneIsTop ? 1 : -1)
+            }
+        }
     }
 }
 
