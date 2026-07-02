@@ -242,6 +242,13 @@ final class WatchSessionManager: NSObject, ObservableObject {
 
     // MARK: - Apply mirrored state
 
+    /// How old a mirrored "running" state may be and still start/keep a ride.
+    /// applicationContext is persisted and replayed on watch app activation, so
+    /// without this a leftover "running" from a past ride/demo (whose final
+    /// "idle" never transferred) would start a phantom workout session hours
+    /// later — which watchOS then saves as an empty workout when the app dies.
+    private static let mirrorFreshness: TimeInterval = 60
+
     private func apply(_ data: [String: Any]) {
         if let v = data["spdV"] as? Double { speedDisplay = v }
         if let v = data["spdU"] as? String { speedUnitLabel = v }
@@ -252,13 +259,58 @@ final class WatchSessionManager: NSObject, ObservableObject {
         if let v = data["radarLost"] as? Bool { radarLost = v }
         if let v = data["hrWarn"] as? Int { hrWarningBpm = v }
         if let v = data["hapticsMuted"] as? Bool { hapticsMuted = v }
-        if let s = data["status"] as? String {
+        if var s = data["status"] as? String {
+            // Staleness guard: only a *recent* payload may claim an active ride.
+            // A missing/old timestamp downgrades to idle (payloads are sent ~2 Hz
+            // during a real ride, so a fresh one always follows within seconds).
+            if s != "idle" {
+                let sentAt = data["sentAt"] as? TimeInterval ?? 0
+                if Date().timeIntervalSince1970 - sentAt > Self.mirrorFreshness {
+                    s = "idle"
+                }
+            }
             statusRaw = s
             rideActive = (s != "idle")
+            if rideActive { lastMirrorAt = Date() }
             updateWorkout()
+            updateRideWatchdog()
         }
         updateHapticLoop()
         evaluateHRWarning()
+    }
+
+    // MARK: - Ride watchdog
+    //
+    // The phone mirrors state ~2 Hz during a ride. If those updates stop for
+    // minutes while we still think a ride is running (phone app killed, link
+    // gone), end and discard the workout session rather than letting an
+    // orphaned session run until watchOS saves it as an empty workout.
+
+    private var lastMirrorAt: Date?
+    private var rideWatchdog: Timer?
+    private static let mirrorTimeout: TimeInterval = 300   // 5 min without updates
+
+    private func updateRideWatchdog() {
+        if rideActive {
+            guard rideWatchdog == nil else { return }
+            rideWatchdog = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) {
+                [weak self] _ in self?.checkMirrorLiveness()
+            }
+        } else {
+            rideWatchdog?.invalidate()
+            rideWatchdog = nil
+        }
+    }
+
+    private func checkMirrorLiveness() {
+        guard rideActive,
+              Date().timeIntervalSince(lastMirrorAt ?? .distantPast) > Self.mirrorTimeout
+        else { return }
+        statusRaw = "idle"
+        rideActive = false
+        updateWorkout()        // ends the session → discarded, never saved
+        updateRideWatchdog()
+        updateHapticLoop()
     }
 
     // MARK: - Heart-rate warning

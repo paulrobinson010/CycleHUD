@@ -65,7 +65,12 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
             "threat": threatLevel,
             "radarLost": radarLost,
             "hrWarn": hrWarningBpm,
-            "hapticsMuted": hapticsMuted
+            "hapticsMuted": hapticsMuted,
+            // Timestamp so the watch can refuse to act on a stale replayed
+            // context: applicationContext is persisted and re-delivered on watch
+            // app activation, and a leftover "running" from a past ride/demo was
+            // starting phantom workout sessions hours later.
+            "sentAt": Date().timeIntervalSince1970
         ]
         if let nearestThreatMeters { payload["nearest"] = nearestThreatMeters }
         // applicationContext is the reliable background path (latest state always
