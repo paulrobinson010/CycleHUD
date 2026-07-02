@@ -128,6 +128,9 @@ struct SettingsView: View {
                     Picker("Appearance", selection: $settings.appearanceTheme) {
                         ForEach(AppearanceTheme.allCases) { Text($0.label).tag($0) }
                     }
+                    Picker("Digits", selection: $settings.digitStyle) {
+                        ForEach(DigitStyle.allCases) { Text($0.label).tag($0) }
+                    }
                     Toggle("Landscape layout", isOn: $settings.landscapeEnabled)
                     if settings.landscapeEnabled {
                         Toggle("Radar on the right (landscape)", isOn: $settings.radarOnRight)

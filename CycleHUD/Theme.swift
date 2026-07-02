@@ -20,6 +20,22 @@ enum AppearanceTheme: String, CaseIterable, Identifiable {
     }
 }
 
+/// How the big metric numerals are drawn: the standard rounded system font, or
+/// the retro 7-segment "digital clock" display font (bundled, original
+/// outlines). Independent of the colour theme — LCD digits suit any of them.
+enum DigitStyle: String, CaseIterable, Identifiable {
+    case standard, digital
+
+    var id: String { rawValue }
+
+    var label: LocalizedStringKey {
+        switch self {
+        case .standard: return "Standard"
+        case .digital: return "Digital"
+        }
+    }
+}
+
 /// Central place for colours and styling so the HUD stays consistent and
 /// high-contrast for outdoor, at-a-glance reading. Light/dark share one neutral
 /// palette that adapts via traits; Cyberpunk swaps in the website's neon
@@ -30,6 +46,8 @@ enum Theme {
     /// the settings change (the ride screen re-identifies its layout), so the
     /// computed colours below take effect immediately.
     static var appearance: AppearanceTheme = .light
+    /// The numeral style, kept in sync by AppSettings (like `appearance`).
+    static var digitStyle: DigitStyle = .standard
     private static var cyber: Bool { appearance == .cyberpunk }
 
     // MARK: Light/dark adaptive palette (as before)
@@ -86,9 +104,14 @@ enum Theme {
     /// so views can apply it unconditionally.
     static var glow: Color { cyber ? cyberAccent.opacity(0.55) : .clear }
 
-    /// Large value font for the metric tiles / speed readout.
+    /// Large value font for the metric tiles / speed readout. The digital style
+    /// only carries digits and separators — any other text (Now, None, n/a)
+    /// falls back to the system font automatically.
     static func valueFont(_ size: CGFloat) -> Font {
-        .system(size: size, weight: .bold, design: .rounded).monospacedDigit()
+        switch digitStyle {
+        case .standard: return .system(size: size, weight: .bold, design: .rounded).monospacedDigit()
+        case .digital: return .custom("CycleHUD7Seg", size: size)
+        }
     }
 
     static let labelFont = Font.system(size: 13, weight: .semibold, design: .rounded)

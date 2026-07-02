@@ -83,9 +83,8 @@ struct RideSummaryView: View {
     private var header: some View {
         VStack(spacing: 2) {
             Text(distanceValue)
-                .font(.system(size: 56, weight: .bold, design: .rounded))
+                .font(Theme.valueFont(56))
                 .foregroundStyle(Theme.textPrimary)
-                .monospacedDigit()
             Text(settings.distanceUnit.label)
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .foregroundStyle(Theme.textSecondary)

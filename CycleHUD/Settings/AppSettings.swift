@@ -22,6 +22,7 @@ final class AppSettings: ObservableObject {
         static let saveWorkouts = "saveWorkouts"
         static let darkModeEnabled = "darkModeEnabled"   // legacy bool, migrated
         static let appearanceTheme = "appearanceTheme"
+        static let digitStyle = "digitStyle"
         static let weatherEnabled = "weatherEnabled"
         static let appLanguage = "appLanguage"
         static let metricTiles = "metricTilesV2"   // V2: default back to the original tile set
@@ -84,6 +85,10 @@ final class AppSettings: ObservableObject {
     /// App appearance: light, dark, or the neon Cyberpunk theme.
     @Published var appearanceTheme: AppearanceTheme {
         didSet { defaults.set(appearanceTheme.rawValue, forKey: Keys.appearanceTheme); applyAppearance() }
+    }
+    /// Metric numerals: standard rounded, or the retro 7-segment display font.
+    @Published var digitStyle: DigitStyle {
+        didSet { defaults.set(digitStyle.rawValue, forKey: Keys.digitStyle); applyAppearance() }
     }
     /// Short-term rain nowcast (Apple WeatherKit) shown on the ride screen.
     @Published var weatherEnabled: Bool { didSet { defaults.set(weatherEnabled, forKey: Keys.weatherEnabled) } }
@@ -190,6 +195,7 @@ final class AppSettings: ObservableObject {
         } else {
             appearanceTheme = defaults.bool(forKey: Keys.darkModeEnabled) ? .dark : .light
         }
+        digitStyle = DigitStyle(rawValue: defaults.string(forKey: Keys.digitStyle) ?? "") ?? .standard
         weatherEnabled = defaults.bool(forKey: Keys.weatherEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
         // (appearance applied below once all stored properties are initialised)
@@ -211,6 +217,7 @@ final class AppSettings: ObservableObject {
     /// this; the observing views re-render on the published change).
     private func applyAppearance() {
         Theme.appearance = appearanceTheme
+        Theme.digitStyle = digitStyle
     }
 
     var wheelCircumferenceMeters: Double { wheelCircumferenceMM / 1000.0 }

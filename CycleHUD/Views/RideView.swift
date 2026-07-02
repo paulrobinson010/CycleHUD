@@ -42,7 +42,7 @@ struct RideView: View {
                 }
                 // Re-identify on theme change so memoized leaf views (tiles,
                 // radar lane) rebuild with the new palette immediately.
-                .id(settings.appearanceTheme)
+                .id("\(settings.appearanceTheme.rawValue)-\(settings.digitStyle.rawValue)")
                 .padding(.horizontal, 14)
                 .padding(.top, 6)
                 .padding(.bottom, 10)
