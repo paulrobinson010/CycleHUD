@@ -108,6 +108,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     static let radarServiceUUIDs: Set<CBUUID> = [radarService, radarServiceAlt, coospoRadarService]
     static let cscService = CBUUID(string: "1816")
     static let cscMeasurement = CBUUID(string: "2A5B")
+    // CSC Feature: readable flags declaring wheel (bit 0) / crank (bit 1) support,
+    // so a sensor's Speed/Cadence roles are known at connect time — before it has
+    // sent any measurement (some sensors only report once the wheel/crank moves).
+    static let cscFeature = CBUUID(string: "2A5C")
     // Standard Bluetooth SIG Heart Rate service / measurement (chest straps,
     // armbands, etc.) — lets a HR sensor feed the ride without an Apple Watch.
     static let heartRateService = CBUUID(string: "180D")
@@ -520,6 +524,8 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             } else if ch.uuid == BluetoothManager.cscMeasurement {
                 peripheral.setNotifyValue(true, for: ch)
                 diag("  → subscribed CSC")
+            } else if ch.uuid == BluetoothManager.cscFeature {
+                peripheral.readValue(for: ch)   // declares wheel/crank support up front
             } else if ch.uuid == BluetoothManager.heartRateMeasurement {
                 peripheral.setNotifyValue(true, for: ch)
                 upsertSavedDevice(id: peripheral.identifier, name: peripheral.name ?? "", addRole: .heartRate)
@@ -607,6 +613,19 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         if BluetoothManager.radarMeasurementUUIDs.contains(characteristic.uuid) {
             parseRadar(data)
             lastRadarFrameAt[peripheral.identifier] = Date()
+            return
+        }
+        if characteristic.uuid == BluetoothManager.cscFeature {
+            // Little-endian 16-bit flags: bit 0 = wheel (speed), bit 1 = crank
+            // (cadence). Tag the roles now so the pairing chips and the SPD/CAD
+            // pills light up on connect, without waiting for movement — covers
+            // combined speed+cadence sensors as well as single-function ones.
+            if data.count >= 2 {
+                let flags = UInt16(data[0]) | (UInt16(data[1]) << 8)
+                if flags & 0x01 != 0 { markCapability(.speed, for: peripheral.identifier) }
+                if flags & 0x02 != 0 { markCapability(.cadence, for: peripheral.identifier) }
+                diag("  CSC feature: wheel=\(flags & 0x01 != 0) crank=\(flags & 0x02 != 0)")
+            }
             return
         }
         if characteristic.uuid == BluetoothManager.cscMeasurement {
