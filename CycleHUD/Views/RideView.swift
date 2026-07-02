@@ -1,6 +1,7 @@
 import SwiftUI
 import UIKit
 import MessageUI
+import UniformTypeIdentifiers
 
 /// The main riding screen: radar-first, with the data grid and ride controls
 /// beneath it. No map.
@@ -21,6 +22,10 @@ struct RideView: View {
     @State private var activeSheet: ActiveSheet?
     @State private var carMarkFlash = false
     @State private var pairingFromOnboarding = false
+    /// Long-press a tile to edit the grid in place: remove badges, an add tile,
+    /// and drag-to-rearrange, closed by a Done button where the controls sit.
+    @State private var editingTiles = false
+    @State private var draggedTile: MetricKind?
 
     @Environment(\.scenePhase) private var scenePhase
     @State private var showPermissionAlert = false
@@ -206,7 +211,7 @@ struct RideView: View {
             statusBar
             radarPanel.frame(maxHeight: .infinity)
             metricsGrid(tileHeight: 90)
-            controlBar
+            if editingTiles { doneEditingBar } else { controlBar }
         }
     }
 
@@ -215,7 +220,7 @@ struct RideView: View {
     /// so the tiles are shrunk to fit however many rows the rider has chosen —
     /// otherwise a tall grid would clip the top row and push the controls off.
     private func landscapeLayout(geo: GeometryProxy) -> some View {
-        let rowCount = max(1, Int(ceil(Double(visibleMetricKinds.count) / 3.0)))
+        let rowCount = max(1, Int(ceil(Double(gridCellCount) / 3.0)))
         // Right column height ≈ total minus the vertical padding, the control
         // bar and the inter-element spacing.
         let available = geo.size.height - 16 - 58 - 10 - 8
@@ -231,7 +236,7 @@ struct RideView: View {
             VStack(spacing: 10) {
                 metricsGrid(tileHeight: tileHeight)
                 Spacer(minLength: 0)
-                controlBar
+                if editingTiles { doneEditingBar } else { controlBar }
             }
             .frame(maxWidth: .infinity)
         }
@@ -333,23 +338,158 @@ struct RideView: View {
         settings.metricKinds.filter { !$0.requiresWeather || settings.weatherEnabled }
     }
 
+    /// Metrics not currently in the grid (and usable, given the Weather setting),
+    /// offered by the edit-mode add tile.
+    private var availableTileKinds: [MetricKind] {
+        let chosen = Set(settings.metricTiles)
+        return MetricKind.allCases.filter {
+            !chosen.contains($0.rawValue) && (!$0.requiresWeather || settings.weatherEnabled)
+        }
+    }
+
+    /// One slot in the tile grid: a metric, or (while editing) the add button.
+    private enum GridCell {
+        case metric(MetricKind)
+        case add
+    }
+
+    /// How many grid slots are showing — drives the landscape height fit.
+    private var gridCellCount: Int {
+        visibleMetricKinds.count + (editingTiles && !availableTileKinds.isEmpty ? 1 : 0)
+    }
+
     /// The rider's chosen tiles, laid out three per row at `tileHeight`. Weather
     /// tiles are hidden when Weather is off; short rows are padded so tile widths
-    /// stay uniform.
+    /// stay uniform. Long-press any tile to edit the grid in place.
     private func metricsGrid(tileHeight: CGFloat) -> some View {
-        let rows = visibleMetricKinds.chunked(into: 3)
+        var cells: [GridCell] = visibleMetricKinds.map { .metric($0) }
+        if editingTiles && !availableTileKinds.isEmpty { cells.append(.add) }
+        let rows = cells.chunked(into: 3)
         return VStack(spacing: 8) {
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                 HStack(spacing: 8) {
                     ForEach(0..<3, id: \.self) { i in
                         if i < row.count {
-                            metricTile(for: row[i], height: tileHeight)
+                            gridCell(row[i], height: tileHeight)
                         } else {
                             Color.clear.frame(maxWidth: .infinity).frame(height: tileHeight)
                         }
                     }
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private func gridCell(_ cell: GridCell, height: CGFloat) -> some View {
+        switch cell {
+        case .metric(let kind): tileCell(for: kind, height: height)
+        case .add: addTile(height: height)
+        }
+    }
+
+    // MARK: - In-place tile editing
+
+    /// A tile plus its edit-mode chrome. Normal mode: the live tile, long-press
+    /// to start editing. Edit mode: the tile's own taps are disabled, a remove
+    /// badge sits on its corner, and it can be dragged onto another tile to
+    /// rearrange (the underlying order updates live as the drag passes over).
+    @ViewBuilder
+    private func tileCell(for kind: MetricKind, height: CGFloat) -> some View {
+        if editingTiles {
+            ZStack {
+                metricTile(for: kind, height: height)
+                    .allowsHitTesting(false)      // e.g. the rain tile's tap sheet
+                // A hit-testable layer over the (now inert) tile so the drag
+                // gesture has something to grab.
+                Color.clear
+                    .frame(maxWidth: .infinity)
+                    .frame(height: height)
+                    .contentShape(Rectangle())
+            }
+            .onDrag {
+                draggedTile = kind
+                return NSItemProvider(object: kind.rawValue as NSString)
+            }
+            .onDrop(of: [.text], delegate: TileDropDelegate(target: kind,
+                                                            dragged: $draggedTile,
+                                                            settings: settings))
+            .overlay(alignment: .topLeading) {
+                // Keep at least one tile so there's always something left to
+                // long-press (Settings → Ride screen tiles remains the backstop).
+                if visibleMetricKinds.count > 1 { removeBadge(kind) }
+            }
+        } else {
+            metricTile(for: kind, height: height)
+                .simultaneousGesture(LongPressGesture(minimumDuration: 0.45).onEnded { _ in
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    withAnimation(.easeInOut(duration: 0.2)) { editingTiles = true }
+                })
+        }
+    }
+
+    private func removeBadge(_ kind: MetricKind) -> some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                settings.metricTiles.removeAll { $0 == kind.rawValue }
+            }
+        } label: {
+            Image(systemName: "minus.circle.fill")
+                .font(.system(size: 22))
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(.white, Theme.threatHigh)
+                .background(Circle().fill(.white).padding(3))
+        }
+        .offset(x: -7, y: -7)
+        .accessibilityLabel("Remove tile")
+    }
+
+    /// Dashed "+" tile at the end of the grid in edit mode: tap for a menu of
+    /// the metrics not currently shown.
+    private func addTile(height: CGFloat) -> some View {
+        Menu {
+            ForEach(availableTileKinds) { kind in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        settings.metricTiles.append(kind.rawValue)
+                    }
+                } label: {
+                    Label(kind.title, systemImage: kind.systemImage)
+                }
+            }
+        } label: {
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(Theme.textSecondary.opacity(0.55),
+                              style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
+                .frame(maxWidth: .infinity)
+                .frame(height: height)
+                .overlay(
+                    Image(systemName: "plus")
+                        .font(.system(size: 26, weight: .bold))
+                        .foregroundStyle(Theme.textSecondary)
+                )
+                .contentShape(Rectangle())
+        }
+        .accessibilityLabel("Add tile")
+    }
+
+    /// Replaces the ride controls while editing, so a drag can't hit Stop.
+    private var doneEditingBar: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                editingTiles = false
+                draggedTile = nil
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "checkmark")
+                Text("Done")
+            }
+            .font(.system(size: 20, weight: .bold, design: .rounded))
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity)
+            .frame(height: 58)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Theme.accent))
         }
     }
 
@@ -549,6 +689,33 @@ struct RideView: View {
         let h = s / 3600, m = (s % 3600) / 60, sec = s % 60
         return h > 0 ? String(format: "%d:%02d:%02d", h, m, sec)
                      : String(format: "%d:%02d", m, sec)
+    }
+}
+
+/// Reorders the tile grid live while a dragged tile passes over its neighbours:
+/// entering another tile's bounds moves the dragged metric to that position in
+/// the persisted order (weather-hidden tiles keep their relative place).
+private struct TileDropDelegate: DropDelegate {
+    let target: MetricKind
+    @Binding var dragged: MetricKind?
+    let settings: AppSettings
+
+    func dropEntered(info: DropInfo) {
+        guard let draggedKind = dragged, draggedKind != target,
+              let from = settings.metricTiles.firstIndex(of: draggedKind.rawValue),
+              let to = settings.metricTiles.firstIndex(of: target.rawValue) else { return }
+        withAnimation(.easeInOut(duration: 0.2)) {
+            var tiles = settings.metricTiles
+            tiles.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+            settings.metricTiles = tiles
+        }
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? { DropProposal(operation: .move) }
+
+    func performDrop(info: DropInfo) -> Bool {
+        dragged = nil
+        return true
     }
 }
 

@@ -1020,6 +1020,46 @@
         }
       }
     },
+    "Add tile" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kachel hinzufügen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add tile"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add tile"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir casilla"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter une tuile"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi scheda"
+          }
+        }
+      }
+    },
     "Adds a “Mark car” button to the ride screen so you can tag the moment a vehicle passes — handy for checking radar timing. Most riders can leave this off." : {
       "localizations" : {
         "de-DE" : {
@@ -7299,6 +7339,46 @@
         }
       }
     },
+    "Remove tile" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kachel entfernen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove tile"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove tile"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar casilla"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirer la tuile"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi scheda"
+          }
+        }
+      }
+    },
     "Resume" : {
       "localizations" : {
         "de-DE" : {
@@ -9152,42 +9232,42 @@
         }
       }
     },
-    "Tap Edit to reorder or remove tiles. Weather tiles (Rain, Temp, Wind) only appear when Weather is turned on." : {
+    "Tap Edit to reorder or remove tiles. Weather tiles (Rain, Temp, Wind) only appear when Weather is turned on. You can also long-press a tile on the ride screen to add, remove or rearrange them in place." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippe auf Bearbeiten, um Kacheln neu anzuordnen oder zu entfernen. Wetter-Kacheln (Regen, Temp, Wind) erscheinen nur, wenn Wetter aktiviert ist."
+            "value" : "Tippe auf Bearbeiten, um Kacheln neu anzuordnen oder zu entfernen. Wetter-Kacheln (Regen, Temp, Wind) erscheinen nur, wenn Wetter aktiviert ist. Du kannst eine Kachel auch direkt im Fahrtbildschirm gedrückt halten, um Kacheln hinzuzufügen, zu entfernen oder neu anzuordnen."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tap Edit to reorder or remove tiles. Weather tiles (Rain, Temp, Wind) only appear when Weather is turned on."
+            "value" : "Tap Edit to reorder or remove tiles. Weather tiles (Rain, Temp, Wind) only appear when Weather is turned on. You can also long-press a tile on the ride screen to add, remove or rearrange them in place."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tap Edit to reorder or remove tiles. Weather tiles (Rain, Temp, Wind) only appear when Weather is turned on."
+            "value" : "Tap Edit to reorder or remove tiles. Weather tiles (Rain, Temp, Wind) only appear when Weather is turned on. You can also long-press a tile on the ride screen to add, remove or rearrange them in place."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca Editar para reordenar o quitar casillas. Las casillas del tiempo (Lluvia, Temp, Viento) solo aparecen cuando el tiempo está activado."
+            "value" : "Toca Editar para reordenar o quitar casillas. Las casillas del tiempo (Lluvia, Temp, Viento) solo aparecen cuando el tiempo está activado. También puedes mantener pulsada una casilla en la pantalla de ruta para añadirlas, quitarlas o reordenarlas directamente."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touchez Modifier pour réorganiser ou retirer des tuiles. Les tuiles météo (Pluie, Temp, Vent) n’apparaissent que si la météo est activée."
+            "value" : "Touchez Modifier pour réorganiser ou retirer des tuiles. Les tuiles météo (Pluie, Temp, Vent) n’apparaissent que si la météo est activée. Vous pouvez aussi maintenir une tuile sur l’écran de sortie pour les ajouter, les retirer ou les réorganiser directement."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tocca Modifica per riordinare o rimuovere le schede. Le schede meteo (Pioggia, Temp, Vento) appaiono solo quando il meteo è attivo."
+            "value" : "Tocca Modifica per riordinare o rimuovere le schede. Le schede meteo (Pioggia, Temp, Vento) appaiono solo quando il meteo è attivo. Puoi anche tenere premuta una scheda nella schermata dell’uscita per aggiungerle, rimuoverle o riordinarle direttamente."
           }
         }
       }

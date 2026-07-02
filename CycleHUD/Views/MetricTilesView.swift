@@ -15,7 +15,7 @@ struct MetricTilesView: View {
             } header: {
                 Text("Shown")
             } footer: {
-                Text("Tap Edit to reorder or remove tiles. Weather tiles (Rain, Temp, Wind) only appear when Weather is turned on.")
+                Text("Tap Edit to reorder or remove tiles. Weather tiles (Rain, Temp, Wind) only appear when Weather is turned on. You can also long-press a tile on the ride screen to add, remove or rearrange them in place.")
             }
 
             if !available.isEmpty {
