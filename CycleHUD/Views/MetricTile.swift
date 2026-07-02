@@ -21,6 +21,7 @@ struct MetricTile: View {
                 Text(value)
                     .font(Theme.valueFont(valueSize))
                     .foregroundStyle(alert ? Color.white : Theme.textPrimary)
+                    .shadow(color: alert ? .clear : Theme.glow, radius: 6)   // neon in Cyberpunk
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
                 if !unit.isEmpty {

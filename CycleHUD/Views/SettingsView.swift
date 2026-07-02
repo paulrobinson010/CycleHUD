@@ -125,7 +125,9 @@ struct SettingsView: View {
                         Label("Ride screen tiles", systemImage: "square.grid.2x2")
                     }
                     Toggle("Show units on tiles", isOn: $settings.showTileUnits)
-                    Toggle("Dark mode", isOn: $settings.darkModeEnabled)
+                    Picker("Appearance", selection: $settings.appearanceTheme) {
+                        ForEach(AppearanceTheme.allCases) { Text($0.label).tag($0) }
+                    }
                     Toggle("Landscape layout", isOn: $settings.landscapeEnabled)
                     if settings.landscapeEnabled {
                         Toggle("Radar on the right (landscape)", isOn: $settings.radarOnRight)
@@ -133,7 +135,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Display")
                 } footer: {
-                    Text("Choose which metric tiles show on the ride screen, and in what order. Dark mode uses a black background; off is a light theme. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait.")
+                    Text("Choose which metric tiles show on the ride screen, and in what order. Appearance offers a clean light theme, an all-black dark theme, or a neon Cyberpunk theme matching the CycleHUD artwork. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait.")
                 }
 
                 Section {
@@ -235,7 +237,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
+        .preferredColorScheme(settings.appearanceTheme.colorScheme)
     }
 
     /// Weight as text so the field is empty (not "0") until a value is entered.

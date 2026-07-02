@@ -20,7 +20,8 @@ final class AppSettings: ObservableObject {
         static let hrWarningEnabled = "hrWarningEnabled"
         static let hrWarningBpm = "hrWarningBpm"
         static let saveWorkouts = "saveWorkouts"
-        static let darkModeEnabled = "darkModeEnabled"
+        static let darkModeEnabled = "darkModeEnabled"   // legacy bool, migrated
+        static let appearanceTheme = "appearanceTheme"
         static let weatherEnabled = "weatherEnabled"
         static let appLanguage = "appLanguage"
         static let metricTiles = "metricTilesV2"   // V2: default back to the original tile set
@@ -80,8 +81,10 @@ final class AppSettings: ObservableObject {
 
     /// When on, each finished ride is saved as an Apple Health workout.
     @Published var saveWorkouts: Bool { didSet { defaults.set(saveWorkouts, forKey: Keys.saveWorkouts) } }
-    /// App appearance: off = light (white background), on = dark.
-    @Published var darkModeEnabled: Bool { didSet { defaults.set(darkModeEnabled, forKey: Keys.darkModeEnabled) } }
+    /// App appearance: light, dark, or the neon Cyberpunk theme.
+    @Published var appearanceTheme: AppearanceTheme {
+        didSet { defaults.set(appearanceTheme.rawValue, forKey: Keys.appearanceTheme); applyAppearance() }
+    }
     /// Short-term rain nowcast (Apple WeatherKit) shown on the ride screen.
     @Published var weatherEnabled: Bool { didSet { defaults.set(weatherEnabled, forKey: Keys.weatherEnabled) } }
     /// In-app language override (BCP-47 code, or "" to follow the device).
@@ -154,7 +157,6 @@ final class AppSettings: ObservableObject {
             Keys.hrWarningEnabled: false,
             Keys.hrWarningBpm: 200,
             Keys.saveWorkouts: true,
-            Keys.darkModeEnabled: false,
             Keys.weatherEnabled: true,
             Keys.appLanguage: "",
             Keys.metricTiles: MetricKind.defaultOrder.map(\.rawValue),
@@ -181,9 +183,16 @@ final class AppSettings: ObservableObject {
         hrWarningEnabled = defaults.bool(forKey: Keys.hrWarningEnabled)
         hrWarningBpm = defaults.integer(forKey: Keys.hrWarningBpm)
         saveWorkouts = defaults.bool(forKey: Keys.saveWorkouts)
-        darkModeEnabled = defaults.bool(forKey: Keys.darkModeEnabled)
+        // Appearance: new tri-state value, migrating the old dark-mode bool.
+        if let raw = defaults.string(forKey: Keys.appearanceTheme),
+           let theme = AppearanceTheme(rawValue: raw) {
+            appearanceTheme = theme
+        } else {
+            appearanceTheme = defaults.bool(forKey: Keys.darkModeEnabled) ? .dark : .light
+        }
         weatherEnabled = defaults.bool(forKey: Keys.weatherEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
+        // (appearance applied below once all stored properties are initialised)
         let storedTiles = defaults.stringArray(forKey: Keys.metricTiles) ?? []
         // Drop any unknown raw values; fall back to the default layout if empty.
         let validTiles = storedTiles.filter { MetricKind(rawValue: $0) != nil }
@@ -195,6 +204,13 @@ final class AppSettings: ObservableObject {
         emergencyContactName = defaults.string(forKey: Keys.emergencyContactName) ?? ""
         emergencyContactPhone = defaults.string(forKey: Keys.emergencyContactPhone) ?? ""
         applyLanguage()
+        applyAppearance()
+    }
+
+    /// Point the palette at the chosen theme (Theme's colours are computed from
+    /// this; the observing views re-render on the published change).
+    private func applyAppearance() {
+        Theme.appearance = appearanceTheme
     }
 
     var wheelCircumferenceMeters: Double { wheelCircumferenceMM / 1000.0 }

@@ -96,7 +96,7 @@ struct CycleHUDApp: App {
             .environmentObject(history)
             .environmentObject(weather)
             .environmentObject(sos)
-            .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
+            .preferredColorScheme(settings.appearanceTheme.colorScheme)
             .onAppear {
                 location.requestAuthorization()
                 location.setMode(.idle)        // low-power fix until a ride starts

@@ -61,9 +61,8 @@ struct UnitsOnboardingView: View {
                     }
                 }
                 pickerRow(title: "Appearance") {
-                    Picker("Appearance", selection: $settings.darkModeEnabled) {
-                        Text("Light").tag(false)
-                        Text("Dark").tag(true)
+                    Picker("Appearance", selection: $settings.appearanceTheme) {
+                        ForEach(AppearanceTheme.allCases) { Text($0.label).tag($0) }
                     }
                     .pickerStyle(.segmented)
                 }
@@ -85,7 +84,7 @@ struct UnitsOnboardingView: View {
             .padding(.horizontal, 28)
             .padding(.bottom, 24)
         }
-        .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
+        .preferredColorScheme(settings.appearanceTheme.colorScheme)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()

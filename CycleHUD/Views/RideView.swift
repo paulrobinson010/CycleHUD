@@ -40,6 +40,9 @@ struct RideView: View {
                 Group {
                     if landscape { landscapeLayout(geo: geo) } else { portraitLayout }
                 }
+                // Re-identify on theme change so memoized leaf views (tiles,
+                // radar lane) rebuild with the new palette immediately.
+                .id(settings.appearanceTheme)
                 .padding(.horizontal, 14)
                 .padding(.top, 6)
                 .padding(.bottom, 10)
@@ -136,7 +139,7 @@ struct RideView: View {
 
     /// The app-wide light/dark choice, applied to presented sheets/covers too so
     /// toggling it updates onboarding and Settings live, not just the main screen.
-    private var appColorScheme: ColorScheme { settings.darkModeEnabled ? .dark : .light }
+    private var appColorScheme: ColorScheme { settings.appearanceTheme.colorScheme }
 
     /// The SOS message composer, or a manual fallback when the device can't send
     /// texts (no SIM/iMessage) — showing the number and message to send by hand.
