@@ -101,15 +101,22 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   so you can feel and fine-tune every alert before a ride. It runs through once
   and stops; starting a ride also stops it.
 
-### Sending rides to Strava
+### Getting rides into Strava
 
-Ride export is a **manual share, not an automatic upload** — finishing a ride
-does *not* silently push it to Strava. Open a ride's summary, tap the share
-button, pick **GPX** or **TCX**, and send it to Strava (or Komoot, Ride with
-GPS, Files, etc.) through the share sheet. Automatic, hands-free upload to
-Strava would require registering a Strava API application (OAuth client ID +
-secret + redirect) and storing per-rider tokens; that can be added later if
-wanted, but it isn't part of the current share-sheet export.
+CycleHUD deliberately has **no built-in Strava login** — Strava's API requires
+an OAuth account connection (and, done properly, a token-exchange server),
+which would break CycleHUD's core privacy promise: no accounts, no logins, no
+servers. Two paths cover it instead:
+
+- **Automatic** — every ride is already saved to **Apple Health** as a full
+  cycling workout (distance, duration, calories, GPS route). A Health→Strava
+  bridge app such as **HealthFit** or **RunGap** can watch Apple Health and
+  auto-upload each new workout to Strava (and Komoot, TrainingPeaks, Dropbox,
+  …). Set it up once and rides appear in Strava moments after you tap Stop.
+  The Strava login lives in the bridge app — CycleHUD never touches it.
+- **Manual** — open any ride's summary, tap the share button, pick **GPX** or
+  **TCX**, and send the file wherever you like (Strava's website, Komoot, Ride
+  with GPS, Files, email) through the share sheet.
 
 ## Screenshots
 
