@@ -34,7 +34,7 @@ struct RideView: View {
 
     var body: some View {
         ZStack {
-            Rectangle().fill(Theme.backgroundStyle).ignoresSafeArea()
+            ThemeBackground().ignoresSafeArea()
             GeometryReader { geo in
                 let landscape = settings.landscapeEnabled && geo.size.width > geo.size.height
                 Group {
@@ -685,7 +685,7 @@ struct RideView: View {
     private var controlBar: some View {
         HStack(spacing: 12) {
             if controlStatus == .idle {
-                primaryButton(title: "Start", system: "play.fill", color: Theme.good) {
+                primaryButton(title: "Start", system: "play.fill", color: Theme.good, cta: true) {
                     ble.stopDemo()
                     ride.start()
                 }
@@ -724,6 +724,7 @@ struct RideView: View {
     }
 
     private func primaryButton(title: LocalizedStringKey, system: String, color: Color,
+                               cta: Bool = false,
                                action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 8) {
@@ -734,7 +735,8 @@ struct RideView: View {
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .frame(height: 58)
-            .background(RoundedRectangle(cornerRadius: 16).fill(color)
+            .background(RoundedRectangle(cornerRadius: 16)
+                .fill(cta ? Theme.ctaStyle(color) : AnyShapeStyle(color))
                 .shadow(color: Theme.glow, radius: 10))
         }
     }

@@ -63,7 +63,7 @@ enum Theme {
 
     // MARK: Cyberpunk palette (website: --bg / --panel / --text / --muted / --grad)
 
-    private static let cyberBackground = Color(red: 0x0C / 255, green: 0x0A / 255, blue: 0x12 / 255)
+    fileprivate static let cyberBackground = Color(red: 0x0C / 255, green: 0x0A / 255, blue: 0x12 / 255)
     private static let cyberPanel = Color(red: 0x1A / 255, green: 0x14 / 255, blue: 0x26 / 255)
     private static let cyberPanelRaised = Color(red: 0x24 / 255, green: 0x1B / 255, blue: 0x33 / 255)
     private static let cyberTextPrimary = Color(red: 0xF3 / 255, green: 0xF0 / 255, blue: 0xFA / 255)
@@ -107,18 +107,29 @@ enum Theme {
     // MARK: Cyberpunk chrome (all no-ops in Light/Dark, so views apply them
     // unconditionally and only Cyberpunk lights up)
 
-    private static let cyberPink = Color(red: 0xFF / 255, green: 0x4F / 255, blue: 0xD8 / 255)
-    private static let cyberPurple = Color(red: 0x9B / 255, green: 0x6B / 255, blue: 0xFF / 255)
-    private static let cyberBgTop = Color(red: 0x04 / 255, green: 0x17 / 255, blue: 0x1E / 255)   // deep cyan-teal
-    private static let cyberBgBottom = Color(red: 0x22 / 255, green: 0x07 / 255, blue: 0x20 / 255) // deep magenta
+    fileprivate static let cyberPink = Color(red: 0xFF / 255, green: 0x4F / 255, blue: 0xD8 / 255)
+    fileprivate static let cyberPurple = Color(red: 0x9B / 255, green: 0x6B / 255, blue: 0xFF / 255)
+    fileprivate static let cyberBgTop = Color(red: 0x06 / 255, green: 0x22 / 255, blue: 0x2B / 255)    // dark teal
+    fileprivate static let cyberBgBottom = Color(red: 0x2E / 255, green: 0x09 / 255, blue: 0x30 / 255) // dark magenta
+    fileprivate static let cyberCyan = cyberAccent
 
-    /// Screen backdrop: the flat theme colour normally; a dark cyan→magenta
-    /// wash in Cyberpunk. Use as `Rectangle().fill(Theme.backgroundStyle)`.
+    /// Screen backdrop: the flat theme colour normally; the neon wash + glow
+    /// blobs in Cyberpunk. Kept for ShapeStyle call sites — full-screen
+    /// backdrops should use `ThemeBackground` (it layers the glows).
     static var backgroundStyle: AnyShapeStyle {
         cyber ? AnyShapeStyle(LinearGradient(
                     colors: [cyberBgTop, cyberBackground, cyberBgBottom],
                     startPoint: .topLeading, endPoint: .bottomTrailing))
               : AnyShapeStyle(background)
+    }
+
+    /// Fill for the primary call-to-action buttons (Start / Start Riding): the
+    /// website's cyan→purple→pink gradient in Cyberpunk, the base colour
+    /// otherwise.
+    static func ctaStyle(_ base: Color) -> AnyShapeStyle {
+        cyber ? AnyShapeStyle(LinearGradient(colors: [cyberAccent, cyberPurple, cyberPink],
+                                             startPoint: .leading, endPoint: .trailing))
+              : AnyShapeStyle(base)
     }
 
     /// Neon cyan→magenta rim for tiles and panels (clear outside Cyberpunk).
@@ -172,6 +183,32 @@ extension Color {
     }
 }
 
+/// Full-screen backdrop. Light/Dark: the flat theme colour. Cyberpunk: a dark
+/// teal→magenta wash with big soft neon glows in the corners (cyan top-left,
+/// magenta bottom-right, a faint purple heart) — the website hero's lighting.
+/// Content sits on solid panels, so the backdrop can afford to be loud.
+struct ThemeBackground: View {
+    var body: some View {
+        if Theme.appearance == .cyberpunk {
+            GeometryReader { geo in
+                let r = max(geo.size.width, geo.size.height)
+                ZStack {
+                    LinearGradient(colors: [Theme.cyberBgTop, Theme.cyberBackground, Theme.cyberBgBottom],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+                    RadialGradient(colors: [Theme.cyberCyan.opacity(0.30), .clear],
+                                   center: .topLeading, startRadius: 0, endRadius: r * 0.75)
+                    RadialGradient(colors: [Theme.cyberPink.opacity(0.26), .clear],
+                                   center: .bottomTrailing, startRadius: 0, endRadius: r * 0.8)
+                    RadialGradient(colors: [Theme.cyberPurple.opacity(0.14), .clear],
+                                   center: .center, startRadius: 0, endRadius: r * 0.6)
+                }
+            }
+        } else {
+            Theme.background
+        }
+    }
+}
+
 extension View {
     /// Theme chrome for the settings-style screens (Forms/Lists): in Cyberpunk
     /// the system list background is hidden so the gradient backdrop shows
@@ -180,7 +217,7 @@ extension View {
     func themedList() -> some View {
         self
             .scrollContentBackground(Theme.appearance == .cyberpunk ? .hidden : .automatic)
-            .background(Rectangle().fill(Theme.backgroundStyle).ignoresSafeArea())
+            .background(ThemeBackground().ignoresSafeArea())
             .tint(Theme.accent)
     }
 }

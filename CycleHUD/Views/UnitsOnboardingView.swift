@@ -80,12 +80,14 @@ struct UnitsOnboardingView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
-                    .background(RoundedRectangle(cornerRadius: 16).fill(Theme.accent))
+                    .background(RoundedRectangle(cornerRadius: 16)
+                        .fill(Theme.ctaStyle(Theme.accent))
+                        .shadow(color: Theme.glow, radius: 10))
             }
             .padding(.horizontal, 28)
             .padding(.bottom, 24)
         }
-        .background(Rectangle().fill(Theme.backgroundStyle).ignoresSafeArea())
+        .background(ThemeBackground().ignoresSafeArea())
         .tint(Theme.accent)
         .preferredColorScheme(settings.appearanceTheme.colorScheme)
         .toolbar {

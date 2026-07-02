@@ -29,7 +29,7 @@ struct WeatherTile: View {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text(value)
                     .font(Theme.valueFont(32))
-                    .foregroundStyle(valueColor)
+                    .foregroundStyle(valueInk)
                     .shadow(color: Theme.glow, radius: 6)   // neon in Cyberpunk
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
@@ -69,12 +69,14 @@ struct WeatherTile: View {
         return "min"
     }
 
-    private var valueColor: Color {
-        guard let n = nowcast, n.hasRain else { return Theme.textPrimary }
+    /// No rain to colour semantically → the theme's numeral ink (gradient in
+    /// Cyberpunk, matching the other tiles); otherwise the intensity colour.
+    private var valueInk: AnyShapeStyle {
+        guard let n = nowcast, n.hasRain else { return Theme.valueStyle }
         switch n.peak {
-        case .heavy: return Theme.threatHigh
-        case .moderate: return Theme.threatMedium
-        default: return Theme.accent
+        case .heavy: return AnyShapeStyle(Theme.threatHigh)
+        case .moderate: return AnyShapeStyle(Theme.threatMedium)
+        default: return AnyShapeStyle(Theme.accent)
         }
     }
 }
@@ -119,7 +121,7 @@ struct WeatherDetailView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Rectangle().fill(Theme.backgroundStyle).ignoresSafeArea())
+        .background(ThemeBackground().ignoresSafeArea())
     }
 
     private var detail: String {

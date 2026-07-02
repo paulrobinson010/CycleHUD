@@ -31,7 +31,7 @@ struct RideSummaryView: View {
                 }
                 .padding()
             }
-            .background(Rectangle().fill(Theme.backgroundStyle).ignoresSafeArea())
+            .background(ThemeBackground().ignoresSafeArea())
             .navigationTitle("Ride Summary")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
