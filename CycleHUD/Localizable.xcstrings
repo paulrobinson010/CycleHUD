@@ -3387,6 +3387,46 @@
         }
       }
     },
+    "Drag tiles here" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kacheln hierher ziehen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag tiles here"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag tiles here"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrastra aquí las casillas"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faites glisser les tuiles ici"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trascina qui le schede"
+          }
+        }
+      }
+    },
     "Duration" : {
       "localizations" : {
         "de-DE" : {
@@ -6648,6 +6688,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "RADAR OFF"
+          }
+        }
+      }
+    },
+    "Radar on the right (landscape)" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Radar rechts (Querformat)"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Radar on the right (landscape)"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Radar on the right (landscape)"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Radar a la derecha (horizontal)"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Radar à droite (paysage)"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Radar a destra (orizzontale)"
           }
         }
       }

@@ -25,6 +25,8 @@ final class AppSettings: ObservableObject {
         static let appLanguage = "appLanguage"
         static let metricTiles = "metricTilesV2"   // V2: default back to the original tile set
         static let showTileUnits = "showTileUnits"
+        static let topTileCount = "topTileCount"
+        static let radarOnRight = "radarOnRight"
         static let crashDetectionEnabled = "crashDetectionEnabled"
         static let emergencyContactName = "emergencyContactName"
         static let emergencyContactPhone = "emergencyContactPhone"
@@ -95,6 +97,11 @@ final class AppSettings: ObservableObject {
     /// Show the unit label (km/h, bpm, …) next to each tile's value. Off frees
     /// the space for bigger numbers — for riders who know their units.
     @Published var showTileUnits: Bool { didSet { defaults.set(showTileUnits, forKey: Keys.showTileUnits) } }
+    /// How many leading entries of `metricTiles` sit ABOVE the radar in portrait
+    /// (dragged there in the ride screen's edit mode). 0 = everything below.
+    @Published var topTileCount: Int { didSet { defaults.set(topTileCount, forKey: Keys.topTileCount) } }
+    /// Landscape: put the radar on the right (tiles/controls on the left).
+    @Published var radarOnRight: Bool { didSet { defaults.set(radarOnRight, forKey: Keys.radarOnRight) } }
 
     /// When on, a sharp impact during a ride starts an SOS countdown that texts
     /// the emergency contact your location.
@@ -152,6 +159,8 @@ final class AppSettings: ObservableObject {
             Keys.appLanguage: "",
             Keys.metricTiles: MetricKind.defaultOrder.map(\.rawValue),
             Keys.showTileUnits: true,
+            Keys.topTileCount: 0,
+            Keys.radarOnRight: false,
             Keys.crashDetectionEnabled: false,
             Keys.emergencyContactName: "",
             Keys.emergencyContactPhone: ""
@@ -180,6 +189,8 @@ final class AppSettings: ObservableObject {
         let validTiles = storedTiles.filter { MetricKind(rawValue: $0) != nil }
         metricTiles = validTiles.isEmpty ? MetricKind.defaultOrder.map(\.rawValue) : validTiles
         showTileUnits = defaults.bool(forKey: Keys.showTileUnits)
+        topTileCount = defaults.integer(forKey: Keys.topTileCount)
+        radarOnRight = defaults.bool(forKey: Keys.radarOnRight)
         crashDetectionEnabled = defaults.bool(forKey: Keys.crashDetectionEnabled)
         emergencyContactName = defaults.string(forKey: Keys.emergencyContactName) ?? ""
         emergencyContactPhone = defaults.string(forKey: Keys.emergencyContactPhone) ?? ""

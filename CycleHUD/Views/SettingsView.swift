@@ -127,6 +127,9 @@ struct SettingsView: View {
                     Toggle("Show units on tiles", isOn: $settings.showTileUnits)
                     Toggle("Dark mode", isOn: $settings.darkModeEnabled)
                     Toggle("Landscape layout", isOn: $settings.landscapeEnabled)
+                    if settings.landscapeEnabled {
+                        Toggle("Radar on the right (landscape)", isOn: $settings.radarOnRight)
+                    }
                 } header: {
                     Text("Display")
                 } footer: {

@@ -209,9 +209,34 @@ struct RideView: View {
     private var portraitLayout: some View {
         VStack(spacing: 12) {
             statusBar
+            if !topMetricKinds.isEmpty || editingTiles { topStrip }
             radarPanel.frame(maxHeight: .infinity)
-            metricsGrid(tileHeight: 90)
+            metricsGrid(kinds: bottomMetricKinds, tileHeight: 90, includeAdd: true)
             if editingTiles { doneEditingBar } else { controlBar }
+        }
+    }
+
+    /// Tiles the rider has dragged ABOVE the radar (portrait only). While
+    /// editing with none up there yet, a dashed drop zone invites the drag.
+    @ViewBuilder private var topStrip: some View {
+        if topMetricKinds.isEmpty {
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(Theme.textSecondary.opacity(0.55),
+                              style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
+                .frame(height: 44)
+                .overlay(
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.up.square")
+                        Text("Drag tiles here")
+                    }
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Theme.textSecondary)
+                )
+                .contentShape(Rectangle())
+                .onDrop(of: [.text], delegate: TopZoneDropDelegate(dragged: $draggedTile,
+                                                                   settings: settings))
+        } else {
+            metricsGrid(kinds: topMetricKinds, tileHeight: 90, includeAdd: false)
         }
     }
 
@@ -228,18 +253,33 @@ struct RideView: View {
         let fitted = (available - CGFloat(rowCount - 1) * rowSpacing) / CGFloat(rowCount)
         let tileHeight = max(48, min(90, fitted))
         return HStack(spacing: 12) {
-            VStack(spacing: 8) {
-                statusBar
-                radarPanel.frame(maxHeight: .infinity)
+            if settings.radarOnRight {
+                tilesColumn(tileHeight: tileHeight)
+                radarColumn
+            } else {
+                radarColumn
+                tilesColumn(tileHeight: tileHeight)
             }
-            .frame(maxWidth: .infinity)
-            VStack(spacing: 10) {
-                metricsGrid(tileHeight: tileHeight)
-                Spacer(minLength: 0)
-                if editingTiles { doneEditingBar } else { controlBar }
-            }
-            .frame(maxWidth: .infinity)
         }
+    }
+
+    private var radarColumn: some View {
+        VStack(spacing: 8) {
+            statusBar
+            radarPanel.frame(maxHeight: .infinity)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    /// Landscape: ALL chosen tiles in one column (the portrait top/bottom split
+    /// doesn't apply — the radar takes the other side).
+    private func tilesColumn(tileHeight: CGFloat) -> some View {
+        VStack(spacing: 10) {
+            metricsGrid(kinds: visibleMetricKinds, tileHeight: tileHeight, includeAdd: true)
+            Spacer(minLength: 0)
+            if editingTiles { doneEditingBar } else { controlBar }
+        }
+        .frame(maxWidth: .infinity)
     }
 
     /// The radar lane plus its debug "Mark car" overlay, shared by both layouts.
@@ -338,6 +378,25 @@ struct RideView: View {
         settings.metricKinds.filter { !$0.requiresWeather || settings.weatherEnabled }
     }
 
+    /// Where the above-radar strip ends in the stored order (clamped safe).
+    private var tileSplitIndex: Int {
+        min(max(0, settings.topTileCount), settings.metricTiles.count)
+    }
+
+    /// Tiles above the radar in portrait (leading entries of the stored order).
+    private var topMetricKinds: [MetricKind] {
+        settings.metricTiles[..<tileSplitIndex]
+            .compactMap(MetricKind.init(rawValue:))
+            .filter { !$0.requiresWeather || settings.weatherEnabled }
+    }
+
+    /// Tiles below the radar in portrait (the rest of the stored order).
+    private var bottomMetricKinds: [MetricKind] {
+        settings.metricTiles[tileSplitIndex...]
+            .compactMap(MetricKind.init(rawValue:))
+            .filter { !$0.requiresWeather || settings.weatherEnabled }
+    }
+
     /// Metrics not currently in the grid (and usable, given the Weather setting),
     /// offered by the edit-mode add tile.
     private var availableTileKinds: [MetricKind] {
@@ -358,12 +417,12 @@ struct RideView: View {
         visibleMetricKinds.count + (editingTiles && !availableTileKinds.isEmpty ? 1 : 0)
     }
 
-    /// The rider's chosen tiles, laid out three per row at `tileHeight`. Weather
-    /// tiles are hidden when Weather is off; short rows are padded so tile widths
-    /// stay uniform. Long-press any tile to edit the grid in place.
-    private func metricsGrid(tileHeight: CGFloat) -> some View {
-        var cells: [GridCell] = visibleMetricKinds.map { .metric($0) }
-        if editingTiles && !availableTileKinds.isEmpty { cells.append(.add) }
+    /// `kinds` laid out three per row at `tileHeight`; short rows are padded so
+    /// tile widths stay uniform. Long-press any tile to edit the grid in place.
+    private func metricsGrid(kinds: [MetricKind], tileHeight: CGFloat,
+                             includeAdd: Bool) -> some View {
+        var cells: [GridCell] = kinds.map { .metric($0) }
+        if includeAdd && editingTiles && !availableTileKinds.isEmpty { cells.append(.add) }
         let rows = cells.chunked(into: 3)
         return VStack(spacing: 8) {
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
@@ -431,6 +490,11 @@ struct RideView: View {
     private func removeBadge(_ kind: MetricKind) -> some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
+                // Removing a tile from the above-radar strip shrinks the split.
+                if let idx = settings.metricTiles.firstIndex(of: kind.rawValue),
+                   idx < settings.topTileCount {
+                    settings.topTileCount -= 1
+                }
                 settings.metricTiles.removeAll { $0 == kind.rawValue }
             }
         } label: {
@@ -712,10 +776,45 @@ private struct TileDropDelegate: DropDelegate {
         guard let draggedKind = dragged, draggedKind != target,
               let from = settings.metricTiles.firstIndex(of: draggedKind.rawValue),
               let to = settings.metricTiles.firstIndex(of: target.rawValue) else { return }
+        // Dropping onto a tile joins that tile's zone (above/below the radar),
+        // so the split index follows the move.
+        let top = min(settings.topTileCount, settings.metricTiles.count)
+        let fromTop = from < top
+        let targetTop = to < top
         withAnimation(.easeInOut(duration: 0.2)) {
             var tiles = settings.metricTiles
             tiles.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
             settings.metricTiles = tiles
+            if fromTop != targetTop {
+                settings.topTileCount = top + (targetTop ? 1 : -1)
+            }
+        }
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? { DropProposal(operation: .move) }
+
+    func performDrop(info: DropInfo) -> Bool {
+        dragged = nil
+        return true
+    }
+}
+
+/// Drop target for the (empty) above-radar strip: moves the dragged tile to the
+/// end of the top zone and grows the split by one.
+private struct TopZoneDropDelegate: DropDelegate {
+    @Binding var dragged: MetricKind?
+    let settings: AppSettings
+
+    func dropEntered(info: DropInfo) {
+        guard let kind = dragged,
+              let from = settings.metricTiles.firstIndex(of: kind.rawValue),
+              from >= settings.topTileCount else { return }   // already up top
+        withAnimation(.easeInOut(duration: 0.2)) {
+            var tiles = settings.metricTiles
+            tiles.move(fromOffsets: IndexSet(integer: from),
+                       toOffset: min(settings.topTileCount, tiles.count))
+            settings.metricTiles = tiles
+            settings.topTileCount += 1
         }
     }
 
