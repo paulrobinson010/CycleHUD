@@ -188,8 +188,13 @@ extension Color {
 /// magenta bottom-right, a faint purple heart) — the website hero's lighting.
 /// Content sits on solid panels, so the backdrop can afford to be loud.
 struct ThemeBackground: View {
+    /// Captured at construction: with no stored inputs SwiftUI would memoize
+    /// this view and keep the previous theme's backdrop after a switch (light/
+    /// dark showing the Cyberpunk wash). The changing input forces a re-render.
+    var appearance: AppearanceTheme = Theme.appearance
+
     var body: some View {
-        if Theme.appearance == .cyberpunk {
+        if appearance == .cyberpunk {
             GeometryReader { geo in
                 let r = max(geo.size.width, geo.size.height)
                 ZStack {
