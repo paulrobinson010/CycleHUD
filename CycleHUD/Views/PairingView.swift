@@ -59,6 +59,7 @@ struct PairingView: View {
                     }
                 }
             }
+            .themedList()
             .navigationTitle("Sensors")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -128,7 +129,7 @@ struct PairingView: View {
         Label(role.rawValue, systemImage: role.systemImage)
             .font(.caption2)
             .padding(.horizontal, 6).padding(.vertical, 2)
-            .background(Capsule().fill(Color.accentColor.opacity(0.2)))
+            .background(Capsule().fill(Theme.accent.opacity(0.2)))
     }
 
     @ViewBuilder private func stateIndicator(_ state: ConnectionState) -> some View {

@@ -26,6 +26,7 @@ struct MetricTilesView: View {
                 }
             }
         }
+        .themedList()
         .navigationTitle("Ride screen")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { EditButton() }

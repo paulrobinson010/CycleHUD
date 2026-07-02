@@ -20,6 +20,7 @@ struct RideHistoryView: View {
                 .onDelete { history.delete(at: $0) }
             }
         }
+        .themedList()
         .navigationTitle("Previous Rides")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $selected) { ride in

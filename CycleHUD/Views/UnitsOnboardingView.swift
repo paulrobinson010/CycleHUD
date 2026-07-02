@@ -12,6 +12,7 @@ struct UnitsOnboardingView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 88, height: 88)
+                .shadow(color: Theme.glow, radius: 26)   // neon in Cyberpunk
                 .accessibilityLabel("CycleHUD")
             VStack(spacing: 6) {
                 Text("Welcome to CycleHUD")
@@ -84,6 +85,8 @@ struct UnitsOnboardingView: View {
             .padding(.horizontal, 28)
             .padding(.bottom, 24)
         }
+        .background(Rectangle().fill(Theme.backgroundStyle).ignoresSafeArea())
+        .tint(Theme.accent)
         .preferredColorScheme(settings.appearanceTheme.colorScheme)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {

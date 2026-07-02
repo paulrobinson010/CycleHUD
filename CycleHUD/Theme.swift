@@ -171,3 +171,16 @@ extension Color {
         })
     }
 }
+
+extension View {
+    /// Theme chrome for the settings-style screens (Forms/Lists): in Cyberpunk
+    /// the system list background is hidden so the gradient backdrop shows
+    /// through, and controls take the theme accent. Light/Dark keep the stock
+    /// system look, so those themes are unchanged.
+    func themedList() -> some View {
+        self
+            .scrollContentBackground(Theme.appearance == .cyberpunk ? .hidden : .automatic)
+            .background(Rectangle().fill(Theme.backgroundStyle).ignoresSafeArea())
+            .tint(Theme.accent)
+    }
+}

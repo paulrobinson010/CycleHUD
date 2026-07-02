@@ -132,6 +132,7 @@ struct DiagnosticsView: View {
                 }
             }
         }
+        .themedList()
         .navigationTitle("Diagnostics")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
