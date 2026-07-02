@@ -34,7 +34,7 @@ struct RideView: View {
 
     var body: some View {
         ZStack {
-            Theme.background.ignoresSafeArea()
+            Rectangle().fill(Theme.backgroundStyle).ignoresSafeArea()
             GeometryReader { geo in
                 let landscape = settings.landscapeEnabled && geo.size.width > geo.size.height
                 Group {
@@ -336,6 +336,8 @@ struct RideView: View {
             .frame(height: 30)
             .padding(.horizontal, 10)
             .background(Capsule().fill(connected ? Theme.good.opacity(0.18) : Theme.panel))
+            .overlay(Capsule().stroke((connected ? Theme.good : Theme.textSecondary)
+                .opacity(Theme.pillStrokeOpacity), lineWidth: 1))
             .accessibilityLabel(connected ? "GPS: fix acquired" : "GPS: searching")
     }
 
@@ -348,6 +350,7 @@ struct RideView: View {
             .padding(.horizontal, 9)
             .padding(.vertical, 5)
             .background(Capsule().fill(statusColor.opacity(0.18)))
+            .overlay(Capsule().stroke(statusColor.opacity(Theme.pillStrokeOpacity), lineWidth: 1))
     }
 
     /// The status that drives the badge and controls — the demo presents itself
@@ -731,7 +734,8 @@ struct RideView: View {
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .frame(height: 58)
-            .background(RoundedRectangle(cornerRadius: 16).fill(color))
+            .background(RoundedRectangle(cornerRadius: 16).fill(color)
+                .shadow(color: Theme.glow, radius: 10))
         }
     }
 
@@ -883,7 +887,8 @@ struct RolePill: View {
         .background(Capsule().fill(status == .connected
                                    ? Theme.good.opacity(0.18) : Theme.panel))
         .overlay(
-            Capsule().stroke(status.color.opacity(status == .failed ? 0.8 : 0), lineWidth: 1)
+            Capsule().stroke(status.color.opacity(status == .failed ? 0.8 : Theme.pillStrokeOpacity),
+                             lineWidth: 1)
         )
         .accessibilityLabel("\(fullName): \(status.detail)")
     }

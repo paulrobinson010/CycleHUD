@@ -104,6 +104,51 @@ enum Theme {
     /// so views can apply it unconditionally.
     static var glow: Color { cyber ? cyberAccent.opacity(0.55) : .clear }
 
+    // MARK: Cyberpunk chrome (all no-ops in Light/Dark, so views apply them
+    // unconditionally and only Cyberpunk lights up)
+
+    private static let cyberPink = Color(red: 0xFF / 255, green: 0x4F / 255, blue: 0xD8 / 255)
+    private static let cyberPurple = Color(red: 0x9B / 255, green: 0x6B / 255, blue: 0xFF / 255)
+    private static let cyberBgTop = Color(red: 0x04 / 255, green: 0x17 / 255, blue: 0x1E / 255)   // deep cyan-teal
+    private static let cyberBgBottom = Color(red: 0x22 / 255, green: 0x07 / 255, blue: 0x20 / 255) // deep magenta
+
+    /// Screen backdrop: the flat theme colour normally; a dark cyan→magenta
+    /// wash in Cyberpunk. Use as `Rectangle().fill(Theme.backgroundStyle)`.
+    static var backgroundStyle: AnyShapeStyle {
+        cyber ? AnyShapeStyle(LinearGradient(
+                    colors: [cyberBgTop, cyberBackground, cyberBgBottom],
+                    startPoint: .topLeading, endPoint: .bottomTrailing))
+              : AnyShapeStyle(background)
+    }
+
+    /// Neon cyan→magenta rim for tiles and panels (clear outside Cyberpunk).
+    static var tileStroke: AnyShapeStyle {
+        cyber ? AnyShapeStyle(LinearGradient(
+                    colors: [cyberAccent.opacity(0.55), cyberPink.opacity(0.55)],
+                    startPoint: .topLeading, endPoint: .bottomTrailing))
+              : AnyShapeStyle(Color.clear)
+    }
+    static var tileStrokeWidth: CGFloat { cyber ? 1 : 0 }
+
+    /// Ink for the big metric numerals: a cyan→purple gradient in Cyberpunk,
+    /// the plain text colour otherwise.
+    static var valueStyle: AnyShapeStyle {
+        cyber ? AnyShapeStyle(LinearGradient(colors: [cyberAccent, cyberPurple],
+                                             startPoint: .top, endPoint: .bottom))
+              : AnyShapeStyle(textPrimary)
+    }
+
+    /// Unit labels next to the numerals: neon pink in Cyberpunk.
+    static var unitColor: Color { cyber ? cyberPink.opacity(0.85) : textSecondary }
+
+    /// Status pills/capsules get a visible neon rim in Cyberpunk.
+    static var pillStrokeOpacity: Double { cyber ? 0.5 : 0 }
+
+    /// The radar lane's resting border (its threat flood overrides this).
+    static var radarIdleStroke: Color {
+        cyber ? cyberAccent.opacity(0.4) : Color.white.opacity(0.08)
+    }
+
     /// Large value font for the metric tiles / speed readout. The digital style
     /// only carries digits and separators — any other text (Now, None, n/a)
     /// falls back to the system font automatically.

@@ -120,7 +120,7 @@ struct PassDetailView: View {
             }
             .padding()
         }
-        .background(Theme.background.ignoresSafeArea())
+        .background(Rectangle().fill(Theme.backgroundStyle).ignoresSafeArea())
         .navigationTitle(pass.date.formatted(date: .omitted, time: .shortened))
         .navigationBarTitleDisplayMode(.inline)
     }

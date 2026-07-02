@@ -28,7 +28,7 @@ struct RadarView: View {
 
     private var topLevel: ThreatLevel? { threats.map(\.level).max() }
     private var alertActive: Bool { topLevel != nil }
-    private var alertColor: Color { topLevel?.color ?? Color.white.opacity(0.08) }
+    private var alertColor: Color { topLevel?.color ?? Theme.radarIdleStroke }
 
     var body: some View {
         GeometryReader { geo in

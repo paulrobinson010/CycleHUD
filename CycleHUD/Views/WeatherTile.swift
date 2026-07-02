@@ -30,12 +30,13 @@ struct WeatherTile: View {
                 Text(value)
                     .font(Theme.valueFont(32))
                     .foregroundStyle(valueColor)
+                    .shadow(color: Theme.glow, radius: 6)   // neon in Cyberpunk
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
                 if !unit.isEmpty {
                     Text(unit)
                         .font(.system(size: 11, weight: .semibold, design: .rounded))
-                        .foregroundStyle(Theme.textSecondary)
+                        .foregroundStyle(Theme.unitColor)
                 }
             }
         }
@@ -43,6 +44,8 @@ struct WeatherTile: View {
         .frame(height: height)
         .padding(.horizontal, 14)
         .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
+        .overlay(RoundedRectangle(cornerRadius: 16)
+            .strokeBorder(Theme.tileStroke, lineWidth: Theme.tileStrokeWidth))
     }
 
     // MARK: - Content
@@ -116,7 +119,7 @@ struct WeatherDetailView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.background.ignoresSafeArea())
+        .background(Rectangle().fill(Theme.backgroundStyle).ignoresSafeArea())
     }
 
     private var detail: String {

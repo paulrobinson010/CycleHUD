@@ -20,7 +20,7 @@ struct MetricTile: View {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text(value)
                     .font(Theme.valueFont(valueSize))
-                    .foregroundStyle(alert ? Color.white : Theme.textPrimary)
+                    .foregroundStyle(alert ? AnyShapeStyle(Color.white) : Theme.valueStyle)
                     .shadow(color: alert ? .clear : Theme.glow, radius: 6)   // neon in Cyberpunk
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
@@ -28,7 +28,7 @@ struct MetricTile: View {
                     Text(unit)
                         .font(.system(size: max(11, valueSize * 0.3),
                                       weight: .semibold, design: .rounded))
-                        .foregroundStyle(alert ? Color.white.opacity(0.85) : Theme.textSecondary)
+                        .foregroundStyle(alert ? Color.white.opacity(0.85) : Theme.unitColor)
                 }
             }
         }
@@ -37,6 +37,8 @@ struct MetricTile: View {
         .padding(.horizontal, 14)
         .background(RoundedRectangle(cornerRadius: 16)
             .fill(alert ? Theme.threatHigh : Theme.panel))
+        .overlay(RoundedRectangle(cornerRadius: 16)
+            .strokeBorder(Theme.tileStroke, lineWidth: alert ? 0 : Theme.tileStrokeWidth))
         .animation(.easeInOut(duration: 0.25), value: alert)
     }
 }
