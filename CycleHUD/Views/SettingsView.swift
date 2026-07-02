@@ -124,6 +124,7 @@ struct SettingsView: View {
                     } label: {
                         Label("Ride screen tiles", systemImage: "square.grid.2x2")
                     }
+                    Toggle("Show units on tiles", isOn: $settings.showTileUnits)
                     Toggle("Dark mode", isOn: $settings.darkModeEnabled)
                     Toggle("Landscape layout", isOn: $settings.landscapeEnabled)
                 } header: {

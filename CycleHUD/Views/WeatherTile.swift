@@ -7,6 +7,8 @@ struct WeatherTile: View {
     let nowcast: RainNowcast?
     var status: WeatherManager.Status = .idle
     var height: CGFloat = 90
+    /// Mirrors the app-wide "show units on tiles" setting (hides the "min").
+    var showUnit: Bool = true
     @State private var showDetail = false
 
     var body: some View {
@@ -60,7 +62,7 @@ struct WeatherTile: View {
     }
 
     private var unit: String {
-        guard let n = nowcast, !n.isRaining, n.hasRain, n.usedMinuteData else { return "" }
+        guard showUnit, let n = nowcast, !n.isRaining, n.hasRain, n.usedMinuteData else { return "" }
         return "min"
     }
 

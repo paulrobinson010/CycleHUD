@@ -493,9 +493,16 @@ struct RideView: View {
         }
     }
 
-    /// Value font scaled to the tile height so shrunken landscape tiles still fit.
+    /// Value font scaled to the tile height so shrunken landscape tiles still
+    /// fit; with units hidden the freed space goes to bigger numerals.
     private func valueSize(for height: CGFloat) -> CGFloat {
-        max(22, min(32, height * 0.42))
+        let cap: CGFloat = settings.showTileUnits ? 32 : 36
+        return max(22, min(cap, height * 0.42))
+    }
+
+    /// The tile's unit label, or nothing when the rider has hidden units.
+    private func tileUnit(_ unit: String) -> String {
+        settings.showTileUnits ? unit : ""
     }
 
     /// Build the tile for one metric, pulling live values from the managers.
@@ -505,46 +512,47 @@ struct RideView: View {
         switch kind {
         case .speed:
             MetricTile(title: kind.title, value: speedString(ride.currentSpeedMps),
-                       unit: settings.speedUnit.label, valueSize: vs, height: height)
+                       unit: tileUnit(settings.speedUnit.label), valueSize: vs, height: height)
         case .avgSpeed:
             MetricTile(title: kind.title, value: speedString(ride.averageSpeedMps),
-                       unit: settings.speedUnit.label, valueSize: vs, height: height)
+                       unit: tileUnit(settings.speedUnit.label), valueSize: vs, height: height)
         case .maxSpeed:
             MetricTile(title: kind.title, value: speedString(ride.maxSpeedMps),
-                       unit: settings.speedUnit.label, valueSize: vs, height: height)
+                       unit: tileUnit(settings.speedUnit.label), valueSize: vs, height: height)
         case .cadence:
             MetricTile(title: kind.title, value: ble.freshCadence.map { Fmt.int($0) } ?? "—",
-                       unit: "rpm", valueSize: vs, height: height)
+                       unit: tileUnit("rpm"), valueSize: vs, height: height)
         case .distance:
             MetricTile(title: kind.title, value: distanceString(ride.distanceMeters),
-                       unit: settings.distanceUnit.label, valueSize: vs, height: height)
+                       unit: tileUnit(settings.distanceUnit.label), valueSize: vs, height: height)
         case .time:
             MetricTile(title: kind.title, value: timeString(ride.movingTimeSeconds),
                        unit: "", valueSize: vs, height: height)
         case .ascent:
             MetricTile(title: kind.title, value: elevationString(ride.elevationGainMeters),
-                       unit: settings.distanceUnit.shortLabel, valueSize: vs, height: height)
+                       unit: tileUnit(settings.distanceUnit.shortLabel), valueSize: vs, height: height)
         case .heartRate:
             let hr = watch.displayHeartRate ?? ride.currentHeartRate ?? ble.freshSensorHeartRate()
             MetricTile(title: kind.title, value: hr.map { Fmt.int($0) } ?? "—",
-                       unit: "bpm", valueSize: vs, height: height,
+                       unit: tileUnit("bpm"), valueSize: vs, height: height,
                        alert: settings.hrWarningEnabled && (hr ?? 0) >= settings.hrWarningBpm)
         case .calories:
             MetricTile(title: kind.title, value: ride.caloriesKcal >= 1 ? Fmt.int(ride.caloriesKcal) : "—",
-                       unit: "kcal", valueSize: vs, height: height)
+                       unit: tileUnit("kcal"), valueSize: vs, height: height)
         case .gradient:
-            MetricTile(title: kind.title, value: gradientString, unit: "%",
+            MetricTile(title: kind.title, value: gradientString, unit: tileUnit("%"),
                        valueSize: vs, height: height)
         case .lapTime:
             MetricTile(title: kind.title, value: timeString(ride.currentLapTimeSeconds),
                        unit: "", valueSize: vs, height: height)
         case .temperature:
-            MetricTile(title: kind.title, value: temperatureValue, unit: temperatureUnit,
+            MetricTile(title: kind.title, value: temperatureValue, unit: tileUnit(temperatureUnit),
                        valueSize: vs, height: height)
         case .wind:
             windTile(height: height, valueSize: vs)
         case .rain:
-            WeatherTile(nowcast: weather.nowcast, status: weather.status, height: height)
+            WeatherTile(nowcast: weather.nowcast, status: weather.status, height: height,
+                        showUnit: settings.showTileUnits)
         }
     }
 
@@ -567,7 +575,7 @@ struct RideView: View {
     /// the compass heading when stationary), or absolute wind speed if no heading
     /// is available at all.
     private func windTile(height: CGFloat, valueSize vs: CGFloat) -> some View {
-        let speedLabel = settings.speedUnit.label
+        let speedLabel = tileUnit(settings.speedUnit.label)
         let heading = location.courseDegrees ?? location.headingDegrees
         if let c = weather.conditions, let heading {
             let head = c.headwindMps(course: heading)

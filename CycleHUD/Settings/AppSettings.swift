@@ -24,6 +24,7 @@ final class AppSettings: ObservableObject {
         static let weatherEnabled = "weatherEnabled"
         static let appLanguage = "appLanguage"
         static let metricTiles = "metricTilesV2"   // V2: default back to the original tile set
+        static let showTileUnits = "showTileUnits"
         static let crashDetectionEnabled = "crashDetectionEnabled"
         static let emergencyContactName = "emergencyContactName"
         static let emergencyContactPhone = "emergencyContactPhone"
@@ -91,6 +92,10 @@ final class AppSettings: ObservableObject {
     /// The selected metrics as `MetricKind`s, dropping any unknown raw values.
     var metricKinds: [MetricKind] { metricTiles.compactMap(MetricKind.init(rawValue:)) }
 
+    /// Show the unit label (km/h, bpm, …) next to each tile's value. Off frees
+    /// the space for bigger numbers — for riders who know their units.
+    @Published var showTileUnits: Bool { didSet { defaults.set(showTileUnits, forKey: Keys.showTileUnits) } }
+
     /// When on, a sharp impact during a ride starts an SOS countdown that texts
     /// the emergency contact your location.
     @Published var crashDetectionEnabled: Bool { didSet { defaults.set(crashDetectionEnabled, forKey: Keys.crashDetectionEnabled) } }
@@ -146,6 +151,7 @@ final class AppSettings: ObservableObject {
             Keys.weatherEnabled: true,
             Keys.appLanguage: "",
             Keys.metricTiles: MetricKind.defaultOrder.map(\.rawValue),
+            Keys.showTileUnits: true,
             Keys.crashDetectionEnabled: false,
             Keys.emergencyContactName: "",
             Keys.emergencyContactPhone: ""
@@ -173,6 +179,7 @@ final class AppSettings: ObservableObject {
         // Drop any unknown raw values; fall back to the default layout if empty.
         let validTiles = storedTiles.filter { MetricKind(rawValue: $0) != nil }
         metricTiles = validTiles.isEmpty ? MetricKind.defaultOrder.map(\.rawValue) : validTiles
+        showTileUnits = defaults.bool(forKey: Keys.showTileUnits)
         crashDetectionEnabled = defaults.bool(forKey: Keys.crashDetectionEnabled)
         emergencyContactName = defaults.string(forKey: Keys.emergencyContactName) ?? ""
         emergencyContactPhone = defaults.string(forKey: Keys.emergencyContactPhone) ?? ""
