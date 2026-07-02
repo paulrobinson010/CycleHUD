@@ -40,6 +40,8 @@ struct CycleHUDApp: App {
     @StateObject private var ride: RideManager
     @StateObject private var weather: WeatherManager
     @StateObject private var sos: SOSManager
+    /// Branded splash (website hero) shown over the HUD at launch, then faded.
+    @State private var showSplash = true
 
     init() {
         AppLog.shared.installCrashHandlers()
@@ -68,28 +70,44 @@ struct CycleHUDApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RideView()
-                .environmentObject(settings)
-                .environmentObject(ble)
-                .environmentObject(location)
-                .environmentObject(ride)
-                .environmentObject(watch)
-                .environmentObject(history)
-                .environmentObject(weather)
-                .environmentObject(sos)
-                .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
-                .onAppear {
-                    location.requestAuthorization()
-                    location.setMode(.idle)        // low-power fix until a ride starts
-                    health.requestAuthorization()
-                    NotificationManager.shared.configure()
-                    NotificationManager.shared.requestAuthorization()
-                    weather.locationProvider = { location.currentLocation }
-                    weather.isEnabled = { settings.weatherEnabled }
-                    weather.start()
-                    sos.locationProvider = { location.currentLocation }
-                    sos.contactProvider = { settings.emergencyContact }
+            ZStack {
+                mainContent
+                if showSplash {
+                    SplashView()
+                        .zIndex(1)
+                        .transition(.opacity)
                 }
+            }
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
+                    withAnimation(.easeOut(duration: 0.5)) { showSplash = false }
+                }
+            }
         }
+    }
+
+    private var mainContent: some View {
+        RideView()
+            .environmentObject(settings)
+            .environmentObject(ble)
+            .environmentObject(location)
+            .environmentObject(ride)
+            .environmentObject(watch)
+            .environmentObject(history)
+            .environmentObject(weather)
+            .environmentObject(sos)
+            .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
+            .onAppear {
+                location.requestAuthorization()
+                location.setMode(.idle)        // low-power fix until a ride starts
+                health.requestAuthorization()
+                NotificationManager.shared.configure()
+                NotificationManager.shared.requestAuthorization()
+                weather.locationProvider = { location.currentLocation }
+                weather.isEnabled = { settings.weatherEnabled }
+                weather.start()
+                sos.locationProvider = { location.currentLocation }
+                sos.contactProvider = { settings.emergencyContact }
+            }
     }
 }
