@@ -220,5 +220,31 @@ final class AppSettings: ObservableObject {
         Theme.digitStyle = digitStyle
     }
 
+    /// Reset the display & behaviour settings to how the app ships: the original
+    /// three rows of tiles (nothing above the radar), Light appearance, standard
+    /// digits, and every toggle back to its default. Deliberately KEEPS the
+    /// rider's units, language, weight, wheel size, emergency contact, paired
+    /// sensors and ride history — resetting those is a different, bigger action.
+    func resetToDefaults() {
+        metricTiles = MetricKind.defaultOrder.map(\.rawValue)
+        topTileCount = 0
+        showTileUnits = true
+        appearanceTheme = .light
+        digitStyle = .standard
+        beepEnabled = true
+        voiceAlertsEnabled = false
+        hapticsEnabled = true
+        autoPauseEnabled = true
+        keepScreenOn = true
+        radarDebugEnabled = false
+        landscapeEnabled = false
+        radarOnRight = false
+        hrWarningEnabled = false
+        hrWarningBpm = 200
+        saveWorkouts = true
+        weatherEnabled = true
+        crashDetectionEnabled = false
+    }
+
     var wheelCircumferenceMeters: Double { wheelCircumferenceMM / 1000.0 }
 }

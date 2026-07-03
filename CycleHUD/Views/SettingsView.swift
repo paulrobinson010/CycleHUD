@@ -14,6 +14,7 @@ struct SettingsView: View {
     /// the picker stays on Custom (letting them type a value) even if that value
     /// happens to coincide with a preset.
     @State private var wheelIsCustom = false
+    @State private var showResetConfirm = false
     @FocusState private var circumferenceFocused: Bool
 
     struct WheelPreset: Identifiable {
@@ -221,6 +222,19 @@ struct SettingsView: View {
                 Section {
                     Text("CycleHUD is a personal quality-of-life cycling HUD built around the Coospo TR70 rear radar. Vehicles behind you appear on a clear radar lane with Apple Watch wrist alerts, and each ride is saved as an Apple Health workout. Also works with Garmin Varia–compatible radars and standard CSC speed/cadence sensors.")
                         .font(.footnote).foregroundStyle(.secondary)
+                }
+
+                Section {
+                    Button(role: .destructive) { showResetConfirm = true } label: {
+                        Label("Reset to defaults", systemImage: "arrow.counterclockwise")
+                    }
+                    .confirmationDialog("Reset to defaults?",
+                                        isPresented: $showResetConfirm, titleVisibility: .visible) {
+                        Button("Reset", role: .destructive) { settings.resetToDefaults() }
+                        Button("Cancel", role: .cancel) {}
+                    }
+                } footer: {
+                    Text("Restores the original tiles (three rows, nothing above the radar) and the display and alert settings. Your units, language, weight, wheel size, emergency contact, paired sensors and ride history are kept.")
                 }
             }
             .themedList()

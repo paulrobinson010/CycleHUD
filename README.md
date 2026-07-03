@@ -38,20 +38,29 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   calories. Heart rate comes from a paired Apple Watch **or a standard Bluetooth
   heart-rate strap** (service 0x180D).
 - **Customisable tiles** — choose which metric tiles appear on the ride screen,
-  and in what order, from **Settings → Ride screen tiles**. Options include
+  and in what order. **Long-press any tile** to edit right on the ride screen:
+  remove with the ⊖ badge, add from the dashed **+** tile, and **drag to
+  rearrange** — including dragging tiles **above the radar** in portrait.
+  (Settings → Ride screen tiles offers the same as a list.) Options include
   speed, average/max speed, cadence, distance, time, ascent, gradient, lap time,
-  heart rate, calories, and the weather tiles (rain, temperature, wind).
+  heart rate, calories, and the weather tiles (rain, temperature, wind). A
+  **Show units on tiles** toggle drops the unit labels for bigger numerals, and
+  **Reset to defaults** (bottom of Settings) restores the original three rows.
 - **Manual laps** — tap the lap button while riding to split the ride; each lap's
   time, distance and average speed are shown in the ride summary.
 - **Ride export** — share any ride (end-of-ride or from history) as a **GPX or
   TCX** file via the system share sheet — to Strava, Komoot, Ride with GPS,
   Files, and more. *(This is a manual share, not an automatic upload — see note
   below.)*
-- **Crash detection → SOS** *(optional)* — if a hard impact is detected while
-  riding, a 20-second countdown starts; if you don't cancel it, CycleHUD opens a
+- **Crash detection → SOS** *(optional)* — a two-stage detector tuned on real
+  roads: a violent impact (well above pothole/kerb spikes) is only a
+  *candidate*, and the SOS fires **only if you come to a stop within 5
+  seconds** of it — ride through the bump and nothing happens. On a confirmed
+  crash a 20-second countdown starts; if you don't cancel it, CycleHUD opens a
   pre-filled text to your emergency contact with your location, ready to send.
-  Set it up in **Settings → Safety**. (iOS won't let an app send a text on its
-  own, so the message opens ready for you — or a bystander — to send.)
+  Set it up in **Settings → Safety**; the toggle takes effect immediately, even
+  mid-ride. (iOS won't let an app send a text on its own, so the message opens
+  ready for you — or a bystander — to send.)
 - **Radar battery** — the TR70's battery level is shown on the radar panel, so
   you know before you set off.
 - **Heart-rate warning** *(optional)* — set a max heart rate (120–220 bpm). When
@@ -69,10 +78,12 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   weight (asked once when workouts are on, or read from Apple Health) — without
   it, calories simply aren't shown. Requires the HealthKit capability (see Setup).
 - **Ride summary & history** — every ride ends with a summary card (distance,
-  time, average/peak speed, heart rate, ascent, calories) over a map of your
-  route, plus **speed, heart-rate and elevation graphs** for the whole ride. Past
-  rides are listed under **Settings → Previous rides** and reopen the same
-  summary.
+  time, average/peak speed, heart rate, ascent, calories) with a map of your
+  route and **speed, heart-rate and elevation graphs** for the whole ride.
+  **Scrub any graph or the map** — tap or drag and the same moment is marked
+  everywhere: a line and value dot on every graph, a marker on the route, and a
+  readout of time, speed, heart rate and elevation at that point. Past rides are
+  listed under **Settings → Previous rides** and reopen the same summary.
 - **Vehicles on the map** — each vehicle the radar flags during a ride is dropped
   as a pin on that ride's route map, with a count, so you can see where traffic
   came up behind you. Open the full-screen map and **tap a vehicle** to pull up
@@ -81,11 +92,15 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   still switched on 5 minutes after a ride ends, a notification names which ones
   so you can switch them off and save their batteries.
 - **Landscape layout** *(optional)* — turn it on to fix the ride screen in
-  landscape, radar on the left and your ride data and controls on the right. The
-  HUD stays landscape regardless of how you hold the phone; Settings and other
-  screens stay portrait.
-- **Light or dark** — a Dark Mode toggle in Settings; the app is a clean light
-  theme by default and flips to an all-black HUD when you want it.
+  landscape: the radar on one side (left or right — your choice) and your ride
+  data and controls on the other. The HUD stays landscape regardless of how you
+  hold the phone; Settings and other screens stay portrait.
+- **Light, dark or Cyberpunk** — three appearances in Settings: a clean light
+  theme (default), an all-black dark HUD, and a neon **Cyberpunk** theme
+  matching the CycleHUD artwork — cyan→magenta backdrop with glow, gradient
+  numerals, neon tile and pill rims. Pair it with the **Digital** digits option
+  for a retro 7-segment LCD readout (an original display font, bundled), in any
+  theme.
 - **Ride control** — Start / Pause / Resume / Stop, with **auto-pause /
   auto-resume** (pauses after you're stopped < 1 km/h for 5 s, resumes ~1 s
   after you move again).
