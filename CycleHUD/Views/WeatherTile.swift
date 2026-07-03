@@ -50,23 +50,31 @@ struct WeatherTile: View {
 
     // MARK: - Content
 
+    /// Digital digits carry no letters, so word values swap for glyphs the LCD
+    /// font has: "—" for nothing to show, "0 min" for raining now, "1 h" for
+    /// the hourly fallback. "—" also replaces "None"/"n/a" in standard mode —
+    /// it matches how every other tile shows an empty value.
+    private var digital: Bool { Theme.digitStyle == .digital }
+
     private var value: String {
         guard let n = nowcast else {
-            switch status {
-            case .unavailable: return String(localized: "n/a", bundle: Lang.bundle)
-            default: return "…"
-            }
+            if status == .unavailable { return "—" }
+            return digital ? "—" : "…"                    // still loading
         }
-        if n.isRaining { return String(localized: "Now", bundle: Lang.bundle) }
+        if n.isRaining { return digital ? "0" : String(localized: "Now", bundle: Lang.bundle) }
         if let m = n.startsInMinutes {
-            return n.usedMinuteData ? Fmt.int(m) : String(localized: "<1h", bundle: Lang.bundle)
+            if n.usedMinuteData { return Fmt.int(m) }
+            return digital ? "1" : String(localized: "<1h", bundle: Lang.bundle)
         }
-        return String(localized: "None", bundle: Lang.bundle)
+        return "—"                                        // no rain expected
     }
 
     private var unit: String {
-        guard showUnit, let n = nowcast, !n.isRaining, n.hasRain, n.usedMinuteData else { return "" }
-        return "min"
+        guard showUnit, let n = nowcast else { return "" }
+        if n.isRaining { return digital ? "min" : "" }    // "0 min" = raining now
+        guard n.hasRain else { return "" }
+        if n.usedMinuteData { return "min" }
+        return digital ? "h" : ""                         // "1 h" = within the hour
     }
 
     /// No rain to colour semantically → the theme's numeral ink (gradient in
