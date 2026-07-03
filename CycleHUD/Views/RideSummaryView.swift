@@ -27,8 +27,8 @@ struct RideSummaryView: View {
             ScrollView {
                 VStack(spacing: 18) {
                     header
-                    routeMap
                     statGrid
+                    routeMap
                     graphs
                     lapsSection
                     passesLink

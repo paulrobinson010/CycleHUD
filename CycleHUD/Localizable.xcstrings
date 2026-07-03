@@ -4521,42 +4521,42 @@
         }
       }
     },
-    "If a sharp impact is detected while you're riding, a 20-second countdown starts. If you don't cancel it, CycleHUD opens a text to your emergency contact with your location, ready to send. (iOS requires you — or someone nearby — to tap Send; an app can't send a text on its own.) Test it any time with your contact set." : {
+    "If a hard impact is detected while you're riding and you come to a stop within a few seconds, a 20-second countdown starts. If you don't cancel it, CycleHUD opens a text to your emergency contact with your location, ready to send. (iOS requires you — or someone nearby — to tap Send; an app can't send a text on its own.) Test it any time with your contact set." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn während der Fahrt ein harter Aufprall erkannt wird, startet ein 20-Sekunden-Countdown. Brichst du ihn nicht ab, öffnet CycleHUD eine sendebereite SMS an deinen Notfallkontakt mit deinem Standort. (iOS erfordert, dass du – oder jemand in der Nähe – auf Senden tippst; eine App kann keine SMS von selbst senden.) Du kannst es jederzeit testen, wenn ein Kontakt eingerichtet ist."
+            "value" : "Wenn während der Fahrt ein harter Aufprall erkannt wird und du innerhalb weniger Sekunden zum Stehen kommst, startet ein 20-Sekunden-Countdown. Brichst du ihn nicht ab, öffnet CycleHUD eine sendebereite SMS an deinen Notfallkontakt mit deinem Standort. (iOS erfordert, dass du – oder jemand in der Nähe – auf Senden tippst; eine App kann keine SMS von selbst senden.) Du kannst es jederzeit testen, wenn ein Kontakt eingerichtet ist."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "If a sharp impact is detected while you're riding, a 20-second countdown starts. If you don't cancel it, CycleHUD opens a text to your emergency contact with your location, ready to send. (iOS requires you — or someone nearby — to tap Send; an app can't send a text on its own.) Test it any time with your contact set."
+            "value" : "If a hard impact is detected while you're riding and you come to a stop within a few seconds, a 20-second countdown starts. If you don't cancel it, CycleHUD opens a text to your emergency contact with your location, ready to send. (iOS requires you — or someone nearby — to tap Send; an app can't send a text on its own.) Test it any time with your contact set."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "If a sharp impact is detected while you're riding, a 20-second countdown starts. If you don't cancel it, CycleHUD opens a text to your emergency contact with your location, ready to send. (iOS requires you — or someone nearby — to tap Send; an app can't send a text on its own.) Test it any time with your contact set."
+            "value" : "If a hard impact is detected while you're riding and you come to a stop within a few seconds, a 20-second countdown starts. If you don't cancel it, CycleHUD opens a text to your emergency contact with your location, ready to send. (iOS requires you — or someone nearby — to tap Send; an app can't send a text on its own.) Test it any time with your contact set."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si se detecta un impacto fuerte mientras ruedas, comienza una cuenta atrás de 20 segundos. Si no la cancelas, CycleHUD abre un mensaje listo para enviar a tu contacto de emergencia con tu ubicación. (iOS requiere que tú —o alguien cerca— toques Enviar; una app no puede enviar un mensaje por sí sola.) Pruébalo cuando quieras con un contacto configurado."
+            "value" : "Si se detecta un impacto fuerte mientras ruedas y te detienes en unos segundos, comienza una cuenta atrás de 20 segundos. Si no la cancelas, CycleHUD abre un mensaje listo para enviar a tu contacto de emergencia con tu ubicación. (iOS requiere que tú —o alguien cerca— toques Enviar; una app no puede enviar un mensaje por sí sola.) Pruébalo cuando quieras con un contacto configurado."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si un impact violent est détecté pendant que vous roulez, un compte à rebours de 20 secondes démarre. Si vous ne l’annulez pas, CycleHUD ouvre un SMS prêt à envoyer à votre contact d’urgence avec votre position. (iOS exige que vous — ou quelqu’un à proximité — appuyiez sur Envoyer ; une app ne peut pas envoyer un SMS toute seule.) Testez-le quand vous voulez avec un contact défini."
+            "value" : "Si un impact violent est détecté pendant que vous roulez et que vous vous arrêtez en quelques secondes, un compte à rebours de 20 secondes démarre. Si vous ne l’annulez pas, CycleHUD ouvre un SMS prêt à envoyer à votre contact d’urgence avec votre position. (iOS exige que vous — ou quelqu’un à proximité — appuyiez sur Envoyer ; une app ne peut pas envoyer un SMS toute seule.) Testez-le quand vous voulez avec un contact défini."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se viene rilevato un forte impatto mentre pedali, parte un conto alla rovescia di 20 secondi. Se non lo annulli, CycleHUD apre un SMS pronto da inviare al tuo contatto di emergenza con la tua posizione. (iOS richiede che tu — o qualcuno vicino — tocchi Invia; un’app non può inviare un SMS da sola.) Provalo quando vuoi con un contatto impostato."
+            "value" : "Se viene rilevato un forte impatto mentre pedali e ti fermi entro pochi secondi, parte un conto alla rovescia di 20 secondi. Se non lo annulli, CycleHUD apre un SMS pronto da inviare al tuo contatto di emergenza con la tua posizione. (iOS richiede che tu — o qualcuno vicino — tocchi Invia; un’app non può inviare un SMS da sola.) Provalo quando vuoi con un contatto impostato."
           }
         }
       }

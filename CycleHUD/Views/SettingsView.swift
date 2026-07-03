@@ -168,7 +168,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Safety")
                 } footer: {
-                    Text("If a sharp impact is detected while you're riding, a 20-second countdown starts. If you don't cancel it, CycleHUD opens a text to your emergency contact with your location, ready to send. (iOS requires you — or someone nearby — to tap Send; an app can't send a text on its own.) Test it any time with your contact set.")
+                    Text("If a hard impact is detected while you're riding and you come to a stop within a few seconds, a 20-second countdown starts. If you don't cancel it, CycleHUD opens a text to your emergency contact with your location, ready to send. (iOS requires you — or someone nearby — to tap Send; an app can't send a text on its own.) Test it any time with your contact set.")
                 }
 
                 Section {

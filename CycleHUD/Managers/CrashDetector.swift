@@ -13,9 +13,12 @@ final class CrashDetector {
     private let motion = CMMotionManager()
     private let queue = OperationQueue()
 
-    /// Impact threshold in g (gravity already removed by device motion). Everyday
-    /// riding bumps sit well under this; a real impact spikes far above it.
-    private let impactThresholdG = 4.0
+    /// Impact threshold in g (gravity already removed by device motion). Road
+    /// riding proved 4 g far too twitchy — potholes and kerbs fired it — so this
+    /// demands a genuinely violent spike. The stop-confirmation in RideManager
+    /// (rider must be stationary within seconds) does the real filtering; this
+    /// just needs to be above ordinary road chatter.
+    private let impactThresholdG = 8.0
     /// Don't re-trigger within this window (one event, not a burst).
     private let cooldown: TimeInterval = 30
     private var lastTrigger: Date?

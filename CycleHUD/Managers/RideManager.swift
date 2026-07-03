@@ -68,6 +68,12 @@ final class RideManager: ObservableObject {
     private let history: RideHistory
     private let sos: SOSManager
     private let crash = CrashDetector()
+    /// When a big impact was detected; the SOS fires only if the rider stops
+    /// (< 1 km/h) within `crashConfirmWindow` of it — a hard bump you ride
+    /// through is not a crash.
+    private var crashCandidateAt: Date?
+    private let crashConfirmWindow: TimeInterval = 5
+    private var crashSettingSub: AnyCancellable?
 
     // Recorded GPS track + body metrics for the workout / calories.
     private var route: [CLLocation] = []
@@ -140,9 +146,25 @@ final class RideManager: ObservableObject {
         self.watch = watch
         self.history = history
         self.sos = sos
+        // An impact alone is just a candidate — road bumps spike the
+        // accelerometer too. The SOS only fires if the rider actually comes to
+        // a stop within a few seconds of the impact (see tick()).
         self.crash.onCrash = { [weak self] in
-            guard let self, self.status != .idle, !self.demoActive else { return }
-            self.sos.trigger()
+            guard let self, self.status != .idle, !self.demoActive,
+                  self.settings.crashDetectionEnabled else { return }
+            self.crashCandidateAt = Date()
+            AppLog.shared.log("Crash candidate (impact) — awaiting stop confirmation")
+        }
+        // Honour the setting live: switching crash detection off mid-ride must
+        // stop it firing (and switching it on mid-ride must arm it).
+        self.crashSettingSub = settings.$crashDetectionEnabled.sink { [weak self] enabled in
+            guard let self, self.status != .idle else { return }
+            if enabled {
+                self.crash.start()
+            } else {
+                self.crash.stop()
+                self.crashCandidateAt = nil
+            }
         }
         self.location.onLocation = { [weak self] loc in self?.accumulate(loc) }
         self.ble.onDemoFinished = { [weak self] in self?.demoFramesFinished() }
@@ -201,6 +223,7 @@ final class RideManager: ObservableObject {
         startTicker()
         startAltimeter()
         if settings.crashDetectionEnabled { crash.start() }
+        crashCandidateAt = nil
         applyScreenLock()
         try? FileManager.default.removeItem(at: routeURL)
         persistSnapshot()
@@ -273,6 +296,7 @@ final class RideManager: ObservableObject {
         stopTicker()
         stopAltimeter()
         crash.stop()
+        crashCandidateAt = nil
         location.setMode(.idle)        // back to low-power once the ride ends
         // Reset all live metrics to a clean slate (the ride is saved to Health
         // below), THEN mirror the zeros so the Watch clears too — otherwise it
@@ -476,6 +500,19 @@ final class RideManager: ObservableObject {
         // Prefer the Apple Watch (already streaming during a ride); fall back to a
         // paired BLE heart-rate strap so HR/calories work without a Watch.
         currentHeartRate = watch.freshHeartRate() ?? ble.freshSensorHeartRate()
+
+        // Crash confirmation: a big impact only becomes an SOS if the rider
+        // comes to a stop shortly after it. Still moving = it was just a bump.
+        if let impactAt = crashCandidateAt {
+            if now.timeIntervalSince(impactAt) > crashConfirmWindow {
+                crashCandidateAt = nil
+                AppLog.shared.log("Crash candidate dismissed — still moving")
+            } else if currentSpeedMps < 1.0 / 3.6, settings.crashDetectionEnabled {
+                crashCandidateAt = nil
+                AppLog.shared.log("Crash CONFIRMED (impact + stop) — SOS countdown")
+                sos.trigger()
+            }
+        }
         if let hr = currentHeartRate, hr > 0 {
             hrSum += Double(hr); hrCount += 1; hrMax = max(hrMax, hr)
         }
