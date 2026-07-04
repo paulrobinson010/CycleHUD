@@ -35,8 +35,9 @@ enum SegmentComparer {
     // Tunables
     private static let matchRadius = 30.0         // m — same-road tolerance
     private static let headingTolerance = 60.0    // deg — same direction
-    private static let maxIndexJump = 8           // prev points skippable in a run
-    private static let gapTolerance = 2           // unmatched current points bridged
+    private static let maxIndexJump = 10          // prev segments skippable in a run
+    private static let gapTolerance = 3           // unmatched current points bridged
+    private static let runBridgeMeters = 400.0    // same-ride runs this close merge
     private static let minRunMeters = 500.0       // ignore shorter overlaps
     private static let minRegionMeters = 1000.0   // macro display floor
     private static let boundarySlack = 150.0      // coverage slack at region edges
@@ -124,19 +125,30 @@ enum SegmentComparer {
 
     private static func matchRuns(current: Path, previous: Path,
                                   prevDate: Date) -> [Run] {
-        // Spatial hash of the previous ride's points, cell ≈ match radius.
+        // Spatial hash of the previous ride's SEGMENTS (not points): both routes
+        // are downsampled to ~250 points ~120 m apart, so two identical
+        // centre-lines have their sample points offset by up to ~60 m in phase.
+        // Matching against the polyline segments makes the radius mean what it
+        // says: distance from the road actually ridden.
         let midLat = previous.coords[previous.coords.count / 2].latitude
-        let latCell = matchRadius / 111_320.0
-        let lonCell = matchRadius / max(1.0, 111_320.0 * cos(midLat * .pi / 180))
-        var grid: [Int64: [Int]] = [:]
-        func key(_ c: CLLocationCoordinate2D) -> (Int64, Int64) {
-            (Int64((c.latitude / latCell).rounded(.down)),
-             Int64((c.longitude / lonCell).rounded(.down)))
+        let cell = matchRadius * 2
+        let latCell = cell / 111_320.0
+        let lonCell = cell / max(1.0, 111_320.0 * cos(midLat * .pi / 180))
+        func key(_ lat: Double, _ lon: Double) -> Int64 {
+            Int64((lat / latCell).rounded(.down)) &* 1_000_003
+                &+ Int64((lon / lonCell).rounded(.down))
         }
-        func packed(_ a: Int64, _ b: Int64) -> Int64 { a &* 1_000_003 &+ b }
-        for (j, c) in previous.coords.enumerated() {
-            let (a, b) = key(c)
-            grid[packed(a, b), default: []].append(j)
+        var grid: [Int64: [Int]] = [:]
+        for j in 0..<previous.coords.count - 1 {
+            // Register the segment in every cell it passes through (~50 m steps).
+            let a = previous.coords[j], b = previous.coords[j + 1]
+            let steps = max(1, Int(meters(a, b) / 50))
+            for s in 0...steps {
+                let f = Double(s) / Double(steps)
+                let k = key(a.latitude + (b.latitude - a.latitude) * f,
+                            a.longitude + (b.longitude - a.longitude) * f)
+                if grid[k]?.last != j { grid[k, default: []].append(j) }
+            }
         }
 
         var runs: [Run] = []
@@ -146,7 +158,7 @@ enum SegmentComparer {
         var gap = 0
 
         func closeRun() {
-            if let a = runD.first, let b = runD.last, b - a >= minRunMeters {
+            if let a = runD.first, let b = runD.last, b - a >= 1 {
                 runs.append(Run(curD: runD, prevT: runT, prevDate: prevDate))
             }
             runD = []; runT = []
@@ -155,15 +167,19 @@ enum SegmentComparer {
 
         for i in 0..<current.coords.count {
             let c = current.coords[i]
-            let (a, b) = key(c)
+            let k0 = Int64((c.latitude / latCell).rounded(.down))
+            let k1 = Int64((c.longitude / lonCell).rounded(.down))
             var bestJ = -1
+            var bestU = 0.0
             var bestDist = matchRadius
+            var seen = Set<Int>()
             for da in -1...1 {
                 for db in -1...1 {
-                    for j in grid[packed(a + Int64(da), b + Int64(db))] ?? [] {
+                    for j in grid[(k0 + Int64(da)) &* 1_000_003 &+ (k1 + Int64(db))] ?? [] {
+                        guard seen.insert(j).inserted else { continue }
                         // Monotonic progression along the previous ride.
                         if lastJ >= 0, j < lastJ - 1 || j > lastJ + maxIndexJump { continue }
-                        let d = meters(c, previous.coords[j])
+                        let (d, u) = pointToSegment(c, previous.coords[j], previous.coords[j + 1])
                         guard d <= bestDist else { continue }
                         // Same direction of travel.
                         var diff = abs(current.heading[i] - previous.heading[j])
@@ -171,21 +187,61 @@ enum SegmentComparer {
                         guard diff <= headingTolerance else { continue }
                         bestDist = d
                         bestJ = j
+                        bestU = u
                     }
                 }
             }
             if bestJ >= 0 {
-                runD.append(current.dist[i])
-                runT.append(previous.time[bestJ])
-                lastJ = max(lastJ, bestJ)
-                gap = 0
+                // The previous clock at the projected position on the segment.
+                let t = previous.time[bestJ]
+                    + bestU * (previous.time[bestJ + 1] - previous.time[bestJ])
+                if runT.last.map({ t >= $0 }) ?? true {
+                    runD.append(current.dist[i])
+                    runT.append(t)
+                    lastJ = max(lastJ, bestJ)
+                    gap = 0
+                }
             } else if !runD.isEmpty {
                 gap += 1
                 if gap > gapTolerance { closeRun() }
             }
         }
         closeRun()
-        return runs
+
+        // Bridge nearby runs from this same ride (a short GPS-noise break must
+        // not fragment the coverage and cost a whole region), then apply the
+        // minimum-overlap filter to the merged result.
+        var bridged: [Run] = []
+        for r in runs {
+            if let last = bridged.last,
+               r.start - last.end < runBridgeMeters,
+               let lt = last.prevT.last, let ft = r.prevT.first, ft >= lt {
+                bridged[bridged.count - 1] = Run(curD: last.curD + r.curD,
+                                                 prevT: last.prevT + r.prevT,
+                                                 prevDate: prevDate)
+            } else {
+                bridged.append(r)
+            }
+        }
+        return bridged.filter { $0.end - $0.start >= minRunMeters }
+    }
+
+    /// Distance from point `p` to segment `a`→`b` (flat metres), plus the
+    /// projection parameter along the segment (0…1).
+    private static func pointToSegment(_ p: CLLocationCoordinate2D,
+                                       _ a: CLLocationCoordinate2D,
+                                       _ b: CLLocationCoordinate2D) -> (Double, Double) {
+        let cosLat = cos(a.latitude * .pi / 180)
+        let bx = (b.longitude - a.longitude) * 111_320 * cosLat
+        let by = (b.latitude - a.latitude) * 111_320
+        let px = (p.longitude - a.longitude) * 111_320 * cosLat
+        let py = (p.latitude - a.latitude) * 111_320
+        let len2 = bx * bx + by * by
+        var u = len2 > 0 ? (px * bx + py * by) / len2 : 0
+        u = min(1, max(0, u))
+        let dx = px - u * bx
+        let dy = py - u * by
+        return ((dx * dx + dy * dy).squareRoot(), u)
     }
 
     // MARK: - Macro regions
@@ -208,9 +264,12 @@ enum SegmentComparer {
                 runs[$0].start <= a + boundarySlack && runs[$0].end >= b - boundarySlack
             })
             guard !covering.isEmpty else { continue }
-            // Same covering set as the neighbour → one macro region, not two
+            // Same covering RIDES as the neighbour → one macro region, not two
             // (this is what stops sub-stretch fragments splitting the view).
-            if var last = regionList.last, last.covering == covering, last.b >= a - boundaryMerge {
+            let rides = Set(covering.map { runs[$0].prevDate })
+            let lastRides = regionList.last.map { Set($0.covering.map { runs[$0].prevDate }) }
+            if var last = regionList.last, lastRides == rides, last.b >= a - boundaryMerge {
+                last.covering.formUnion(covering)
                 last.b = b
                 regionList[regionList.count - 1] = last
             } else {
