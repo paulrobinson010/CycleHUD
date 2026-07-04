@@ -8,6 +8,8 @@ struct WeatherConditions: Equatable {
     let temperatureC: Double
     /// Wind speed in metres per second.
     let windSpeedMps: Double
+    /// Peak gust in metres per second, when reported.
+    let gustMps: Double?
     /// Direction the wind is blowing *from*, in degrees clockwise from north
     /// (WeatherKit's convention).
     let windFromDegrees: Double

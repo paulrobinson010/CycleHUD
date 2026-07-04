@@ -89,13 +89,29 @@ struct WeatherTile: View {
     }
 }
 
+/// Apple-required attribution for WeatherKit data: the Apple Weather mark
+/// linking to the data-sources legal page. Shown wherever weather data appears
+/// (rain and wind details, and next to the Settings toggle).
+struct AppleWeatherAttribution: View {
+    private let legalURL = URL(string: "https://weatherkit.apple.com/legal-attribution.html")!
+
+    var body: some View {
+        Link(destination: legalURL) {
+            HStack(spacing: 4) {
+                Image(systemName: "apple.logo").font(.system(size: 12, weight: .semibold))
+                Text("Weather").font(.system(size: 13, weight: .semibold))
+                Image(systemName: "chevron.right").font(.system(size: 10, weight: .bold))
+            }
+            .foregroundStyle(Theme.textSecondary)
+        }
+    }
+}
+
 /// Tap-through detail: the summary in words plus the mandatory Apple Weather
 /// attribution and a link to the data-source legal page.
 struct WeatherDetailView: View {
     let nowcast: RainNowcast
     @Environment(\.dismiss) private var dismiss
-
-    private let legalURL = URL(string: "https://weatherkit.apple.com/legal-attribution.html")!
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -117,15 +133,7 @@ struct WeatherDetailView: View {
                     .font(.footnote).foregroundStyle(Theme.textSecondary)
             }
             Spacer(minLength: 0)
-            // Apple-required attribution + legal link.
-            Link(destination: legalURL) {
-                HStack(spacing: 4) {
-                    Image(systemName: "apple.logo").font(.system(size: 12, weight: .semibold))
-                    Text("Weather").font(.system(size: 13, weight: .semibold))
-                    Image(systemName: "chevron.right").font(.system(size: 10, weight: .bold))
-                }
-                .foregroundStyle(Theme.textSecondary)
-            }
+            AppleWeatherAttribution()
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)

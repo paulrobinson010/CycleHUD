@@ -113,6 +113,7 @@ struct SettingsView: View {
 
                 Section {
                     Toggle("Rain nowcast", isOn: $settings.weatherEnabled)
+                    AppleWeatherAttribution()
                 } header: {
                     Text("Weather")
                 } footer: {

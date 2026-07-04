@@ -27,6 +27,7 @@ struct RideView: View {
     @State private var editingTiles = false
     @State private var draggedTile: MetricKind?
     @State private var showDeletePageConfirm = false
+    @State private var showWindDetail = false
 
     @Environment(\.scenePhase) private var scenePhase
     @State private var showPermissionAlert = false
@@ -73,6 +74,16 @@ struct RideView: View {
             SOSCountdownView(sos: sos).environment(\.locale, settings.appLocale)
         }
         .sheet(isPresented: $sos.presentComposer) { sosComposer }
+        .sheet(isPresented: $showWindDetail) {
+            if let c = weather.conditions {
+                WindDetailView(conditions: c,
+                               heading: location.courseDegrees ?? location.headingDegrees,
+                               speedUnit: settings.speedUnit)
+                    .presentationDetents([.height(300)])
+                    .preferredColorScheme(appColorScheme)
+                    .environment(\.locale, settings.appLocale)
+            }
+        }
         .fullScreenCover(isPresented: Binding(
             get: { !settings.hasChosenUnits },
             set: { _ in }
@@ -810,11 +821,16 @@ struct RideView: View {
             if head > 1 { color = Theme.threatMedium }        // fighting it
             else if head < -1 { color = Theme.good }          // free speed
         }
-        return DirectionTile(title: "Wind",
-                             value: c.map { Fmt.int(settings.speedUnit.value(fromMps: $0.windSpeedMps)) } ?? "—",
-                             unit: c != nil ? tileUnit(settings.speedUnit.label) : "",
-                             valueSize: vs, height: height,
-                             arrowDegrees: arrow, arrowColor: color)
+        return Button {
+            if weather.conditions != nil { showWindDetail = true }
+        } label: {
+            DirectionTile(title: "Wind",
+                          value: c.map { Fmt.int(settings.speedUnit.value(fromMps: $0.windSpeedMps)) } ?? "—",
+                          unit: c != nil ? tileUnit(settings.speedUnit.label) : "",
+                          valueSize: vs, height: height,
+                          arrowDegrees: arrow, arrowColor: color)
+        }
+        .buttonStyle(.plain)
     }
 
     /// A needle that always points north — no number, just the arrow.

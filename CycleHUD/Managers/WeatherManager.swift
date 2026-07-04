@@ -101,6 +101,7 @@ final class WeatherManager: ObservableObject {
         let conditions = WeatherConditions(
             temperatureC: cur.temperature.converted(to: .celsius).value,
             windSpeedMps: cur.wind.speed.converted(to: .metersPerSecond).value,
+            gustMps: cur.wind.gust?.converted(to: .metersPerSecond).value,
             windFromDegrees: cur.wind.direction.converted(to: .degrees).value,
             asOf: now)
         return (rain, conditions)
