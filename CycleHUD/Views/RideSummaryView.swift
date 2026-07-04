@@ -32,10 +32,10 @@ struct RideSummaryView: View {
                     header
                     statGrid
                     routeMap
-                    comparisonsSection
                     graphs
                     lapsSection
                     passesLink
+                    comparisonsSection
                 }
                 .padding()
             }
@@ -233,12 +233,28 @@ struct RideSummaryView: View {
     /// route, each against the fastest previous time over the same stretch.
     @ViewBuilder private var comparisonsSection: some View {
         if !comparisons.isEmpty {
+            let comparedMeters = comparisons.reduce(0) { $0 + $1.lengthMeters }
+            let totalDelta = comparisons.reduce(0) { $0 + $1.deltaSeconds }
             VStack(spacing: 0) {
                 HStack {
                     Text("Previous bests")
                         .font(.system(size: 14, weight: .bold, design: .rounded))
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
+                }
+                .padding(.bottom, 4)
+                HStack {
+                    Text(String(localized: "\(distText(comparedMeters)) of \(distText(summary.distanceMeters)) \(settings.distanceUnit.label) compared",
+                                bundle: Lang.bundle))
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(Theme.textSecondary)
+                    Spacer()
+                    Text(totalDelta <= 0
+                            ? String(localized: "\(lapTimeString(abs(totalDelta))) faster", bundle: Lang.bundle)
+                            : String(localized: "\(lapTimeString(totalDelta)) slower", bundle: Lang.bundle))
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(totalDelta <= 0 ? Theme.good : Theme.threatHigh)
                 }
                 .padding(.bottom, 8)
                 ForEach(comparisons) { c in
@@ -271,6 +287,10 @@ struct RideSummaryView: View {
             .padding(16)
             .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
         }
+    }
+
+    private func distText(_ meters: Double) -> String {
+        Fmt.decimal(settings.distanceUnit.value(fromMeters: meters), 1)
     }
 
     /// "2.1–8.3 km" along this ride, in the rider's units.
