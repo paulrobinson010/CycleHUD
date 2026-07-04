@@ -686,13 +686,10 @@ struct RideView: View {
                              arrowDegrees: arrow, arrowColor: color)
     }
 
-    /// Heading in degrees with a needle that always points north.
+    /// A needle that always points north — no number, just the arrow.
     private func compassTile(height: CGFloat, valueSize vs: CGFloat) -> some View {
         let heading = location.courseDegrees ?? location.headingDegrees
-        return DirectionTile(title: "Compass",
-                             value: heading.map { Fmt.int($0) } ?? "—",
-                             unit: heading != nil ? tileUnit("°") : "",
-                             valueSize: vs, height: height,
+        return DirectionTile(title: "Compass", valueSize: vs, height: height,
                              arrowDegrees: heading.map { -$0 }, arrowColor: Theme.accent)
     }
 

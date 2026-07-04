@@ -6,51 +6,76 @@ import SwiftUI
 /// chrome so it sits uniformly in the grid.
 struct DirectionTile: View {
     let title: LocalizedStringKey
-    let value: String
-    let unit: String
+    /// Empty = arrow-only (the compass): the needle becomes the tile's content.
+    var value: String = ""
+    var unit: String = ""
     var valueSize: CGFloat = 28
     var height: CGFloat = 84
-    /// Degrees to rotate the arrow from pointing straight up; nil hides it.
+    /// Degrees to rotate the arrow from pointing straight up; nil = no reading.
     var arrowDegrees: Double?
     var arrowColor: Color = Theme.accent
 
     var body: some View {
-        HStack(spacing: 8) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .textCase(.uppercase)
-                    .font(Theme.labelFont)
-                    .foregroundStyle(Theme.textSecondary)
-                HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text(value)
-                        .font(Theme.valueFont(valueSize))
-                        .foregroundStyle(Theme.valueStyle)
-                        .shadow(color: Theme.glow, radius: 6)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.5)
-                    if !unit.isEmpty {
-                        Text(unit)
-                            .font(.system(size: max(11, valueSize * 0.3),
-                                          weight: .semibold, design: .rounded))
-                            .foregroundStyle(Theme.unitColor)
+        VStack(alignment: .leading, spacing: 2) {
+            // The title spans the whole tile (never squeezed by the arrow) and
+            // stays on one line — longer translations scale down, not wrap.
+            Text(title)
+                .textCase(.uppercase)
+                .font(Theme.labelFont)
+                .foregroundStyle(Theme.textSecondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if value.isEmpty {
+                // Compass: just the needle, centred.
+                Group {
+                    if arrowDegrees != nil {
+                        arrow(size: valueSize)
+                    } else {
+                        Text(verbatim: "—")
+                            .font(Theme.valueFont(valueSize))
+                            .foregroundStyle(Theme.valueStyle)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            } else {
+                HStack(spacing: 6) {
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                        Text(value)
+                            .font(Theme.valueFont(valueSize))
+                            .foregroundStyle(Theme.valueStyle)
+                            .shadow(color: Theme.glow, radius: 6)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                        if !unit.isEmpty {
+                            Text(unit)
+                                .font(.system(size: max(11, valueSize * 0.3),
+                                              weight: .semibold, design: .rounded))
+                                .foregroundStyle(Theme.unitColor)
+                        }
+                    }
+                    Spacer(minLength: 4)
+                    if arrowDegrees != nil {
+                        arrow(size: valueSize * 0.66)
                     }
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            if let deg = arrowDegrees {
-                Image(systemName: "location.north.fill")
-                    .font(.system(size: valueSize * 0.66, weight: .bold))
-                    .foregroundStyle(arrowColor)
-                    .rotationEffect(.degrees(deg))
-                    .shadow(color: Theme.glow, radius: 6)
-                    .animation(.easeInOut(duration: 0.4), value: deg)
-            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: height)
         .padding(.horizontal, 14)
         .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
         .overlay(RoundedRectangle(cornerRadius: 16)
             .strokeBorder(Theme.tileStroke, lineWidth: Theme.tileStrokeWidth))
+    }
+
+    private func arrow(size: CGFloat) -> some View {
+        Image(systemName: "location.north.fill")
+            .font(.system(size: size, weight: .bold))
+            .foregroundStyle(arrowColor)
+            .rotationEffect(.degrees(arrowDegrees ?? 0))
+            .shadow(color: Theme.glow, radius: 6)
+            .animation(.easeInOut(duration: 0.4), value: arrowDegrees)
     }
 }
 
@@ -71,6 +96,8 @@ struct MetricTile: View {
                 .textCase(.uppercase)
                 .font(Theme.labelFont)
                 .foregroundStyle(alert ? Color.white.opacity(0.85) : Theme.textSecondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text(value)
                     .font(Theme.valueFont(valueSize))
