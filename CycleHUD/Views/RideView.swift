@@ -65,6 +65,7 @@ struct RideView: View {
         }
         .sheet(item: $ride.finishedSummary) { summary in
             RideSummaryView(summary: summary).environmentObject(settings)
+                .environmentObject(history)
                 .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
         }
         .fullScreenCover(isPresented: Binding(

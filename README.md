@@ -88,8 +88,12 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   route and **speed, heart-rate and elevation graphs** for the whole ride.
   **Scrub any graph or the map** — tap or drag and the same moment is marked
   everywhere: a line and value dot on every graph, a marker on the route, and a
-  readout of time, speed, heart rate and elevation at that point. Past rides are
-  listed under **Settings → Previous rides** and reopen the same summary.
+  readout of time, speed, heart rate and elevation at that point. Rides that
+  cover roads you've ridden before get a **Previous bests** card: the route is
+  split where past rides joined or left it (never on sub-kilometre fragments),
+  and each stretch is compared against your fastest previous time over that
+  same stretch — green when this ride set the best. Past rides are listed
+  under **Settings → Previous rides** and reopen the same summary.
 - **Vehicles on the map** — each vehicle the radar flags during a ride is dropped
   as a pin on that ride's route map, with a count, so you can see where traffic
   came up behind you. Open the full-screen map and **tap a vehicle** to pull up

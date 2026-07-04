@@ -7,7 +7,10 @@ import Charts
 struct RideSummaryView: View {
     let summary: RideSummary
     @EnvironmentObject var settings: AppSettings
+    @EnvironmentObject var history: RideHistory
     @Environment(\.dismiss) private var dismiss
+    /// Stretches of this ride ridden before, compared against the previous best.
+    @State private var comparisons: [SegmentComparison] = []
     @State private var showRouteMap = false
     @State private var exportFile: ExportFile?
     @State private var showExportError = false
@@ -29,6 +32,7 @@ struct RideSummaryView: View {
                     header
                     statGrid
                     routeMap
+                    comparisonsSection
                     graphs
                     lapsSection
                     passesLink
@@ -53,6 +57,15 @@ struct RideSummaryView: View {
             }
             .sheet(item: $exportFile) { file in
                 ShareSheet(items: [file.url])
+            }
+            .task(id: summary.id) {
+                // Match this ride's route against previous rides off the main
+                // thread; the card only appears when something matched.
+                let current = summary
+                let rides = history.rides
+                comparisons = await Task.detached(priority: .utility) {
+                    SegmentComparer.compare(current, against: rides)
+                }.value
             }
             .alert("Couldn’t export this ride", isPresented: $showExportError) {
                 Button("OK", role: .cancel) {}
@@ -214,6 +227,67 @@ struct RideSummaryView: View {
         return LazyVGrid(columns: cols, spacing: 12) {
             ForEach(stats, id: \.0) { stat($0.0, $0.1, $0.2) }
         }
+    }
+
+    /// Stretches ridden before, split where past rides joined or left this
+    /// route, each against the fastest previous time over the same stretch.
+    @ViewBuilder private var comparisonsSection: some View {
+        if !comparisons.isEmpty {
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Previous bests")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(Theme.textPrimary)
+                    Spacer()
+                }
+                .padding(.bottom, 8)
+                ForEach(comparisons) { c in
+                    HStack(spacing: 10) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(verbatim: rangeText(c))
+                                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                .foregroundStyle(Theme.textPrimary)
+                            Text(String(localized: "Best: \(bestText(c))", bundle: Lang.bundle))
+                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .foregroundStyle(Theme.textSecondary)
+                        }
+                        Spacer()
+                        Text(verbatim: lapTimeString(c.currentSeconds))
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .monospacedDigit()
+                            .foregroundStyle(Theme.textPrimary)
+                        Text(verbatim: deltaText(c))
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .monospacedDigit()
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 3)
+                            .background(Capsule().fill(c.isFastest ? Theme.good : Theme.threatHigh))
+                    }
+                    .padding(.vertical, 7)
+                    if c.id != comparisons.last?.id { Divider() }
+                }
+            }
+            .padding(16)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
+        }
+    }
+
+    /// "2.1–8.3 km" along this ride, in the rider's units.
+    private func rangeText(_ c: SegmentComparison) -> String {
+        let a = Fmt.decimal(settings.distanceUnit.value(fromMeters: c.startMeters), 1)
+        let b = Fmt.decimal(settings.distanceUnit.value(fromMeters: c.endMeters), 1)
+        return "\(a)–\(b) \(settings.distanceUnit.label)"
+    }
+
+    private func bestText(_ c: SegmentComparison) -> String {
+        "\(lapTimeString(c.bestSeconds)) · \(c.bestDate.formatted(date: .abbreviated, time: .omitted))"
+    }
+
+    /// Signed difference to the previous best, e.g. "−0:24" (faster, green).
+    private func deltaText(_ c: SegmentComparison) -> String {
+        let sign = c.isFastest ? "−" : "+"
+        return sign + lapTimeString(abs(c.deltaSeconds))
     }
 
     /// Manually-marked lap splits, shown only when the rider logged any.

@@ -25,6 +25,7 @@ struct RideHistoryView: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $selected) { ride in
             RideSummaryView(summary: ride).environmentObject(settings)
+                .environmentObject(history)
         }
     }
 
