@@ -43,7 +43,9 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   rearrange** — including dragging tiles **above the radar** in portrait.
   (Settings → Ride screen tiles offers the same as a list.) Options include
   speed, average/max speed, cadence, distance, time, ascent, gradient, lap time,
-  heart rate, calories, and the weather tiles (rain, temperature, wind). A
+  heart rate, calories, a compass, and the weather tiles (rain, temperature,
+  wind — the wind tile shows the speed with a direction arrow relative to your
+  travel, tinted for headwind or tailwind). A
   **Show units on tiles** toggle drops the unit labels for bigger numerals, and
   **Reset to defaults** (bottom of Settings) restores the original three rows.
 - **Manual laps** — tap the lap button while riding to split the ride; each lap's

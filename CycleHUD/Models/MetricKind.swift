@@ -6,6 +6,7 @@ import SwiftUI
 enum MetricKind: String, CaseIterable, Identifiable, Codable {
     case speed, avgSpeed, maxSpeed, cadence, distance, time, ascent
     case heartRate, calories, gradient, lapTime, temperature, wind, rain
+    case compass
 
     var id: String { rawValue }
 
@@ -34,6 +35,7 @@ enum MetricKind: String, CaseIterable, Identifiable, Codable {
         case .temperature: return "Temp"
         case .wind: return "Wind"
         case .rain: return "Rain"
+        case .compass: return "Compass"
         }
     }
 
@@ -53,6 +55,7 @@ enum MetricKind: String, CaseIterable, Identifiable, Codable {
         case .temperature: return "thermometer.medium"
         case .wind: return "wind"
         case .rain: return "cloud.rain"
+        case .compass: return "safari"
         }
     }
 

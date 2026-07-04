@@ -639,6 +639,8 @@ struct RideView: View {
                        valueSize: vs, height: height)
         case .wind:
             windTile(height: height, valueSize: vs)
+        case .compass:
+            compassTile(height: height, valueSize: vs)
         case .rain:
             WeatherTile(nowcast: weather.nowcast, status: weather.status, height: height,
                         showUnit: settings.showTileUnits)
@@ -660,24 +662,38 @@ struct RideView: View {
         return Fmt.int(t)
     }
 
-    /// Headwind / tailwind along the rider's heading (GPS course while moving, or
-    /// the compass heading when stationary), or absolute wind speed if no heading
-    /// is available at all.
+    /// Wind speed with a direction arrow: the arrow shows where the wind is
+    /// blowing relative to your direction of travel (GPS course while moving,
+    /// compass heading when stopped) — pointing down = headwind, up = tailwind —
+    /// and is tinted by the head/tail component.
     private func windTile(height: CGFloat, valueSize vs: CGFloat) -> some View {
-        let speedLabel = tileUnit(settings.speedUnit.label)
         let heading = location.courseDegrees ?? location.headingDegrees
-        if let c = weather.conditions, let heading {
+        let c = weather.conditions
+        var arrow: Double?
+        var color = Theme.accent
+        if let c, let heading {
+            // windFromDegrees is where the wind comes FROM; the arrow shows
+            // where it's blowing TOWARD, in the rider's frame (up = ahead).
+            arrow = (c.windFromDegrees + 180 - heading).truncatingRemainder(dividingBy: 360)
             let head = c.headwindMps(course: heading)
-            let value = Fmt.int(settings.speedUnit.value(fromMps: abs(head)))
-            return MetricTile(title: head >= 0 ? "Headwind" : "Tailwind",
-                              value: value, unit: speedLabel, valueSize: vs, height: height)
-        } else if let c = weather.conditions {
-            return MetricTile(title: "Wind",
-                              value: Fmt.int(settings.speedUnit.value(fromMps: c.windSpeedMps)),
-                              unit: speedLabel, valueSize: vs, height: height)
-        } else {
-            return MetricTile(title: "Wind", value: "—", unit: "", valueSize: vs, height: height)
+            if head > 1 { color = Theme.threatMedium }        // fighting it
+            else if head < -1 { color = Theme.good }          // free speed
         }
+        return DirectionTile(title: "Wind",
+                             value: c.map { Fmt.int(settings.speedUnit.value(fromMps: $0.windSpeedMps)) } ?? "—",
+                             unit: c != nil ? tileUnit(settings.speedUnit.label) : "",
+                             valueSize: vs, height: height,
+                             arrowDegrees: arrow, arrowColor: color)
+    }
+
+    /// Heading in degrees with a needle that always points north.
+    private func compassTile(height: CGFloat, valueSize vs: CGFloat) -> some View {
+        let heading = location.courseDegrees ?? location.headingDegrees
+        return DirectionTile(title: "Compass",
+                             value: heading.map { Fmt.int($0) } ?? "—",
+                             unit: heading != nil ? tileUnit("°") : "",
+                             valueSize: vs, height: height,
+                             arrowDegrees: heading.map { -$0 }, arrowColor: Theme.accent)
     }
 
     // MARK: - Controls
