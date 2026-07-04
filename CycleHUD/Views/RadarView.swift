@@ -181,12 +181,13 @@ struct RadarView: View {
         }
     }
 
+    /// The rider marker: the same bare arrow as the wind/compass tiles (no
+    /// enclosing ring), with the neon glow in Cyberpunk.
     private func rider(w: CGFloat) -> some View {
         Image(systemName: "location.north.fill")
-            .font(.system(size: 22, weight: .bold))
+            .font(.system(size: 32, weight: .bold))
             .foregroundStyle(riderColor)
-            .frame(width: 46, height: 46)
-            .overlay(Circle().stroke(riderColor, lineWidth: 3))
+            .shadow(color: Theme.glow, radius: 6)
             .position(x: w / 2, y: 38)
     }
 
