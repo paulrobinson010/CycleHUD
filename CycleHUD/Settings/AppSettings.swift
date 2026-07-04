@@ -25,9 +25,11 @@ final class AppSettings: ObservableObject {
         static let digitStyle = "digitStyle"
         static let weatherEnabled = "weatherEnabled"
         static let appLanguage = "appLanguage"
-        static let metricTiles = "metricTilesV2"   // V2: default back to the original tile set
+        static let metricTiles = "metricTilesV2"   // legacy single-page tiles, migrated
+        static let topTileCountLegacy = "topTileCount"
+        static let ridePages = "ridePagesV1"
+        static let currentRidePage = "currentRidePage"
         static let showTileUnits = "showTileUnits"
-        static let topTileCount = "topTileCount"
         static let radarOnRight = "radarOnRight"
         static let crashDetectionEnabled = "crashDetectionEnabled"
         static let emergencyContactName = "emergencyContactName"
@@ -96,8 +98,31 @@ final class AppSettings: ObservableObject {
     @Published var appLanguage: String {
         didSet { defaults.set(appLanguage, forKey: Keys.appLanguage); applyLanguage() }
     }
-    /// The ride-screen metric tiles to show, in order (MetricKind raw values).
-    @Published var metricTiles: [String] { didSet { defaults.set(metricTiles, forKey: Keys.metricTiles) } }
+    /// The swipeable ride-screen pages: each has its own tiles, above-radar
+    /// split, and whether the radar lane is shown. Never empty.
+    @Published var pages: [RidePage] {
+        didSet {
+            if pages.isEmpty { pages = [.standard] }
+            if let data = try? JSONEncoder().encode(pages) {
+                defaults.set(data, forKey: Keys.ridePages)
+            }
+        }
+    }
+    /// The page the rider last viewed — the app lands back on it.
+    @Published var currentPageIndex: Int {
+        didSet { defaults.set(currentPageIndex, forKey: Keys.currentRidePage) }
+    }
+
+    /// Clamped page index, safe across deletions.
+    var pageIndexSafe: Int { min(max(0, currentPageIndex), max(0, pages.count - 1)) }
+    var currentPage: RidePage { pages[pageIndexSafe] }
+
+    /// The CURRENT page's tiles — a proxy so the tile editors (drag delegates,
+    /// the Settings list) keep working unchanged, per page.
+    var metricTiles: [String] {
+        get { pages[pageIndexSafe].tiles }
+        set { pages[pageIndexSafe].tiles = newValue }
+    }
 
     /// The selected metrics as `MetricKind`s, dropping any unknown raw values.
     var metricKinds: [MetricKind] { metricTiles.compactMap(MetricKind.init(rawValue:)) }
@@ -105,9 +130,12 @@ final class AppSettings: ObservableObject {
     /// Show the unit label (km/h, bpm, …) next to each tile's value. Off frees
     /// the space for bigger numbers — for riders who know their units.
     @Published var showTileUnits: Bool { didSet { defaults.set(showTileUnits, forKey: Keys.showTileUnits) } }
-    /// How many leading entries of `metricTiles` sit ABOVE the radar in portrait
-    /// (dragged there in the ride screen's edit mode). 0 = everything below.
-    @Published var topTileCount: Int { didSet { defaults.set(topTileCount, forKey: Keys.topTileCount) } }
+    /// How many leading entries of the CURRENT page's tiles sit ABOVE the radar
+    /// in portrait (dragged there in the ride screen's edit mode).
+    var topTileCount: Int {
+        get { pages[pageIndexSafe].topTileCount }
+        set { pages[pageIndexSafe].topTileCount = newValue }
+    }
     /// Landscape: put the radar on the right (tiles/controls on the left).
     @Published var radarOnRight: Bool { didSet { defaults.set(radarOnRight, forKey: Keys.radarOnRight) } }
 
@@ -164,9 +192,8 @@ final class AppSettings: ObservableObject {
             Keys.saveWorkouts: true,
             Keys.weatherEnabled: true,
             Keys.appLanguage: "",
-            Keys.metricTiles: MetricKind.defaultOrder.map(\.rawValue),
             Keys.showTileUnits: true,
-            Keys.topTileCount: 0,
+            Keys.currentRidePage: 0,
             Keys.radarOnRight: false,
             Keys.crashDetectionEnabled: false,
             Keys.emergencyContactName: "",
@@ -199,12 +226,23 @@ final class AppSettings: ObservableObject {
         weatherEnabled = defaults.bool(forKey: Keys.weatherEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
         // (appearance applied below once all stored properties are initialised)
-        let storedTiles = defaults.stringArray(forKey: Keys.metricTiles) ?? []
-        // Drop any unknown raw values; fall back to the default layout if empty.
-        let validTiles = storedTiles.filter { MetricKind(rawValue: $0) != nil }
-        metricTiles = validTiles.isEmpty ? MetricKind.defaultOrder.map(\.rawValue) : validTiles
+        // Ride pages: decode, or migrate the old single-page tile settings.
+        if let data = defaults.data(forKey: Keys.ridePages),
+           let decoded = try? JSONDecoder().decode([RidePage].self, from: data),
+           !decoded.isEmpty {
+            pages = decoded
+        } else {
+            let stored = (defaults.stringArray(forKey: Keys.metricTiles) ?? [])
+                .filter { MetricKind(rawValue: $0) != nil }
+            var page = RidePage.standard
+            if !stored.isEmpty {
+                page.tiles = stored
+                page.topTileCount = defaults.integer(forKey: Keys.topTileCountLegacy)
+            }
+            pages = [page]
+        }
+        currentPageIndex = defaults.integer(forKey: Keys.currentRidePage)
         showTileUnits = defaults.bool(forKey: Keys.showTileUnits)
-        topTileCount = defaults.integer(forKey: Keys.topTileCount)
         radarOnRight = defaults.bool(forKey: Keys.radarOnRight)
         crashDetectionEnabled = defaults.bool(forKey: Keys.crashDetectionEnabled)
         emergencyContactName = defaults.string(forKey: Keys.emergencyContactName) ?? ""
@@ -226,8 +264,8 @@ final class AppSettings: ObservableObject {
     /// rider's units, language, weight, wheel size, emergency contact, paired
     /// sensors and ride history — resetting those is a different, bigger action.
     func resetToDefaults() {
-        metricTiles = MetricKind.defaultOrder.map(\.rawValue)
-        topTileCount = 0
+        pages = [.standard]
+        currentPageIndex = 0
         showTileUnits = true
         appearanceTheme = .light
         digitStyle = .standard

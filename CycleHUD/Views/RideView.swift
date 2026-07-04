@@ -26,6 +26,7 @@ struct RideView: View {
     /// and drag-to-rearrange, closed by a Done button where the controls sit.
     @State private var editingTiles = false
     @State private var draggedTile: MetricKind?
+    @State private var showDeletePageConfirm = false
 
     @Environment(\.scenePhase) private var scenePhase
     @State private var showPermissionAlert = false
@@ -38,7 +39,7 @@ struct RideView: View {
             GeometryReader { geo in
                 let landscape = settings.landscapeEnabled && geo.size.width > geo.size.height
                 Group {
-                    if landscape { landscapeLayout(geo: geo) } else { portraitLayout }
+                    if landscape { landscapeLayout(geo: geo) } else { portraitLayout(geo: geo) }
                 }
                 // Re-identify on theme change so memoized leaf views (tiles,
                 // radar lane) rebuild with the new palette immediately.
@@ -207,22 +208,75 @@ struct RideView: View {
 
     // MARK: - Layouts
 
-    /// Default stacked layout: status, radar, metrics, controls top-to-bottom.
-    /// The radar flexes; tiles keep their full height (portrait has room).
-    private var portraitLayout: some View {
+    /// Default stacked layout: status bar, then the swipeable pages (each page:
+    /// optional top strip + radar + grid, or a data-only grid), the page dots,
+    /// and the controls. While editing, paging locks to the current page so a
+    /// tile drag can never cross pages.
+    private func portraitLayout(geo: GeometryProxy) -> some View {
         VStack(spacing: 12) {
             statusBar
-            if !topMetricKinds.isEmpty || editingTiles { topStrip }
-            radarPanel.frame(maxHeight: .infinity)
-            metricsGrid(kinds: bottomMetricKinds, tileHeight: 90, includeAdd: true)
-            if editingTiles { doneEditingBar } else { controlBar }
+            if editingTiles {
+                portraitPage(settings.currentPage, geo: geo)
+            } else {
+                TabView(selection: $settings.currentPageIndex) {
+                    ForEach(Array(settings.pages.enumerated()), id: \.element.id) { idx, page in
+                        portraitPage(page, geo: geo).tag(idx)
+                    }
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+            }
+            pageDots
+            if editingTiles { editToolbar } else { controlBar }
+        }
+    }
+
+    /// One ride page: radar with tiles above/below it, or (radar hidden) a
+    /// data-only grid whose tiles stretch into the freed height.
+    @ViewBuilder private func portraitPage(_ page: RidePage, geo: GeometryProxy) -> some View {
+        if page.showsRadar {
+            VStack(spacing: 12) {
+                let top = topKinds(of: page)
+                if !top.isEmpty || editingTiles { topStrip(top) }
+                radarPanel.frame(maxHeight: .infinity)
+                metricsGrid(kinds: bottomKinds(of: page), tileHeight: 90, includeAdd: true)
+            }
+        } else {
+            let all = kinds(of: page)
+            let slots = all.count + (editingTiles && !availableTileKinds.isEmpty ? 1 : 0)
+            let rows = max(1, Int(ceil(Double(max(1, slots)) / 3.0)))
+            let available = geo.size.height - 210   // status, dots, controls, padding
+            let fitted = (available - CGFloat(rows - 1) * 8) / CGFloat(rows)
+            let tileHeight = max(90, min(150, fitted))
+            VStack(spacing: 12) {
+                metricsGrid(kinds: all, tileHeight: tileHeight, includeAdd: true)
+                Spacer(minLength: 0)
+            }
+        }
+    }
+
+    /// Page indicator dots, just above the controls. Tap to jump.
+    @ViewBuilder private var pageDots: some View {
+        if settings.pages.count > 1 {
+            HStack(spacing: 8) {
+                ForEach(settings.pages.indices, id: \.self) { i in
+                    Circle()
+                        .fill(i == settings.pageIndexSafe ? Theme.accent
+                                                          : Theme.textSecondary.opacity(0.35))
+                        .frame(width: 7, height: 7)
+                        .contentShape(Circle().inset(by: -6))
+                        .onTapGesture {
+                            guard !editingTiles else { return }
+                            withAnimation { settings.currentPageIndex = i }
+                        }
+                }
+            }
         }
     }
 
     /// Tiles the rider has dragged ABOVE the radar (portrait only). While
     /// editing with none up there yet, a dashed drop zone invites the drag.
-    @ViewBuilder private var topStrip: some View {
-        if topMetricKinds.isEmpty {
+    @ViewBuilder private func topStrip(_ top: [MetricKind]) -> some View {
+        if top.isEmpty {
             RoundedRectangle(cornerRadius: 16)
                 .strokeBorder(Theme.textSecondary.opacity(0.55),
                               style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
@@ -238,7 +292,7 @@ struct RideView: View {
                 .contentShape(Rectangle())
                 .onDrop(of: [.text], delegate: zoneEndDelegate(true))
         } else {
-            metricsGrid(kinds: topMetricKinds, tileHeight: 90, includeAdd: false,
+            metricsGrid(kinds: top, tileHeight: 90, includeAdd: false,
                         zoneIsTop: true)
         }
     }
@@ -274,13 +328,29 @@ struct RideView: View {
         .frame(maxWidth: .infinity)
     }
 
-    /// Landscape: ALL chosen tiles in one column (the portrait top/bottom split
-    /// doesn't apply — the radar takes the other side).
+    /// Landscape: each page's tiles in one column (the portrait top/bottom split
+    /// doesn't apply, and the radar column is always shown — pages' radar on/off
+    /// is a portrait concept). Swipe to change page; editing locks the page.
     private func tilesColumn(tileHeight: CGFloat) -> some View {
         VStack(spacing: 10) {
-            metricsGrid(kinds: visibleMetricKinds, tileHeight: tileHeight, includeAdd: true)
-            Spacer(minLength: 0)
-            if editingTiles { doneEditingBar } else { controlBar }
+            if editingTiles {
+                metricsGrid(kinds: visibleMetricKinds, tileHeight: tileHeight, includeAdd: true)
+                Spacer(minLength: 0)
+            } else {
+                TabView(selection: $settings.currentPageIndex) {
+                    ForEach(Array(settings.pages.enumerated()), id: \.element.id) { idx, page in
+                        VStack(spacing: 10) {
+                            metricsGrid(kinds: kinds(of: page), tileHeight: tileHeight,
+                                        includeAdd: true)
+                            Spacer(minLength: 0)
+                        }
+                        .tag(idx)
+                    }
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+            }
+            pageDots
+            if editingTiles { editToolbar } else { controlBar }
         }
         .frame(maxWidth: .infinity)
     }
@@ -296,6 +366,12 @@ struct RideView: View {
             .overlay(alignment: .bottomTrailing) {
                 if settings.radarDebugEnabled { carMarkButton }
             }
+            // A radar-only page has no tile to long-press, so the radar itself
+            // is an entry into tile editing too.
+            .simultaneousGesture(LongPressGesture(minimumDuration: 0.45).onEnded { _ in
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                withAnimation(.easeInOut(duration: 0.2)) { editingTiles = true }
+            })
     }
 
     // MARK: - Status bar
@@ -379,29 +455,30 @@ struct RideView: View {
 
     // MARK: - Metrics
 
-    /// The rider's chosen tiles, hidden weather tiles removed, ready to lay out.
-    private var visibleMetricKinds: [MetricKind] {
-        settings.metricKinds.filter { !$0.requiresWeather || settings.weatherEnabled }
+    /// A page's visible tiles: valid kinds, weather tiles removed when off.
+    private func kinds(of page: RidePage) -> [MetricKind] {
+        page.tiles.compactMap(MetricKind.init(rawValue:))
+            .filter { !$0.requiresWeather || settings.weatherEnabled }
     }
 
-    /// Where the above-radar strip ends in the stored order (clamped safe).
-    private var tileSplitIndex: Int {
-        min(max(0, settings.topTileCount), settings.metricTiles.count)
-    }
-
-    /// Tiles above the radar in portrait (leading entries of the stored order).
-    private var topMetricKinds: [MetricKind] {
-        settings.metricTiles[..<tileSplitIndex]
+    /// A page's tiles above the radar (its leading `topTileCount` entries).
+    private func topKinds(of page: RidePage) -> [MetricKind] {
+        let split = min(max(0, page.topTileCount), page.tiles.count)
+        return page.tiles.prefix(split)
             .compactMap(MetricKind.init(rawValue:))
             .filter { !$0.requiresWeather || settings.weatherEnabled }
     }
 
-    /// Tiles below the radar in portrait (the rest of the stored order).
-    private var bottomMetricKinds: [MetricKind] {
-        settings.metricTiles[tileSplitIndex...]
+    /// A page's tiles below the radar.
+    private func bottomKinds(of page: RidePage) -> [MetricKind] {
+        let split = min(max(0, page.topTileCount), page.tiles.count)
+        return page.tiles.dropFirst(split)
             .compactMap(MetricKind.init(rawValue:))
             .filter { !$0.requiresWeather || settings.weatherEnabled }
     }
+
+    /// The CURRENT page's visible tiles (landscape fit, edit-mode guards).
+    private var visibleMetricKinds: [MetricKind] { kinds(of: settings.currentPage) }
 
     /// Metrics not currently in the grid (and usable, given the Weather setting),
     /// offered by the edit-mode add tile.
@@ -499,9 +576,11 @@ struct RideView: View {
                                                             dragged: $draggedTile,
                                                             settings: settings))
             .overlay(alignment: .topLeading) {
-                // Keep at least one tile so there's always something left to
-                // long-press (Settings → Ride screen tiles remains the backstop).
-                if visibleMetricKinds.count > 1 { removeBadge(kind) }
+                // Keep a long-press target on the page: the last tile may only
+                // be removed when the radar remains (it accepts a long-press).
+                if visibleMetricKinds.count > 1 || settings.currentPage.showsRadar {
+                    removeBadge(kind)
+                }
             }
         } else {
             metricTile(for: kind, height: height)
@@ -562,23 +641,75 @@ struct RideView: View {
         .accessibilityLabel("Add tile")
     }
 
-    /// Replaces the ride controls while editing, so a drag can't hit Stop.
-    private var doneEditingBar: some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                editingTiles = false
-                draggedTile = nil
+    /// Replaces the ride controls while editing, so a drag can't hit Stop:
+    /// page management (delete / radar on-off / add) plus Done.
+    private var editToolbar: some View {
+        HStack(spacing: 10) {
+            if settings.pages.count > 1 {
+                editTool("trash", color: Theme.threatHigh) { showDeletePageConfirm = true }
+                    .accessibilityLabel("Delete page")
+                    .confirmationDialog("Delete this page?",
+                                        isPresented: $showDeletePageConfirm,
+                                        titleVisibility: .visible) {
+                        Button("Delete page", role: .destructive) { deleteCurrentPage() }
+                        Button("Cancel", role: .cancel) {}
+                    }
             }
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "checkmark")
-                Text("Done")
+            editTool(settings.currentPage.showsRadar
+                        ? "antenna.radiowaves.left.and.right.slash"
+                        : "antenna.radiowaves.left.and.right",
+                     color: Theme.textPrimary) {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    settings.pages[settings.pageIndexSafe].showsRadar.toggle()
+                }
             }
-            .font(.system(size: 20, weight: .bold, design: .rounded))
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 58)
-            .background(RoundedRectangle(cornerRadius: 16).fill(Theme.accent))
+            .accessibilityLabel(settings.currentPage.showsRadar ? "Hide radar" : "Show radar")
+            editTool("plus.rectangle.on.rectangle", color: Theme.textPrimary) { addPage() }
+                .accessibilityLabel("Add page")
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    editingTiles = false
+                    draggedTile = nil
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark")
+                    Text("Done")
+                }
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 58)
+                .background(RoundedRectangle(cornerRadius: 16).fill(Theme.accent))
+            }
+        }
+    }
+
+    private func editTool(_ icon: String, color: Color,
+                          action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(color)
+                .frame(width: 58, height: 58)
+                .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panelRaised))
+        }
+    }
+
+    /// New page right after the current one, empty and radar-on; jump to it.
+    private func addPage() {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            let idx = settings.pageIndexSafe + 1
+            settings.pages.insert(RidePage(tiles: []), at: idx)
+            settings.currentPageIndex = idx
+        }
+    }
+
+    private func deleteCurrentPage() {
+        guard settings.pages.count > 1 else { return }
+        withAnimation(.easeInOut(duration: 0.2)) {
+            settings.pages.remove(at: settings.pageIndexSafe)
+            settings.currentPageIndex = settings.pageIndexSafe   // re-clamp
         }
     }
 

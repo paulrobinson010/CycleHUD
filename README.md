@@ -37,10 +37,14 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   GPS-altitude fallback otherwise), live road **gradient**, plus heart rate and
   calories. Heart rate comes from a paired Apple Watch **or a standard Bluetooth
   heart-rate strap** (service 0x180D).
-- **Customisable tiles** — choose which metric tiles appear on the ride screen,
-  and in what order. **Long-press any tile** to edit right on the ride screen:
-  remove with the ⊖ badge, add from the dashed **+** tile, and **drag to
-  rearrange** — including dragging tiles **above the radar** in portrait.
+- **Customisable tiles & pages** — choose which metric tiles appear on the ride
+  screen, and in what order. **Long-press any tile** (or the radar) to edit
+  right on the ride screen: remove with the ⊖ badge, add from the dashed **+**
+  tile, and **drag to rearrange** — including dragging tiles **above the
+  radar** in portrait. Create **multiple pages** (swipe between them; dots
+  above the controls show where you are): each page has its own tiles and can
+  show or hide the radar — e.g. a radar page plus a full-screen data page. The
+  app reopens on the page you last used.
   (Settings → Ride screen tiles offers the same as a list.) Options include
   speed, average/max speed, cadence, distance, time, ascent, gradient, lap time,
   heart rate, calories, a compass, and the weather tiles (rain, temperature,
