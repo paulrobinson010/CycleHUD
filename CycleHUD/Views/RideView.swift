@@ -814,11 +814,17 @@ struct RideView: View {
         let c = weather.conditions
         var arrow: Double?
         var color = Theme.accent
+        // The number is the HEADWIND/TAILWIND component along your heading (the
+        // figure that actually costs or gives you speed — same as the detail
+        // view); the arrow carries the direction. Falls back to the absolute
+        // wind speed only when no heading is known yet.
+        var valueMps = c?.windSpeedMps
         if let c, let heading {
             // windFromDegrees is where the wind comes FROM; the arrow shows
             // where it's blowing TOWARD, in the rider's frame (up = ahead).
             arrow = (c.windFromDegrees + 180 - heading).truncatingRemainder(dividingBy: 360)
             let head = c.headwindMps(course: heading)
+            valueMps = abs(head)
             if head > 1 { color = Theme.threatMedium }        // fighting it
             else if head < -1 { color = Theme.good }          // free speed
         }
@@ -826,7 +832,7 @@ struct RideView: View {
             if weather.conditions != nil { showWindDetail = true }
         } label: {
             DirectionTile(title: "Wind",
-                          value: c.map { Fmt.int(settings.speedUnit.value(fromMps: $0.windSpeedMps)) } ?? "—",
+                          value: valueMps.map { Fmt.int(settings.speedUnit.value(fromMps: $0)) } ?? "—",
                           unit: c != nil ? tileUnit(settings.speedUnit.label) : "",
                           valueSize: vs, height: height,
                           arrowDegrees: arrow, arrowColor: color)
