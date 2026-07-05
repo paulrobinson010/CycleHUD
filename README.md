@@ -64,6 +64,10 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   seconds** of it — ride through the bump and nothing happens. On a confirmed
   crash a 20-second countdown starts; if you don't cancel it, CycleHUD opens a
   pre-filled text to your emergency contact with your location, ready to send.
+  A paired Apple Watch mirrors the alert with repeating wrist buzzes — so if
+  you're thrown clear while the phone stays mounted on the bike, you can tap
+  **I'm OK** on the wrist to cancel on both devices, or **Call** to ring your
+  emergency contact straight from the Watch.
   Set it up in **Settings → Safety**; the toggle takes effect immediately, even
   mid-ride. (iOS won't let an app send a text on its own, so the message opens
   ready for you — or a bystander — to send.)
@@ -236,7 +240,7 @@ These live in code and are easy to adjust:
 - **New-vehicle beep / SOS tone** — `AudioAlerts.swift` (`makeDoubleBeepWAV`,
   `makeSOSWAV`).
 - **Crash-detection sensitivity** — `CrashDetector.swift` (`impactThresholdG`,
-  default 4 g) and the SOS countdown length in `SOSManager.swift`.
+  default 8 g) and the SOS countdown length in `SOSManager.swift`.
 - **Live gradient window** — `RideManager.swift` (`updateGradient`).
 
 > The page `0x24` distance/speed/level bytes are decoded from real traffic (a

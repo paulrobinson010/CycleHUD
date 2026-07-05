@@ -27,6 +27,14 @@ final class WatchSessionManager: NSObject, ObservableObject {
     private var hrWarningBpm = 0             // warning threshold from the phone (0 = off)
     private var lastHRWarnAt: Date?
 
+    // Crash SOS mirrored from the phone: the wrist can cancel, or call the
+    // emergency contact, when the phone is mounted out of reach after a crash.
+    @Published private(set) var sosActive = false
+    @Published private(set) var sosSeconds = 0
+    @Published private(set) var sosContactName = ""
+    private var sosContactPhone = ""
+    private var sosHapticTimer: Timer?
+
     // Diagnostics surfaced on-screen so we can see where the HR chain breaks.
     @Published var healthRequested = false
     @Published var workoutActive = false
@@ -408,12 +416,57 @@ extension WatchSessionManager: WCSessionDelegate {
 
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
         DispatchQueue.main.async {
-            if let event = message["event"] as? String {
+            if let active = message["sosActive"] as? Bool {
+                self.applySOS(active: active,
+                              seconds: message["sosSeconds"] as? Int ?? 0,
+                              name: message["sosName"] as? String ?? "",
+                              phone: message["sosPhone"] as? String ?? "")
+            } else if let event = message["event"] as? String {
                 self.playEventHaptic(event)       // one-shot wrist alert
             } else {
                 self.apply(message)               // live ride mirror
             }
         }
+    }
+
+    /// Mirror the phone's crash-SOS state: buzz hard while it's live so a
+    /// dazed rider notices the wrist, and keep buzzing through the call stage
+    /// until someone dismisses it.
+    private func applySOS(active: Bool, seconds: Int, name: String, phone: String) {
+        let wasActive = sosActive
+        sosActive = active
+        sosSeconds = seconds
+        if !name.isEmpty { sosContactName = name }
+        if !phone.isEmpty { sosContactPhone = phone }
+        if active && !wasActive {
+            sosHapticTimer?.invalidate()
+            sosHapticTimer = Timer.scheduledTimer(withTimeInterval: 1.6, repeats: true) { _ in
+                WKInterfaceDevice.current().play(.failure)
+            }
+            WKInterfaceDevice.current().play(.failure)
+        } else if !active {
+            sosHapticTimer?.invalidate()
+            sosHapticTimer = nil
+        }
+    }
+
+    /// "I'm OK" from the wrist: dismiss here and tell the phone to stand down.
+    func cancelSOS() {
+        sosActive = false
+        sosHapticTimer?.invalidate()
+        sosHapticTimer = nil
+        if WCSession.default.isReachable {
+            WCSession.default.sendMessage(["sosCancel": true], replyHandler: nil, errorHandler: nil)
+        }
+    }
+
+    /// Ring the emergency contact from the wrist — relayed through the phone
+    /// when in Bluetooth range, or directly on cellular models. This is the
+    /// action that works when the phone is on the bike and the rider isn't.
+    func callEmergencyContact() {
+        let digits = sosContactPhone.filter { "+0123456789".contains($0) }
+        guard !digits.isEmpty, let url = URL(string: "tel:\(digits)") else { return }
+        WKExtension.shared().openSystemURL(url)
     }
 
     /// One-shot wrist alerts pushed from the phone. The radar-lost pattern is

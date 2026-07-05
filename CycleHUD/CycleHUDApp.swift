@@ -108,6 +108,15 @@ struct CycleHUDApp: App {
                 weather.start()
                 sos.locationProvider = { location.currentLocation }
                 sos.contactProvider = { settings.emergencyContact }
+                sos.stateChanged = { active, seconds in
+                    watch.sendSOSState(active: active, secondsRemaining: seconds,
+                                       contactName: settings.emergencyContactName,
+                                       contactPhone: settings.emergencyContactPhone)
+                }
+                watch.onSOSCancel = {
+                    sos.cancel()
+                    sos.composerFinished()
+                }
             }
     }
 }
