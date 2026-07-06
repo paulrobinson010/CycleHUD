@@ -92,6 +92,25 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
         #endif
     }
 
+    /// Called when the rider cancels the crash alert from the Watch.
+    var onSOSCancel: (() -> Void)?
+
+    /// Mirror the SOS state to the Watch (countdown, then the call stage).
+    /// sendMessage only: the SOS exists solely mid-ride, when the Watch runs
+    /// its workout session and is reachable — and applicationContext would
+    /// collide with the ride mirror's payload.
+    func sendSOSState(active: Bool, secondsRemaining: Int,
+                      contactName: String, contactPhone: String) {
+        #if canImport(WatchConnectivity)
+        guard let session, session.isReachable else { return }
+        session.sendMessage(["sosActive": active,
+                             "sosSeconds": secondsRemaining,
+                             "sosName": contactName,
+                             "sosPhone": contactPhone],
+                            replyHandler: nil, errorHandler: nil)
+        #endif
+    }
+
     /// Tell the Watch the radar has dropped out — a distinct safety alert.
     func sendRadarLostHaptic() {
         #if canImport(WatchConnectivity)
@@ -121,6 +140,10 @@ extension WatchConnectivityManager: WCSessionDelegate {
     }
 
     private func handleIncoming(_ message: [String: Any]) {
+        if message["sosCancel"] as? Bool == true {
+            DispatchQueue.main.async { self.onSOSCancel?() }
+            return
+        }
         guard let hr = message["heartRate"] as? Double else { return }
         DispatchQueue.main.async {
             self.latestHeartRate = Int(hr.rounded())

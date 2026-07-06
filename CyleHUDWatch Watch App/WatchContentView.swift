@@ -6,6 +6,52 @@ struct WatchContentView: View {
     @EnvironmentObject var session: WatchSessionManager
 
     var body: some View {
+        if session.sosActive {
+            sosScreen
+        } else {
+            mirrorBody
+        }
+    }
+
+    /// Crash SOS mirrored from the phone: cancel from the wrist, or ring the
+    /// emergency contact — the action that works when the phone is out of reach.
+    private var sosScreen: some View {
+        VStack(spacing: 8) {
+            Text("Possible crash")
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+            if session.sosSeconds > 0 {
+                Text(verbatim: "\(session.sosSeconds)")
+                    .font(.system(size: 34, weight: .heavy, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+            }
+            Button { session.cancelSOS() } label: {
+                Text("I’m OK")
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.green)
+            Button { session.callEmergencyContact() } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "phone.fill")
+                    Text(session.sosContactName.isEmpty
+                            ? String(localized: "Call")
+                            : session.sosContactName)
+                        .lineLimit(1)
+                }
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.red)
+        }
+        .padding(.horizontal, 4)
+        .containerBackground(Color.red.gradient, for: .navigation)
+    }
+
+    private var mirrorBody: some View {
         VStack(spacing: 6) {
             threatBanner
 

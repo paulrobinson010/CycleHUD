@@ -25,6 +25,10 @@ final class SOSManager: ObservableObject {
     /// Supplied by the app.
     var locationProvider: (() -> CLLocation?)?
     var contactProvider: (() -> (name: String, phone: String)?)?
+    /// Mirrors the SOS to the Apple Watch (active = countdown or composer up),
+    /// so a rider thrown clear of the bike can cancel — or call — from the
+    /// wrist while the phone stays mounted out of reach.
+    var stateChanged: ((_ active: Bool, _ secondsRemaining: Int) -> Void)?
 
     private var timer: Timer?
 
@@ -37,6 +41,7 @@ final class SOSManager: ObservableObject {
         guard !isCountingDown, !presentComposer, hasContact else { return }
         secondsRemaining = countdownSeconds
         isCountingDown = true
+        stateChanged?(true, secondsRemaining)
         AudioAlerts.shared.playSOSAlert()
         UINotificationFeedbackGenerator().notificationOccurred(.error)
         timer?.invalidate()
@@ -47,6 +52,7 @@ final class SOSManager: ObservableObject {
 
     private func tickDown() {
         secondsRemaining -= 1
+        stateChanged?(true, max(0, secondsRemaining))
         if secondsRemaining % 5 == 0 { AudioAlerts.shared.playSOSAlert() }
         if secondsRemaining <= 0 { sendNow() }
     }
@@ -56,18 +62,23 @@ final class SOSManager: ObservableObject {
         timer?.invalidate(); timer = nil
         isCountingDown = false
         secondsRemaining = 0
+        stateChanged?(false, 0)
     }
 
-    /// Skip the rest of the countdown and raise the alert now.
+    /// Skip the rest of the countdown and raise the alert now. The Watch stays
+    /// in SOS mode (its call button matters most when the phone is out of
+    /// reach) until the rider dismisses on either device.
     func sendNow() {
         timer?.invalidate(); timer = nil
         isCountingDown = false
         secondsRemaining = 0
         presentComposer = true
+        stateChanged?(true, 0)
     }
 
     func composerFinished() {
         presentComposer = false
+        stateChanged?(false, 0)
     }
 
     // MARK: - Message content
