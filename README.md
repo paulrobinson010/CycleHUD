@@ -6,6 +6,9 @@ the **Coospo TR70** rear radar. The focus is a **clear, glanceable UI**,
 saves each ride as an **Apple Health workout**. Garmin Varia–compatible radars,
 standard BLE speed/cadence sensors and heart-rate straps work too.
 
+**Now on the App Store:**
+[Download CycleHUD](https://apps.apple.com/app/cyclehud/id6784582667)
+
 <p align="center">
   <img src="docs/shots/alert-red.png" alt="CycleHUD main riding screen, with the radar panel flooded red as a vehicle closes in" width="300">
 </p>

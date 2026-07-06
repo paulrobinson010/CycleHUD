@@ -60,6 +60,11 @@ header.nav {
   border: 1px solid var(--line); border-radius: 999px;
   color: var(--muted); font-size: 14px; background: var(--bg-soft);
 }
+/* Official App Store badge: keep clear space ≥ ¼ badge height around it
+   (Apple marketing guidelines) — the margins provide it. */
+.hero .appstore { display: inline-block; margin-top: 30px; }
+.hero .appstore img { height: 54px; width: auto; display: block; }
+.hero .appstore:hover img { opacity: 0.85; }
 
 /* Sections */
 section { padding: 48px 0; border-top: 1px solid var(--line); }
