@@ -40,6 +40,7 @@ struct CycleHUDApp: App {
     @StateObject private var ride: RideManager
     @StateObject private var weather: WeatherManager
     @StateObject private var sos: SOSManager
+    @StateObject private var junctions: JunctionManager
     /// Branded splash (website hero) shown over the HUD at launch, then faded.
     @State private var showSplash = true
 
@@ -57,6 +58,7 @@ struct CycleHUDApp: App {
         let ride = RideManager(ble: ble, location: location, settings: settings,
                                health: health, watch: watch, history: history, sos: sos)
         let weather = WeatherManager()
+        let junctions = JunctionManager()
         _settings = StateObject(wrappedValue: settings)
         _ble = StateObject(wrappedValue: ble)
         _location = StateObject(wrappedValue: location)
@@ -66,6 +68,7 @@ struct CycleHUDApp: App {
         _ride = StateObject(wrappedValue: ride)
         _weather = StateObject(wrappedValue: weather)
         _sos = StateObject(wrappedValue: sos)
+        _junctions = StateObject(wrappedValue: junctions)
     }
 
     var body: some Scene {
@@ -96,6 +99,7 @@ struct CycleHUDApp: App {
             .environmentObject(history)
             .environmentObject(weather)
             .environmentObject(sos)
+            .environmentObject(junctions)
             .preferredColorScheme(settings.appearanceTheme.colorScheme)
             .onAppear {
                 location.requestAuthorization()
@@ -106,6 +110,9 @@ struct CycleHUDApp: App {
                 weather.locationProvider = { location.currentLocation }
                 weather.isEnabled = { settings.weatherEnabled }
                 weather.start()
+                junctions.locationProvider = { location.currentLocation }
+                junctions.isEnabled = { settings.junctionsEnabled }
+                junctions.start()
                 sos.locationProvider = { location.currentLocation }
                 sos.contactProvider = { settings.emergencyContact }
                 sos.stateChanged = { active, seconds in

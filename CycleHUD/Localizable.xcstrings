@@ -1220,6 +1220,46 @@
         }
       }
     },
+    "Adds a Junction tile to the ride screen showing the next intersection ahead — its layout and the distance to it, counting down as you approach. Road data around your route is fetched from OpenStreetMap while this is on, which sends your approximate location to OpenStreetMap's servers. Nothing is sent while it's off." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fügt dem Fahrbildschirm eine Kreuzungs-Kachel hinzu, die die nächste Kreuzung voraus zeigt – ihre Form und die Entfernung dazu, die beim Näherkommen herunterzählt. Solange dies aktiviert ist, werden Straßendaten rund um deine Route von OpenStreetMap geladen; dabei wird dein ungefährer Standort an die Server von OpenStreetMap gesendet. Ist es deaktiviert, wird nichts gesendet."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds a Junction tile to the ride screen showing the next intersection ahead — its layout and the distance to it, counting down as you approach. Road data around your route is fetched from OpenStreetMap while this is on, which sends your approximate location to OpenStreetMap's servers. Nothing is sent while it's off."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds a Junction tile to the ride screen showing the next intersection ahead — its layout and the distance to it, counting down as you approach. Road data around your route is fetched from OpenStreetMap while this is on, which sends your approximate location to OpenStreetMap's servers. Nothing is sent while it's off."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade a la pantalla de marcha un recuadro de Cruce que muestra el próximo cruce: su forma y la distancia hasta él, en cuenta atrás a medida que te acercas. Mientras está activado, los datos de carreteras alrededor de tu ruta se descargan de OpenStreetMap, lo que envía tu ubicación aproximada a los servidores de OpenStreetMap. Con la opción desactivada no se envía nada."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute une tuile Intersection à l’écran de conduite montrant la prochaine intersection – sa forme et la distance qui vous en sépare, décomptée à mesure que vous approchez. Tant que cette option est activée, les données routières autour de votre itinéraire sont récupérées depuis OpenStreetMap, ce qui envoie votre position approximative aux serveurs d’OpenStreetMap. Rien n’est envoyé quand elle est désactivée."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiunge alla schermata di guida un riquadro Incrocio che mostra il prossimo incrocio – la sua forma e la distanza, con conto alla rovescia mentre ti avvicini. Finché è attivo, i dati stradali intorno al tuo percorso vengono scaricati da OpenStreetMap, inviando la tua posizione approssimativa ai server di OpenStreetMap. Quando è disattivato non viene inviato nulla."
+          }
+        }
+      }
+    },
     "Adds a “Mark car” button to the ride screen so you can tag the moment a vehicle passes — handy for checking radar timing. Most riders can leave this off." : {
       "localizations" : {
         "de-DE" : {
@@ -5399,6 +5439,86 @@
         }
       }
     },
+    "Junction" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kreuzung"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junction"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junction"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cruce"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intersection"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incrocio"
+          }
+        }
+      }
+    },
+    "Junctions" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kreuzungen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junctions"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junctions"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cruces"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intersections"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incroci"
+          }
+        }
+      }
+    },
     "Keep screen on while riding" : {
       "localizations" : {
         "de-DE" : {
@@ -8704,6 +8824,46 @@
         }
       }
     },
+    "Road data © OpenStreetMap contributors" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Straßendaten © OpenStreetMap-Mitwirkende"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Road data © OpenStreetMap contributors"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Road data © OpenStreetMap contributors"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datos de carreteras © colaboradores de OpenStreetMap"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Données routières © les contributeurs d’OpenStreetMap"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dati stradali © contributori di OpenStreetMap"
+          }
+        }
+      }
+    },
     "Route" : {
       "localizations" : {
         "de-DE" : {
@@ -11036,6 +11196,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unità"
+          }
+        }
+      }
+    },
+    "Upcoming junctions" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kommende Kreuzungen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upcoming junctions"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upcoming junctions"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próximos cruces"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intersections à venir"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incroci in arrivo"
           }
         }
       }

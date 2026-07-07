@@ -121,6 +121,26 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Toggle("Upcoming junctions", isOn: $settings.junctionsEnabled)
+                    if settings.junctionsEnabled {
+                        Link(destination: URL(string: "https://www.openstreetmap.org/copyright")!) {
+                            HStack {
+                                Text("Road data © OpenStreetMap contributors")
+                                    .font(.footnote)
+                                Spacer()
+                                Image(systemName: "arrow.up.right.square")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                } header: {
+                    Text("Junctions")
+                } footer: {
+                    Text("Adds a Junction tile to the ride screen showing the next intersection ahead — its layout and the distance to it, counting down as you approach. Road data around your route is fetched from OpenStreetMap while this is on, which sends your approximate location to OpenStreetMap's servers. Nothing is sent while it's off.")
+                }
+
+                Section {
                     NavigationLink {
                         MetricTilesView().environmentObject(settings)
                     } label: {

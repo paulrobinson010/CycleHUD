@@ -6,7 +6,7 @@ import SwiftUI
 enum MetricKind: String, CaseIterable, Identifiable, Codable {
     case speed, avgSpeed, maxSpeed, cadence, distance, time, ascent
     case heartRate, calories, gradient, lapTime, temperature, wind, rain
-    case compass
+    case compass, junction
 
     var id: String { rawValue }
 
@@ -36,6 +36,7 @@ enum MetricKind: String, CaseIterable, Identifiable, Codable {
         case .wind: return "Wind"
         case .rain: return "Rain"
         case .compass: return "Compass"
+        case .junction: return "Junction"
         }
     }
 
@@ -56,11 +57,18 @@ enum MetricKind: String, CaseIterable, Identifiable, Codable {
         case .wind: return "wind"
         case .rain: return "cloud.rain"
         case .compass: return "safari"
+        case .junction: return "arrow.triangle.branch"
         }
     }
 
     /// Needs WeatherKit data, so it's hidden when Weather is turned off.
     var requiresWeather: Bool {
         self == .temperature || self == .wind || self == .rain
+    }
+
+    /// Needs OpenStreetMap road data, so it's hidden when Upcoming junctions
+    /// is turned off.
+    var requiresJunctions: Bool {
+        self == .junction
     }
 }

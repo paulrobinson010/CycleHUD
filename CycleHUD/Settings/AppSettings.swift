@@ -24,6 +24,7 @@ final class AppSettings: ObservableObject {
         static let appearanceTheme = "appearanceTheme"
         static let digitStyle = "digitStyle"
         static let weatherEnabled = "weatherEnabled"
+        static let junctionsEnabled = "junctionsEnabled"
         static let appLanguage = "appLanguage"
         static let metricTiles = "metricTilesV2"   // legacy single-page tiles, migrated
         static let topTileCountLegacy = "topTileCount"
@@ -94,6 +95,9 @@ final class AppSettings: ObservableObject {
     }
     /// Short-term rain nowcast (Apple WeatherKit) shown on the ride screen.
     @Published var weatherEnabled: Bool { didSet { defaults.set(weatherEnabled, forKey: Keys.weatherEnabled) } }
+    /// Off by default: fetching junction data sends the rider's approximate
+    /// location to OpenStreetMap's servers, so it's strictly opt-in.
+    @Published var junctionsEnabled: Bool { didSet { defaults.set(junctionsEnabled, forKey: Keys.junctionsEnabled) } }
     /// In-app language override (BCP-47 code, or "" to follow the device).
     @Published var appLanguage: String {
         didSet { defaults.set(appLanguage, forKey: Keys.appLanguage); applyLanguage() }
@@ -191,6 +195,7 @@ final class AppSettings: ObservableObject {
             Keys.hrWarningBpm: 200,
             Keys.saveWorkouts: true,
             Keys.weatherEnabled: true,
+            Keys.junctionsEnabled: false,
             Keys.appLanguage: "",
             Keys.showTileUnits: true,
             Keys.currentRidePage: 0,
@@ -224,6 +229,7 @@ final class AppSettings: ObservableObject {
         }
         digitStyle = DigitStyle(rawValue: defaults.string(forKey: Keys.digitStyle) ?? "") ?? .standard
         weatherEnabled = defaults.bool(forKey: Keys.weatherEnabled)
+        junctionsEnabled = defaults.bool(forKey: Keys.junctionsEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
         // (appearance applied below once all stored properties are initialised)
         // Ride pages: decode, or migrate the old single-page tile settings.
@@ -281,6 +287,7 @@ final class AppSettings: ObservableObject {
         hrWarningBpm = 200
         saveWorkouts = true
         weatherEnabled = true
+        junctionsEnabled = false
         crashDetectionEnabled = false
     }
 

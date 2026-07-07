@@ -85,6 +85,15 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   **temperature** tile and a **wind** tile that resolves the wind against your
   GPS heading and shows it as a headwind or tailwind. Turn off in Settings.
   Requires the WeatherKit capability (see Setup).
+- **Upcoming junctions** *(optional, off by default)* — a **Junction** tile
+  shows the next intersection ahead: a schematic of its road arms at their true
+  angles (T, crossroads, roundabout…) in your frame of travel, with the distance
+  counting down as you approach. Road data comes from **OpenStreetMap**'s
+  Overpass API — one small fetch per kilometre or so, cached, with everything
+  after that computed on-device from GPS. Because enabling it sends your
+  approximate location to OSM's servers, it's strictly opt-in
+  (Settings → Junctions) and disclosed in the privacy policy. Road data
+  © OpenStreetMap contributors.
 - **Apple Health workout** — tapping Stop saves a cycling workout (distance,
   duration, calories, GPS route) to Apple Health. On by default; turn *Save rides
   as workouts* off in Settings to keep rides local-only. Calories need your

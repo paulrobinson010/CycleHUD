@@ -14,6 +14,7 @@ struct RideView: View {
     @EnvironmentObject var history: RideHistory
     @EnvironmentObject var weather: WeatherManager
     @EnvironmentObject var sos: SOSManager
+    @EnvironmentObject var junctions: JunctionManager
 
     private enum ActiveSheet: Int, Identifiable {
         case pairing, settings
@@ -469,10 +470,16 @@ struct RideView: View {
 
     // MARK: - Metrics
 
-    /// A page's visible tiles: valid kinds, weather tiles removed when off.
+    /// Whether a tile kind is usable given the current data-source settings
+    /// (weather tiles need Weather on; the junction tile needs Junctions on).
+    private func usable(_ kind: MetricKind) -> Bool {
+        (!kind.requiresWeather || settings.weatherEnabled)
+            && (!kind.requiresJunctions || settings.junctionsEnabled)
+    }
+
+    /// A page's visible tiles: valid kinds, data-source-gated tiles removed.
     private func kinds(of page: RidePage) -> [MetricKind] {
-        page.tiles.compactMap(MetricKind.init(rawValue:))
-            .filter { !$0.requiresWeather || settings.weatherEnabled }
+        page.tiles.compactMap(MetricKind.init(rawValue:)).filter(usable)
     }
 
     /// A page's tiles above the radar (its leading `topTileCount` entries).
@@ -480,7 +487,7 @@ struct RideView: View {
         let split = min(max(0, page.topTileCount), page.tiles.count)
         return page.tiles.prefix(split)
             .compactMap(MetricKind.init(rawValue:))
-            .filter { !$0.requiresWeather || settings.weatherEnabled }
+            .filter(usable)
     }
 
     /// A page's tiles below the radar.
@@ -488,19 +495,17 @@ struct RideView: View {
         let split = min(max(0, page.topTileCount), page.tiles.count)
         return page.tiles.dropFirst(split)
             .compactMap(MetricKind.init(rawValue:))
-            .filter { !$0.requiresWeather || settings.weatherEnabled }
+            .filter(usable)
     }
 
     /// The CURRENT page's visible tiles (landscape fit, edit-mode guards).
     private var visibleMetricKinds: [MetricKind] { kinds(of: settings.currentPage) }
 
-    /// Metrics not currently in the grid (and usable, given the Weather setting),
-    /// offered by the edit-mode add tile.
+    /// Metrics not currently in the grid (and usable, given the data-source
+    /// settings), offered by the edit-mode add tile.
     private var availableTileKinds: [MetricKind] {
         let chosen = Set(settings.metricTiles)
-        return MetricKind.allCases.filter {
-            !chosen.contains($0.rawValue) && (!$0.requiresWeather || settings.weatherEnabled)
-        }
+        return MetricKind.allCases.filter { !chosen.contains($0.rawValue) && usable($0) }
     }
 
     /// One slot in the tile grid: a metric, or (while editing) the add button.
@@ -786,6 +791,8 @@ struct RideView: View {
             windTile(height: height, valueSize: vs)
         case .compass:
             compassTile(height: height, valueSize: vs)
+        case .junction:
+            junctionTile(height: height, valueSize: vs)
         case .rain:
             WeatherTile(nowcast: weather.nowcast, status: weather.status, height: height,
                         showUnit: settings.showTileUnits)
@@ -840,6 +847,16 @@ struct RideView: View {
                           arrowDegrees: arrow, arrowColor: color)
         }
         .buttonStyle(.plain)
+    }
+
+    /// The next intersection ahead (OpenStreetMap): distance counting down in
+    /// the rider's units, with a schematic of the junction's arms.
+    private func junctionTile(height: CGFloat, valueSize vs: CGFloat) -> some View {
+        let info = junctions.next
+        let value = info.map { Fmt.int(settings.distanceUnit.shortValue(fromMeters: $0.distanceMeters)) } ?? "—"
+        return JunctionTile(title: "Junction", value: value,
+                            unit: info != nil ? tileUnit(settings.distanceUnit.shortLabel) : "",
+                            valueSize: vs, height: height, info: info)
     }
 
     /// A needle that always points north — no number, just the arrow.
