@@ -239,32 +239,55 @@ struct RideSummaryView: View {
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
                     if let effortScore {
-                        Text(effortBandName(effortScore))
+                        // Strips carry no numbers (matching the Watch picker),
+                        // so echo the pick here: "7 · Hard".
+                        Text(verbatim: "\(effortScore) · \(effortBandName(effortScore))")
                             .font(.system(size: 13, weight: .bold, design: .rounded))
                             .foregroundStyle(effortColor(effortScore))
                     }
                 }
-                HStack(spacing: 5) {
+                // Rising strips like the Watch workout app's effort picker:
+                // 1 shortest → 10 tallest, tinted by band, with a wider gap
+                // at each band boundary. Strips up to the pick fill solid.
+                HStack(alignment: .bottom, spacing: 3) {
                     ForEach(1...10, id: \.self) { i in
                         Button {
                             effortScore = i
                             effort?(i)
                         } label: {
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(i <= (effortScore ?? 0)
-                                        ? effortColor(i)
-                                        : Theme.textSecondary.opacity(0.18))
-                                .frame(height: 30)
-                                .overlay(
-                                    Text(verbatim: "\(i)")
-                                        .font(.system(size: 12, weight: .semibold, design: .rounded))
-                                        .foregroundStyle(i <= (effortScore ?? 0)
-                                                            ? .white : Theme.textSecondary)
-                                )
+                            VStack(spacing: 0) {
+                                Spacer(minLength: 0)
+                                RoundedRectangle(cornerRadius: 3)
+                                    .fill(effortColor(i)
+                                            .opacity(i <= (effortScore ?? 0) ? 1 : 0.22))
+                                    .frame(height: 14 + CGFloat(i - 1) * 30 / 9)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 44)          // full-height tap target
+                            .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
+                        .padding(.trailing, [3, 6, 8].contains(i) ? 4 : 0)
+                        .accessibilityLabel(Text(verbatim: "\(i) — \(effortBandName(i))"))
                     }
                 }
+                // Band names centred under their strips (3/3/2/2 of the width).
+                GeometryReader { geo in
+                    let labels: [(String, CGFloat)] = [
+                        (String(localized: "Easy", bundle: Lang.bundle), 0.15),
+                        (String(localized: "Moderate", bundle: Lang.bundle), 0.45),
+                        (String(localized: "Hard", bundle: Lang.bundle), 0.70),
+                        (String(localized: "All out", bundle: Lang.bundle), 0.90)
+                    ]
+                    ForEach(labels, id: \.1) { label in
+                        Text(verbatim: label.0)
+                            .font(.system(size: 10, weight: .semibold, design: .rounded))
+                            .foregroundStyle(Theme.textSecondary)
+                            .fixedSize()
+                            .position(x: geo.size.width * label.1, y: 6)
+                    }
+                }
+                .frame(height: 12)
                 if effortScore != nil {
                     HStack(spacing: 5) {
                         Image(systemName: "checkmark.circle.fill")
