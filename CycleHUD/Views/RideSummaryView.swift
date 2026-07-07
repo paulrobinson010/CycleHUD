@@ -6,9 +6,13 @@ import Charts
 /// ride in the history list. Self-contained with its own close button.
 struct RideSummaryView: View {
     let summary: RideSummary
+    /// Present only on the end-of-ride sheet (nil from history): receives the
+    /// rider's 1–10 perceived effort, written to the just-saved Health workout.
+    var effort: ((Int) -> Void)? = nil
     @EnvironmentObject var settings: AppSettings
     @EnvironmentObject var history: RideHistory
     @Environment(\.dismiss) private var dismiss
+    @State private var effortScore: Int?
     /// Stretches of this ride ridden before, compared against the previous best.
     @State private var comparisons: [SegmentComparison] = []
     @State private var showRouteMap = false
@@ -30,6 +34,7 @@ struct RideSummaryView: View {
             ScrollView {
                 VStack(spacing: 18) {
                     header
+                    effortCard
                     statGrid
                     routeMap
                     graphs
@@ -220,6 +225,79 @@ struct RideSummaryView: View {
             .fill(Theme.threatHigh)
             .frame(width: 9, height: 9)
             .overlay(Circle().stroke(.white, lineWidth: 1.5))
+    }
+
+    /// Post-ride effort prompt (end-of-ride only): Apple's 1–10 workout effort
+    /// scale, related to the workout just saved to Health. Tap again to revise;
+    /// ignoring it simply leaves the workout without a score.
+    @ViewBuilder private var effortCard: some View {
+        if effort != nil {
+            VStack(spacing: 10) {
+                HStack {
+                    Text("How hard was that ride?")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(Theme.textPrimary)
+                    Spacer()
+                    if let effortScore {
+                        Text(effortBandName(effortScore))
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(effortColor(effortScore))
+                    }
+                }
+                HStack(spacing: 5) {
+                    ForEach(1...10, id: \.self) { i in
+                        Button {
+                            effortScore = i
+                            effort?(i)
+                        } label: {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(i <= (effortScore ?? 0)
+                                        ? effortColor(i)
+                                        : Theme.textSecondary.opacity(0.18))
+                                .frame(height: 30)
+                                .overlay(
+                                    Text(verbatim: "\(i)")
+                                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                        .foregroundStyle(i <= (effortScore ?? 0)
+                                                            ? .white : Theme.textSecondary)
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                if effortScore != nil {
+                    HStack(spacing: 5) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 12))
+                        Text("Saved to Apple Health")
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                        Spacer()
+                    }
+                    .foregroundStyle(Theme.textSecondary)
+                }
+            }
+            .padding(16)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
+        }
+    }
+
+    /// Apple's effort bands: 1–3 easy, 4–6 moderate, 7–8 hard, 9–10 all out.
+    private func effortBandName(_ score: Int) -> String {
+        switch score {
+        case ...3: return String(localized: "Easy", bundle: Lang.bundle)
+        case ...6: return String(localized: "Moderate", bundle: Lang.bundle)
+        case ...8: return String(localized: "Hard", bundle: Lang.bundle)
+        default:   return String(localized: "All out", bundle: Lang.bundle)
+        }
+    }
+
+    private func effortColor(_ score: Int) -> Color {
+        switch score {
+        case ...3: return Theme.good
+        case ...6: return .yellow
+        case ...8: return .orange
+        default:   return Theme.threatHigh
+        }
     }
 
     private var statGrid: some View {

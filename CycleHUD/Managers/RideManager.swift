@@ -60,6 +60,13 @@ final class RideManager: ObservableObject {
     /// Cleared when the sheet is dismissed.
     @Published var finishedSummary: RideSummary?
 
+    /// Whether the end-of-ride summary should offer the 1–10 effort prompt:
+    /// workout saving is on, and the OS supports Apple's effort score (iOS 18+).
+    var canPromptEffort: Bool { settings.saveWorkouts && health.supportsEffortScore }
+
+    /// Rider's perceived effort from the end-of-ride prompt → Apple Health.
+    func recordEffort(_ score: Int) { health.recordEffort(score: score) }
+
     private let ble: BluetoothManager
     private let location: LocationManager
     private let settings: AppSettings

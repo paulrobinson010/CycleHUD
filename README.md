@@ -90,6 +90,10 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   as workouts* off in Settings to keep rides local-only. Calories need your
   weight (asked once when workouts are on, or read from Apple Health) — without
   it, calories simply aren't shown. Requires the HealthKit capability (see Setup).
+  On iOS 18+ the end-of-ride summary also asks *How hard was that ride?* — pick
+  1–10 (or ignore it) and it's written to the workout as Apple's **effort
+  score**, feeding Health's training-load view. Tap again to revise; on older
+  iOS the prompt simply doesn't appear.
 - **Ride summary & history** — every ride ends with a summary card (distance,
   time, average/peak speed, heart rate, ascent, calories) with a map of your
   route and **speed, heart-rate and elevation graphs** for the whole ride.

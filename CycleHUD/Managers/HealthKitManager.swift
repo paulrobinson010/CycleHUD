@@ -17,12 +17,15 @@ final class HealthKitManager: ObservableObject {
 
     func requestAuthorization() {
         guard isAvailable else { return }
-        let share: Set<HKSampleType> = [
+        var share: Set<HKSampleType> = [
             HKObjectType.workoutType(),
             HKSeriesType.workoutRoute(),
             HKQuantityType(.activeEnergyBurned),
             HKQuantityType(.distanceCycling)
         ]
+        if #available(iOS 18.0, *) {
+            share.insert(HKQuantityType(.workoutEffortScore))
+        }
         let read: Set<HKObjectType> = [
             HKQuantityType(.heartRate),
             HKQuantityType(.bodyMass),
@@ -68,11 +71,64 @@ final class HealthKitManager: ObservableObject {
         }
     }
 
+    // MARK: - Workout effort score (iOS 18+)
+
+    /// Whether Apple's 1–10 workout effort score can be recorded on this OS.
+    var supportsEffortScore: Bool {
+        if #available(iOS 18.0, *) { return isAvailable } else { return false }
+    }
+
+    /// The workout written by the most recent `saveRide`, kept so an effort
+    /// score picked on the end-of-ride summary can be related to it.
+    private var lastSavedWorkout: HKWorkout?
+    /// Effort picked before the async workout save finished; applied on completion.
+    private var pendingEffortScore: Int?
+    /// The effort sample we wrote, replaced if the rider revises their pick.
+    private var lastEffortSample: HKSample?
+    /// Serialises effort writes so a quick re-tap can't race the delete+save.
+    private var effortTask: Task<Void, Never>?
+
+    /// Record the rider's 1–10 perceived effort against the workout just saved.
+    /// Safe to call before the save finishes — the score is applied when it does.
+    /// Calling again replaces the previous score.
+    func recordEffort(score: Int) {
+        guard #available(iOS 18.0, *), (1...10).contains(score) else { return }
+        pendingEffortScore = score
+        guard let workout = lastSavedWorkout else { return }   // applied post-save
+        effortTask = Task { [previous = effortTask] in
+            await previous?.value
+            await self.applyEffort(score, to: workout)
+        }
+    }
+
+    @available(iOS 18.0, *)
+    private func applyEffort(_ score: Int, to workout: HKWorkout) async {
+        let quantity = HKQuantity(unit: .appleEffortScore(), doubleValue: Double(score))
+        let sample = HKQuantitySample(type: HKQuantityType(.workoutEffortScore),
+                                      quantity: quantity,
+                                      start: workout.startDate, end: workout.endDate)
+        if let old = lastEffortSample {
+            _ = try? await store.unrelateWorkoutEffortSample(old, from: workout)
+            try? await store.delete(old)
+        }
+        do {
+            _ = try await store.relateWorkoutEffortSample(sample, with: workout, activity: nil)
+            await MainActor.run { lastEffortSample = sample }
+        } catch {
+            // Non-fatal: the workout simply has no effort score.
+        }
+    }
+
     // MARK: - Saving a workout
 
     func saveRide(start: Date, end: Date, distanceMeters: Double,
                   calories: Double, route: [CLLocation]) async {
         guard isAvailable, end > start else { return }
+        await MainActor.run {
+            lastSavedWorkout = nil
+            pendingEffortScore = nil
+            lastEffortSample = nil
+        }
 
         let config = HKWorkoutConfiguration()
         config.activityType = .cycling
@@ -103,6 +159,18 @@ final class HealthKitManager: ObservableObject {
                 let routeBuilder = HKWorkoutRouteBuilder(healthStore: store, device: .local())
                 try await routeBuilder.insertRouteData(route)
                 try await routeBuilder.finishRoute(with: workout, metadata: nil)
+            }
+
+            // Publish the workout for the effort prompt, and apply a score the
+            // rider picked while this save was still in flight.
+            if let workout {
+                let pending: Int? = await MainActor.run {
+                    lastSavedWorkout = workout
+                    return pendingEffortScore
+                }
+                if #available(iOS 18.0, *), let pending {
+                    await applyEffort(pending, to: workout)
+                }
             }
         } catch {
             // Non-fatal: the ride simply isn't saved (e.g. authorization denied).

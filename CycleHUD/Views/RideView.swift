@@ -64,7 +64,9 @@ struct RideView: View {
             .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
         }
         .sheet(item: $ride.finishedSummary) { summary in
-            RideSummaryView(summary: summary).environmentObject(settings)
+            RideSummaryView(summary: summary,
+                            effort: ride.canPromptEffort ? { ride.recordEffort($0) } : nil)
+                .environmentObject(settings)
                 .environmentObject(history)
                 .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
         }
