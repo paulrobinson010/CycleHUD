@@ -91,8 +91,10 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   OpenStreetMap data). Routes loop back to the start by default, or turn that
   off to finish somewhere else. Save routes with a name and pick one to follow:
   while the road behind is clear the **radar panel shows the route ahead** in
-  your direction of travel (with distance remaining and an off-route warning) —
-  the moment a vehicle appears, the radar takes the panel back. With junctions
+  your direction of travel (with distance remaining) — the moment a vehicle
+  appears, the radar takes the panel back. Stray from the path and the panel
+  switches to **back-on-route directions**: an arrow pointing at the nearest
+  point of the route, the distance to it, and a dashed link on the mini-map. With junctions
   on, the **Junction tile highlights the arm your route takes** in green.
   Share any route as a **`.cyclehudroute` file** (CycleHUD's own format) via
   the share sheet, and import routes from friends with the import button or by

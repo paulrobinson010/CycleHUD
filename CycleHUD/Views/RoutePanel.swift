@@ -31,6 +31,9 @@ struct RoutePanel: View {
                         .foregroundStyle(Theme.textSecondary)
                 }
                 rider(w: w, h: h)
+                if offRoute, let location, let progress {
+                    backToRoute(w: w, h: h, rider: location.coordinate, progress: progress)
+                }
             }
             .frame(width: w, height: h)
             .background(RoundedRectangle(cornerRadius: 24).fill(Theme.panel))
@@ -60,6 +63,42 @@ struct RoutePanel: View {
             }
         }
         .padding(12)
+    }
+
+    /// Directions back onto the route when the rider has strayed: an arrow
+    /// pointing at the nearest point of the path (in the rider's frame, so
+    /// "up" = keep going, "right" = it's off to your right) with the distance
+    /// to cover. The canvas also draws a dashed link to the same point.
+    private func backToRoute(w: CGFloat, h: CGFloat,
+                             rider: CLLocationCoordinate2D,
+                             progress: (index: Int, offMeters: Double, remainingMeters: Double)) -> some View {
+        let target = route.path[min(progress.index, route.path.count - 1)].coordinate
+        let toRoute = PlannedRoute.bearing(rider, target)
+        let heading = course ?? routeHeading(progress.index)
+        return VStack(spacing: 6) {
+            Image(systemName: "arrow.up")
+                .font(.system(size: 40, weight: .heavy))
+                .foregroundStyle(Theme.threatMedium)
+                .rotationEffect(.degrees(toRoute - heading))
+                .shadow(color: Theme.glow, radius: 8)
+                .animation(.easeInOut(duration: 0.4), value: toRoute - heading)
+            Text(verbatim: offDistText(progress.offMeters))
+                .font(.system(size: 17, weight: .heavy, design: .rounded))
+                .monospacedDigit()
+                .foregroundStyle(Theme.textPrimary)
+            Text("Back to route")
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .foregroundStyle(Theme.textSecondary)
+        }
+        .position(x: w / 2, y: h * 0.38)
+    }
+
+    /// Short distances in radar-style metres/feet; longer ones in km/mi.
+    private func offDistText(_ m: Double) -> String {
+        if m < 950 {
+            return "\(Fmt.int(distanceUnit.shortValue(fromMeters: m))) \(distanceUnit.shortLabel)"
+        }
+        return "\(Fmt.decimal(distanceUnit.value(fromMeters: m), 1)) \(distanceUnit.label)"
     }
 
     /// The rider marker: same bare arrow as the radar lane, always pointing up
@@ -101,6 +140,16 @@ struct RoutePanel: View {
                 lastVisible += 1
             }
             guard lastVisible > start else { return }
+
+            // Straying: a dashed link from the rider to the nearest point of
+            // the path — the on-map version of the back-to-route arrow.
+            if progress.offMeters > 80 {
+                var link = Path()
+                link.move(to: origin)
+                link.addLine(to: place(route.path[progress.index].coordinate))
+                context.stroke(link, with: .color(Theme.threatMedium),
+                               style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [7, 7]))
+            }
 
             // Ridden portion (dim) then the road ahead (bright).
             var behind = Path()
