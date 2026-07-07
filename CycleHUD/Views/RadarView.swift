@@ -169,7 +169,7 @@ struct RadarView: View {
             let scale = 0.95 + proximity * 0.6
             VStack(spacing: 4) {
                 CarGlyph(color: alertActive ? .black : threat.level.color)
-                    .frame(width: 38 * scale, height: 60 * scale)
+                    .frame(width: 33 * scale, height: 52 * scale)
                 Text(distanceLabel(threat.distanceMeters))
                     .font(.system(size: 16, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
