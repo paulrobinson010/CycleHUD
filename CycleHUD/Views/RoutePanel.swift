@@ -1,11 +1,12 @@
 import SwiftUI
+import MapKit
 import CoreLocation
 
-/// The active route drawn in the radar panel's slot while the road behind is
-/// clear: the upcoming path in the rider's frame (up = direction of travel,
-/// rider marker in the lower third), with the distance remaining and an
-/// off-route warning. The radar view takes the slot back whenever a vehicle
-/// is detected.
+/// The active route shown in the radar panel's slot while the road behind is
+/// clear: a real street map, rotated so the direction of travel points up,
+/// with the route in blue, the lead-in leg to the start in green, waypoint
+/// dots, and the rider in the lower third. The radar view takes the slot back
+/// whenever a vehicle is detected.
 struct RoutePanel: View {
     let route: PlannedRoute
     let location: CLLocation?
@@ -23,8 +24,6 @@ struct RoutePanel: View {
     let radarConnected: Bool
     let distanceUnit: DistanceUnit
 
-    /// How much route to draw ahead of the rider (metres of window height).
-    private let windowAhead: Double = 500
     /// Strayed after joining — amber "back to route" guidance.
     private var offRoute: Bool { joined && (progress?.offMeters ?? 0) > 80 }
     /// Not there yet — calm "to the start" guidance.
@@ -32,22 +31,20 @@ struct RoutePanel: View {
 
     var body: some View {
         GeometryReader { geo in
-            let w = geo.size.width
-            let h = geo.size.height
             ZStack {
                 if let location, let progress {
-                    pathCanvas(w: w, h: h, rider: location.coordinate, progress: progress)
+                    routeMap(rider: location.coordinate, progress: progress)
                 } else {
                     Text("Waiting for GPS…")
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
                         .foregroundStyle(Theme.textSecondary)
                 }
-                rider(w: w, h: h)
                 if offRoute || headingToStart, let location, let progress {
-                    directions(w: w, h: h, rider: location.coordinate, progress: progress)
+                    directions(w: geo.size.width, h: geo.size.height,
+                               rider: location.coordinate, progress: progress)
                 }
             }
-            .frame(width: w, height: h)
+            .frame(width: geo.size.width, height: geo.size.height)
             .background(RoundedRectangle(cornerRadius: 24).fill(Theme.panel))
             .overlay(RoundedRectangle(cornerRadius: 24)
                 .stroke(offRoute ? Theme.threatMedium : Theme.radarIdleStroke,
@@ -58,9 +55,94 @@ struct RoutePanel: View {
         }
     }
 
+    // MARK: - The street map
+
+    /// Camera: up = direction of travel, centred a little ahead of the rider
+    /// so most of the panel shows what's coming.
+    private func routeMap(rider: CLLocationCoordinate2D,
+                          progress: (index: Int, offMeters: Double, remainingMeters: Double)) -> some View {
+        let heading = course ?? routeHeading(progress.index)
+        let center = coordinate(from: rider, meters: 170, bearing: heading)
+        return Map(position: .constant(.camera(
+            MapCamera(centerCoordinate: center, distance: 1500, heading: heading)))) {
+            MapPolyline(coordinates: route.path.map(\.coordinate))
+                .stroke(Theme.accent,
+                        style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+            if headingToStart, let leg = leadIn, leg.count >= 2 {
+                MapPolyline(coordinates: leg.map(\.coordinate))
+                    .stroke(Theme.good,
+                            style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+            }
+            ForEach(Array(route.waypoints.enumerated()), id: \.offset) { _, wp in
+                Annotation("", coordinate: wp.coordinate) {
+                    Circle().fill(Theme.accent)
+                        .frame(width: 10, height: 10)
+                        .overlay(Circle().stroke(.white, lineWidth: 1.5))
+                }
+            }
+            if let start = route.path.first {
+                Annotation("", coordinate: start.coordinate) {
+                    Circle().fill(Theme.good)
+                        .frame(width: 14, height: 14)
+                        .overlay(Circle().stroke(.white, lineWidth: 2))
+                }
+            }
+            if !route.loop, let end = route.path.last {
+                Annotation("", coordinate: end.coordinate) {
+                    Circle().fill(Theme.threatHigh)
+                        .frame(width: 14, height: 14)
+                        .overlay(Circle().stroke(.white, lineWidth: 2))
+                }
+            }
+            Annotation("", coordinate: rider) {
+                // Up on screen = direction of travel (the camera provides the
+                // rotation), so the fixed up-arrow always points the right way.
+                Image(systemName: "location.north.fill")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(offRoute ? Theme.threatMedium : Theme.accent)
+                    .shadow(color: .black.opacity(0.5), radius: 3)
+            }
+        }
+        .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
+        .disabled(true)   // glanceable HUD, not an interactive map
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(verbatim: route.name)
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundStyle(Theme.textPrimary)
+                .lineLimit(1)
+                .shadow(color: .black.opacity(0.4), radius: 2)
+            if offRoute {
+                Text("Off route")
+                    .font(.system(size: 13, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Capsule().fill(Theme.threatMedium))
+            } else if headingToStart {
+                distancePill(route.distanceMeters)
+            } else if let progress {
+                distancePill(progress.remainingMeters)
+            }
+        }
+        .padding(12)
+    }
+
+    /// Distance readout that stays readable over any map imagery.
+    private func distancePill(_ meters: Double) -> some View {
+        Text(verbatim: "\(Fmt.decimal(distanceUnit.value(fromMeters: meters), 1)) \(distanceUnit.label)")
+            .font(.system(size: 15, weight: .heavy, design: .rounded))
+            .monospacedDigit()
+            .foregroundStyle(Theme.textPrimary)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(Capsule().fill(Theme.panel.opacity(0.85)))
+    }
+
     /// Radar-down warning, styled like the radar lane's own badge, so swapping
-    /// the panel for the route never hides the safety state. Bottom-centre:
-    /// the top row belongs to the route name and the mute controls.
+    /// the panel for the route never hides the safety state.
     @ViewBuilder private var radarWarning: some View {
         if !radarConnected {
             HStack(spacing: 6) {
@@ -76,36 +158,13 @@ struct RoutePanel: View {
         }
     }
 
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(verbatim: route.name)
-                .font(.system(size: 13, weight: .bold, design: .rounded))
-                .foregroundStyle(Theme.textSecondary)
-                .lineLimit(1)
-            if offRoute {
-                Text("Off route")
-                    .font(.system(size: 13, weight: .heavy, design: .rounded))
-                    .foregroundStyle(Theme.threatMedium)
-            } else if headingToStart {
-                Text(verbatim: "\(Fmt.decimal(distanceUnit.value(fromMeters: route.distanceMeters), 1)) \(distanceUnit.label)")
-                    .font(.system(size: 15, weight: .heavy, design: .rounded))
-                    .monospacedDigit()
-                    .foregroundStyle(Theme.textPrimary)
-            } else if let progress {
-                Text(verbatim: "\(Fmt.decimal(distanceUnit.value(fromMeters: progress.remainingMeters), 1)) \(distanceUnit.label)")
-                    .font(.system(size: 15, weight: .heavy, design: .rounded))
-                    .monospacedDigit()
-                    .foregroundStyle(Theme.textPrimary)
-            }
-        }
-        .padding(12)
-    }
+    // MARK: - Guidance overlay
 
     /// Directions when the rider isn't on the path: an arrow pointing at the
-    /// target (in the rider's frame, so "up" = keep going, "right" = it's off
-    /// to your right) with the distance to cover. Before the route has been
-    /// joined the target is the START marker; after that it's the nearest
-    /// point of the path. The canvas also draws a dashed link to the same spot.
+    /// target (in the rider's frame — the same heading the map camera uses, so
+    /// arrow and map can never disagree) with the distance to cover. Before
+    /// the route is joined the target follows the green lead-in leg (or the
+    /// start itself); after joining it's the nearest point of the path.
     private func directions(w: CGFloat, h: CGFloat,
                             rider: CLLocationCoordinate2D,
                             progress: (index: Int, offMeters: Double, remainingMeters: Double)) -> some View {
@@ -121,17 +180,23 @@ struct RoutePanel: View {
                 .font(.system(size: 40, weight: .heavy))
                 .foregroundStyle(tint)
                 .rotationEffect(.degrees(toTarget - heading))
-                .shadow(color: Theme.glow, radius: 8)
+                .shadow(color: .black.opacity(0.5), radius: 4)
                 .animation(.easeInOut(duration: 0.4), value: toTarget - heading)
             Text(verbatim: offDistText(distance))
                 .font(.system(size: 17, weight: .heavy, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(Theme.textPrimary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 2)
+                .background(Capsule().fill(Theme.panel.opacity(0.85)))
             Text(headingToStart ? "To the start" : "Back to route")
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
-                .foregroundStyle(Theme.textSecondary)
+                .foregroundStyle(Theme.textPrimary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 2)
+                .background(Capsule().fill(Theme.panel.opacity(0.85)))
         }
-        .position(x: w / 2, y: h * 0.38)
+        .position(x: w / 2, y: h * 0.35)
     }
 
     /// Where the guidance points: the start until the route is joined, then
@@ -142,29 +207,71 @@ struct RoutePanel: View {
         return route.path[min(progress.index, route.path.count - 1)].coordinate
     }
 
-    /// Follow-the-leg guidance while a lead-in exists: aim ~30 m along the leg
-    /// from the rider's nearest point, and report the ROAD distance left to
-    /// the start rather than the crow-flies line.
+    /// Follow-the-leg guidance while a lead-in exists. The rider is projected
+    /// onto the leg's SEGMENTS (nodes can be 100+ m apart on straights, so a
+    /// nearest-node aim can point the arrow at the wrong bend); the arrow aims
+    /// ~30 m along the leg from that projection, and the distance reported is
+    /// the road distance left to the start.
     private func leadInGuidance(rider: CLLocationCoordinate2D)
         -> (target: CLLocationCoordinate2D, remaining: Double)? {
         guard let leg = leadIn, leg.count >= 2 else { return nil }
-        var nearest = 0
-        var best = Double.greatestFiniteMagnitude
-        for (i, p) in leg.enumerated() {
-            let d = PlannedRoute.meters(rider, p.coordinate)
-            if d < best { best = d; nearest = i }
+        var bestSeg = 0
+        var bestT = 0.0
+        var bestD = Double.greatestFiniteMagnitude
+        for i in 0..<(leg.count - 1) {
+            let (d, t) = project(rider, onto: leg[i].coordinate, leg[i + 1].coordinate)
+            if d < bestD { bestD = d; bestSeg = i; bestT = t }
         }
-        var aim = nearest
-        var travelled = 0.0
-        while aim < leg.count - 1, travelled < 30 {
-            travelled += PlannedRoute.meters(leg[aim].coordinate, leg[aim + 1].coordinate)
-            aim += 1
+        let a = leg[bestSeg].coordinate
+        let b = leg[bestSeg + 1].coordinate
+        let segLen = PlannedRoute.meters(a, b)
+        let projection = CLLocationCoordinate2D(
+            latitude: a.latitude + (b.latitude - a.latitude) * bestT,
+            longitude: a.longitude + (b.longitude - a.longitude) * bestT)
+
+        // Aim ~30 m along the leg from the projection.
+        var aim = projection
+        var budget = 30.0
+        var carry = segLen * (1 - bestT)
+        var i = bestSeg
+        while budget > 0, i < leg.count - 1 {
+            if carry >= budget {
+                let from = i == bestSeg ? projection : leg[i].coordinate
+                let toward = leg[i + 1].coordinate
+                let f = budget / max(1, PlannedRoute.meters(from, toward))
+                aim = CLLocationCoordinate2D(
+                    latitude: from.latitude + (toward.latitude - from.latitude) * min(1, f),
+                    longitude: from.longitude + (toward.longitude - from.longitude) * min(1, f))
+                budget = 0
+            } else {
+                budget -= carry
+                i += 1
+                aim = leg[i].coordinate
+                carry = i < leg.count - 1
+                    ? PlannedRoute.meters(leg[i].coordinate, leg[i + 1].coordinate) : 0
+            }
         }
-        var remaining = 0.0
-        for i in nearest..<(leg.count - 1) {
-            remaining += PlannedRoute.meters(leg[i].coordinate, leg[i + 1].coordinate)
+
+        var remaining = segLen * (1 - bestT)
+        for j in (bestSeg + 1)..<(leg.count - 1) {
+            remaining += PlannedRoute.meters(leg[j].coordinate, leg[j + 1].coordinate)
         }
-        return (leg[aim].coordinate, remaining)
+        return (aim, remaining)
+    }
+
+    /// Perpendicular distance of `p` from segment a→b and the clamped
+    /// projection parameter t ∈ [0, 1], in metres.
+    private func project(_ p: CLLocationCoordinate2D,
+                         onto a: CLLocationCoordinate2D,
+                         _ b: CLLocationCoordinate2D) -> (distance: Double, t: Double) {
+        let (abx, aby) = PlannedRoute.delta(a, b)
+        let (apx, apy) = PlannedRoute.delta(a, p)
+        let len2 = abx * abx + aby * aby
+        guard len2 > 0 else { return (PlannedRoute.meters(a, p), 0) }
+        let t = max(0, min(1, (apx * abx + apy * aby) / len2))
+        let ox = apx - abx * t
+        let oy = apy - aby * t
+        return ((ox * ox + oy * oy).squareRoot(), t)
     }
 
     /// Short distances in radar-style metres/feet; longer ones in km/mi.
@@ -175,111 +282,19 @@ struct RoutePanel: View {
         return "\(Fmt.decimal(distanceUnit.value(fromMeters: m), 1)) \(distanceUnit.label)"
     }
 
-    /// The rider marker: same bare arrow as the radar lane, always pointing up
-    /// (the world rotates around it).
-    private func rider(w: CGFloat, h: CGFloat) -> some View {
-        Image(systemName: "location.north.fill")
-            .font(.system(size: 26, weight: .bold))
-            .foregroundStyle(offRoute ? Theme.threatMedium : Theme.accent)
-            .shadow(color: Theme.glow, radius: 8)
-            .position(x: w / 2, y: h * 0.72)
-    }
-
-    private func pathCanvas(w: CGFloat, h: CGFloat,
-                            rider: CLLocationCoordinate2D,
-                            progress: (index: Int, offMeters: Double, remainingMeters: Double)) -> some View {
-        Canvas { context, size in
-            // Rider-frame transform: metres → points, rotated so the travel
-            // direction points up. The rider sits at (w/2, 0.72h) so most of
-            // the window shows what's coming.
-            let scale = (size.height * 0.72) / windowAhead
-            let origin = CGPoint(x: size.width / 2, y: size.height * 0.72)
-            let heading = (course ?? routeHeading(progress.index)) * .pi / 180
-
-            func place(_ c: CLLocationCoordinate2D) -> CGPoint {
-                let (dx, dy) = PlannedRoute.delta(rider, c)
-                // Rotate east/north into the rider frame (heading up): a point
-                // at bearing b lands at screen angle b − heading, matching the
-                // guidance arrow's math.
-                let rx = dx * cos(heading) - dy * sin(heading)
-                let ry = dx * sin(heading) + dy * cos(heading)
-                return CGPoint(x: origin.x + rx * scale, y: origin.y - ry * scale)
-            }
-
-            // Slice of the path around the rider: a little behind, plenty ahead.
-            let start = max(0, progress.index - 30)
-            var lastVisible = progress.index
-            var travelled = 0.0
-            while lastVisible < route.path.count - 1, travelled < windowAhead * 1.6 {
-                travelled += PlannedRoute.meters(route.path[lastVisible].coordinate,
-                                                 route.path[lastVisible + 1].coordinate)
-                lastVisible += 1
-            }
-            guard lastVisible > start else { return }
-
-            // Lead-in leg to the start (road path, green) when one is planned:
-            // it IS the guidance, so the dashed crow-flies link is skipped.
-            if headingToStart, let leg = leadIn, leg.count >= 2 {
-                var lead = Path()
-                lead.addLines(leg.map { place($0.coordinate) })
-                context.stroke(lead, with: .color(Theme.good),
-                               style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-            }
-
-            // Away from the path: a dashed link from the rider to the guidance
-            // target — the start until joined, then the nearest point.
-            if progress.offMeters > 80, !(headingToStart && (leadIn?.count ?? 0) >= 2) {
-                let target = joined
-                    ? route.path[progress.index].coordinate
-                    : (route.path.first?.coordinate ?? route.path[progress.index].coordinate)
-                var link = Path()
-                link.move(to: origin)
-                link.addLine(to: place(target))
-                context.stroke(link, with: .color(joined ? Theme.threatMedium : Theme.accent),
-                               style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [7, 7]))
-                // Green start dot at the target when it's in the window.
-                if !joined {
-                    let p = place(target)
-                    let dot = Path(ellipseIn: CGRect(x: p.x - 6, y: p.y - 6, width: 12, height: 12))
-                    context.fill(dot, with: .color(Theme.good))
-                    context.stroke(dot, with: .color(.white), lineWidth: 2)
-                }
-            }
-
-            // Ridden portion (dim) then the road ahead (bright).
-            var behind = Path()
-            behind.addLines((start...progress.index).map { place(route.path[$0].coordinate) })
-            context.stroke(behind, with: .color(Theme.accent.opacity(0.3)),
-                           style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-
-            var ahead = Path()
-            ahead.addLines((progress.index...lastVisible).map { place(route.path[$0].coordinate) })
-            context.stroke(ahead, with: .color(Theme.accent),
-                           style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
-
-            // Waypoint markers dotted around the route, when in the window.
-            for wp in route.waypoints.dropFirst() {
-                let p = place(wp.coordinate)
-                guard p.x > -20, p.x < size.width + 20,
-                      p.y > -20, p.y < size.height + 20 else { continue }
-                let dot = Path(ellipseIn: CGRect(x: p.x - 4.5, y: p.y - 4.5, width: 9, height: 9))
-                context.fill(dot, with: .color(Theme.accent))
-                context.stroke(dot, with: .color(.white), lineWidth: 1.5)
-            }
-
-            // Finish flag when it comes into the window.
-            if lastVisible == route.path.count - 1, let last = route.path.last {
-                let p = place(last.coordinate)
-                let dot = Path(ellipseIn: CGRect(x: p.x - 6, y: p.y - 6, width: 12, height: 12))
-                context.fill(dot, with: .color(Theme.good))
-                context.stroke(dot, with: .color(.white), lineWidth: 2)
-            }
-        }
-    }
-
     /// Fallback orientation before GPS course exists: point the route's own
     /// local direction up.
     private func routeHeading(_ index: Int) -> Double {
         route.bearingAfter(index: index, lookahead: 30) ?? 0
+    }
+
+    /// The coordinate `meters` away from `c` along `bearing`.
+    private func coordinate(from c: CLLocationCoordinate2D, meters: Double,
+                            bearing: Double) -> CLLocationCoordinate2D {
+        let rad = bearing * .pi / 180
+        let dLat = meters * cos(rad) / 111_320
+        let dLon = meters * sin(rad) / (111_320 * max(0.2, cos(c.latitude * .pi / 180)))
+        return CLLocationCoordinate2D(latitude: c.latitude + dLat,
+                                      longitude: c.longitude + dLon)
     }
 }

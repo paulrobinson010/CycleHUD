@@ -90,9 +90,10 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   path snaps to **quiet roads and cycle paths** (BRouter's trekking profile over
   OpenStreetMap data). Routes loop back to the start by default, or turn that
   off to finish somewhere else. Save routes with a name and pick one to follow:
-  while the road behind is clear the **radar panel shows the route ahead** in
-  your direction of travel (with distance remaining) — the moment a vehicle
-  appears, the radar takes the panel back. Stray from the path and the panel
+  while the road behind is clear the **radar panel becomes a live street map**
+  — rotated so your direction of travel points up, the route in blue with its
+  waypoints dotted along it, and the distance remaining on top — and the
+  moment a vehicle appears, the radar takes the panel back. Stray from the path and the panel
   switches to **back-on-route directions**: an arrow pointing at the nearest
   point of the route, the distance to it, and a dashed link on the mini-map.
   Pick a route while away from it and CycleHUD plots a green **lead-in leg**
