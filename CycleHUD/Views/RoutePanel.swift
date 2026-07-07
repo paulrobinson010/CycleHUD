@@ -51,12 +51,13 @@ struct RoutePanel: View {
                         lineWidth: offRoute ? 3 : 1))
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .overlay(alignment: .topLeading) { header }
-            .overlay(alignment: .top) { radarWarning }
+            .overlay(alignment: .bottom) { radarWarning }
         }
     }
 
     /// Radar-down warning, styled like the radar lane's own badge, so swapping
-    /// the panel for the route never hides the safety state.
+    /// the panel for the route never hides the safety state. Bottom-centre:
+    /// the top row belongs to the route name and the mute controls.
     @ViewBuilder private var radarWarning: some View {
         if !radarConnected {
             HStack(spacing: 6) {
@@ -68,7 +69,7 @@ struct RoutePanel: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 5)
             .background(Capsule().fill(Theme.threatHigh))
-            .padding(.top, 10)
+            .padding(.bottom, 12)
         }
     }
 
