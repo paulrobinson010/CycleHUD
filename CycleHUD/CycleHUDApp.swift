@@ -124,6 +124,8 @@ struct CycleHUDApp: App {
                 junctions.locationProvider = { location.currentLocation }
                 junctions.isEnabled = { settings.junctionsEnabled }
                 junctions.start()
+                routes.locationProvider = { location.currentLocation }
+                routes.startLeadInUpdates()
                 sos.locationProvider = { location.currentLocation }
                 sos.contactProvider = { settings.emergencyContact }
                 sos.stateChanged = { active, seconds in

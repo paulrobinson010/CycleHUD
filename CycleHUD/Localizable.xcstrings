@@ -1300,42 +1300,42 @@
         }
       }
     },
-    "Adds a map button to the ride screen for planning and picking routes. Plan by tapping start and waypoints on a map — the path snaps to quiet roads and cycle paths, and loops back to the start unless you choose a separate finish. While following a route it appears in the radar panel whenever the road behind is clear, and the Junction tile points the way. Planning sends the tapped points to the BRouter routing service (brouter.de, OpenStreetMap data); saved routes stay on your device and can be shared as files." : {
+    "Adds a map button to the ride screen for planning and picking routes. Plan by tapping start and waypoints on a map — the path snaps to quiet roads and cycle paths, and loops back to the start unless you choose a separate finish. While following a route it appears in the radar panel whenever the road behind is clear, and the Junction tile points the way; pick a route while away from it and CycleHUD also plots a lead-in to the start. Planning and the lead-in send the needed points to the BRouter routing service (brouter.de, OpenStreetMap data); saved routes stay on your device and can be shared as files." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fügt dem Fahrbildschirm eine Karten-Taste zum Planen und Auswählen von Routen hinzu. Plane, indem du Start und Wegpunkte auf einer Karte antippst – der Weg folgt ruhigen Straßen und Radwegen und führt zurück zum Start, sofern du kein separates Ziel wählst. Beim Folgen einer Route erscheint sie im Radarfeld, solange die Straße hinter dir frei ist, und die Kreuzungs-Kachel zeigt die Richtung. Beim Planen werden die angetippten Punkte an den Routing-Dienst BRouter (brouter.de, OpenStreetMap-Daten) gesendet; gespeicherte Routen bleiben auf deinem Gerät und lassen sich als Dateien teilen."
+            "value" : "Fügt dem Fahrbildschirm eine Karten-Taste zum Planen und Auswählen von Routen hinzu. Plane, indem du Start und Wegpunkte auf einer Karte antippst – der Weg folgt ruhigen Straßen und Radwegen und führt zurück zum Start, sofern du kein separates Ziel wählst. Beim Folgen einer Route erscheint sie im Radarfeld, solange die Straße hinter dir frei ist, und die Kreuzungs-Kachel zeigt die Richtung; wählst du eine Route abseits von ihr, plant CycleHUD zusätzlich eine Zufahrt zum Start. Planung und Zufahrt senden die nötigen Punkte an den Routing-Dienst BRouter (brouter.de, OpenStreetMap-Daten); gespeicherte Routen bleiben auf deinem Gerät und lassen sich als Dateien teilen."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adds a map button to the ride screen for planning and picking routes. Plan by tapping start and waypoints on a map — the path snaps to quiet roads and cycle paths, and loops back to the start unless you choose a separate finish. While following a route it appears in the radar panel whenever the road behind is clear, and the Junction tile points the way. Planning sends the tapped points to the BRouter routing service (brouter.de, OpenStreetMap data); saved routes stay on your device and can be shared as files."
+            "value" : "Adds a map button to the ride screen for planning and picking routes. Plan by tapping start and waypoints on a map — the path snaps to quiet roads and cycle paths, and loops back to the start unless you choose a separate finish. While following a route it appears in the radar panel whenever the road behind is clear, and the Junction tile points the way; pick a route while away from it and CycleHUD also plots a lead-in to the start. Planning and the lead-in send the needed points to the BRouter routing service (brouter.de, OpenStreetMap data); saved routes stay on your device and can be shared as files."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adds a map button to the ride screen for planning and picking routes. Plan by tapping start and waypoints on a map — the path snaps to quiet roads and cycle paths, and loops back to the start unless you choose a separate finish. While following a route it appears in the radar panel whenever the road behind is clear, and the Junction tile points the way. Planning sends the tapped points to the BRouter routing service (brouter.de, OpenStreetMap data); saved routes stay on your device and can be shared as files."
+            "value" : "Adds a map button to the ride screen for planning and picking routes. Plan by tapping start and waypoints on a map — the path snaps to quiet roads and cycle paths, and loops back to the start unless you choose a separate finish. While following a route it appears in the radar panel whenever the road behind is clear, and the Junction tile points the way; pick a route while away from it and CycleHUD also plots a lead-in to the start. Planning and the lead-in send the needed points to the BRouter routing service (brouter.de, OpenStreetMap data); saved routes stay on your device and can be shared as files."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añade un botón de mapa a la pantalla de marcha para planificar y elegir rutas. Planifica tocando la salida y puntos intermedios en un mapa: el trazado sigue carreteras tranquilas y carriles bici, y vuelve a la salida salvo que elijas una meta distinta. Mientras sigues una ruta, esta aparece en el panel del radar siempre que la carretera de detrás esté despejada, y el recuadro de Cruce indica la dirección. La planificación envía los puntos tocados al servicio de rutas BRouter (brouter.de, datos de OpenStreetMap); las rutas guardadas permanecen en tu dispositivo y pueden compartirse como archivos."
+            "value" : "Añade un botón de mapa a la pantalla de marcha para planificar y elegir rutas. Planifica tocando la salida y puntos intermedios en un mapa: el trazado sigue carreteras tranquilas y carriles bici, y vuelve a la salida salvo que elijas una meta distinta. Mientras sigues una ruta, esta aparece en el panel del radar siempre que la carretera de detrás esté despejada, y el recuadro de Cruce indica la dirección; si eliges una ruta lejos de ella, CycleHUD también traza un acceso hasta la salida. La planificación y ese acceso envían los puntos necesarios al servicio de rutas BRouter (brouter.de, datos de OpenStreetMap); las rutas guardadas permanecen en tu dispositivo y pueden compartirse como archivos."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute un bouton carte à l’écran de conduite pour planifier et choisir des itinéraires. Planifiez en touchant le départ et des étapes sur une carte – le tracé suit les routes calmes et les pistes cyclables, et revient au départ sauf si vous choisissez une arrivée distincte. Pendant le suivi, l’itinéraire s’affiche dans le panneau radar tant que la route derrière est dégagée, et la tuile Intersection indique la direction. La planification envoie les points touchés au service de calcul d’itinéraire BRouter (brouter.de, données OpenStreetMap) ; les itinéraires enregistrés restent sur votre appareil et peuvent être partagés sous forme de fichiers."
+            "value" : "Ajoute un bouton carte à l’écran de conduite pour planifier et choisir des itinéraires. Planifiez en touchant le départ et des étapes sur une carte – le tracé suit les routes calmes et les pistes cyclables, et revient au départ sauf si vous choisissez une arrivée distincte. Pendant le suivi, l’itinéraire s’affiche dans le panneau radar tant que la route derrière est dégagée, et la tuile Intersection indique la direction ; si vous choisissez un itinéraire loin de celui-ci, CycleHUD trace aussi un accès jusqu’au départ. La planification et cet accès envoient les points nécessaires au service de calcul d’itinéraire BRouter (brouter.de, données OpenStreetMap) ; les itinéraires enregistrés restent sur votre appareil et peuvent être partagés sous forme de fichiers."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aggiunge alla schermata di guida un pulsante mappa per pianificare e scegliere i percorsi. Pianifica toccando partenza e tappe su una mappa – il tracciato segue strade tranquille e piste ciclabili e torna alla partenza, a meno che tu non scelga un arrivo diverso. Mentre segui un percorso, questo appare nel pannello radar finché la strada dietro è libera, e il riquadro Incrocio indica la direzione. La pianificazione invia i punti toccati al servizio di routing BRouter (brouter.de, dati OpenStreetMap); i percorsi salvati restano sul tuo dispositivo e possono essere condivisi come file."
+            "value" : "Aggiunge alla schermata di guida un pulsante mappa per pianificare e scegliere i percorsi. Pianifica toccando partenza e tappe su una mappa – il tracciato segue strade tranquille e piste ciclabili e torna alla partenza, a meno che tu non scelga un arrivo diverso. Mentre segui un percorso, questo appare nel pannello radar finché la strada dietro è libera, e il riquadro Incrocio indica la direzione; se attivi un percorso lontano da esso, CycleHUD traccia anche un avvicinamento alla partenza. La pianificazione e l’avvicinamento inviano i punti necessari al servizio di routing BRouter (brouter.de, dati OpenStreetMap); i percorsi salvati restano sul tuo dispositivo e possono essere condivisi come file."
           }
         }
       }
@@ -3866,6 +3866,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Demo"
+          }
+        }
+      }
+    },
+    "Demo route" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demo-Route"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demo route"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demo route"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ruta de demostración"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinéraire démo"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Percorso demo"
           }
         }
       }
@@ -7853,42 +7893,42 @@
         }
       }
     },
-    "Plays a one-time preview on the main screen — a vehicle closing in from low (yellow) through medium (orange) to high (red), the new-vehicle beep, escalating Apple Watch wrist taps, and a “radar off” wrist alert at the end — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it." : {
+    "Plays a one-time preview on the main screen — a vehicle closing in from low (yellow) through medium (orange) to high (red), the new-vehicle beep, escalating Apple Watch wrist taps, a “radar off” wrist alert, and to finish, a demo route gliding by in the radar panel — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spielt eine einmalige Vorschau auf dem Hauptbildschirm — ein Fahrzeug, das von niedrig (gelb) über mittel (orange) zu hoch (rot) näher kommt, der Signalton für neue Fahrzeuge, stärker werdende Apple-Watch-Tipps und am Ende eine „Radar aus“-Warnung — damit du jede Warnung vor der Fahrt fühlen und feinjustieren kannst. Läuft einmal durch und stoppt; der Start einer Fahrt beendet sie ebenfalls."
+            "value" : "Spielt eine einmalige Vorschau auf dem Hauptbildschirm — ein Fahrzeug, das von niedrig (gelb) über mittel (orange) zu hoch (rot) näher kommt, der Signalton für neue Fahrzeuge, stärker werdende Apple-Watch-Tipps, eine „Radar aus“-Warnung und zum Abschluss eine Demo-Route, die im Radarfeld vorbeigleitet — damit du jede Warnung vor der Fahrt fühlen und feinjustieren kannst. Läuft einmal durch und stoppt; der Start einer Fahrt beendet sie ebenfalls."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plays a one-time preview on the main screen — a vehicle closing in from low (yellow) through medium (orange) to high (red), the new-vehicle beep, escalating Apple Watch wrist taps, and a “radar off” wrist alert at the end — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it."
+            "value" : "Plays a one-time preview on the main screen — a vehicle closing in from low (yellow) through medium (orange) to high (red), the new-vehicle beep, escalating Apple Watch wrist taps, a “radar off” wrist alert, and to finish, a demo route gliding by in the radar panel — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plays a one-time preview on the main screen — a vehicle closing in from low (yellow) through medium (orange) to high (red), the new-vehicle beep, escalating Apple Watch wrist taps, and a “radar off” wrist alert at the end — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it."
+            "value" : "Plays a one-time preview on the main screen — a vehicle closing in from low (yellow) through medium (orange) to high (red), the new-vehicle beep, escalating Apple Watch wrist taps, a “radar off” wrist alert, and to finish, a demo route gliding by in the radar panel — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reproduce una vista previa única en la pantalla principal: un vehículo que se acerca de bajo (amarillo) a medio (naranja) y alto (rojo), el pitido de vehículo nuevo, toques cada vez más rápidos del Apple Watch y un aviso « radar apagado » al final, para que sientas y ajustes cada alerta antes de rodar. Se reproduce una vez y se detiene; iniciar una ruta también lo detiene."
+            "value" : "Reproduce una vista previa única en la pantalla principal: un vehículo que se acerca de bajo (amarillo) a medio (naranja) y alto (rojo), el pitido de vehículo nuevo, toques cada vez más rápidos del Apple Watch, un aviso « radar apagado » y, para terminar, una ruta de demostración deslizándose por el panel del radar, para que sientas y ajustes cada alerta antes de rodar. Se reproduce una vez y se detiene; iniciar una ruta también lo detiene."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lance un aperçu unique sur l'écran principal — un véhicule qui approche de faible (jaune) à moyen (orange) puis élevé (rouge), le bip de nouveau véhicule, des tapotements d'Apple Watch de plus en plus rapides et une alerte « radar éteint » à la fin — pour ressentir et régler chaque alerte avant une sortie. Il se joue une fois puis s'arrête ; démarrer une sortie l'arrête aussi."
+            "value" : "Lance un aperçu unique sur l’écran principal — un véhicule qui approche de faible (jaune) à moyen (orange) puis élevé (rouge), le bip de nouveau véhicule, des tapotements d’Apple Watch de plus en plus rapides, une alerte « radar éteint », et pour finir un itinéraire démo qui défile dans le panneau radar — pour ressentir et régler chaque alerte avant une sortie. Il se joue une fois puis s’arrête ; démarrer une sortie l’arrête aussi."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Riproduce un'anteprima singola nella schermata principale — un veicolo che si avvicina da basso (giallo) a medio (arancione) ad alto (rosso), il bip per i nuovi veicoli, tocchi dell'Apple Watch sempre più rapidi e un avviso « radar spento » alla fine — così puoi sentire e regolare ogni avviso prima di un'uscita. Si esegue una volta e si ferma; anche avviare un'uscita lo interrompe."
+            "value" : "Riproduce un’anteprima singola nella schermata principale — un veicolo che si avvicina da basso (giallo) a medio (arancione) ad alto (rosso), il bip per i nuovi veicoli, tocchi dell’Apple Watch sempre più rapidi, un avviso « radar spento » e, per finire, un percorso demo che scorre nel pannello radar — così puoi sentire e regolare ogni avviso prima di un’uscita. Si esegue una volta e si ferma; anche avviare un’uscita lo interrompe."
           }
         }
       }

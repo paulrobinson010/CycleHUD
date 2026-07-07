@@ -94,7 +94,10 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   your direction of travel (with distance remaining) — the moment a vehicle
   appears, the radar takes the panel back. Stray from the path and the panel
   switches to **back-on-route directions**: an arrow pointing at the nearest
-  point of the route, the distance to it, and a dashed link on the mini-map. With junctions
+  point of the route, the distance to it, and a dashed link on the mini-map.
+  Pick a route while away from it and CycleHUD plots a green **lead-in leg**
+  along quiet roads from where you are to the start, with the arrow and
+  road-distance following the leg until you join. With junctions
   on, the **Junction tile highlights the arm your route takes** in green.
   Share any route as a **`.cyclehudroute` file** (CycleHUD's own format) via
   the share sheet, and import routes from friends with the import button or by

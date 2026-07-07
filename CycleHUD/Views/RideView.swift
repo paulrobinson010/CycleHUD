@@ -379,12 +379,27 @@ struct RideView: View {
     /// is detected.
     private var radarPanel: some View {
         Group {
-            if let route = routes.activeRoute, settings.routePlanningEnabled, ble.threats.isEmpty {
+            if ride.demoActive, let demoRoute = ride.demoRoute, ble.threats.isEmpty {
+                // Demo finale: glide along a looping demo route so riders see
+                // route-following without planning anything.
+                RoutePanel(route: demoRoute,
+                           location: CLLocation(
+                                latitude: demoRoute.path[min(ride.demoRouteIndex, demoRoute.path.count - 1)].lat,
+                                longitude: demoRoute.path[min(ride.demoRouteIndex, demoRoute.path.count - 1)].lon),
+                           course: demoRoute.bearingAfter(index: ride.demoRouteIndex, lookahead: 20),
+                           progress: (index: ride.demoRouteIndex, offMeters: 0,
+                                      remainingMeters: demoRoute.remainingMeters(from: ride.demoRouteIndex)),
+                           joined: true,
+                           leadIn: nil,
+                           radarConnected: true,
+                           distanceUnit: settings.distanceUnit)
+            } else if let route = routes.activeRoute, settings.routePlanningEnabled, ble.threats.isEmpty {
                 RoutePanel(route: route,
                            location: location.currentLocation,
                            course: location.courseDegrees ?? location.headingDegrees,
                            progress: location.currentLocation.flatMap { routes.progress(at: $0.coordinate) },
                            joined: routes.joinedActiveRoute,
+                           leadIn: routes.leadIn,
                            radarConnected: ble.status(for: .radar) == .connected,
                            distanceUnit: settings.distanceUnit)
             } else {

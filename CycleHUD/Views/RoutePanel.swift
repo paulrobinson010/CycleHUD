@@ -15,6 +15,9 @@ struct RoutePanel: View {
     /// Whether the rider has reached the route yet (RouteStore tracks this).
     /// Until then, directions target the START marker, not the nearest point.
     let joined: Bool
+    /// Road leg from the rider to the start (BRouter), when one is available:
+    /// drawn green, with the arrow and distance following the leg.
+    let leadIn: [PlannedRoute.Point]?
     /// The radar's safety signal must survive the panel swap: when it's not
     /// connected, a warning overlays the route view.
     let radarConnected: Bool
@@ -106,11 +109,13 @@ struct RoutePanel: View {
     private func directions(w: CGFloat, h: CGFloat,
                             rider: CLLocationCoordinate2D,
                             progress: (index: Int, offMeters: Double, remainingMeters: Double)) -> some View {
-        let target = directionsTarget(progress: progress)
+        let leg = headingToStart ? leadInGuidance(rider: rider) : nil
+        let target = leg?.target ?? directionsTarget(progress: progress)
         let toTarget = PlannedRoute.bearing(rider, target)
-        let distance = headingToStart ? PlannedRoute.meters(rider, target) : progress.offMeters
+        let distance = leg?.remaining
+            ?? (headingToStart ? PlannedRoute.meters(rider, target) : progress.offMeters)
         let heading = course ?? routeHeading(progress.index)
-        let tint = headingToStart ? Theme.accent : Theme.threatMedium
+        let tint = headingToStart ? (leg != nil ? Theme.good : Theme.accent) : Theme.threatMedium
         return VStack(spacing: 6) {
             Image(systemName: "arrow.up")
                 .font(.system(size: 40, weight: .heavy))
@@ -135,6 +140,31 @@ struct RoutePanel: View {
         -> CLLocationCoordinate2D {
         if headingToStart, let start = route.path.first { return start.coordinate }
         return route.path[min(progress.index, route.path.count - 1)].coordinate
+    }
+
+    /// Follow-the-leg guidance while a lead-in exists: aim ~30 m along the leg
+    /// from the rider's nearest point, and report the ROAD distance left to
+    /// the start rather than the crow-flies line.
+    private func leadInGuidance(rider: CLLocationCoordinate2D)
+        -> (target: CLLocationCoordinate2D, remaining: Double)? {
+        guard let leg = leadIn, leg.count >= 2 else { return nil }
+        var nearest = 0
+        var best = Double.greatestFiniteMagnitude
+        for (i, p) in leg.enumerated() {
+            let d = PlannedRoute.meters(rider, p.coordinate)
+            if d < best { best = d; nearest = i }
+        }
+        var aim = nearest
+        var travelled = 0.0
+        while aim < leg.count - 1, travelled < 30 {
+            travelled += PlannedRoute.meters(leg[aim].coordinate, leg[aim + 1].coordinate)
+            aim += 1
+        }
+        var remaining = 0.0
+        for i in nearest..<(leg.count - 1) {
+            remaining += PlannedRoute.meters(leg[i].coordinate, leg[i + 1].coordinate)
+        }
+        return (leg[aim].coordinate, remaining)
     }
 
     /// Short distances in radar-style metres/feet; longer ones in km/mi.
@@ -187,9 +217,18 @@ struct RoutePanel: View {
             }
             guard lastVisible > start else { return }
 
+            // Lead-in leg to the start (road path, green) when one is planned:
+            // it IS the guidance, so the dashed crow-flies link is skipped.
+            if headingToStart, let leg = leadIn, leg.count >= 2 {
+                var lead = Path()
+                lead.addLines(leg.map { place($0.coordinate) })
+                context.stroke(lead, with: .color(Theme.good),
+                               style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+            }
+
             // Away from the path: a dashed link from the rider to the guidance
             // target — the start until joined, then the nearest point.
-            if progress.offMeters > 80 {
+            if progress.offMeters > 80, !(headingToStart && (leadIn?.count ?? 0) >= 2) {
                 let target = joined
                     ? route.path[progress.index].coordinate
                     : (route.path.first?.coordinate ?? route.path[progress.index].coordinate)
@@ -217,6 +256,16 @@ struct RoutePanel: View {
             ahead.addLines((progress.index...lastVisible).map { place(route.path[$0].coordinate) })
             context.stroke(ahead, with: .color(Theme.accent),
                            style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
+
+            // Waypoint markers dotted around the route, when in the window.
+            for wp in route.waypoints.dropFirst() {
+                let p = place(wp.coordinate)
+                guard p.x > -20, p.x < size.width + 20,
+                      p.y > -20, p.y < size.height + 20 else { continue }
+                let dot = Path(ellipseIn: CGRect(x: p.x - 4.5, y: p.y - 4.5, width: 9, height: 9))
+                context.fill(dot, with: .color(Theme.accent))
+                context.stroke(dot, with: .color(.white), lineWidth: 1.5)
+            }
 
             // Finish flag when it comes into the window.
             if lastVisible == route.path.count - 1, let last = route.path.last {

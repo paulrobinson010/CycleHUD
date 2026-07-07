@@ -371,6 +371,14 @@ final class RideManager: ObservableObject {
     // While set, the demo is in its closing "radar dropped out" preview window.
     private var demoRadarLostUntil: Date?
 
+    // Final demo beat: a looping demo route with waypoints shown in the radar
+    // slot, the rider gliding along it, so route-following can be previewed
+    // without planning anything.
+    @Published private(set) var demoRoute: PlannedRoute?
+    @Published private(set) var demoRouteIndex = 0
+    private var demoRouteUntil: Date?
+    private var demoRouteCarry = 0.0
+
     func startDemo() {
         guard status == .idle, !demoActive else { return }
         demoActive = true
@@ -399,6 +407,10 @@ final class RideManager: ObservableObject {
         demoActive = false
         demoPaused = false
         demoRadarLostUntil = nil
+        demoRoute = nil
+        demoRouteIndex = 0
+        demoRouteUntil = nil
+        demoRouteCarry = 0
         demoTimer?.invalidate()
         demoTimer = nil
         distanceMeters = 0
@@ -431,16 +443,64 @@ final class RideManager: ObservableObject {
         sendMirror()                  // push the RADAR OFF banner immediately
     }
 
+    /// A ~2 km organic loop around the rider (or a fixed spot with no fix),
+    /// with waypoint markers dotted around it — the demo's route preview.
+    private func makeDemoRoute() -> PlannedRoute {
+        let center = location.currentLocation?.coordinate
+            ?? CLLocationCoordinate2D(latitude: 52.4414, longitude: -0.8329)
+        var path: [PlannedRoute.Point] = []
+        let n = 160
+        for i in 0...n {
+            let t = Double(i) / Double(n) * 2 * .pi
+            // Wobbled radius so the loop bends like real lanes, not a circle.
+            let r = 260 + 90 * sin(2 * t) + 50 * sin(3 * t + 1)
+            let dLat = r * cos(t) / 111_320
+            let dLon = r * sin(t) / (111_320 * cos(center.latitude * .pi / 180))
+            path.append(PlannedRoute.Point(lat: center.latitude + dLat,
+                                           lon: center.longitude + dLon))
+        }
+        var dist = 0.0
+        for i in 0..<(path.count - 1) {
+            dist += PlannedRoute.meters(path[i].coordinate, path[i + 1].coordinate)
+        }
+        let waypoints = stride(from: 0, to: path.count, by: max(1, path.count / 6)).map { path[$0] }
+        return PlannedRoute(name: String(localized: "Demo route", bundle: Lang.bundle),
+                            waypoints: waypoints, loop: true,
+                            path: path, distanceMeters: dist)
+    }
+
     private func demoTick() {
         let now = Date()
         let dt = lastTick.map { now.timeIntervalSince($0) } ?? 0.5
         lastTick = now
         guard !demoPaused else { return }
 
-        // Closing radar-lost preview: hold the RADAR OFF banner, then finish.
+        // Closing radar-lost preview: hold the RADAR OFF banner, then move on
+        // to the final beat — following a demo route in the radar slot.
         if let until = demoRadarLostUntil {
-            if now >= until { stopDemo() } else { sendMirror() }
+            if now >= until {
+                demoRadarLostUntil = nil
+                demoRoute = makeDemoRoute()
+                demoRouteIndex = 0
+                demoRouteCarry = 0
+                demoRouteUntil = now.addingTimeInterval(12)
+            } else {
+                sendMirror()
+            }
             return
+        }
+
+        // Route preview: glide along the demo loop, then finish for real.
+        if let until = demoRouteUntil {
+            if now >= until { stopDemo(); return }
+            demoRouteCarry += max(3, currentSpeedMps) * dt
+            while let route = demoRoute, demoRouteIndex < route.path.count - 1 {
+                let seg = PlannedRoute.meters(route.path[demoRouteIndex].coordinate,
+                                              route.path[demoRouteIndex + 1].coordinate)
+                guard demoRouteCarry >= seg else { break }
+                demoRouteCarry -= seg
+                demoRouteIndex += 1
+            }
         }
         movingTimeSeconds += dt
         let wobble = sin(movingTimeSeconds / 6.0) * 1.2 + Double.random(in: -0.4...0.4)

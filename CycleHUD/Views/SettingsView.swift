@@ -145,7 +145,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Routes")
                 } footer: {
-                    Text("Adds a map button to the ride screen for planning and picking routes. Plan by tapping start and waypoints on a map — the path snaps to quiet roads and cycle paths, and loops back to the start unless you choose a separate finish. While following a route it appears in the radar panel whenever the road behind is clear, and the Junction tile points the way. Planning sends the tapped points to the BRouter routing service (brouter.de, OpenStreetMap data); saved routes stay on your device and can be shared as files.")
+                    Text("Adds a map button to the ride screen for planning and picking routes. Plan by tapping start and waypoints on a map — the path snaps to quiet roads and cycle paths, and loops back to the start unless you choose a separate finish. While following a route it appears in the radar panel whenever the road behind is clear, and the Junction tile points the way; pick a route while away from it and CycleHUD also plots a lead-in to the start. Planning and the lead-in send the needed points to the BRouter routing service (brouter.de, OpenStreetMap data); saved routes stay on your device and can be shared as files.")
                 }
 
                 Section {
@@ -234,7 +234,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Demo")
                 } footer: {
-                    Text("Plays a one-time preview on the main screen — a vehicle closing in from low (yellow) through medium (orange) to high (red), the new-vehicle beep, escalating Apple Watch wrist taps, and a “radar off” wrist alert at the end — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it.")
+                    Text("Plays a one-time preview on the main screen — a vehicle closing in from low (yellow) through medium (orange) to high (red), the new-vehicle beep, escalating Apple Watch wrist taps, a “radar off” wrist alert, and to finish, a demo route gliding by in the radar panel — so you can feel and fine-tune every alert before a ride. It runs through once and stops; starting a ride also stops it.")
                 }
 
                 Section {

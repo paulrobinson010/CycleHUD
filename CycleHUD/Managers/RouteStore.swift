@@ -11,8 +11,17 @@ final class RouteStore: ObservableObject {
         didSet {
             defaults.set(activeRouteID?.uuidString ?? "", forKey: "activeRouteID")
             joinedActiveRoute = false
+            leadIn = nil
         }
     }
+
+    /// Road path from the rider to the active route's start — the "route me
+    /// to the start" leg. Fetched from BRouter when a route is picked away
+    /// from the rider, refreshed if they stray off it, dropped once joined.
+    @Published private(set) var leadIn: [PlannedRoute.Point]?
+
+    /// Supplied by the app so the lead-in updater can see the rider.
+    var locationProvider: (() -> CLLocation?)?
 
     /// Whether the rider has reached the active route yet. Until they have,
     /// the ride panel directs them to the START marker rather than treating
@@ -91,6 +100,51 @@ final class RouteStore: ObservableObject {
         route.id = UUID()
         add(route)
         return route
+    }
+
+    // MARK: - Lead-in to the start
+
+    private var leadInTimer: Timer?
+    private var leadInFetching = false
+    private var lastLeadInFetch: Date?
+
+    /// Begin the periodic lead-in check (idempotent; cheap while irrelevant).
+    func startLeadInUpdates() {
+        guard leadInTimer == nil else { return }
+        leadInTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
+            self?.tickLeadIn()
+        }
+    }
+
+    private func tickLeadIn() {
+        guard let route = activeRoute, !joinedActiveRoute,
+              let loc = locationProvider?()?.coordinate else {
+            if leadIn != nil { leadIn = nil }
+            return
+        }
+        // Close to the route already: the panel's own guidance covers it.
+        if let near = route.nearestPathIndex(to: loc), near.meters < 150 {
+            if leadIn != nil { leadIn = nil }
+            return
+        }
+        // Still on the current leg? Keep it — no refetch needed.
+        if let leg = leadIn,
+           leg.contains(where: { PlannedRoute.meters(loc, $0.coordinate) < 100 }) {
+            return
+        }
+        guard !leadInFetching, let start = route.path.first else { return }
+        if let last = lastLeadInFetch, Date().timeIntervalSince(last) < 30 { return }
+        leadInFetching = true
+        lastLeadInFetch = Date()
+        Task { @MainActor in
+            defer { leadInFetching = false }
+            guard let result = try? await RoutePlanner.plan(
+                through: [PlannedRoute.Point(loc), start], loop: false) else { return }
+            // Only publish if it's still the situation we planned for.
+            if activeRouteID == route.id, !joinedActiveRoute {
+                leadIn = result.path
+            }
+        }
     }
 
     // MARK: - Ride-time progress
