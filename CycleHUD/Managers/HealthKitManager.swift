@@ -108,7 +108,7 @@ final class HealthKitManager: ObservableObject {
                                       quantity: quantity,
                                       start: workout.startDate, end: workout.endDate)
         if let old = lastEffortSample {
-            _ = try? await store.unrelateWorkoutEffortSample(old, from: workout)
+            _ = try? await store.unrelateWorkoutEffortSample(old, from: workout, activity: nil)
             try? await store.delete(old)
         }
         do {
