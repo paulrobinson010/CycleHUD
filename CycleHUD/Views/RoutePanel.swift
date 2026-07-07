@@ -167,9 +167,11 @@ struct RoutePanel: View {
 
             func place(_ c: CLLocationCoordinate2D) -> CGPoint {
                 let (dx, dy) = PlannedRoute.delta(rider, c)
-                // Rotate east/north into the rider frame (heading up).
-                let rx = dx * cos(-heading) - dy * sin(-heading)
-                let ry = dx * sin(-heading) + dy * cos(-heading)
+                // Rotate east/north into the rider frame (heading up): a point
+                // at bearing b lands at screen angle b − heading, matching the
+                // guidance arrow's math.
+                let rx = dx * cos(heading) - dy * sin(heading)
+                let ry = dx * sin(heading) + dy * cos(heading)
                 return CGPoint(x: origin.x + rx * scale, y: origin.y - ry * scale)
             }
 
