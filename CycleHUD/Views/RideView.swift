@@ -2,6 +2,7 @@ import SwiftUI
 import UIKit
 import MessageUI
 import UniformTypeIdentifiers
+import CoreLocation
 
 /// The main riding screen: radar-first, with the data grid and ride controls
 /// beneath it. No map.
@@ -15,9 +16,10 @@ struct RideView: View {
     @EnvironmentObject var weather: WeatherManager
     @EnvironmentObject var sos: SOSManager
     @EnvironmentObject var junctions: JunctionManager
+    @EnvironmentObject var routes: RouteStore
 
     private enum ActiveSheet: Int, Identifiable {
-        case pairing, settings
+        case pairing, settings, routes
         var id: Int { rawValue }
     }
     @State private var activeSheet: ActiveSheet?
@@ -60,6 +62,7 @@ struct RideView: View {
                 case .settings: SettingsView().environmentObject(settings).environmentObject(ble)
                         .environmentObject(ride).environmentObject(history).environmentObject(weather)
                         .environmentObject(sos)
+                case .routes: RoutesView().environmentObject(routes).environmentObject(settings)
                 }
             }
             .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
@@ -371,10 +374,23 @@ struct RideView: View {
     }
 
     /// The radar lane plus its debug "Mark car" overlay, shared by both layouts.
+    /// With a route being followed and the road behind clear, the slot shows
+    /// the route ahead instead — the radar takes it back the moment a vehicle
+    /// is detected.
     private var radarPanel: some View {
-        RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
-                  radarConnected: ble.status(for: .radar) == .connected,
-                  batteryPercent: ble.radarBatteryPercent)
+        Group {
+            if let route = routes.activeRoute, settings.routePlanningEnabled, ble.threats.isEmpty {
+                RoutePanel(route: route,
+                           location: location.currentLocation,
+                           course: location.courseDegrees ?? location.headingDegrees,
+                           progress: location.currentLocation.flatMap { routes.progress(at: $0.coordinate) },
+                           distanceUnit: settings.distanceUnit)
+            } else {
+                RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
+                          radarConnected: ble.status(for: .radar) == .connected,
+                          batteryPercent: ble.radarBatteryPercent)
+            }
+        }
             .overlay(alignment: .topTrailing) {
                 MuteControls(settings: settings).padding(10)
             }
@@ -405,6 +421,14 @@ struct RideView: View {
 
             if controlStatus != .idle { statusBadge }
 
+            if settings.routePlanningEnabled {
+                Button { activeSheet = .routes } label: {
+                    Image(systemName: routes.activeRoute != nil ? "map.fill" : "map")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(routes.activeRoute != nil ? Theme.good : Theme.textPrimary)
+                }
+                .accessibilityLabel("Routes")
+            }
             Button { activeSheet = .pairing } label: {
                 Image(systemName: "antenna.radiowaves.left.and.right")
                     .font(.system(size: 17, weight: .semibold))
@@ -850,13 +874,26 @@ struct RideView: View {
     }
 
     /// The next intersection ahead (OpenStreetMap): distance counting down in
-    /// the rider's units, with a schematic of the junction's arms.
+    /// the rider's units, with a schematic of the junction's arms. When a
+    /// planned route passes through the junction, the arm the route takes is
+    /// highlighted green — the tile points the way.
     private func junctionTile(height: CGFloat, valueSize vs: CGFloat) -> some View {
         let info = junctions.next
         let value = info.map { Fmt.int(settings.distanceUnit.shortValue(fromMeters: $0.distanceMeters)) } ?? "—"
         return JunctionTile(title: "Junction", value: value,
                             unit: info != nil ? tileUnit(settings.distanceUnit.shortLabel) : "",
-                            valueSize: vs, height: height, info: info)
+                            valueSize: vs, height: height, info: info,
+                            routeBearing: info.flatMap(routeExitBearing))
+    }
+
+    /// The direction the active route leaves `junction`, or nil when no route
+    /// is being followed or it doesn't pass through this junction.
+    private func routeExitBearing(at junction: JunctionInfo) -> Double? {
+        guard settings.routePlanningEnabled, let route = routes.activeRoute else { return nil }
+        let coord = CLLocationCoordinate2D(latitude: junction.latitude,
+                                           longitude: junction.longitude)
+        guard let near = route.nearestPathIndex(to: coord), near.meters <= 30 else { return nil }
+        return route.bearingAfter(index: near.index, lookahead: 25)
     }
 
     /// A needle that always points north — no number, just the arrow.

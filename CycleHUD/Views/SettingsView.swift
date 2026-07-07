@@ -141,6 +141,14 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Toggle("Route planning", isOn: $settings.routePlanningEnabled)
+                } header: {
+                    Text("Routes")
+                } footer: {
+                    Text("Adds a map button to the ride screen for planning and picking routes. Plan by tapping start and waypoints on a map — the path snaps to quiet roads and cycle paths, and loops back to the start unless you choose a separate finish. While following a route it appears in the radar panel whenever the road behind is clear, and the Junction tile points the way. Planning sends the tapped points to the BRouter routing service (brouter.de, OpenStreetMap data); saved routes stay on your device and can be shared as files.")
+                }
+
+                Section {
                     NavigationLink {
                         MetricTilesView().environmentObject(settings)
                     } label: {

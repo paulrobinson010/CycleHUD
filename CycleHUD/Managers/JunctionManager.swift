@@ -13,6 +13,9 @@ struct JunctionInfo: Equatable {
     var isRoundabout: Bool
     /// OSM node id — stable identity while approaching the same junction.
     var nodeID: Int64
+    /// The junction's position (used to match it against a planned route).
+    var latitude: Double
+    var longitude: Double
 }
 
 /// Finds the next road junction ahead using OpenStreetMap road data.
@@ -205,7 +208,9 @@ final class JunctionManager: ObservableObject {
                                     armBearings: arms,
                                     approachBearing: bearing(from, at),
                                     isRoundabout: roundaboutNodes.contains(cur),
-                                    nodeID: cur)
+                                    nodeID: cur,
+                                    latitude: at.latitude,
+                                    longitude: at.longitude)
             }
             guard let nxt = nbrs.first(where: { $0 != prev }),
                   let a = nodeCoords[cur], let b = nodeCoords[nxt] else { return nil }

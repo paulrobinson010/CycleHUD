@@ -1098,6 +1098,46 @@
         }
       }
     },
+    "Add at least two points." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füge mindestens zwei Punkte hinzu."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add at least two points."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add at least two points."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade al menos dos puntos."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoutez au moins deux points."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi almeno due punti."
+          }
+        }
+      }
+    },
     "Add page" : {
       "localizations" : {
         "de-DE" : {
@@ -1256,6 +1296,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aggiunge alla schermata di guida un riquadro Incrocio che mostra il prossimo incrocio – la sua forma e la distanza, con conto alla rovescia mentre ti avvicini. Finché è attivo, i dati stradali intorno al tuo percorso vengono scaricati da OpenStreetMap, inviando la tua posizione approssimativa ai server di OpenStreetMap. Quando è disattivato non viene inviato nulla."
+          }
+        }
+      }
+    },
+    "Adds a map button to the ride screen for planning and picking routes. Plan by tapping start and waypoints on a map — the path snaps to quiet roads and cycle paths, and loops back to the start unless you choose a separate finish. While following a route it appears in the radar panel whenever the road behind is clear, and the Junction tile points the way. Planning sends the tapped points to the BRouter routing service (brouter.de, OpenStreetMap data); saved routes stay on your device and can be shared as files." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fügt dem Fahrbildschirm eine Karten-Taste zum Planen und Auswählen von Routen hinzu. Plane, indem du Start und Wegpunkte auf einer Karte antippst – der Weg folgt ruhigen Straßen und Radwegen und führt zurück zum Start, sofern du kein separates Ziel wählst. Beim Folgen einer Route erscheint sie im Radarfeld, solange die Straße hinter dir frei ist, und die Kreuzungs-Kachel zeigt die Richtung. Beim Planen werden die angetippten Punkte an den Routing-Dienst BRouter (brouter.de, OpenStreetMap-Daten) gesendet; gespeicherte Routen bleiben auf deinem Gerät und lassen sich als Dateien teilen."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds a map button to the ride screen for planning and picking routes. Plan by tapping start and waypoints on a map — the path snaps to quiet roads and cycle paths, and loops back to the start unless you choose a separate finish. While following a route it appears in the radar panel whenever the road behind is clear, and the Junction tile points the way. Planning sends the tapped points to the BRouter routing service (brouter.de, OpenStreetMap data); saved routes stay on your device and can be shared as files."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds a map button to the ride screen for planning and picking routes. Plan by tapping start and waypoints on a map — the path snaps to quiet roads and cycle paths, and loops back to the start unless you choose a separate finish. While following a route it appears in the radar panel whenever the road behind is clear, and the Junction tile points the way. Planning sends the tapped points to the BRouter routing service (brouter.de, OpenStreetMap data); saved routes stay on your device and can be shared as files."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade un botón de mapa a la pantalla de marcha para planificar y elegir rutas. Planifica tocando la salida y puntos intermedios en un mapa: el trazado sigue carreteras tranquilas y carriles bici, y vuelve a la salida salvo que elijas una meta distinta. Mientras sigues una ruta, esta aparece en el panel del radar siempre que la carretera de detrás esté despejada, y el recuadro de Cruce indica la dirección. La planificación envía los puntos tocados al servicio de rutas BRouter (brouter.de, datos de OpenStreetMap); las rutas guardadas permanecen en tu dispositivo y pueden compartirse como archivos."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute un bouton carte à l’écran de conduite pour planifier et choisir des itinéraires. Planifiez en touchant le départ et des étapes sur une carte – le tracé suit les routes calmes et les pistes cyclables, et revient au départ sauf si vous choisissez une arrivée distincte. Pendant le suivi, l’itinéraire s’affiche dans le panneau radar tant que la route derrière est dégagée, et la tuile Intersection indique la direction. La planification envoie les points touchés au service de calcul d’itinéraire BRouter (brouter.de, données OpenStreetMap) ; les itinéraires enregistrés restent sur votre appareil et peuvent être partagés sous forme de fichiers."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiunge alla schermata di guida un pulsante mappa per pianificare e scegliere i percorsi. Pianifica toccando partenza e tappe su una mappa – il tracciato segue strade tranquille e piste ciclabili e torna alla partenza, a meno che tu non scelga un arrivo diverso. Mentre segui un percorso, questo appare nel pannello radar finché la strada dietro è libera, e il riquadro Incrocio indica la direzione. La pianificazione invia i punti toccati al servizio di routing BRouter (brouter.de, dati OpenStreetMap); i percorsi salvati restano sul tuo dispositivo e possono essere condivisi come file."
           }
         }
       }
@@ -2584,6 +2664,46 @@
         }
       }
     },
+    "Clear all points" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Punkte löschen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear all points"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear all points"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Borrar todos los puntos"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effacer tous les points"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancella tutti i punti"
+          }
+        }
+      }
+    },
     "Clear log" : {
       "localizations" : {
         "de-DE" : {
@@ -3142,6 +3262,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impossibile esportare questa uscita"
+          }
+        }
+      }
+    },
+    "Couldn’t import that file" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datei konnte nicht importiert werden"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t import that file"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t import that file"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo importar el archivo"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’importer ce fichier"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile importare il file"
           }
         }
       }
@@ -4430,6 +4590,46 @@
         }
       }
     },
+    "Finding quiet roads…" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ruhige Straßen werden gesucht …"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finding quiet roads…"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finding quiet roads…"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando carreteras tranquilas…"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche de routes calmes…"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ricerca di strade tranquille…"
+          }
+        }
+      }
+    },
     "Finish" : {
       "comment" : "Name of the last location on a route.",
       "isCommentAutoGenerated" : true,
@@ -5155,6 +5355,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Potrei aver avuto un incidente in bici e potrei aver bisogno di aiuto."
+          }
+        }
+      }
+    },
+    "Import route" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route importieren"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import route"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import route"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importar ruta"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importer un itinéraire"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importa percorso"
+          }
+        }
+      }
+    },
+    "It doesn’t look like a CycleHUD route." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das sieht nicht nach einer CycleHUD-Route aus."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It doesn’t look like a CycleHUD route."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It doesn’t look like a CycleHUD route."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No parece una ruta de CycleHUD."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela ne ressemble pas à un itinéraire CycleHUD."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non sembra un percorso CycleHUD."
           }
         }
       }
@@ -6001,6 +6281,46 @@
         }
       }
     },
+    "Loop back to start" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück zum Start"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loop back to start"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loop back to start"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a la salida"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revenir au départ"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Torna alla partenza"
+          }
+        }
+      }
+    },
     "Mark car" : {
       "localizations" : {
         "de-DE" : {
@@ -6568,6 +6888,46 @@
         }
       }
     },
+    "New route" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neue Route"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New route"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New route"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueva ruta"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouvel itinéraire"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuovo percorso"
+          }
+        }
+      }
+    },
     "No" : {
       "localizations" : {
         "de-DE" : {
@@ -6604,6 +6964,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No"
+          }
+        }
+      }
+    },
+    "No cycling route found between these points." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Radroute zwischen diesen Punkten gefunden."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No cycling route found between these points."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No cycling route found between these points."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha encontrado una ruta ciclista entre estos puntos."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun itinéraire cyclable trouvé entre ces points."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessun percorso ciclabile trovato tra questi punti."
           }
         }
       }
@@ -6810,6 +7210,46 @@
         }
       }
     },
+    "No routes yet. Tap + to plan one on the map, or import a shared route file." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Routen. Tippe auf +, um eine auf der Karte zu planen, oder importiere eine geteilte Routendatei."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No routes yet. Tap + to plan one on the map, or import a shared route file."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No routes yet. Tap + to plan one on the map, or import a shared route file."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay rutas. Toca + para planificar una en el mapa o importa un archivo de ruta compartido."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun itinéraire pour l’instant. Touchez + pour en tracer un sur la carte, ou importez un fichier d’itinéraire partagé."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora nessun percorso. Tocca + per pianificarne uno sulla mappa, oppure importa un file di percorso condiviso."
+          }
+        }
+      }
+    },
     "None" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -7007,6 +7447,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Numero"
+          }
+        }
+      }
+    },
+    "Off route" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abseits der Route"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Off route"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Off route"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuera de ruta"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hors itinéraire"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuori percorso"
           }
         }
       }
@@ -8904,6 +9384,126 @@
         }
       }
     },
+    "Route name" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Routenname"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route name"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route name"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre de la ruta"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom de l’itinéraire"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nome del percorso"
+          }
+        }
+      }
+    },
+    "Route planning" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Routenplanung"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route planning"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route planning"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planificación de rutas"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planification d’itinéraire"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pianificazione percorsi"
+          }
+        }
+      }
+    },
+    "Routes" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Routen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Routes"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Routes"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rutas"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinéraires"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Percorsi"
+          }
+        }
+      }
+    },
     "Safety" : {
       "localizations" : {
         "de-DE" : {
@@ -9022,6 +9622,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uscita di esempio aggiunta"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sichern"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salva"
           }
         }
       }
@@ -9752,6 +10392,46 @@
         }
       }
     },
+    "Share route" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route teilen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share route"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share route"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartir ruta"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager l’itinéraire"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condividi percorso"
+          }
+        }
+      }
+    },
     "Show “Mark car” button" : {
       "localizations" : {
         "de-DE" : {
@@ -10397,6 +11077,46 @@
         }
       }
     },
+    "Start point" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Startpunkt"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start point"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start point"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salida"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Départ"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partenza"
+          }
+        }
+      }
+    },
     "Start radar demo" : {
       "localizations" : {
         "de-DE" : {
@@ -10677,6 +11397,46 @@
         }
       }
     },
+    "Tap a route to follow it on the ride screen; tap again to stop following. The route replaces the radar lane until a vehicle appears." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe auf eine Route, um ihr auf dem Fahrbildschirm zu folgen; erneut tippen beendet das Folgen. Die Route ersetzt die Radarspur, bis ein Fahrzeug erscheint."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a route to follow it on the ride screen; tap again to stop following. The route replaces the radar lane until a vehicle appears."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a route to follow it on the ride screen; tap again to stop following. The route replaces the radar lane until a vehicle appears."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca una ruta para seguirla en la pantalla de marcha; toca de nuevo para dejar de seguirla. La ruta sustituye al carril del radar hasta que aparece un vehículo."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez un itinéraire pour le suivre sur l’écran de conduite ; touchez à nouveau pour arrêter. L’itinéraire remplace la voie radar jusqu’à ce qu’un véhicule apparaisse."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tocca un percorso per seguirlo nella schermata di guida; tocca di nuovo per smettere. Il percorso sostituisce la corsia radar finché non compare un veicolo."
+          }
+        }
+      }
+    },
     "Tap Edit to reorder or remove tiles. Weather tiles (Rain, Temp, Wind) only appear when Weather is turned on. You can also long-press a tile on the ride screen to add, remove or rearrange them in place." : {
       "localizations" : {
         "de-DE" : {
@@ -10713,6 +11473,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tocca Modifica per riordinare o rimuovere le schede. Le schede meteo (Pioggia, Temp, Vento) appaiono solo quando il meteo è attivo. Puoi anche tenere premuta una scheda nella schermata dell’uscita per aggiungerle, rimuoverle o riordinarle direttamente."
+          }
+        }
+      }
+    },
+    "Tap the map to set the start, then keep tapping to add waypoints." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe auf die Karte, um den Start zu setzen; jedes weitere Tippen fügt Wegpunkte hinzu."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap the map to set the start, then keep tapping to add waypoints."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap the map to set the start, then keep tapping to add waypoints."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca el mapa para fijar la salida y sigue tocando para añadir puntos intermedios."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez la carte pour placer le départ, puis continuez à toucher pour ajouter des étapes."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tocca la mappa per impostare la partenza, poi continua a toccare per aggiungere tappe."
           }
         }
       }
@@ -11160,6 +11960,46 @@
         }
       }
     },
+    "Undo last point" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letzten Punkt entfernen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo last point"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo last point"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deshacer el último punto"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler le dernier point"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annulla l’ultimo punto"
+          }
+        }
+      }
+    },
     "Units" : {
       "localizations" : {
         "de-DE" : {
@@ -11436,6 +12276,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Veicoli"
+          }
+        }
+      }
+    },
+    "Waiting for GPS…" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warten auf GPS …"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for GPS…"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for GPS…"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esperando GPS…"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En attente du GPS…"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In attesa del GPS…"
           }
         }
       }

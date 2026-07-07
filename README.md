@@ -85,6 +85,18 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   **temperature** tile and a **wind** tile that resolves the wind against your
   GPS heading and shows it as a headwind or tailwind. Turn off in Settings.
   Requires the WeatherKit capability (see Setup).
+- **Route planning** *(optional, off by default)* — plan rides on a map from a
+  button on the ride screen: tap a start point, keep tapping waypoints, and the
+  path snaps to **quiet roads and cycle paths** (BRouter's trekking profile over
+  OpenStreetMap data). Routes loop back to the start by default, or turn that
+  off to finish somewhere else. Save routes with a name and pick one to follow:
+  while the road behind is clear the **radar panel shows the route ahead** in
+  your direction of travel (with distance remaining and an off-route warning) —
+  the moment a vehicle appears, the radar takes the panel back. With junctions
+  on, the **Junction tile highlights the arm your route takes** in green.
+  Share any route as a **`.cyclehudroute` file** (CycleHUD's own format) via
+  the share sheet, and import routes from friends with the import button or by
+  opening the file — no accounts involved.
 - **Upcoming junctions** *(optional, off by default)* — a **Junction** tile
   shows the next intersection ahead: a schematic of its road arms at their true
   angles (T, crossroads, roundabout…) in your frame of travel, with the distance

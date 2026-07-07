@@ -12,6 +12,9 @@ struct JunctionTile: View {
     var valueSize: CGFloat = 28
     var height: CGFloat = 84
     var info: JunctionInfo?
+    /// The direction a followed route leaves this junction; that arm is
+    /// highlighted green so the tile points the way to go.
+    var routeBearing: Double? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
@@ -39,7 +42,7 @@ struct JunctionTile: View {
                 }
                 Spacer(minLength: 4)
                 if let info {
-                    JunctionGlyph(info: info)
+                    JunctionGlyph(info: info, routeBearing: routeBearing)
                         .frame(width: valueSize * 1.5, height: valueSize * 1.5)
                         .shadow(color: Theme.glow, radius: 6)
                 }
@@ -60,13 +63,28 @@ struct JunctionTile: View {
 /// dimmer — it's behind you).
 struct JunctionGlyph: View {
     let info: JunctionInfo
+    var routeBearing: Double? = nil
     var color: Color = Theme.accent
+
+    /// The arm closest to the route's exit direction (never the one behind).
+    private var routeArm: Double? {
+        guard let routeBearing else { return nil }
+        func diff(_ a: Double, _ b: Double) -> Double {
+            let d = abs(a - b).truncatingRemainder(dividingBy: 360)
+            return min(d, 360 - d)
+        }
+        return info.armBearings
+            .filter { diff($0, info.approachBearing + 180) > 30 }
+            .min { diff($0, routeBearing) < diff($1, routeBearing) }
+            .flatMap { diff($0, routeBearing) <= 50 ? $0 : nil }
+    }
 
     var body: some View {
         Canvas { context, size in
             let c = CGPoint(x: size.width / 2, y: size.height / 2)
             let r = min(size.width, size.height) / 2 - 1
             let lineWidth = max(2.5, r * 0.22)
+            let highlighted = routeArm
             for arm in info.armBearings {
                 let relDeg = ((arm - info.approachBearing).truncatingRemainder(dividingBy: 360) + 360)
                     .truncatingRemainder(dividingBy: 360)
@@ -75,11 +93,15 @@ struct JunctionGlyph: View {
                 // The return arm (≈180° in the rider's frame) is where you come
                 // from; dim it so the roads ahead stand out.
                 let behind = abs(relDeg - 180) < 25
+                let isRoute = highlighted == arm
                 var path = Path()
                 path.move(to: c)
                 path.addLine(to: end)
-                context.stroke(path, with: .color(color.opacity(behind ? 0.35 : 1)),
-                               style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                context.stroke(path,
+                               with: .color(isRoute ? Theme.good
+                                                    : color.opacity(behind ? 0.35 : 1)),
+                               style: StrokeStyle(lineWidth: isRoute ? lineWidth * 1.4 : lineWidth,
+                                                  lineCap: .round))
             }
             if info.isRoundabout {
                 let ring = Path(ellipseIn: CGRect(x: c.x - r * 0.45, y: c.y - r * 0.45,

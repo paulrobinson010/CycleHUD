@@ -41,6 +41,7 @@ struct CycleHUDApp: App {
     @StateObject private var weather: WeatherManager
     @StateObject private var sos: SOSManager
     @StateObject private var junctions: JunctionManager
+    @StateObject private var routes: RouteStore
     /// Branded splash (website hero) shown over the HUD at launch, then faded.
     @State private var showSplash = true
 
@@ -59,6 +60,7 @@ struct CycleHUDApp: App {
                                health: health, watch: watch, history: history, sos: sos)
         let weather = WeatherManager()
         let junctions = JunctionManager()
+        let routes = RouteStore()
         _settings = StateObject(wrappedValue: settings)
         _ble = StateObject(wrappedValue: ble)
         _location = StateObject(wrappedValue: location)
@@ -69,6 +71,7 @@ struct CycleHUDApp: App {
         _weather = StateObject(wrappedValue: weather)
         _sos = StateObject(wrappedValue: sos)
         _junctions = StateObject(wrappedValue: junctions)
+        _routes = StateObject(wrappedValue: routes)
     }
 
     var body: some Scene {
@@ -100,7 +103,15 @@ struct CycleHUDApp: App {
             .environmentObject(weather)
             .environmentObject(sos)
             .environmentObject(junctions)
+            .environmentObject(routes)
             .preferredColorScheme(settings.appearanceTheme.colorScheme)
+            // Shared .cyclehudroute files ("open in CycleHUD" from Files,
+            // AirDrop, Messages…) land here and go straight into the list.
+            .onOpenURL { url in
+                if url.pathExtension.lowercased() == "cyclehudroute" {
+                    _ = routes.importRoute(from: url)
+                }
+            }
             .onAppear {
                 location.requestAuthorization()
                 location.setMode(.idle)        // low-power fix until a ride starts
