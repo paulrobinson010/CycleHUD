@@ -8,8 +8,16 @@ final class RouteStore: ObservableObject {
     @Published private(set) var routes: [PlannedRoute] = []
     /// The route currently being followed on the ride screen (persisted).
     @Published var activeRouteID: UUID? {
-        didSet { defaults.set(activeRouteID?.uuidString ?? "", forKey: "activeRouteID") }
+        didSet {
+            defaults.set(activeRouteID?.uuidString ?? "", forKey: "activeRouteID")
+            joinedActiveRoute = false
+        }
     }
+
+    /// Whether the rider has reached the active route yet. Until they have,
+    /// the ride panel directs them to the START marker rather than treating
+    /// them as "off route" from some arbitrary nearest point.
+    private(set) var joinedActiveRoute = false
 
     var activeRoute: PlannedRoute? {
         guard let id = activeRouteID else { return nil }
@@ -97,7 +105,11 @@ final class RouteStore: ObservableObject {
     func progress(at coord: CLLocationCoordinate2D)
         -> (index: Int, offMeters: Double, remainingMeters: Double)? {
         guard let route = activeRoute else { progressHint = nil; return nil }
-        if progressRouteID != route.id { progressHint = nil; progressRouteID = route.id }
+        if progressRouteID != route.id {
+            progressHint = nil
+            progressRouteID = route.id
+            joinedActiveRoute = false
+        }
         // Windowed search near the last position; if the rider has strayed
         // (off route / restarted elsewhere), fall back to a whole-path scan.
         var match = route.nearestPathIndex(to: coord, hint: progressHint)
@@ -106,6 +118,7 @@ final class RouteStore: ObservableObject {
         }
         guard let m = match else { return nil }
         progressHint = m.index
+        if m.meters < 60 { joinedActiveRoute = true }
         return (m.index, m.meters, route.remainingMeters(from: m.index))
     }
 }

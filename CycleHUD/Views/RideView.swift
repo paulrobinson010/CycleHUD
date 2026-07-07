@@ -384,6 +384,8 @@ struct RideView: View {
                            location: location.currentLocation,
                            course: location.courseDegrees ?? location.headingDegrees,
                            progress: location.currentLocation.flatMap { routes.progress(at: $0.coordinate) },
+                           joined: routes.joinedActiveRoute,
+                           radarConnected: ble.status(for: .radar) == .connected,
                            distanceUnit: settings.distanceUnit)
             } else {
                 RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,

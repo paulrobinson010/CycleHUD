@@ -12,11 +12,20 @@ struct RoutePanel: View {
     let course: Double?
     /// Progress from RouteStore (index along path, metres off it, remaining).
     let progress: (index: Int, offMeters: Double, remainingMeters: Double)?
+    /// Whether the rider has reached the route yet (RouteStore tracks this).
+    /// Until then, directions target the START marker, not the nearest point.
+    let joined: Bool
+    /// The radar's safety signal must survive the panel swap: when it's not
+    /// connected, a warning overlays the route view.
+    let radarConnected: Bool
     let distanceUnit: DistanceUnit
 
     /// How much route to draw ahead of the rider (metres of window height).
     private let windowAhead: Double = 500
-    private var offRoute: Bool { (progress?.offMeters ?? 0) > 80 }
+    /// Strayed after joining — amber "back to route" guidance.
+    private var offRoute: Bool { joined && (progress?.offMeters ?? 0) > 80 }
+    /// Not there yet — calm "to the start" guidance.
+    private var headingToStart: Bool { !joined && (progress?.offMeters ?? 0) > 80 }
 
     var body: some View {
         GeometryReader { geo in
@@ -31,8 +40,8 @@ struct RoutePanel: View {
                         .foregroundStyle(Theme.textSecondary)
                 }
                 rider(w: w, h: h)
-                if offRoute, let location, let progress {
-                    backToRoute(w: w, h: h, rider: location.coordinate, progress: progress)
+                if offRoute || headingToStart, let location, let progress {
+                    directions(w: w, h: h, rider: location.coordinate, progress: progress)
                 }
             }
             .frame(width: w, height: h)
@@ -42,6 +51,24 @@ struct RoutePanel: View {
                         lineWidth: offRoute ? 3 : 1))
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .overlay(alignment: .topLeading) { header }
+            .overlay(alignment: .top) { radarWarning }
+        }
+    }
+
+    /// Radar-down warning, styled like the radar lane's own badge, so swapping
+    /// the panel for the route never hides the safety state.
+    @ViewBuilder private var radarWarning: some View {
+        if !radarConnected {
+            HStack(spacing: 6) {
+                Image(systemName: "antenna.radiowaves.left.and.right.slash")
+                Text("NOT CONNECTED")
+            }
+            .font(.system(size: 13, weight: .heavy, design: .rounded))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 5)
+            .background(Capsule().fill(Theme.threatHigh))
+            .padding(.top, 10)
         }
     }
 
@@ -55,6 +82,11 @@ struct RoutePanel: View {
                 Text("Off route")
                     .font(.system(size: 13, weight: .heavy, design: .rounded))
                     .foregroundStyle(Theme.threatMedium)
+            } else if headingToStart {
+                Text(verbatim: "\(Fmt.decimal(distanceUnit.value(fromMeters: route.distanceMeters), 1)) \(distanceUnit.label)")
+                    .font(.system(size: 15, weight: .heavy, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(Theme.textPrimary)
             } else if let progress {
                 Text(verbatim: "\(Fmt.decimal(distanceUnit.value(fromMeters: progress.remainingMeters), 1)) \(distanceUnit.label)")
                     .font(.system(size: 15, weight: .heavy, design: .rounded))
@@ -65,32 +97,43 @@ struct RoutePanel: View {
         .padding(12)
     }
 
-    /// Directions back onto the route when the rider has strayed: an arrow
-    /// pointing at the nearest point of the path (in the rider's frame, so
-    /// "up" = keep going, "right" = it's off to your right) with the distance
-    /// to cover. The canvas also draws a dashed link to the same point.
-    private func backToRoute(w: CGFloat, h: CGFloat,
-                             rider: CLLocationCoordinate2D,
-                             progress: (index: Int, offMeters: Double, remainingMeters: Double)) -> some View {
-        let target = route.path[min(progress.index, route.path.count - 1)].coordinate
-        let toRoute = PlannedRoute.bearing(rider, target)
+    /// Directions when the rider isn't on the path: an arrow pointing at the
+    /// target (in the rider's frame, so "up" = keep going, "right" = it's off
+    /// to your right) with the distance to cover. Before the route has been
+    /// joined the target is the START marker; after that it's the nearest
+    /// point of the path. The canvas also draws a dashed link to the same spot.
+    private func directions(w: CGFloat, h: CGFloat,
+                            rider: CLLocationCoordinate2D,
+                            progress: (index: Int, offMeters: Double, remainingMeters: Double)) -> some View {
+        let target = directionsTarget(progress: progress)
+        let toTarget = PlannedRoute.bearing(rider, target)
+        let distance = headingToStart ? PlannedRoute.meters(rider, target) : progress.offMeters
         let heading = course ?? routeHeading(progress.index)
+        let tint = headingToStart ? Theme.accent : Theme.threatMedium
         return VStack(spacing: 6) {
             Image(systemName: "arrow.up")
                 .font(.system(size: 40, weight: .heavy))
-                .foregroundStyle(Theme.threatMedium)
-                .rotationEffect(.degrees(toRoute - heading))
+                .foregroundStyle(tint)
+                .rotationEffect(.degrees(toTarget - heading))
                 .shadow(color: Theme.glow, radius: 8)
-                .animation(.easeInOut(duration: 0.4), value: toRoute - heading)
-            Text(verbatim: offDistText(progress.offMeters))
+                .animation(.easeInOut(duration: 0.4), value: toTarget - heading)
+            Text(verbatim: offDistText(distance))
                 .font(.system(size: 17, weight: .heavy, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(Theme.textPrimary)
-            Text("Back to route")
+            Text(headingToStart ? "To the start" : "Back to route")
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
                 .foregroundStyle(Theme.textSecondary)
         }
         .position(x: w / 2, y: h * 0.38)
+    }
+
+    /// Where the guidance points: the start until the route is joined, then
+    /// the nearest point of the path.
+    private func directionsTarget(progress: (index: Int, offMeters: Double, remainingMeters: Double))
+        -> CLLocationCoordinate2D {
+        if headingToStart, let start = route.path.first { return start.coordinate }
+        return route.path[min(progress.index, route.path.count - 1)].coordinate
     }
 
     /// Short distances in radar-style metres/feet; longer ones in km/mi.
@@ -141,14 +184,24 @@ struct RoutePanel: View {
             }
             guard lastVisible > start else { return }
 
-            // Straying: a dashed link from the rider to the nearest point of
-            // the path — the on-map version of the back-to-route arrow.
+            // Away from the path: a dashed link from the rider to the guidance
+            // target — the start until joined, then the nearest point.
             if progress.offMeters > 80 {
+                let target = joined
+                    ? route.path[progress.index].coordinate
+                    : (route.path.first?.coordinate ?? route.path[progress.index].coordinate)
                 var link = Path()
                 link.move(to: origin)
-                link.addLine(to: place(route.path[progress.index].coordinate))
-                context.stroke(link, with: .color(Theme.threatMedium),
+                link.addLine(to: place(target))
+                context.stroke(link, with: .color(joined ? Theme.threatMedium : Theme.accent),
                                style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [7, 7]))
+                // Green start dot at the target when it's in the window.
+                if !joined {
+                    let p = place(target)
+                    let dot = Path(ellipseIn: CGRect(x: p.x - 6, y: p.y - 6, width: 12, height: 12))
+                    context.fill(dot, with: .color(Theme.good))
+                    context.stroke(dot, with: .color(.white), lineWidth: 2)
+                }
             }
 
             // Ridden portion (dim) then the road ahead (bright).
