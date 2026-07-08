@@ -410,6 +410,9 @@ struct RideView: View {
                            ghostCoordinate: ride.status != .idle
                                ? routes.ghostCoordinate(elapsed: ride.movingTimeSeconds) : nil,
                            showClimbStrip: !visibleMetricKinds.contains(.climb),
+                           junction: settings.junctionsEnabled && !visibleMetricKinds.contains(.junction)
+                               ? junctions.next : nil,
+                           junctionRouteBearing: junctions.next.flatMap(routeExitBearing),
                            distanceUnit: settings.distanceUnit)
             } else {
                 RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,

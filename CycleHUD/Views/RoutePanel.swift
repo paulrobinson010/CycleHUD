@@ -33,6 +33,10 @@ struct RoutePanel: View {
     /// False when the climb row tile is on the current page — the row carries
     /// the profile, so the map keeps its full height.
     var showClimbStrip: Bool = true
+    /// The next junction, when junctions are on but the Junction tile isn't
+    /// on the current page — shown as a badge on the map instead.
+    var junction: JunctionInfo? = nil
+    var junctionRouteBearing: Double? = nil
     let distanceUnit: DistanceUnit
 
     /// Pinch-zoom altitude, preserved across the once-a-second camera updates.
@@ -65,12 +69,34 @@ struct RoutePanel: View {
                         lineWidth: offRoute ? 3 : 1))
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .overlay(alignment: .topLeading) { header }
+            .overlay(alignment: .topTrailing) { junctionBadge }
             .overlay(alignment: .bottom) {
                 VStack(spacing: 6) {
                     climbStrip
                     radarWarning
                 }
             }
+        }
+    }
+
+    /// The junction tile's essentials as a map badge — the arms schematic
+    /// (route arm highlighted green) and the countdown — sitting below the
+    /// mute controls when the tile itself isn't on the page.
+    @ViewBuilder private var junctionBadge: some View {
+        if let junction {
+            HStack(spacing: 6) {
+                JunctionGlyph(info: junction, routeBearing: junctionRouteBearing)
+                    .frame(width: 30, height: 30)
+                Text(verbatim: "\(Fmt.int(distanceUnit.shortValue(fromMeters: junction.distanceMeters))) \(distanceUnit.shortLabel)")
+                    .font(.system(size: 13, weight: .heavy, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(Theme.textPrimary)
+            }
+            .padding(.horizontal, 9)
+            .padding(.vertical, 5)
+            .background(Capsule().fill(Theme.panel.opacity(0.85)))
+            .padding(.trailing, 10)
+            .padding(.top, 64)     // clear of the mute controls above
         }
     }
 
