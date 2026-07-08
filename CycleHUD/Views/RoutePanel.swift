@@ -71,15 +71,18 @@ struct RoutePanel: View {
         }
     }
 
-    /// The road ahead in profile: the next ~5 km of elevation, rider at the
-    /// left edge. Only when the route carries elevation data and the rider is
-    /// on it (guidance overlays take priority otherwise).
+    /// The WHOLE route in profile along the bottom of the map — visible from
+    /// the moment a route is picked (before reaching the start too), with a
+    /// marker walking the profile once the rider is on the route and the
+    /// gradient-just-ahead label while riding it.
     @ViewBuilder private var climbStrip: some View {
-        if joined, !offRoute, let progress,
-           let elevations = route.elevations, elevations.count == route.path.count,
-           progress.index < route.path.count - 1 {
+        if let elevations = route.elevations, elevations.count == route.path.count,
+           route.path.count > 1 {
+            let ridden = (joined && progress != nil)
+                ? max(0, route.remainingMeters(from: 0) - progress!.remainingMeters) : nil
             ClimbProfileStrip(route: route, elevations: elevations,
-                              fromIndex: progress.index)
+                              progressMeters: ridden,
+                              gradientFromIndex: (joined && !offRoute) ? progress?.index : nil)
                 .frame(height: 44)
                 .padding(.horizontal, 10)
         }
@@ -417,20 +420,22 @@ struct RoutePanel: View {
     }
 }
 
-/// The next ~5 km of the route in profile — what the upcoming road does
-/// vertically. The rider sits at the left edge; the label shows the gradient
-/// of the road immediately ahead and the climbing left in the window.
+/// The whole route in profile — every climb and descent of the ride at a
+/// glance. A marker walks the profile as the rider progresses; the label
+/// shows the gradient of the road immediately ahead (while on the route) and
+/// the route's total ascent.
 struct ClimbProfileStrip: View {
     let route: PlannedRoute
     let elevations: [Double]
-    let fromIndex: Int
-    var windowMeters: Double = 5000
+    /// Metres ridden along the route (nil before joining — no marker).
+    var progressMeters: Double? = nil
+    /// Rider's path index for the gradient-ahead label (nil hides it).
+    var gradientFromIndex: Int? = nil
 
     var body: some View {
-        // Sample (distance, elevation) ahead of the rider.
         let samples = profileSamples()
-        let gradient = aheadGradient(samples)
-        let ascent = samples.isEmpty ? 0 : zip(samples, samples.dropFirst())
+        let gradient = gradientFromIndex.flatMap(aheadGradient)
+        let ascent = zip(samples, samples.dropFirst())
             .reduce(0.0) { $0 + max(0, $1.1.ele - $1.0.ele) }
         ZStack(alignment: .topTrailing) {
             Canvas { context, size in
@@ -456,6 +461,23 @@ struct ClimbProfileStrip: View {
                 samples.dropFirst().forEach { line.addLine(to: pt($0)) }
                 context.stroke(line, with: .color(Theme.accent),
                                style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+
+                // Where the rider is along the profile.
+                if let progressMeters {
+                    let x = size.width * min(1, max(0, progressMeters / span))
+                    var mark = Path()
+                    mark.move(to: CGPoint(x: x, y: 2))
+                    mark.addLine(to: CGPoint(x: x, y: size.height - 2))
+                    context.stroke(mark, with: .color(Theme.textPrimary.opacity(0.55)),
+                                   style: StrokeStyle(lineWidth: 1.5, dash: [3, 3]))
+                    // Dot riding the profile line itself.
+                    if let s = samples.last(where: { $0.dist <= progressMeters }) ?? samples.first {
+                        let p = pt((progressMeters, s.ele))
+                        let dot = Path(ellipseIn: CGRect(x: p.x - 4, y: p.y - 4, width: 8, height: 8))
+                        context.fill(dot, with: .color(Theme.accent))
+                        context.stroke(dot, with: .color(.white), lineWidth: 1.5)
+                    }
+                }
             }
             HStack(spacing: 6) {
                 if let gradient {
@@ -477,22 +499,31 @@ struct ClimbProfileStrip: View {
         .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 
+    /// Cumulative (distance, elevation) over the whole route, downsampled so
+    /// the canvas stays cheap for dense paths.
     private func profileSamples() -> [(dist: Double, ele: Double)] {
-        var samples: [(dist: Double, ele: Double)] = [(0, elevations[fromIndex])]
+        let step = max(1, route.path.count / 240)
+        var samples: [(dist: Double, ele: Double)] = [(0, elevations[0])]
         var dist = 0.0
-        var i = fromIndex
-        while i < route.path.count - 1, dist < windowMeters {
-            dist += PlannedRoute.meters(route.path[i].coordinate, route.path[i + 1].coordinate)
-            i += 1
-            samples.append((dist, elevations[i]))
+        for i in 1..<route.path.count {
+            dist += PlannedRoute.meters(route.path[i - 1].coordinate, route.path[i].coordinate)
+            if i % step == 0 || i == route.path.count - 1 {
+                samples.append((dist, elevations[i]))
+            }
         }
         return samples
     }
 
-    /// Slope of the first ~150 m ahead, as a percentage.
-    private func aheadGradient(_ samples: [(dist: Double, ele: Double)]) -> Double? {
-        guard let end = samples.first(where: { $0.dist >= 120 }) ?? samples.last,
-              end.dist >= 40, let start = samples.first else { return nil }
-        return (end.ele - start.ele) / end.dist * 100
+    /// Slope of the ~120 m of route ahead of `index`, as a percentage.
+    private func aheadGradient(_ index: Int) -> Double? {
+        guard index < route.path.count - 1 else { return nil }
+        var dist = 0.0
+        var i = index
+        while i < route.path.count - 1, dist < 120 {
+            dist += PlannedRoute.meters(route.path[i].coordinate, route.path[i + 1].coordinate)
+            i += 1
+        }
+        guard dist >= 40 else { return nil }
+        return (elevations[i] - elevations[index]) / dist * 100
     }
 }

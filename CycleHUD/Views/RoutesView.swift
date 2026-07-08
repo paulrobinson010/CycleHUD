@@ -9,6 +9,7 @@ struct RoutesView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var showEditor = false
+    @State private var editRoute: PlannedRoute?
     @State private var showImporter = false
     @State private var shareURL: ShareURL?
     @State private var importFailed = false
@@ -72,6 +73,11 @@ struct RoutesView: View {
                     .environmentObject(routes)
                     .environmentObject(settings)
             }
+            .sheet(item: $editRoute) { route in
+                RouteEditorView(editing: route)
+                    .environmentObject(routes)
+                    .environmentObject(settings)
+            }
             .sheet(item: $shareURL) { share in
                 ShareSheet(items: [share.url])
             }
@@ -107,6 +113,13 @@ struct RoutesView: View {
                     .foregroundStyle(Theme.textSecondary)
             }
             Spacer()
+            Button { editRoute = route } label: {
+                Image(systemName: "pencil")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Theme.textPrimary)
+            }
+            .buttonStyle(.borderless)
+            .accessibilityLabel("Edit route")
             Button {
                 if let url = routes.exportFile(for: route) { shareURL = ShareURL(url: url) }
             } label: {

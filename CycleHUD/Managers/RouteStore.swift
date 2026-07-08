@@ -61,6 +61,13 @@ final class RouteStore: ObservableObject {
         persist()
     }
 
+    /// Replace an existing route (same id) — used by the route editor.
+    func update(_ route: PlannedRoute) {
+        guard let idx = routes.firstIndex(where: { $0.id == route.id }) else { return }
+        routes[idx] = route
+        persist()
+    }
+
     func delete(_ route: PlannedRoute) {
         routes.removeAll { $0.id == route.id }
         if activeRouteID == route.id { activeRouteID = nil }

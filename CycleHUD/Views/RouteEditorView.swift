@@ -11,19 +11,45 @@ struct RouteEditorView: View {
     @EnvironmentObject var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
 
-    @State private var waypoints: [PlannedRoute.Point] = []
-    @State private var loop = true
-    @State private var name = ""
-    @State private var path: [PlannedRoute.Point] = []
-    @State private var distanceMeters: Double = 0
+    /// Present with a route to edit it in place; nil creates a new one.
+    /// Changing the points (or the loop setting) clears the route's ghost —
+    /// its best time raced the old roads — while a rename keeps it.
+    private let editing: PlannedRoute?
+
+    @State private var waypoints: [PlannedRoute.Point]
+    @State private var loop: Bool
+    @State private var name: String
+    @State private var path: [PlannedRoute.Point]
+    @State private var distanceMeters: Double
     @State private var elevations: [Double]?
     @State private var planning = false
     @State private var planError: String?
     @State private var planTask: Task<Void, Never>?
-    @State private var camera: MapCameraPosition = .userLocation(
-        fallback: .region(MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 52.44, longitude: -0.83),
-            span: MKCoordinateSpan(latitudeDelta: 0.08, longitudeDelta: 0.08))))
+    @State private var camera: MapCameraPosition
+
+    init(editing: PlannedRoute? = nil) {
+        self.editing = editing
+        _waypoints = State(initialValue: editing?.waypoints ?? [])
+        _loop = State(initialValue: editing?.loop ?? true)
+        _name = State(initialValue: editing?.name ?? "")
+        _path = State(initialValue: editing?.path ?? [])
+        _distanceMeters = State(initialValue: editing?.distanceMeters ?? 0)
+        _elevations = State(initialValue: editing?.elevations)
+        if let path = editing?.path, path.count > 1 {
+            let lats = path.map(\.lat), lons = path.map(\.lon)
+            let region = MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: (lats.min()! + lats.max()!) / 2,
+                                               longitude: (lons.min()! + lons.max()!) / 2),
+                span: MKCoordinateSpan(latitudeDelta: max(0.01, (lats.max()! - lats.min()!) * 1.4),
+                                       longitudeDelta: max(0.01, (lons.max()! - lons.min()!) * 1.4)))
+            _camera = State(initialValue: .region(region))
+        } else {
+            _camera = State(initialValue: .userLocation(
+                fallback: .region(MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: 52.44, longitude: -0.83),
+                    span: MKCoordinateSpan(latitudeDelta: 0.08, longitudeDelta: 0.08)))))
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -32,7 +58,7 @@ struct RouteEditorView: View {
                 controls
             }
             .background(ThemeBackground().ignoresSafeArea())
-            .navigationTitle("New route")
+            .navigationTitle(editing == nil ? Text("New route") : Text("Edit route"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -139,8 +165,19 @@ struct RouteEditorView: View {
                 .onChange(of: loop) { _, _ in replan() }
             TextField("Route name", text: $name)
                 .textFieldStyle(.roundedBorder)
+            if pointsChanged, editing?.bestTimes != nil {
+                Text("Changing the points clears this route’s best time — the ghost raced the old roads. Renaming keeps it.")
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundStyle(Theme.threatMedium)
+            }
         }
         .padding(14)
+    }
+
+    /// Whether the ridden geometry differs from the route being edited.
+    private var pointsChanged: Bool {
+        guard let editing else { return false }
+        return waypoints != editing.waypoints || loop != editing.loop
     }
 
     /// Re-route after every marker change, debounced so quick tapping doesn't
@@ -176,12 +213,29 @@ struct RouteEditorView: View {
     }
 
     private func save() {
-        let route = PlannedRoute(name: name.trimmingCharacters(in: .whitespaces),
-                                 waypoints: waypoints, loop: loop,
-                                 path: path, distanceMeters: distanceMeters,
-                                 elevations: elevations)
-        routes.add(route)
-        routes.activeRouteID = route.id
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        if let editing {
+            var updated = editing
+            updated.name = trimmed
+            updated.waypoints = waypoints
+            updated.loop = loop
+            updated.path = path
+            updated.distanceMeters = distanceMeters
+            updated.elevations = elevations
+            if pointsChanged {
+                // The best time raced different roads — it can't be compared.
+                updated.bestTimes = nil
+                updated.bestDate = nil
+            }
+            routes.update(updated)
+        } else {
+            let route = PlannedRoute(name: trimmed,
+                                     waypoints: waypoints, loop: loop,
+                                     path: path, distanceMeters: distanceMeters,
+                                     elevations: elevations)
+            routes.add(route)
+            routes.activeRouteID = route.id
+        }
         dismiss()
     }
 }

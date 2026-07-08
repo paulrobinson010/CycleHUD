@@ -2464,6 +2464,46 @@
         }
       }
     },
+    "Changing the points clears this route’s best time — the ghost raced the old roads. Renaming keeps it." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Ändern der Punkte löscht die Bestzeit dieser Route – der Geist fuhr die alten Straßen. Ein neuer Name behält sie."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changing the points clears this route’s best time — the ghost raced the old roads. Renaming keeps it."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changing the points clears this route’s best time — the ghost raced the old roads. Renaming keeps it."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar los puntos borra el mejor tiempo de esta ruta: el fantasma corrió por las carreteras antiguas. Cambiar solo el nombre lo conserva."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier les points efface le meilleur temps de cet itinéraire – le fantôme roulait sur les anciennes routes. Le renommer le conserve."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modificare i punti cancella il miglior tempo di questo percorso: il fantasma correva sulle vecchie strade. Rinominarlo lo conserva."
+          }
+        }
+      }
+    },
     "Checking…" : {
       "localizations" : {
         "de-DE" : {
@@ -4426,6 +4466,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Facile"
+          }
+        }
+      }
+    },
+    "Edit route" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route bearbeiten"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit route"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit route"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar ruta"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier l’itinéraire"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifica percorso"
           }
         }
       }
