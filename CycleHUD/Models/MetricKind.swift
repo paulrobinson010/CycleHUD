@@ -6,7 +6,7 @@ import SwiftUI
 enum MetricKind: String, CaseIterable, Identifiable, Codable {
     case speed, avgSpeed, maxSpeed, cadence, distance, time, ascent
     case heartRate, calories, gradient, lapTime, temperature, wind, rain
-    case compass, junction
+    case compass, junction, climb
 
     var id: String { rawValue }
 
@@ -37,6 +37,7 @@ enum MetricKind: String, CaseIterable, Identifiable, Codable {
         case .rain: return "Rain"
         case .compass: return "Compass"
         case .junction: return "Junction"
+        case .climb: return "Distance and climb"
         }
     }
 
@@ -58,7 +59,14 @@ enum MetricKind: String, CaseIterable, Identifiable, Codable {
         case .rain: return "cloud.rain"
         case .compass: return "safari"
         case .junction: return "arrow.triangle.branch"
+        case .climb: return "chart.line.uptrend.xyaxis"
         }
+    }
+
+    /// Takes a whole grid row (the climb row: distance/gradient/ascent over
+    /// the route's elevation profile).
+    var isFullRow: Bool {
+        self == .climb
     }
 
     /// Needs WeatherKit data, so it's hidden when Weather is turned off.

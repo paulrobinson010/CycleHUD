@@ -409,6 +409,7 @@ struct RideView: View {
                                ? routes.ghostDelta(elapsed: ride.movingTimeSeconds) : nil,
                            ghostCoordinate: ride.status != .idle
                                ? routes.ghostCoordinate(elapsed: ride.movingTimeSeconds) : nil,
+                           showClimbStrip: !visibleMetricKinds.contains(.climb),
                            distanceUnit: settings.distanceUnit)
             } else {
                 RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
@@ -564,32 +565,50 @@ struct RideView: View {
     }
 
     /// How many grid slots are showing — drives the landscape height fit.
+    /// A full-row tile (the climb row) counts as a whole row of three.
     private var gridCellCount: Int {
-        visibleMetricKinds.count + (editingTiles && !availableTileKinds.isEmpty ? 1 : 0)
+        visibleMetricKinds.reduce(0) { $0 + ($1.isFullRow ? 3 : 1) }
+            + (editingTiles && !availableTileKinds.isEmpty ? 1 : 0)
     }
 
     /// `kinds` laid out three per row at `tileHeight`; short rows are padded so
-    /// tile widths stay uniform. Long-press any tile to edit the grid in place.
-    /// While editing, the free space — padded slots, the gaps between tiles and
-    /// the grid background — accepts drops too (move to the end of this zone),
-    /// so a drag doesn't have to land exactly on another tile.
+    /// tile widths stay uniform, and full-row tiles (the climb row) get a row
+    /// of their own. Long-press any tile to edit the grid in place. While
+    /// editing, the free space — padded slots, the gaps between tiles and the
+    /// grid background — accepts drops too (move to the end of this zone), so
+    /// a drag doesn't have to land exactly on another tile.
     private func metricsGrid(kinds: [MetricKind], tileHeight: CGFloat,
                              includeAdd: Bool, zoneIsTop: Bool = false) -> some View {
         var cells: [GridCell] = kinds.map { .metric($0) }
         if includeAdd && editingTiles && !availableTileKinds.isEmpty { cells.append(.add) }
-        let rows = cells.chunked(into: 3)
+        var rows: [[GridCell]] = []
+        var current: [GridCell] = []
+        for cell in cells {
+            if case .metric(let kind) = cell, kind.isFullRow {
+                if !current.isEmpty { rows.append(current); current = [] }
+                rows.append([cell])
+            } else {
+                current.append(cell)
+                if current.count == 3 { rows.append(current); current = [] }
+            }
+        }
+        if !current.isEmpty { rows.append(current) }
         return VStack(spacing: 8) {
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
-                HStack(spacing: 8) {
-                    ForEach(0..<3, id: \.self) { i in
-                        if i < row.count {
-                            gridCell(row[i], height: tileHeight, zoneIsTop: zoneIsTop)
-                        } else {
-                            Color.clear
-                                .frame(maxWidth: .infinity)
-                                .frame(height: tileHeight)
-                                .contentShape(Rectangle())
-                                .onDrop(of: [.text], delegate: zoneEndDelegate(zoneIsTop))
+                if row.count == 1, case .metric(let kind) = row[0], kind.isFullRow {
+                    gridCell(row[0], height: tileHeight, zoneIsTop: zoneIsTop)
+                } else {
+                    HStack(spacing: 8) {
+                        ForEach(0..<3, id: \.self) { i in
+                            if i < row.count {
+                                gridCell(row[i], height: tileHeight, zoneIsTop: zoneIsTop)
+                            } else {
+                                Color.clear
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: tileHeight)
+                                    .contentShape(Rectangle())
+                                    .onDrop(of: [.text], delegate: zoneEndDelegate(zoneIsTop))
+                            }
                         }
                     }
                 }
@@ -842,6 +861,8 @@ struct RideView: View {
             compassTile(height: height, valueSize: vs)
         case .junction:
             junctionTile(height: height, valueSize: vs)
+        case .climb:
+            climbRowTile(height: height, valueSize: vs)
         case .rain:
             WeatherTile(nowcast: weather.nowcast, status: weather.status, height: height,
                         showUnit: settings.showTileUnits)
@@ -896,6 +917,28 @@ struct RideView: View {
                           arrowDegrees: arrow, arrowColor: color)
         }
         .buttonStyle(.plain)
+    }
+
+    /// The distance-and-climb row: distance / live gradient / ascent overlaid
+    /// on the active route's elevation profile (with the rider's position
+    /// marked). Takes a full grid row; the route map drops its own climb
+    /// strip while this row is on the page.
+    private func climbRowTile(height: CGFloat, valueSize vs: CGFloat) -> some View {
+        let route = settings.routePlanningEnabled ? routes.activeRoute : nil
+        var ridden: Double?
+        if let route, routes.joinedActiveRoute, let loc = location.currentLocation,
+           let progress = routes.progress(at: loc.coordinate, course: location.courseDegrees) {
+            ridden = max(0, route.remainingMeters(from: 0) - progress.remainingMeters)
+        }
+        return ClimbRowTile(route: route,
+                            progressMeters: ridden,
+                            distanceValue: distanceString(ride.distanceMeters),
+                            distanceUnit: tileUnit(settings.distanceUnit.label),
+                            gradientValue: gradientString,
+                            gradientUnit: tileUnit("%"),
+                            ascentValue: elevationString(ride.elevationGainMeters),
+                            ascentUnit: tileUnit(settings.distanceUnit.shortLabel),
+                            valueSize: vs, height: height)
     }
 
     /// The next intersection ahead (OpenStreetMap): distance counting down in

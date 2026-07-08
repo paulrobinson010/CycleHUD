@@ -4190,6 +4190,46 @@
         }
       }
     },
+    "Distance and climb" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distanz und Anstieg"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance and climb"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance and climb"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distancia y desnivel"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance et dénivelé"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distanza e salita"
+          }
+        }
+      }
+    },
     "Distance and closing speed are measured by the radar (~2 readings/second). Estimated vehicle speed adds your own speed onto the closing speed and is an approximation." : {
       "localizations" : {
         "de-DE" : {

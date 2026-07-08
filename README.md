@@ -102,8 +102,11 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   on, the **Junction tile highlights the arm your route takes** in green.
   **Turn alerts** speak "left/right turn ahead" and tap your wrist as each
   bend approaches (cue distance scales with speed; toggle in Settings), and a
-  **climb-profile strip** along the bottom of the map shows the next 5 km of
-  elevation with the gradient just ahead. Share any route as a
+  **climb-profile strip** along the bottom of the map shows the whole route's
+  elevation with your position marked and the gradient just ahead. Prefer the
+  profile as a tile? Add the **Distance and climb row** — a full-width tile
+  with distance, live gradient and ascent overlaid on the route's profile —
+  and the map hands the strip over to it. Share any route as a
   **`.cyclehudroute` file** (CycleHUD's own format) via the share sheet, and
   import routes from friends — or **GPX files** from Strava, Komoot,
   RideWithGPS and the rest — with the import button or by opening the file.

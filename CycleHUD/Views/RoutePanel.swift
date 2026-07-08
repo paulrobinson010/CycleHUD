@@ -30,6 +30,9 @@ struct RoutePanel: View {
     /// the ghost is right now on the map.
     var ghostDeltaSeconds: Double? = nil
     var ghostCoordinate: CLLocationCoordinate2D? = nil
+    /// False when the climb row tile is on the current page — the row carries
+    /// the profile, so the map keeps its full height.
+    var showClimbStrip: Bool = true
     let distanceUnit: DistanceUnit
 
     /// Pinch-zoom altitude, preserved across the once-a-second camera updates.
@@ -74,7 +77,8 @@ struct RoutePanel: View {
     /// Whether the climb strip will render (used to keep the rider marker
     /// clear of it).
     private var hasClimbStrip: Bool {
-        (route.elevations?.count ?? -1) == route.path.count && route.path.count > 1
+        showClimbStrip
+            && (route.elevations?.count ?? -1) == route.path.count && route.path.count > 1
     }
 
     /// The WHOLE route in profile along the bottom of the map — visible from
@@ -82,8 +86,7 @@ struct RoutePanel: View {
     /// marker walking the profile once the rider is on the route and the
     /// gradient-just-ahead label while riding it.
     @ViewBuilder private var climbStrip: some View {
-        if let elevations = route.elevations, elevations.count == route.path.count,
-           route.path.count > 1 {
+        if hasClimbStrip, let elevations = route.elevations {
             let ridden = (joined && progress != nil)
                 ? max(0, route.remainingMeters(from: 0) - progress!.remainingMeters) : nil
             ClimbProfileStrip(route: route, elevations: elevations,
@@ -440,6 +443,9 @@ struct ClimbProfileStrip: View {
     var progressMeters: Double? = nil
     /// Rider's path index for the gradient-ahead label (nil hides it).
     var gradientFromIndex: Int? = nil
+    /// Drawn inside another tile (the climb row): no labels, no chrome — the
+    /// host supplies background, border and overlaid stats.
+    var embedded: Bool = false
 
     var body: some View {
         let samples = profileSamples()
@@ -488,23 +494,26 @@ struct ClimbProfileStrip: View {
                     }
                 }
             }
-            HStack(spacing: 6) {
-                if let gradient {
-                    Text(verbatim: String(format: "%+.1f%%", gradient))
-                        .foregroundStyle(gradient > 3 ? Theme.threatMedium
-                                            : (gradient < -1 ? Theme.good : Theme.textPrimary))
+            if !embedded {
+                HStack(spacing: 6) {
+                    if let gradient {
+                        Text(verbatim: String(format: "%+.1f%%", gradient))
+                            .foregroundStyle(gradient > 3 ? Theme.threatMedium
+                                                : (gradient < -1 ? Theme.good : Theme.textPrimary))
+                    }
+                    if ascent >= 5 {
+                        Text(verbatim: "↗ \(Fmt.int(ascent)) m")
+                            .foregroundStyle(Theme.textSecondary)
+                    }
                 }
-                if ascent >= 5 {
-                    Text(verbatim: "↗ \(Fmt.int(ascent)) m")
-                        .foregroundStyle(Theme.textSecondary)
-                }
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .monospacedDigit()
+                .padding(.horizontal, 6)
+                .padding(.top, 3)
             }
-            .font(.system(size: 11, weight: .bold, design: .rounded))
-            .monospacedDigit()
-            .padding(.horizontal, 6)
-            .padding(.top, 3)
         }
-        .background(RoundedRectangle(cornerRadius: 10).fill(Theme.panel.opacity(0.85)))
+        .background(RoundedRectangle(cornerRadius: 10)
+            .fill(embedded ? Color.clear : Theme.panel.opacity(0.85)))
         .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 
