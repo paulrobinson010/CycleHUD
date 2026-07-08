@@ -929,7 +929,7 @@ struct RideView: View {
     /// strip while this row is on the page.
     private func climbRowTile(height: CGFloat, valueSize vs: CGFloat) -> some View {
         let route = settings.routePlanningEnabled ? routes.activeRoute : nil
-        var ridden: Double?
+        var ridden: Double? = route != nil ? 0 : nil   // marker at the start until joined
         if let route, routes.joinedActiveRoute, let loc = location.currentLocation,
            let progress = routes.progress(at: loc.coordinate, course: location.courseDegrees) {
             ridden = max(0, route.remainingMeters(from: 0) - progress.remainingMeters)

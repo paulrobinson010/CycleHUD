@@ -113,8 +113,11 @@ struct RoutePanel: View {
     /// gradient-just-ahead label while riding it.
     @ViewBuilder private var climbStrip: some View {
         if hasClimbStrip, let elevations = route.elevations {
-            let ridden = (joined && progress != nil)
-                ? max(0, route.remainingMeters(from: 0) - progress!.remainingMeters) : nil
+            // Position marker always: nearest point once riding the route,
+            // pinned to the start (0) while still heading there.
+            let ridden = joined
+                ? progress.map { max(0, route.remainingMeters(from: 0) - $0.remainingMeters) }
+                : 0
             ClimbProfileStrip(route: route, elevations: elevations,
                               progressMeters: ridden,
                               gradientFromIndex: (joined && !offRoute) ? progress?.index : nil)
@@ -503,14 +506,14 @@ struct ClimbProfileStrip: View {
                 context.stroke(line, with: .color(Theme.accent),
                                style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
 
-                // Where the rider is along the profile.
+                // Where the rider is along the profile — a clear solid line.
                 if let progressMeters {
                     let x = size.width * min(1, max(0, progressMeters / span))
                     var mark = Path()
                     mark.move(to: CGPoint(x: x, y: 2))
                     mark.addLine(to: CGPoint(x: x, y: size.height - 2))
-                    context.stroke(mark, with: .color(Theme.textPrimary.opacity(0.55)),
-                                   style: StrokeStyle(lineWidth: 1.5, dash: [3, 3]))
+                    context.stroke(mark, with: .color(Theme.textPrimary.opacity(0.9)),
+                                   style: StrokeStyle(lineWidth: 2, lineCap: .round))
                     // Dot riding the profile line itself.
                     if let s = samples.last(where: { $0.dist <= progressMeters }) ?? samples.first {
                         let p = pt((progressMeters, s.ele))
