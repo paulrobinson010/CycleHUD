@@ -57,6 +57,38 @@ CycleHUD is a focused, no-nonsense tool made by a rider who wanted exactly this,
 First release of CycleHUD: a rear-radar heads-up display with Apple Watch wrist alerts, ride summaries with vehicle-pass logging on a map, and Apple Health workouts.
 ```
 
+## What's New (1.5) — en-US, 4000 char limit
+```
+This is a big one. CycleHUD learns to navigate — and to race you.
+
+ROUTES (optional, off by default)
+• Plan rides on a map: tap a start and waypoints, and the path snaps to quiet roads and cycle paths. Loop back to the start, or pick a separate finish.
+• Follow a route on a live street map right in the radar panel — the radar instantly takes over whenever a vehicle approaches.
+• Pick a route from far away and CycleHUD plots a lead-in leg to the start.
+• Spoken turn alerts ("left turn ahead") with a wrist tap as each bend approaches.
+• Live traffic on the route map: congestion and closures, straight from Apple Maps.
+• The whole route's elevation profile, with your position and the gradient just ahead — as a strip on the map or a full-width Distance & Climb tile.
+• Share routes as plain GPX files and import from anywhere (Strava, Komoot, RideWithGPS, a friend's export).
+
+GHOST RIDER
+• Complete a route once and that run becomes its best. Every ride after races it: a live ahead/behind readout, and a ghost marker riding the map beside you.
+• Beat your ghost and the new run takes over. Ghosts even travel inside shared GPX files — so you can race a friend's best, or any recorded ride you import.
+
+UPCOMING JUNCTIONS (optional, off by default)
+• A tile or map badge shows the next intersection ahead — its real layout and a live distance countdown, powered by OpenStreetMap. Following a route? The arm your route takes glows green.
+
+ALSO NEW
+• Rate your effort (1–10) after each ride and it's saved to Apple Health's training load (iOS 18+).
+• Crash SOS now mirrors to Apple Watch: dismiss it or call your emergency contact straight from the wrist.
+• iCloud sync: rides, routes and ghosts back up to your own iCloud and follow you to a new phone. No accounts, ever.
+• Multi-page tile layouts, a customizable grid, and new Wind, Compass, Junction and Distance & Climb tiles.
+
+FIXES
+• Auto-pause reliably resumes (position-based check), out-and-back roads no longer confuse distance-remaining or junction guidance, smoother route matching on long straights, and Apple Watch phantom-workout fixes.
+
+As always: no accounts, no CycleHUD servers, no tracking. The optional junction and routing features fetch open road data (OpenStreetMap, BRouter) and are clearly disclosed in Settings and the privacy policy.
+```
+
 ## URLs
 - Marketing URL: `https://paulrobinson010.github.io/CycleHUD/`
 - Support URL: `https://paulrobinson010.github.io/CycleHUD/` (or the privacy page)

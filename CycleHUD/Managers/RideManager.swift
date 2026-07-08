@@ -383,6 +383,14 @@ final class RideManager: ObservableObject {
     // without planning anything.
     @Published private(set) var demoRoute: PlannedRoute?
     @Published private(set) var demoRouteIndex = 0
+    /// Seconds into the route preview — drives the demo ghost race.
+    @Published private(set) var demoRouteElapsed = 0.0
+    /// A staged junction ahead on the demo loop (arms + countdown), so the
+    /// junction tile/badge demo without any OSM fetch.
+    @Published private(set) var demoJunction: JunctionInfo?
+    /// The arm the demo "route" takes at that junction (drawn green).
+    @Published private(set) var demoJunctionExitBearing: Double?
+    private var demoJunctionTarget = 0
     private var demoRouteUntil: Date?
     private var demoRouteCarry = 0.0
 
@@ -416,6 +424,10 @@ final class RideManager: ObservableObject {
         demoRadarLostUntil = nil
         demoRoute = nil
         demoRouteIndex = 0
+        demoRouteElapsed = 0
+        demoJunction = nil
+        demoJunctionExitBearing = nil
+        demoJunctionTarget = 0
         demoRouteUntil = nil
         demoRouteCarry = 0
         demoTimer?.invalidate()
@@ -471,9 +483,56 @@ final class RideManager: ObservableObject {
             dist += PlannedRoute.meters(path[i].coordinate, path[i + 1].coordinate)
         }
         let waypoints = stride(from: 0, to: path.count, by: max(1, path.count / 6)).map { path[$0] }
+        // Rolling synthetic elevations (climb strip) and a ghost that rides a
+        // touch slower than the demo speed, so the rider visibly pulls ahead.
+        let elevations = (0...n).map { i -> Double in
+            let t = Double(i) / Double(n) * 2 * .pi
+            return 100 + 26 * sin(2 * t + 0.6) + 9 * sin(5 * t)
+        }
+        var bestTimes: [Double] = [0]
+        for i in 0..<(path.count - 1) {
+            bestTimes.append(bestTimes[i]
+                + PlannedRoute.meters(path[i].coordinate, path[i + 1].coordinate) / 6.2)
+        }
         return PlannedRoute(name: String(localized: "Demo route", bundle: Lang.bundle),
                             waypoints: waypoints, loop: true,
-                            path: path, distanceMeters: dist)
+                            path: path, distanceMeters: dist,
+                            elevations: elevations,
+                            bestTimes: bestTimes, bestDate: Date())
+    }
+
+    /// Stage the next pretend junction ahead of the demo rider and keep its
+    /// countdown live; every third one is a roundabout for variety.
+    private func updateDemoJunction() {
+        guard let route = demoRoute else { return }
+        let spacing = 40                                       // path points apart
+        if demoJunctionTarget <= demoRouteIndex + 2 {
+            demoJunctionTarget = ((demoRouteIndex / spacing) + 1) * spacing
+        }
+        guard demoJunctionTarget < route.path.count - 1 else {
+            demoJunction = nil
+            return
+        }
+        let at = route.path[demoJunctionTarget].coordinate
+        let approach = PlannedRoute.bearing(route.path[demoJunctionTarget - 1].coordinate, at)
+        func norm(_ d: Double) -> Double {
+            var v = d.truncatingRemainder(dividingBy: 360)
+            if v < 0 { v += 360 }
+            return v
+        }
+        var dist = 0.0
+        for i in demoRouteIndex..<demoJunctionTarget {
+            dist += PlannedRoute.meters(route.path[i].coordinate, route.path[i + 1].coordinate)
+        }
+        let exit = norm(approach + 85)
+        demoJunction = JunctionInfo(distanceMeters: dist,
+                                    armBearings: [norm(approach), exit,
+                                                  norm(approach - 95), norm(approach + 180)],
+                                    approachBearing: approach,
+                                    isRoundabout: (demoJunctionTarget / spacing) % 3 == 0,
+                                    nodeID: Int64(demoJunctionTarget),
+                                    latitude: at.latitude, longitude: at.longitude)
+        demoJunctionExitBearing = exit
     }
 
     private func demoTick() {
@@ -489,17 +548,22 @@ final class RideManager: ObservableObject {
                 demoRadarLostUntil = nil
                 demoRoute = makeDemoRoute()
                 demoRouteIndex = 0
+                demoRouteElapsed = 0
                 demoRouteCarry = 0
-                demoRouteUntil = now.addingTimeInterval(12)
+                demoJunctionTarget = 0
+                updateDemoJunction()
+                demoRouteUntil = now.addingTimeInterval(16)
             } else {
                 sendMirror()
             }
             return
         }
 
-        // Route preview: glide along the demo loop, then finish for real.
+        // Route preview: glide along the demo loop — junction countdown, climb
+        // strip and the ghost race all live — then finish for real.
         if let until = demoRouteUntil {
             if now >= until { stopDemo(); return }
+            demoRouteElapsed += dt
             demoRouteCarry += max(3, currentSpeedMps) * dt
             while let route = demoRoute, demoRouteIndex < route.path.count - 1 {
                 let seg = PlannedRoute.meters(route.path[demoRouteIndex].coordinate,
@@ -508,6 +572,7 @@ final class RideManager: ObservableObject {
                 demoRouteCarry -= seg
                 demoRouteIndex += 1
             }
+            updateDemoJunction()
         }
         movingTimeSeconds += dt
         let wobble = sin(movingTimeSeconds / 6.0) * 1.2 + Double.random(in: -0.4...0.4)
@@ -677,13 +742,15 @@ final class RideManager: ObservableObject {
     private func sendMirror() {
         let levels = ble.threats.map { $0.level.rawValue }
         let nearest = ble.threats.map { Int($0.distanceMeters.rounded()) }.min()
-        // During the demo, present as "running" so the Watch starts its workout
-        // session (real HR) for testing without a full ride.
+        // The demo announces itself as "demo": the Watch displays it exactly
+        // like a running ride (mirror, haptics) but must NOT start a workout
+        // session — a session orphaned by a suspended watch app after a demo
+        // is eventually saved by watchOS as a phantom empty workout.
         watch.sendMirror(speedDisplay: settings.speedUnit.value(fromMps: currentSpeedMps),
                          speedUnit: settings.speedUnit.label,
                          distanceDisplay: settings.distanceUnit.value(fromMeters: distanceMeters),
                          distanceUnit: settings.distanceUnit.label,
-                         rideStatusRaw: demoActive ? "running" : statusRaw,
+                         rideStatusRaw: demoActive ? "demo" : statusRaw,
                          threatLevel: levels.max() ?? -1,
                          nearestThreatMeters: nearest,
                          radarLost: demoActive ? (demoRadarLostUntil != nil) : radarConfiguredButDown,

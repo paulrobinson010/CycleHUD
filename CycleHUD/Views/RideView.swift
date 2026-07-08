@@ -381,8 +381,9 @@ struct RideView: View {
     private var radarPanel: some View {
         Group {
             if ride.demoActive, let demoRoute = ride.demoRoute, ble.threats.isEmpty {
-                // Demo finale: glide along a looping demo route so riders see
-                // route-following without planning anything.
+                // Demo finale: glide along a looping demo route with every
+                // route-view element live — junction badge counting down,
+                // climb strip, ghost race, battery and ETA pills.
                 RoutePanel(route: demoRoute,
                            location: CLLocation(
                                 latitude: demoRoute.path[min(ride.demoRouteIndex, demoRoute.path.count - 1)].lat,
@@ -393,6 +394,15 @@ struct RideView: View {
                            joined: true,
                            leadIn: nil,
                            radarConnected: true,
+                           batteryPercent: 76,
+                           etaSeconds: demoRoute.remainingMeters(from: ride.demoRouteIndex) / 7.0,
+                           ghostDeltaSeconds: demoGhostDelta,
+                           ghostCoordinate: demoGhostCoordinate,
+                           showClimbStrip: settings.routeElevationEnabled
+                               && !visibleMetricKinds.contains(.climb),
+                           junction: !visibleMetricKinds.contains(.junction) ? ride.demoJunction : nil,
+                           junctionRouteBearing: ride.demoJunctionExitBearing,
+                           showTraffic: settings.routeTrafficEnabled,
                            distanceUnit: settings.distanceUnit)
             } else if let route = routes.activeRoute, settings.routePlanningEnabled, ble.threats.isEmpty {
                 RoutePanel(route: route,
@@ -415,6 +425,7 @@ struct RideView: View {
                            junction: settings.junctionsEnabled && !visibleMetricKinds.contains(.junction)
                                ? junctions.next : nil,
                            junctionRouteBearing: junctions.next.flatMap(routeExitBearing),
+                           showTraffic: settings.routeTrafficEnabled,
                            distanceUnit: settings.distanceUnit)
             } else {
                 RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
@@ -706,15 +717,25 @@ struct RideView: View {
 
     /// Dashed "+" tile at the end of the grid in edit mode: tap for a menu of
     /// the metrics not currently shown.
+    /// Tiles the Distance and climb row already covers — struck through in the
+    /// add picker while the row is on the page, so it's obvious they'd repeat.
+    private static let climbRowCovers: Set<MetricKind> = [.distance, .gradient, .ascent]
+
     private func addTile(height: CGFloat) -> some View {
-        Menu {
+        let rowOnPage = visibleMetricKinds.contains(.climb)
+        return Menu {
             ForEach(availableTileKinds) { kind in
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         settings.metricTiles.append(kind.rawValue)
                     }
                 } label: {
-                    Label(kind.title, systemImage: kind.systemImage)
+                    if rowOnPage && Self.climbRowCovers.contains(kind) {
+                        Label { Text(kind.title).strikethrough() }
+                              icon: { Image(systemName: kind.systemImage) }
+                    } else {
+                        Label(kind.title, systemImage: kind.systemImage)
+                    }
                 }
             }
         } label: {
@@ -924,6 +945,22 @@ struct RideView: View {
         .buttonStyle(.plain)
     }
 
+    /// The demo's ghost race: the pretend rider (7 m/s-ish) vs the demo
+    /// route's built-in best (6.2 m/s), so the delta pill trends green.
+    private var demoGhostDelta: Double? {
+        guard let route = ride.demoRoute, let best = route.bestTimes,
+              ride.demoRouteIndex < best.count else { return nil }
+        return ride.demoRouteElapsed - best[ride.demoRouteIndex]
+    }
+
+    private var demoGhostCoordinate: CLLocationCoordinate2D? {
+        guard let route = ride.demoRoute, let best = route.bestTimes,
+              best.count == route.path.count else { return nil }
+        var i = best.firstIndex(where: { $0 > ride.demoRouteElapsed }) ?? best.count
+        i = max(0, i - 1)
+        return route.path[i].coordinate
+    }
+
     /// The distance-and-climb row: distance / live gradient / ascent overlaid
     /// on the active route's elevation profile (with the rider's position
     /// marked). Takes a full grid row; the route map drops its own climb
@@ -951,12 +988,14 @@ struct RideView: View {
     /// planned route passes through the junction, the arm the route takes is
     /// highlighted green — the tile points the way.
     private func junctionTile(height: CGFloat, valueSize vs: CGFloat) -> some View {
-        let info = junctions.next
+        let info = ride.demoActive ? (ride.demoJunction ?? junctions.next) : junctions.next
         let value = info.map { Fmt.int(settings.distanceUnit.shortValue(fromMeters: $0.distanceMeters)) } ?? "—"
         return JunctionTile(title: "Junction", value: value,
                             unit: info != nil ? tileUnit(settings.distanceUnit.shortLabel) : "",
                             valueSize: vs, height: height, info: info,
-                            routeBearing: info.flatMap(routeExitBearing))
+                            routeBearing: ride.demoActive
+                                ? ride.demoJunctionExitBearing
+                                : info.flatMap(routeExitBearing))
     }
 
     /// The direction the active route leaves `junction`, or nil when no route
