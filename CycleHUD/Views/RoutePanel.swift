@@ -71,6 +71,12 @@ struct RoutePanel: View {
         }
     }
 
+    /// Whether the climb strip will render (used to keep the rider marker
+    /// clear of it).
+    private var hasClimbStrip: Bool {
+        (route.elevations?.count ?? -1) == route.path.count && route.path.count > 1
+    }
+
     /// The WHOLE route in profile along the bottom of the map — visible from
     /// the moment a route is picked (before reaching the start too), with a
     /// marker walking the profile once the rider is on the route and the
@@ -95,8 +101,11 @@ struct RoutePanel: View {
     private func routeMap(rider: CLLocationCoordinate2D,
                           progress: (index: Int, offMeters: Double, remainingMeters: Double)) -> some View {
         let heading = course ?? routeHeading(progress.index)
-        // Centre further ahead when zoomed out so the extra view is road to come.
-        let center = coordinate(from: rider, meters: zoomDistance * 0.11, bearing: heading)
+        // Centre ahead of the rider so most of the view is road to come — but
+        // less so when the climb strip occupies the bottom of the panel, or
+        // the rider's own arrow ends up hidden behind it (seen on device).
+        let aheadFactor = hasClimbStrip ? 0.04 : 0.10
+        let center = coordinate(from: rider, meters: zoomDistance * aheadFactor, bearing: heading)
         return Map(position: .constant(.camera(
             MapCamera(centerCoordinate: center, distance: zoomDistance, heading: heading))),
                    interactionModes: .zoom) {
