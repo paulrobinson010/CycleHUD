@@ -26,12 +26,14 @@ struct ClimbRowTile: View {
                                   progressMeters: progressMeters,
                                   embedded: true)
             }
+            // Same geometry as a row of three tiles (equal thirds, 8 pt gaps,
+            // content inset 14 pt) so the stats line up with the tile columns
+            // above and below the row.
             HStack(spacing: 8) {
                 stat("Distance", distanceValue, distanceUnit)
                 stat("Gradient", gradientValue, gradientUnit)
                 stat("Ascent", ascentValue, ascentUnit)
             }
-            .padding(.horizontal, 14)
         }
         .frame(maxWidth: .infinity)
         .frame(height: height)
@@ -65,5 +67,6 @@ struct ClimbRowTile: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.leading, 14)
     }
 }
