@@ -9,7 +9,7 @@ enum GPXRouteImporter {
 
     static func route(from data: Data, fallbackName: String) -> PlannedRoute? {
         let parser = Parser()
-        guard let (name, points) = parser.parse(data), points.count >= 2 else { return nil }
+        guard let (name, points, wpts) = parser.parse(data), points.count >= 2 else { return nil }
 
         // Downsample dense recordings (1 Hz GPX can be 10k+ points) to ~2000.
         let stride = max(1, points.count / 2000)
@@ -27,18 +27,49 @@ enum GPXRouteImporter {
         guard distance > 100 else { return nil }     // not a usable route
 
         let isLoop = PlannedRoute.meters(path.first!.coordinate, path.last!.coordinate) < 200
+
+        // Track-point timestamps = a recorded run of these roads: reconstruct
+        // it as the route's ghost (elapsed seconds per point, monotonic), so
+        // importing a friend's shared route — or anyone's recorded ride —
+        // gives you their run to race.
+        var bestTimes: [Double]?
+        var bestDate: Date?
+        let stamped = sampled.compactMap(\.time)
+        if let first = stamped.first, stamped.count >= sampled.count * 9 / 10 {
+            var last = 0.0
+            var offsets: [Double] = []
+            for point in sampled {
+                var v = point.time?.timeIntervalSince(first) ?? last
+                if v < last { v = last }
+                last = v
+                offsets.append(v)
+            }
+            if (offsets.last ?? 0) > 60 {
+                bestTimes = offsets
+                bestDate = stamped.last
+            }
+        }
+
+        // Marker round-trip: files CycleHUD exported carry the tapped markers
+        // as <wpt>; other GPX usually has none, so start/finish stand in.
+        let waypoints = wpts.count >= 2
+            ? wpts.map { PlannedRoute.Point(lat: $0.lat, lon: $0.lon) }
+            : [path.first!, path.last!]
         return PlannedRoute(name: name ?? fallbackName,
-                            waypoints: [path.first!, path.last!],
+                            waypoints: waypoints,
                             loop: isLoop,
                             path: path,
                             distanceMeters: distance,
-                            elevations: hasElevation ? elevations : nil)
+                            elevations: hasElevation ? elevations : nil,
+                            bestTimes: bestTimes,
+                            bestDate: bestDate)
     }
 
     private struct GPXPoint: Equatable {
         var lat: Double
         var lon: Double
         var ele: Double
+        var time: Date?
     }
 
     /// Minimal streaming GPX reader: collects trkpt (preferred) and rtept
@@ -46,21 +77,31 @@ enum GPXRouteImporter {
     private final class Parser: NSObject, XMLParserDelegate {
         private var trackPoints: [GPXPoint] = []
         private var routePoints: [GPXPoint] = []
+        private var waypoints: [GPXPoint] = []
+        private var insideWpt = false
         private var name: String?
 
         private var currentKind: String?         // "trkpt" | "rtept" while inside one
         private var currentPoint: GPXPoint?
         private var readingEle = false
+        private var readingTime = false
         private var readingName = false
         private var eleText = ""
+        private var timeText = ""
         private var nameText = ""
+        private let iso = ISO8601DateFormatter()
+        private let isoFractional: ISO8601DateFormatter = {
+            let f = ISO8601DateFormatter()
+            f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            return f
+        }()
 
-        func parse(_ data: Data) -> (name: String?, points: [GPXPoint])? {
+        func parse(_ data: Data) -> (name: String?, points: [GPXPoint], wpts: [GPXPoint])? {
             let parser = XMLParser(data: data)
             parser.delegate = self
             guard parser.parse() || !trackPoints.isEmpty || !routePoints.isEmpty else { return nil }
             let points = trackPoints.count >= 2 ? trackPoints : routePoints
-            return (name, points)
+            return (name, points, waypoints)
         }
 
         func parser(_ parser: XMLParser, didStartElement element: String,
@@ -72,10 +113,19 @@ enum GPXRouteImporter {
                       let lon = attributes["lon"].flatMap(Double.init) else { return }
                 currentKind = element
                 currentPoint = GPXPoint(lat: lat, lon: lon, ele: 0)
+            case "wpt":
+                insideWpt = true
+                if let lat = attributes["lat"].flatMap(Double.init),
+                   let lon = attributes["lon"].flatMap(Double.init) {
+                    waypoints.append(GPXPoint(lat: lat, lon: lon, ele: 0))
+                }
             case "ele" where currentPoint != nil:
                 readingEle = true
                 eleText = ""
-            case "name" where name == nil && currentPoint == nil:
+            case "time" where currentPoint != nil:
+                readingTime = true
+                timeText = ""
+            case "name" where name == nil && currentPoint == nil && !insideWpt:
                 readingName = true
                 nameText = ""
             default:
@@ -85,6 +135,7 @@ enum GPXRouteImporter {
 
         func parser(_ parser: XMLParser, foundCharacters string: String) {
             if readingEle { eleText += string }
+            if readingTime { timeText += string }
             if readingName { nameText += string }
         }
 
@@ -97,6 +148,13 @@ enum GPXRouteImporter {
                     currentPoint = p
                 }
                 readingEle = false
+            case "time":
+                if readingTime, var p = currentPoint {
+                    let text = timeText.trimmingCharacters(in: .whitespacesAndNewlines)
+                    p.time = iso.date(from: text) ?? isoFractional.date(from: text)
+                    currentPoint = p
+                }
+                readingTime = false
             case "name":
                 if readingName {
                     let trimmed = nameText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -110,6 +168,8 @@ enum GPXRouteImporter {
                 }
                 currentPoint = nil
                 currentKind = nil
+            case "wpt":
+                insideWpt = false
             default:
                 break
             }

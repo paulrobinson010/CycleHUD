@@ -106,18 +106,19 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   elevation with your position marked and the gradient just ahead. Prefer the
   profile as a tile? Add the **Distance and climb row** — a full-width tile
   with distance, live gradient and ascent overlaid on the route's profile —
-  and the map hands the strip over to it. Share any route as a
-  **`.cyclehudroute` file** (CycleHUD's own format) via the share sheet, and
-  import routes from friends — or **GPX files** from Strava, Komoot,
-  RideWithGPS and the rest — with the import button or by opening the file.
-  No accounts involved.
+  and the map hands the strip over to it. Routes share as plain **GPX** —
+  the format everything speaks — via the share sheet, and import from
+  anywhere (Strava, Komoot, RideWithGPS, a friend's export) with the import
+  button or by opening the file. No accounts involved.
 - **Ghost rider** — the first time you complete a route, that run becomes the
   route's **best**; every ride after that races it live. A checkered-flag pill
   shows seconds ahead (green) or behind (red), and a purple ghost marker rides
   the map at exactly where your best run was at this point — timed from when
   each run first touches the route, so a long roll to the start doesn't skew
   the race. Beat it and the new run takes over as the ghost. Bests travel
-  inside shared route files, so friends can race your ghost.
+  inside shared GPX as ordinary track timestamps, so friends can race your
+  ghost — and importing any *recorded* ride GPX (a Strava activity export,
+  say) turns that ride into a ghost you can race.
 - **Upcoming junctions** *(optional, off by default)* — a **Junction** tile
   shows the next intersection ahead: a schematic of its road arms at their true
   angles (T, crossroads, roundabout…) in your frame of travel, with the distance

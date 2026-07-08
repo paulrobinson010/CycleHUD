@@ -74,21 +74,56 @@ final class RouteStore: ObservableObject {
         persist()
     }
 
-    // MARK: - Share / import (.cyclehudroute)
+    // MARK: - Share / import
 
-    /// Write the route as a shareable `.cyclehudroute` file (JSON envelope).
+    /// Write the route as a shareable GPX file — the format everything
+    /// speaks. Waypoint markers become `<wpt>`, the path a `<trk>` with
+    /// elevation, and the route's best run (the ghost) rides along as
+    /// per-point `<time>` stamps — semantically a recorded best ride, so a
+    /// friend who imports it races your ghost.
     func exportFile(for route: PlannedRoute) -> URL? {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        guard let data = try? encoder.encode(RouteFile(route: route)) else { return nil }
         let safeName = route.name.replacingOccurrences(of: "/", with: "-")
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent(safeName.isEmpty ? "Route" : safeName)
-            .appendingPathExtension("cyclehudroute")
+            .appendingPathExtension("gpx")
         do {
-            try data.write(to: url, options: .atomic)
+            try gpxString(for: route).data(using: .utf8)?.write(to: url, options: .atomic)
             return url
         } catch { return nil }
+    }
+
+    private func gpxString(for route: PlannedRoute) -> String {
+        func esc(_ s: String) -> String {
+            s.replacingOccurrences(of: "&", with: "&amp;")
+                .replacingOccurrences(of: "<", with: "&lt;")
+                .replacingOccurrences(of: ">", with: "&gt;")
+                .replacingOccurrences(of: "\"", with: "&quot;")
+        }
+        let iso = ISO8601DateFormatter()
+        // Ghost timestamps: absolute times whose DELTAS are the best run
+        // (anchored so the track ends when the best was set).
+        let ghostBase: Date? = route.bestTimes.map { times in
+            (route.bestDate ?? route.createdAt).addingTimeInterval(-(times.last ?? 0))
+        }
+        var out = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        out += "<gpx version=\"1.1\" creator=\"CycleHUD\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n"
+        out += "  <metadata><name>\(esc(route.name))</name></metadata>\n"
+        for wp in route.waypoints {
+            out += "  <wpt lat=\"\(String(format: "%.6f", wp.lat))\" lon=\"\(String(format: "%.6f", wp.lon))\"/>\n"
+        }
+        out += "  <trk><name>\(esc(route.name))</name><trkseg>\n"
+        for (i, p) in route.path.enumerated() {
+            out += "    <trkpt lat=\"\(String(format: "%.6f", p.lat))\" lon=\"\(String(format: "%.6f", p.lon))\">"
+            if let elevations = route.elevations, i < elevations.count {
+                out += "<ele>\(String(format: "%.1f", elevations[i]))</ele>"
+            }
+            if let ghostBase, let times = route.bestTimes, i < times.count {
+                out += "<time>\(iso.string(from: ghostBase.addingTimeInterval(times[i])))</time>"
+            }
+            out += "</trkpt>\n"
+        }
+        out += "  </trkseg></trk>\n</gpx>\n"
+        return out
     }
 
     /// Import a shared route file (from the file picker or an open-with URL):
