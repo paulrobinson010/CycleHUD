@@ -42,6 +42,7 @@ struct CycleHUDApp: App {
     @StateObject private var sos: SOSManager
     @StateObject private var junctions: JunctionManager
     @StateObject private var routes: RouteStore
+    @StateObject private var cloud: CloudSync
     /// Branded splash (website hero) shown over the HUD at launch, then faded.
     @State private var showSplash = true
 
@@ -61,6 +62,7 @@ struct CycleHUDApp: App {
         let weather = WeatherManager()
         let junctions = JunctionManager()
         let routes = RouteStore()
+        let cloud = CloudSync()
         _settings = StateObject(wrappedValue: settings)
         _ble = StateObject(wrappedValue: ble)
         _location = StateObject(wrappedValue: location)
@@ -72,6 +74,7 @@ struct CycleHUDApp: App {
         _sos = StateObject(wrappedValue: sos)
         _junctions = StateObject(wrappedValue: junctions)
         _routes = StateObject(wrappedValue: routes)
+        _cloud = StateObject(wrappedValue: cloud)
     }
 
     var body: some Scene {
@@ -104,6 +107,7 @@ struct CycleHUDApp: App {
             .environmentObject(sos)
             .environmentObject(junctions)
             .environmentObject(routes)
+            .environmentObject(cloud)
             .preferredColorScheme(settings.appearanceTheme.colorScheme)
             // Shared route files ("open in CycleHUD" from Files, AirDrop,
             // Messages…) land here and go straight into the list.
@@ -127,6 +131,11 @@ struct CycleHUDApp: App {
                 routes.locationProvider = { location.currentLocation }
                 routes.startLeadInUpdates()
                 ride.routes = routes           // turn cues + ghost rider
+                cloud.isEnabled = { settings.iCloudSyncEnabled }
+                routes.cloud = cloud
+                history.cloud = cloud
+                cloud.onSync = [{ routes.syncFromCloud() }, { history.syncFromCloud() }]
+                cloud.start()
                 sos.locationProvider = { location.currentLocation }
                 sos.contactProvider = { settings.emergencyContact }
                 sos.stateChanged = { active, seconds in

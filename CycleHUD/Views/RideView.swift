@@ -17,6 +17,7 @@ struct RideView: View {
     @EnvironmentObject var sos: SOSManager
     @EnvironmentObject var junctions: JunctionManager
     @EnvironmentObject var routes: RouteStore
+    @EnvironmentObject var cloud: CloudSync
 
     private enum ActiveSheet: Int, Identifiable {
         case pairing, settings, routes
@@ -61,7 +62,7 @@ struct RideView: View {
                 case .pairing: PairingView(showAccessHint: pairingFromOnboarding).environmentObject(ble)
                 case .settings: SettingsView().environmentObject(settings).environmentObject(ble)
                         .environmentObject(ride).environmentObject(history).environmentObject(weather)
-                        .environmentObject(sos)
+                        .environmentObject(sos).environmentObject(cloud)
                 case .routes: RoutesView().environmentObject(routes).environmentObject(settings)
                 }
             }

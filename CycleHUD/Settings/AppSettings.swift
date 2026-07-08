@@ -28,6 +28,7 @@ final class AppSettings: ObservableObject {
         static let routePlanningEnabled = "routePlanningEnabled"
         static let routeTurnAlertsEnabled = "routeTurnAlertsEnabled"
         static let routeElevationEnabled = "routeElevationEnabled"
+        static let iCloudSyncEnabled = "iCloudSyncEnabled"
         static let appLanguage = "appLanguage"
         static let metricTiles = "metricTilesV2"   // legacy single-page tiles, migrated
         static let topTileCountLegacy = "topTileCount"
@@ -109,6 +110,8 @@ final class AppSettings: ObservableObject {
     /// The elevation-profile strip on the route map (the Distance and climb
     /// row supersedes it while that row is on the page).
     @Published var routeElevationEnabled: Bool { didSet { defaults.set(routeElevationEnabled, forKey: Keys.routeElevationEnabled) } }
+    /// Mirror rides/routes/ghosts into the rider's own iCloud (no accounts).
+    @Published var iCloudSyncEnabled: Bool { didSet { defaults.set(iCloudSyncEnabled, forKey: Keys.iCloudSyncEnabled) } }
     /// In-app language override (BCP-47 code, or "" to follow the device).
     @Published var appLanguage: String {
         didSet { defaults.set(appLanguage, forKey: Keys.appLanguage); applyLanguage() }
@@ -210,6 +213,7 @@ final class AppSettings: ObservableObject {
             Keys.routePlanningEnabled: false,
             Keys.routeTurnAlertsEnabled: true,
             Keys.routeElevationEnabled: true,
+            Keys.iCloudSyncEnabled: true,
             Keys.appLanguage: "",
             Keys.showTileUnits: true,
             Keys.currentRidePage: 0,
@@ -247,6 +251,7 @@ final class AppSettings: ObservableObject {
         routePlanningEnabled = defaults.bool(forKey: Keys.routePlanningEnabled)
         routeTurnAlertsEnabled = defaults.bool(forKey: Keys.routeTurnAlertsEnabled)
         routeElevationEnabled = defaults.bool(forKey: Keys.routeElevationEnabled)
+        iCloudSyncEnabled = defaults.bool(forKey: Keys.iCloudSyncEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
         // (appearance applied below once all stored properties are initialised)
         // Ride pages: decode, or migrate the old single-page tile settings.

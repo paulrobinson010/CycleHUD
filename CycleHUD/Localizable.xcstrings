@@ -1982,6 +1982,46 @@
         }
       }
     },
+    "Backs up your rides, routes and ghosts to your own iCloud and keeps a new phone in step. Everything stays in your personal iCloud Drive — no accounts and no CycleHUD servers. When two devices hold the same route, the faster ghost wins." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sichert deine Fahrten, Routen und Geister in deiner eigenen iCloud und hält ein neues Telefon auf dem gleichen Stand. Alles bleibt in deinem persönlichen iCloud Drive – keine Konten und keine CycleHUD-Server. Haben zwei Geräte dieselbe Route, gewinnt der schnellere Geist."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backs up your rides, routes and ghosts to your own iCloud and keeps a new phone in step. Everything stays in your personal iCloud Drive — no accounts and no CycleHUD servers. When two devices hold the same route, the faster ghost wins."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backs up your rides, routes and ghosts to your own iCloud and keeps a new phone in step. Everything stays in your personal iCloud Drive — no accounts and no CycleHUD servers. When two devices hold the same route, the faster ghost wins."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guarda tus salidas, rutas y fantasmas en tu propio iCloud y mantiene un teléfono nuevo al día. Todo permanece en tu iCloud Drive personal: sin cuentas y sin servidores de CycleHUD. Si dos dispositivos tienen la misma ruta, gana el fantasma más rápido."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauvegarde vos sorties, itinéraires et fantômes dans votre propre iCloud et garde un nouveau téléphone à jour. Tout reste dans votre iCloud Drive personnel – pas de comptes ni de serveurs CycleHUD. Si deux appareils ont le même itinéraire, le fantôme le plus rapide gagne."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salva le tue uscite, i percorsi e i fantasmi nel tuo iCloud e mantiene aggiornato un nuovo telefono. Tutto resta nel tuo iCloud Drive personale: nessun account e nessun server CycleHUD. Se due dispositivi hanno lo stesso percorso, vince il fantasma più veloce."
+          }
+        }
+      }
+    },
     "Beep on new vehicle" : {
       "localizations" : {
         "de-DE" : {
@@ -3790,6 +3830,46 @@
         }
       }
     },
+    "Data" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daten"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datos"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Données"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dati"
+          }
+        }
+      }
+    },
     "Delete page" : {
       "localizations" : {
         "de-DE" : {
@@ -5555,6 +5635,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Potrei aver avuto un incidente in bici e potrei aver bisogno di aiuto."
+          }
+        }
+      }
+    },
+    "iCloud isn’t available — check you’re signed in and iCloud Drive is on." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud ist nicht verfügbar – prüfe, ob du angemeldet bist und iCloud Drive aktiviert ist."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud isn’t available — check you’re signed in and iCloud Drive is on."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud isn’t available — check you’re signed in and iCloud Drive is on."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud no está disponible: comprueba que has iniciado sesión y que iCloud Drive está activado."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud n’est pas disponible – vérifiez que vous êtes connecté et qu’iCloud Drive est activé."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud non è disponibile: verifica di aver effettuato l’accesso e che iCloud Drive sia attivo."
+          }
+        }
+      }
+    },
+    "iCloud sync" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud-Synchronisierung"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud sync"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud sync"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sincronización con iCloud"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Synchronisation iCloud"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sincronizzazione iCloud"
           }
         }
       }

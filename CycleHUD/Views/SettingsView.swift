@@ -7,6 +7,7 @@ struct SettingsView: View {
     @EnvironmentObject var ride: RideManager
     @EnvironmentObject var history: RideHistory
     @EnvironmentObject var weather: WeatherManager
+    @EnvironmentObject var cloud: CloudSync
     @EnvironmentObject var sos: SOSManager
     @Environment(\.dismiss) private var dismiss
 
@@ -218,6 +219,19 @@ struct SettingsView: View {
                     Text("Heart Rate")
                 } footer: {
                     Text("When your heart rate reaches this, the heart-rate readout turns red and a paired Apple Watch double-buzzes — repeating every 30 seconds while it stays high.")
+                }
+
+                Section {
+                    Toggle("iCloud sync", isOn: $settings.iCloudSyncEnabled)
+                    if settings.iCloudSyncEnabled && !cloud.available {
+                        Text("iCloud isn’t available — check you’re signed in and iCloud Drive is on.")
+                            .font(.footnote)
+                            .foregroundStyle(Theme.threatMedium)
+                    }
+                } header: {
+                    Text("Data")
+                } footer: {
+                    Text("Backs up your rides, routes and ghosts to your own iCloud and keeps a new phone in step. Everything stays in your personal iCloud Drive — no accounts and no CycleHUD servers. When two devices hold the same route, the faster ghost wins.")
                 }
 
                 Section {

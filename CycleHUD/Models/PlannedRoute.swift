@@ -35,6 +35,9 @@ struct PlannedRoute: Codable, Identifiable, Equatable {
     /// with shared route files, so friends can race your ghost.
     var bestTimes: [Double]? = nil
     var bestDate: Date? = nil
+    /// Last local edit — iCloud sync merges per-route by newest. Optional so
+    /// older saved/shared routes still decode (falls back to `createdAt`).
+    var modifiedAt: Date? = nil
 
     // MARK: - Ride-time geometry
 

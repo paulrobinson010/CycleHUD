@@ -77,6 +77,21 @@ Notes:
   sensible mm/hr values (the one unit worth sanity-checking on a real device),
   and that `minuteForecast` returns data in your area.
 
+## 3b. iCloud sync (rides, routes & ghosts — optional)
+
+`CloudSync` mirrors the ride history and routes (with their ghosts) into the
+app's own iCloud Drive container, so data survives a lost phone. The code is
+in place; enable the capability once:
+
+1. In Xcode, **CycleHUD target → Signing & Capabilities → + Capability →
+   iCloud**, tick **iCloud Documents**, and add (＋) a container named
+   `iCloud.$(PRODUCT_BUNDLE_IDENTIFIER)` (Xcode offers this default).
+2. Build/run. The toggle lives under **Settings → Data → iCloud sync** (on by
+   default); it warns in place if iCloud is unavailable on the device.
+
+Without the capability (or with iCloud Drive off) the feature quietly does
+nothing — everything else works as before.
+
 ## 3b. Translations (optional)
 
 The app is localization-ready. To add languages:

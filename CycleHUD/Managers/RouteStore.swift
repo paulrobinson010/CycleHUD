@@ -54,23 +54,104 @@ final class RouteStore: ObservableObject {
         if let data = try? JSONEncoder().encode(routes) {
             try? data.write(to: fileURL, options: .atomic)
         }
+        pushToCloud()
+    }
+
+    // MARK: - iCloud sync
+
+    /// Wired in by the app; nil = sync off.
+    var cloud: CloudSync?
+
+    /// Deleted route ids (tombstones) so a deletion on one phone doesn't get
+    /// resurrected by a merge from another. Bounded.
+    private var deletedIDs: [UUID] {
+        get { (defaults.stringArray(forKey: "deletedRouteIDs") ?? []).compactMap(UUID.init) }
+        set { defaults.set(newValue.suffix(200).map(\.uuidString), forKey: "deletedRouteIDs") }
+    }
+
+    private func recordDeletion(_ id: UUID) {
+        deletedIDs = deletedIDs + [id]
+    }
+
+    private struct CloudPayload: Codable {
+        var routes: [PlannedRoute]
+        var deleted: [UUID]
+    }
+
+    private func pushToCloud() {
+        guard let cloud else { return }
+        let payload = CloudPayload(routes: routes, deleted: deletedIDs)
+        if let data = try? JSONEncoder().encode(payload) {
+            cloud.push(data, file: "routes.json")
+        }
+    }
+
+    /// Merge the cloud copy into this device: per-route newest edit wins, a
+    /// FASTER ghost always wins (two phones race each other honestly), and
+    /// deletions from either side hold.
+    func syncFromCloud() {
+        guard let cloud else { return }
+        guard let data = cloud.pull(file: "routes.json"),
+              let payload = try? JSONDecoder().decode(CloudPayload.self, from: data) else {
+            pushToCloud()          // nothing in the cloud yet — seed it
+            return
+        }
+        let deleted = Set(deletedIDs).union(payload.deleted)
+        deletedIDs = Array(deleted)
+
+        var byID = Dictionary(uniqueKeysWithValues: routes.map { ($0.id, $0) })
+        for remote in payload.routes where !deleted.contains(remote.id) {
+            if let local = byID[remote.id] {
+                let localStamp = local.modifiedAt ?? local.createdAt
+                let remoteStamp = remote.modifiedAt ?? remote.createdAt
+                var winner = remoteStamp > localStamp ? remote : local
+                // Ghost merges independently: keep the faster complete run.
+                let fastest = [local, remote]
+                    .compactMap { r in r.bestTimes?.last.map { ($0, r) } }
+                    .min { $0.0 < $1.0 }?.1
+                if let fastest {
+                    winner.bestTimes = fastest.bestTimes
+                    winner.bestDate = fastest.bestDate
+                }
+                byID[remote.id] = winner
+            } else {
+                byID[remote.id] = remote
+            }
+        }
+        let merged = byID.values.filter { !deleted.contains($0.id) }
+            .sorted { $0.createdAt < $1.createdAt }
+        if merged != routes {
+            routes = merged
+            if let active = activeRouteID, !merged.contains(where: { $0.id == active }) {
+                activeRouteID = nil
+            }
+            if let data = try? JSONEncoder().encode(routes) {
+                try? data.write(to: fileURL, options: .atomic)
+            }
+        }
+        pushToCloud()
     }
 
     func add(_ route: PlannedRoute) {
-        routes.append(route)
+        var stamped = route
+        stamped.modifiedAt = Date()
+        routes.append(stamped)
         persist()
     }
 
     /// Replace an existing route (same id) — used by the route editor.
     func update(_ route: PlannedRoute) {
         guard let idx = routes.firstIndex(where: { $0.id == route.id }) else { return }
-        routes[idx] = route
+        var stamped = route
+        stamped.modifiedAt = Date()
+        routes[idx] = stamped
         persist()
     }
 
     func delete(_ route: PlannedRoute) {
         routes.removeAll { $0.id == route.id }
         if activeRouteID == route.id { activeRouteID = nil }
+        recordDeletion(route.id)
         persist()
     }
 
@@ -251,6 +332,7 @@ final class RouteStore: ObservableObject {
         if currentBest == nil || final < currentBest! {
             routes[idx].bestTimes = filled
             routes[idx].bestDate = Date()
+            routes[idx].modifiedAt = Date()
             persist()
         }
     }

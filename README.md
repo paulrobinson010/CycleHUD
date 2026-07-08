@@ -128,6 +128,11 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   approximate location to OSM's servers, it's strictly opt-in
   (Settings → Junctions) and disclosed in the privacy policy. Road data
   © OpenStreetMap contributors.
+- **iCloud sync** — rides, routes and ghosts mirror into your own iCloud
+  Drive, so history survives a lost phone and a new one picks up where you
+  left off. No accounts, no CycleHUD servers — it's your personal iCloud,
+  with a toggle under Settings → Data. When two devices hold the same route,
+  the faster ghost wins the merge. (Needs the iCloud capability — see Setup.)
 - **Apple Health workout** — tapping Stop saves a cycling workout (distance,
   duration, calories, GPS route) to Apple Health. On by default; turn *Save rides
   as workouts* off in Settings to keep rides local-only. Calories need your
