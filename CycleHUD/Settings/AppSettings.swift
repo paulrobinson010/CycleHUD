@@ -28,6 +28,7 @@ final class AppSettings: ObservableObject {
         static let routePlanningEnabled = "routePlanningEnabled"
         static let routeTurnAlertsEnabled = "routeTurnAlertsEnabled"
         static let routeElevationEnabled = "routeElevationEnabled"
+        static let routeTrafficEnabled = "routeTrafficEnabled"
         static let iCloudSyncEnabled = "iCloudSyncEnabled"
         static let appLanguage = "appLanguage"
         static let metricTiles = "metricTilesV2"   // legacy single-page tiles, migrated
@@ -110,6 +111,8 @@ final class AppSettings: ObservableObject {
     /// The elevation-profile strip on the route map (the Distance and climb
     /// row supersedes it while that row is on the page).
     @Published var routeElevationEnabled: Bool { didSet { defaults.set(routeElevationEnabled, forKey: Keys.routeElevationEnabled) } }
+    /// Apple's live traffic layer on the route map (jams, closures).
+    @Published var routeTrafficEnabled: Bool { didSet { defaults.set(routeTrafficEnabled, forKey: Keys.routeTrafficEnabled) } }
     /// Mirror rides/routes/ghosts into the rider's own iCloud (no accounts).
     @Published var iCloudSyncEnabled: Bool { didSet { defaults.set(iCloudSyncEnabled, forKey: Keys.iCloudSyncEnabled) } }
     /// In-app language override (BCP-47 code, or "" to follow the device).
@@ -213,6 +216,7 @@ final class AppSettings: ObservableObject {
             Keys.routePlanningEnabled: false,
             Keys.routeTurnAlertsEnabled: true,
             Keys.routeElevationEnabled: true,
+            Keys.routeTrafficEnabled: true,
             Keys.iCloudSyncEnabled: true,
             Keys.appLanguage: "",
             Keys.showTileUnits: true,
@@ -251,6 +255,7 @@ final class AppSettings: ObservableObject {
         routePlanningEnabled = defaults.bool(forKey: Keys.routePlanningEnabled)
         routeTurnAlertsEnabled = defaults.bool(forKey: Keys.routeTurnAlertsEnabled)
         routeElevationEnabled = defaults.bool(forKey: Keys.routeElevationEnabled)
+        routeTrafficEnabled = defaults.bool(forKey: Keys.routeTrafficEnabled)
         iCloudSyncEnabled = defaults.bool(forKey: Keys.iCloudSyncEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
         // (appearance applied below once all stored properties are initialised)
@@ -313,6 +318,7 @@ final class AppSettings: ObservableObject {
         routePlanningEnabled = false
         routeTurnAlertsEnabled = true
         routeElevationEnabled = true
+        routeTrafficEnabled = true
         crashDetectionEnabled = false
     }
 

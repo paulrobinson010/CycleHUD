@@ -37,6 +37,8 @@ struct RoutePanel: View {
     /// on the current page — shown as a badge on the map instead.
     var junction: JunctionInfo? = nil
     var junctionRouteBearing: Double? = nil
+    /// Apple's live traffic layer (jams and closure icons painted on the map).
+    var showTraffic: Bool = false
     let distanceUnit: DistanceUnit
 
     /// Pinch-zoom altitude, preserved across the once-a-second camera updates.
@@ -195,7 +197,8 @@ struct RoutePanel: View {
                     .shadow(color: .black.opacity(0.5), radius: 3)
             }
         }
-        .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
+        .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll,
+                            showsTraffic: showTraffic))
         // Pinch zoom is the one interaction allowed (no panning — the camera
         // follows the rider). Remember the chosen zoom so the per-second
         // camera refresh doesn't undo it.
