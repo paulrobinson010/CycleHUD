@@ -677,13 +677,15 @@ final class RideManager: ObservableObject {
     private func sendMirror() {
         let levels = ble.threats.map { $0.level.rawValue }
         let nearest = ble.threats.map { Int($0.distanceMeters.rounded()) }.min()
-        // During the demo, present as "running" so the Watch starts its workout
-        // session (real HR) for testing without a full ride.
+        // The demo announces itself as "demo": the Watch displays it exactly
+        // like a running ride (mirror, haptics) but must NOT start a workout
+        // session — a session orphaned by a suspended watch app after a demo
+        // is eventually saved by watchOS as a phantom empty workout.
         watch.sendMirror(speedDisplay: settings.speedUnit.value(fromMps: currentSpeedMps),
                          speedUnit: settings.speedUnit.label,
                          distanceDisplay: settings.distanceUnit.value(fromMeters: distanceMeters),
                          distanceUnit: settings.distanceUnit.label,
-                         rideStatusRaw: demoActive ? "running" : statusRaw,
+                         rideStatusRaw: demoActive ? "demo" : statusRaw,
                          threatLevel: levels.max() ?? -1,
                          nearestThreatMeters: nearest,
                          radarLost: demoActive ? (demoRadarLostUntil != nil) : radarConfiguredButDown,

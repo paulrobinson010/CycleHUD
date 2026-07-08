@@ -60,13 +60,16 @@ final class WatchSessionManager: NSObject, ObservableObject {
     private let hrUnit = HKUnit.count().unitDivided(by: .minute())
 
     private var rideActive = false     // run the workout session only during a ride
+    /// True while mirroring the phone's DEMO: display like a ride, no workout.
+    private var workoutSuppressed = false
 
     /// Start/stop the workout session. A live `HKWorkoutSession` is the single
     /// biggest battery drain on the watch, so we run it ONLY during an actual
-    /// ride — never just because the app is on screen. When idle, heart rate
-    /// comes from the low-power HealthKit sample stream (startHeartRateQuery).
+    /// ride — never just because the app is on screen, and never for the
+    /// phone's demo. When idle, heart rate comes from the low-power HealthKit
+    /// sample stream (startHeartRateQuery).
     private func updateWorkout() {
-        let want = rideActive
+        let want = rideActive && !workoutSuppressed
         if want, workoutSession == nil {
             startWorkout()
         } else if !want, workoutSession != nil {
@@ -277,6 +280,13 @@ final class WatchSessionManager: NSObject, ObservableObject {
                     s = "idle"
                 }
             }
+            // The phone's demo: display exactly like a running ride, but NEVER
+            // start a workout session for it — a session orphaned when watchOS
+            // suspends the app right after a short demo is eventually saved by
+            // the system as a phantom empty workout. Demos are watched wrist-up,
+            // so nothing needs the workout keep-alive.
+            workoutSuppressed = (s == "demo")
+            if workoutSuppressed { s = "running" }
             statusRaw = s
             rideActive = (s != "idle")
             if rideActive { lastMirrorAt = Date() }
