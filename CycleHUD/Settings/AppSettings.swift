@@ -27,6 +27,7 @@ final class AppSettings: ObservableObject {
         static let junctionsEnabled = "junctionsEnabled"
         static let routePlanningEnabled = "routePlanningEnabled"
         static let routeTurnAlertsEnabled = "routeTurnAlertsEnabled"
+        static let routeElevationEnabled = "routeElevationEnabled"
         static let appLanguage = "appLanguage"
         static let metricTiles = "metricTilesV2"   // legacy single-page tiles, migrated
         static let topTileCountLegacy = "topTileCount"
@@ -105,6 +106,9 @@ final class AppSettings: ObservableObject {
     @Published var routePlanningEnabled: Bool { didSet { defaults.set(routePlanningEnabled, forKey: Keys.routePlanningEnabled) } }
     /// Spoken "Left/Right turn ahead" + wrist tap at route turns.
     @Published var routeTurnAlertsEnabled: Bool { didSet { defaults.set(routeTurnAlertsEnabled, forKey: Keys.routeTurnAlertsEnabled) } }
+    /// The elevation-profile strip on the route map (the Distance and climb
+    /// row supersedes it while that row is on the page).
+    @Published var routeElevationEnabled: Bool { didSet { defaults.set(routeElevationEnabled, forKey: Keys.routeElevationEnabled) } }
     /// In-app language override (BCP-47 code, or "" to follow the device).
     @Published var appLanguage: String {
         didSet { defaults.set(appLanguage, forKey: Keys.appLanguage); applyLanguage() }
@@ -205,6 +209,7 @@ final class AppSettings: ObservableObject {
             Keys.junctionsEnabled: false,
             Keys.routePlanningEnabled: false,
             Keys.routeTurnAlertsEnabled: true,
+            Keys.routeElevationEnabled: true,
             Keys.appLanguage: "",
             Keys.showTileUnits: true,
             Keys.currentRidePage: 0,
@@ -241,6 +246,7 @@ final class AppSettings: ObservableObject {
         junctionsEnabled = defaults.bool(forKey: Keys.junctionsEnabled)
         routePlanningEnabled = defaults.bool(forKey: Keys.routePlanningEnabled)
         routeTurnAlertsEnabled = defaults.bool(forKey: Keys.routeTurnAlertsEnabled)
+        routeElevationEnabled = defaults.bool(forKey: Keys.routeElevationEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
         // (appearance applied below once all stored properties are initialised)
         // Ride pages: decode, or migrate the old single-page tile settings.
@@ -301,6 +307,7 @@ final class AppSettings: ObservableObject {
         junctionsEnabled = false
         routePlanningEnabled = false
         routeTurnAlertsEnabled = true
+        routeElevationEnabled = true
         crashDetectionEnabled = false
     }
 

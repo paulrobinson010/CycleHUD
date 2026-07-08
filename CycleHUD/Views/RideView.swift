@@ -409,7 +409,8 @@ struct RideView: View {
                                ? routes.ghostDelta(elapsed: ride.movingTimeSeconds) : nil,
                            ghostCoordinate: ride.status != .idle
                                ? routes.ghostCoordinate(elapsed: ride.movingTimeSeconds) : nil,
-                           showClimbStrip: !visibleMetricKinds.contains(.climb),
+                           showClimbStrip: settings.routeElevationEnabled
+                               && !visibleMetricKinds.contains(.climb),
                            junction: settings.junctionsEnabled && !visibleMetricKinds.contains(.junction)
                                ? junctions.next : nil,
                            junctionRouteBearing: junctions.next.flatMap(routeExitBearing),

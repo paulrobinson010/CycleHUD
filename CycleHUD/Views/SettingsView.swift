@@ -144,6 +144,7 @@ struct SettingsView: View {
                     Toggle("Route planning", isOn: $settings.routePlanningEnabled)
                     if settings.routePlanningEnabled {
                         Toggle("Turn alerts", isOn: $settings.routeTurnAlertsEnabled)
+                        Toggle("Route elevation", isOn: $settings.routeElevationEnabled)
                     }
                 } header: {
                     Text("Routes")
