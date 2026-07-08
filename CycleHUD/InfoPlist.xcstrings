@@ -98,6 +98,9 @@
     "CycleHUD Route" : {
 
     },
+    "GPX Route" : {
+
+    },
     "NSBluetoothAlwaysUsageDescription" : {
       "comment" : "Permission usage description",
       "localizations" : {
