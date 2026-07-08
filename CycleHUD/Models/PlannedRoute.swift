@@ -52,48 +52,69 @@ struct PlannedRoute: Codable, Identifiable, Equatable {
         return min(d, 360 - d)
     }
 
-    /// The direction the path travels at point `i` (start→finish).
-    func localBearing(at i: Int) -> Double? {
-        if i < path.count - 1 { return Self.bearing(path[i].coordinate, path[i + 1].coordinate) }
-        if i > 0 { return Self.bearing(path[i - 1].coordinate, path[i].coordinate) }
-        return nil
+    /// Perpendicular distance of `p` from segment a→b, the clamped projection
+    /// parameter t ∈ [0, 1], and the segment length — all in metres.
+    static func project(_ p: CLLocationCoordinate2D,
+                        onto a: CLLocationCoordinate2D,
+                        _ b: CLLocationCoordinate2D) -> (distance: Double, t: Double, length: Double) {
+        let (abx, aby) = delta(a, b)
+        let (apx, apy) = delta(a, p)
+        let len2 = abx * abx + aby * aby
+        guard len2 > 0 else { return (meters(a, p), 0, 0) }
+        let t = max(0, min(1, (apx * abx + apy * aby) / len2))
+        let ox = apx - abx * t
+        let oy = apy - aby * t
+        return ((ox * ox + oy * oy).squareRoot(), t, len2.squareRoot())
     }
 
-    /// Index of the path point nearest `coord`, plus its distance in metres.
+    /// The rider's match on the path: the SEGMENT the position projects onto
+    /// (index of its start point), the perpendicular distance to it, and how
+    /// far along the segment the projection sits.
+    ///
+    /// Segments, not vertices: the routed path's nodes can be hundreds of
+    /// metres apart on straight roads, so nearest-VERTEX distance reads
+    /// "200 m off route" from the middle of a straight the rider is actually
+    /// on (seen on device).
+    ///
     /// With a `hint` the search is windowed around the last known position
     /// (fast, and keeps progress from jumping backwards where a loop crosses
     /// itself); pass nil to scan the whole path.
     ///
     /// `course` disambiguates out-and-back stretches: on a loop whose first
     /// and last kilometres share the same road, the outbound and homebound
-    /// path points overlap — a rider heading home must match the HOMEBOUND
-    /// ones or the remaining distance (and junction guidance) jumps to the
-    /// outbound leg. Points whose travel direction opposes the course are
-    /// penalised, so same-distance ties always resolve to the leg the rider
-    /// is actually riding.
+    /// legs overlap — a rider heading home must match the HOMEBOUND leg or
+    /// the remaining distance (and junction guidance) jumps to the outbound
+    /// one. Segments whose travel direction opposes the course are penalised,
+    /// so same-spot ties always resolve to the leg being ridden.
     func nearestPathIndex(to coord: CLLocationCoordinate2D,
                           hint: Int? = nil, windowMeters: Double = 800,
-                          course: Double? = nil) -> (index: Int, meters: Double)? {
-        guard !path.isEmpty else { return nil }
-        var lo = 0, hi = path.count - 1
+                          course: Double? = nil) -> (index: Int, meters: Double, along: Double)? {
+        guard path.count > 1 else {
+            guard let only = path.first else { return nil }
+            return (0, Self.meters(coord, only.coordinate), 0)
+        }
+        var lo = 0, hi = path.count - 2          // segment start indices
         if let hint {
             // ~10 m between path points is typical; window generously.
             let span = max(40, Int(windowMeters / 10))
             lo = max(0, hint - span / 4)
-            hi = min(path.count - 1, hint + span)
+            hi = min(path.count - 2, hint + span)
         }
-        var best: (index: Int, meters: Double, score: Double) =
-            (lo, Double.greatestFiniteMagnitude, Double.greatestFiniteMagnitude)
+        var best: (index: Int, meters: Double, along: Double, score: Double)?
         for i in lo...hi {
-            let d = Self.meters(coord, path[i].coordinate)
+            let a = path[i].coordinate
+            let b = path[i + 1].coordinate
+            let (d, t, len) = Self.project(coord, onto: a, b)
             var score = d
-            if let course, let b = localBearing(at: i),
-               Self.angleDiff(b, course) > 100 {
+            if let course, Self.angleDiff(Self.bearing(a, b), course) > 100 {
                 score += 500      // soft wrong-way penalty, not a hard filter
             }
-            if score < best.score { best = (i, d, score) }
+            if best == nil || score < best!.score {
+                best = (i, d, t * len, score)
+            }
         }
-        return (best.index, best.meters)
+        guard let r = best else { return nil }
+        return (r.index, r.meters, r.along)
     }
 
     /// Riding distance along the path from `index` to the finish.

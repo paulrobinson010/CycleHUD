@@ -179,6 +179,9 @@ final class RouteStore: ObservableObject {
         guard let m = match else { return nil }
         progressHint = m.index
         if m.meters < 60 { joinedActiveRoute = true }
-        return (m.index, m.meters, route.remainingMeters(from: m.index))
+        // Remaining distance measured from the projection, not the segment
+        // start, so it ticks down smoothly along sparse straight segments.
+        let remaining = max(0, route.remainingMeters(from: m.index) - m.along)
+        return (m.index, m.meters, remaining)
     }
 }

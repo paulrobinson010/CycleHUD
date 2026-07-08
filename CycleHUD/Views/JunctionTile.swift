@@ -91,7 +91,8 @@ struct JunctionGlyph: View {
                 let rel = relDeg * .pi / 180
                 let end = CGPoint(x: c.x + r * sin(rel), y: c.y - r * cos(rel))
                 // The return arm (≈180° in the rider's frame) is where you come
-                // from; dim it so the roads ahead stand out.
+                // from; mute it so the roads ahead stand out — but keep it
+                // clearly visible (0.35 washed out in low light on device).
                 let behind = abs(relDeg - 180) < 25
                 let isRoute = highlighted == arm
                 var path = Path()
@@ -99,8 +100,9 @@ struct JunctionGlyph: View {
                 path.addLine(to: end)
                 context.stroke(path,
                                with: .color(isRoute ? Theme.good
-                                                    : color.opacity(behind ? 0.35 : 1)),
-                               style: StrokeStyle(lineWidth: isRoute ? lineWidth * 1.4 : lineWidth,
+                                                    : color.opacity(behind ? 0.6 : 1)),
+                               style: StrokeStyle(lineWidth: isRoute ? lineWidth * 1.4
+                                                             : (behind ? lineWidth * 0.8 : lineWidth),
                                                   lineCap: .round))
             }
             if info.isRoundabout {

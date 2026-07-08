@@ -74,9 +74,16 @@ struct RoutePanel: View {
         return Map(position: .constant(.camera(
             MapCamera(centerCoordinate: center, distance: zoomDistance, heading: heading))),
                    interactionModes: .zoom) {
+            // Whole route as a muted underlay; only the NEXT kilometre is
+            // bright. Where a loop crosses itself (or shares an out-and-back
+            // road) both passes are drawn, and without this split the
+            // homebound leg reads as "the way" at an outbound junction.
             MapPolyline(coordinates: route.path.map(\.coordinate))
+                .stroke(Theme.accent.opacity(0.35),
+                        style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+            MapPolyline(coordinates: upcomingSlice(from: joined ? progress.index : 0))
                 .stroke(Theme.accent,
-                        style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+                        style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
             if headingToStart, let leg = leadIn, leg.count >= 2 {
                 MapPolyline(coordinates: leg.map(\.coordinate))
                     .stroke(Theme.good,
@@ -120,6 +127,19 @@ struct RoutePanel: View {
             let d = context.camera.distance
             if abs(d - zoomDistance) > 1 { zoomDistance = min(8000, max(400, d)) }
         }
+    }
+
+    /// The next ~kilometre of route from `index` — the stretch drawn bright.
+    private func upcomingSlice(from index: Int) -> [CLLocationCoordinate2D] {
+        let start = min(max(0, index), route.path.count - 1)
+        var end = start
+        var acc = 0.0
+        while end < route.path.count - 1, acc < 1000 {
+            acc += PlannedRoute.meters(route.path[end].coordinate,
+                                       route.path[end + 1].coordinate)
+            end += 1
+        }
+        return route.path[start...end].map(\.coordinate)
     }
 
     private var header: some View {
