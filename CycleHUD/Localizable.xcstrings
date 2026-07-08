@@ -5479,42 +5479,42 @@
         }
       }
     },
-    "It doesn’t look like a CycleHUD route." : {
+    "It doesn’t look like a CycleHUD route or a GPX file." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das sieht nicht nach einer CycleHUD-Route aus."
+            "value" : "Das sieht nicht nach einer CycleHUD-Route oder einer GPX-Datei aus."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "It doesn’t look like a CycleHUD route."
+            "value" : "It doesn’t look like a CycleHUD route or a GPX file."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "It doesn’t look like a CycleHUD route."
+            "value" : "It doesn’t look like a CycleHUD route or a GPX file."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No parece una ruta de CycleHUD."
+            "value" : "No parece una ruta de CycleHUD ni un archivo GPX."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cela ne ressemble pas à un itinéraire CycleHUD."
+            "value" : "Cela ne ressemble pas à un itinéraire CycleHUD ni à un fichier GPX."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non sembra un percorso CycleHUD."
+            "value" : "Non sembra un percorso CycleHUD né un file GPX."
           }
         }
       }
@@ -6237,6 +6237,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ultimo segnale (tecnico)"
+          }
+        }
+      }
+    },
+    "Left turn ahead" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gleich links abbiegen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left turn ahead"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left turn ahead"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepárate para girar a la izquierda"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparez-vous à tourner à gauche"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparati a svoltare a sinistra"
           }
         }
       }
@@ -9384,6 +9424,46 @@
         }
       }
     },
+    "Right turn ahead" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gleich rechts abbiegen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Right turn ahead"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Right turn ahead"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepárate para girar a la derecha"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparez-vous à tourner à droite"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparati a svoltare a destra"
+          }
+        }
+      }
+    },
     "Road data © OpenStreetMap contributors" : {
       "localizations" : {
         "de-DE" : {
@@ -11996,6 +12076,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verso la partenza"
+          }
+        }
+      }
+    },
+    "Turn alerts" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbiege-Hinweise"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn alerts"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn alerts"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avisos de giro"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alertes de virage"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avvisi di svolta"
           }
         }
       }

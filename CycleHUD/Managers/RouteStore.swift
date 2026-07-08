@@ -84,13 +84,25 @@ final class RouteStore: ObservableObject {
         } catch { return nil }
     }
 
-    /// Import a shared route file (from the file picker or an open-with URL).
-    /// The imported route gets a fresh id so re-imports never collide.
+    /// Import a shared route file (from the file picker or an open-with URL):
+    /// CycleHUD's own `.cyclehudroute`, or a `.gpx` from Strava / Komoot /
+    /// RideWithGPS and friends. The imported route gets a fresh id so
+    /// re-imports never collide.
     @discardableResult
     func importRoute(from url: URL) -> PlannedRoute? {
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
         guard let data = try? Data(contentsOf: url) else { return nil }
+
+        if url.pathExtension.lowercased() == "gpx" {
+            let fallback = url.deletingPathExtension().lastPathComponent
+                .replacingOccurrences(of: "_", with: " ")
+            guard let route = GPXRouteImporter.route(from: data, fallbackName: fallback)
+            else { return nil }
+            add(route)
+            return route
+        }
+
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         guard let file = try? decoder.decode(RouteFile.self, from: data),
@@ -145,6 +157,80 @@ final class RouteStore: ObservableObject {
                 leadIn = result.path
             }
         }
+    }
+
+    // MARK: - Ghost rider
+
+    /// This ride's elapsed-seconds-at-each-path-point, being recorded so a
+    /// complete run can become the route's best. -1 = not reached yet.
+    private var ghostRun: [Double]?
+    private var ghostRouteID: UUID?
+    /// Elapsed when the rider first touched the route — both this run and the
+    /// stored best are measured from their own first touch, so a long ride to
+    /// the start doesn't poison the race.
+    private var ghostRunStart: Double?
+
+    /// Call at ride start: begin recording a candidate best run.
+    func beginGhostRun() {
+        ghostRun = activeRoute.map { Array(repeating: -1, count: $0.path.count) }
+        ghostRouteID = activeRouteID
+        ghostRunStart = nil
+    }
+
+    /// Call each tick while riding: stamp the rider's progress point.
+    func recordGhost(elapsed: Double) {
+        guard var run = ghostRun, let route = activeRoute, route.id == ghostRouteID,
+              joinedActiveRoute, let idx = progressHint, idx < run.count else { return }
+        if ghostRunStart == nil { ghostRunStart = elapsed }
+        let onRoute = elapsed - (ghostRunStart ?? elapsed)
+        if run[idx] < 0 {
+            run[idx] = onRoute
+            ghostRun = run
+        }
+    }
+
+    /// Call at ride stop: a run that covered ≥90% of the route and beat the
+    /// stored best becomes the new ghost.
+    func endGhostRun() {
+        defer { ghostRun = nil; ghostRouteID = nil; ghostRunStart = nil }
+        guard let run = ghostRun, let routeID = ghostRouteID,
+              let idx = routes.firstIndex(where: { $0.id == routeID }) else { return }
+        let covered = run.filter { $0 >= 0 }.count
+        guard Double(covered) >= 0.9 * Double(run.count), covered >= 2 else { return }
+        // Dense, monotonic timeline: forward-fill unvisited points.
+        var filled = run
+        var last = 0.0
+        for i in filled.indices {
+            if filled[i] < 0 || filled[i] < last { filled[i] = last } else { last = filled[i] }
+        }
+        let final = filled.last ?? 0
+        guard final > 60 else { return }
+        let currentBest = routes[idx].bestTimes?.last
+        if currentBest == nil || final < currentBest! {
+            routes[idx].bestTimes = filled
+            routes[idx].bestDate = Date()
+            persist()
+        }
+    }
+
+    /// Live race state: seconds ahead (−) or behind (+) the route's best run,
+    /// measured from each run's own first touch of the route.
+    func ghostDelta(elapsed: Double) -> Double? {
+        guard joinedActiveRoute, let route = activeRoute,
+              let best = route.bestTimes, let idx = progressHint, idx < best.count,
+              let start = ghostRunStart else { return nil }
+        return (elapsed - start) - best[idx]
+    }
+
+    /// Where the ghost is right now (it "set off" when this run first touched
+    /// the route) — drawn as a marker on the route map.
+    func ghostCoordinate(elapsed: Double) -> CLLocationCoordinate2D? {
+        guard joinedActiveRoute, let route = activeRoute, let best = route.bestTimes,
+              best.count == route.path.count, let start = ghostRunStart else { return nil }
+        let onRoute = elapsed - start
+        var i = best.firstIndex(where: { $0 > onRoute }) ?? best.count
+        i = max(0, i - 1)
+        return route.path[i].coordinate
     }
 
     // MARK: - Ride-time progress

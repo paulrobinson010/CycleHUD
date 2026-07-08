@@ -111,6 +111,14 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
         #endif
     }
 
+    /// Tap the wrist for an upcoming route turn (the phone speaks the side).
+    func sendTurnHaptic() {
+        #if canImport(WatchConnectivity)
+        guard let session, session.isReachable else { return }
+        session.sendMessage(["event": "turn"], replyHandler: nil, errorHandler: nil)
+        #endif
+    }
+
     /// Tell the Watch the radar has dropped out — a distinct safety alert.
     func sendRadarLostHaptic() {
         #if canImport(WatchConnectivity)

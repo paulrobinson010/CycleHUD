@@ -100,9 +100,21 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   along quiet roads from where you are to the start, with the arrow and
   road-distance following the leg until you join. With junctions
   on, the **Junction tile highlights the arm your route takes** in green.
-  Share any route as a **`.cyclehudroute` file** (CycleHUD's own format) via
-  the share sheet, and import routes from friends with the import button or by
-  opening the file — no accounts involved.
+  **Turn alerts** speak "left/right turn ahead" and tap your wrist as each
+  bend approaches (cue distance scales with speed; toggle in Settings), and a
+  **climb-profile strip** along the bottom of the map shows the next 5 km of
+  elevation with the gradient just ahead. Share any route as a
+  **`.cyclehudroute` file** (CycleHUD's own format) via the share sheet, and
+  import routes from friends — or **GPX files** from Strava, Komoot,
+  RideWithGPS and the rest — with the import button or by opening the file.
+  No accounts involved.
+- **Ghost rider** — the first time you complete a route, that run becomes the
+  route's **best**; every ride after that races it live. A checkered-flag pill
+  shows seconds ahead (green) or behind (red), and a purple ghost marker rides
+  the map at exactly where your best run was at this point — timed from when
+  each run first touches the route, so a long roll to the start doesn't skew
+  the race. Beat it and the new run takes over as the ghost. Bests travel
+  inside shared route files, so friends can race your ghost.
 - **Upcoming junctions** *(optional, off by default)* — a **Junction** tile
   shows the next intersection ahead: a schematic of its road arms at their true
   angles (T, crossroads, roundabout…) in your frame of travel, with the distance

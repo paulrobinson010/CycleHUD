@@ -28,9 +28,10 @@ enum RoutePlanner {
     }
 
     /// Route through `waypoints` in order; when `loop` is set the path returns
-    /// to the first marker. Returns the road-following path and its length.
+    /// to the first marker. Returns the road-following path, its length, and
+    /// per-point elevations (BRouter supplies them as the third coordinate).
     static func plan(through waypoints: [PlannedRoute.Point], loop: Bool) async throws
-        -> (path: [PlannedRoute.Point], distanceMeters: Double) {
+        -> (path: [PlannedRoute.Point], distanceMeters: Double, elevations: [Double]?) {
         var points = waypoints
         if loop, let first = points.first { points.append(first) }
         guard points.count >= 2 else { throw PlanError.tooFewPoints }
@@ -67,13 +68,17 @@ enum RoutePlanner {
               let coords = geometry["coordinates"] as? [[Any]], coords.count >= 2 else {
             throw PlanError.noRoute
         }
-        let path: [PlannedRoute.Point] = coords.compactMap { c in
+        var path: [PlannedRoute.Point] = []
+        var elevations: [Double] = []
+        for c in coords {
             guard c.count >= 2,
                   let lon = (c[0] as? NSNumber)?.doubleValue,
-                  let lat = (c[1] as? NSNumber)?.doubleValue else { return nil }
-            return PlannedRoute.Point(lat: lat, lon: lon)
+                  let lat = (c[1] as? NSNumber)?.doubleValue else { continue }
+            path.append(PlannedRoute.Point(lat: lat, lon: lon))
+            elevations.append(c.count >= 3 ? ((c[2] as? NSNumber)?.doubleValue ?? 0) : 0)
         }
         guard path.count >= 2 else { throw PlanError.noRoute }
+        let hasElevation = elevations.contains { $0 != 0 }
 
         // BRouter reports the length in properties["track-length"] (a string of
         // metres); fall back to summing the polyline if it's ever absent.
@@ -86,6 +91,6 @@ enum RoutePlanner {
                 distance += PlannedRoute.meters(path[i].coordinate, path[i + 1].coordinate)
             }
         }
-        return (path, distance)
+        return (path, distance, hasElevation ? elevations : nil)
     }
 }

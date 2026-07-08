@@ -26,6 +26,10 @@ struct RoutePanel: View {
     var batteryPercent: Int? = nil
     /// Estimated seconds to the finish at the ride's average speed.
     var etaSeconds: Double? = nil
+    /// Ghost rider: seconds vs this route's best run (− = ahead), and where
+    /// the ghost is right now on the map.
+    var ghostDeltaSeconds: Double? = nil
+    var ghostCoordinate: CLLocationCoordinate2D? = nil
     let distanceUnit: DistanceUnit
 
     /// Pinch-zoom altitude, preserved across the once-a-second camera updates.
@@ -58,7 +62,26 @@ struct RoutePanel: View {
                         lineWidth: offRoute ? 3 : 1))
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .overlay(alignment: .topLeading) { header }
-            .overlay(alignment: .bottom) { radarWarning }
+            .overlay(alignment: .bottom) {
+                VStack(spacing: 6) {
+                    climbStrip
+                    radarWarning
+                }
+            }
+        }
+    }
+
+    /// The road ahead in profile: the next ~5 km of elevation, rider at the
+    /// left edge. Only when the route carries elevation data and the rider is
+    /// on it (guidance overlays take priority otherwise).
+    @ViewBuilder private var climbStrip: some View {
+        if joined, !offRoute, let progress,
+           let elevations = route.elevations, elevations.count == route.path.count,
+           progress.index < route.path.count - 1 {
+            ClimbProfileStrip(route: route, elevations: elevations,
+                              fromIndex: progress.index)
+                .frame(height: 44)
+                .padding(.horizontal, 10)
         }
     }
 
@@ -108,6 +131,15 @@ struct RoutePanel: View {
                     Circle().fill(Theme.threatHigh)
                         .frame(width: 14, height: 14)
                         .overlay(Circle().stroke(.white, lineWidth: 2))
+                }
+            }
+            if let ghostCoordinate {
+                Annotation("", coordinate: ghostCoordinate) {
+                    // The route's best run, riding it live alongside you.
+                    Image(systemName: "location.north.fill")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(.purple.opacity(0.85))
+                        .shadow(color: .black.opacity(0.4), radius: 2)
                 }
             }
             Annotation("", coordinate: rider) {
@@ -165,6 +197,12 @@ struct RoutePanel: View {
                 infoPill(icon: "clock", text: etaText(etaSeconds),
                          tint: Theme.textPrimary)
             }
+            if let ghostDeltaSeconds, !offRoute, !headingToStart {
+                // The race against this route's best run: green = ahead.
+                infoPill(icon: "flag.checkered",
+                         text: deltaText(ghostDeltaSeconds),
+                         tint: ghostDeltaSeconds <= 0 ? Theme.good : Theme.threatHigh)
+            }
             if radarConnected, let batteryPercent {
                 infoPill(icon: "battery.100",
                          iconVariable: Double(batteryPercent) / 100.0,
@@ -189,6 +227,12 @@ struct RoutePanel: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 3)
         .background(Capsule().fill(Theme.panel.opacity(0.85)))
+    }
+
+    /// "−0:14" / "+1:02" vs the ghost.
+    private func deltaText(_ seconds: Double) -> String {
+        let s = Int(abs(seconds).rounded())
+        return "\(seconds <= 0 ? "−" : "+")\(s / 60):\(String(format: "%02d", s % 60))"
     }
 
     /// "≈ 38 min" / "≈ 1 h 05" at the ride's average speed.
@@ -370,5 +414,85 @@ struct RoutePanel: View {
         let dLon = meters * sin(rad) / (111_320 * max(0.2, cos(c.latitude * .pi / 180)))
         return CLLocationCoordinate2D(latitude: c.latitude + dLat,
                                       longitude: c.longitude + dLon)
+    }
+}
+
+/// The next ~5 km of the route in profile — what the upcoming road does
+/// vertically. The rider sits at the left edge; the label shows the gradient
+/// of the road immediately ahead and the climbing left in the window.
+struct ClimbProfileStrip: View {
+    let route: PlannedRoute
+    let elevations: [Double]
+    let fromIndex: Int
+    var windowMeters: Double = 5000
+
+    var body: some View {
+        // Sample (distance, elevation) ahead of the rider.
+        let samples = profileSamples()
+        let gradient = aheadGradient(samples)
+        let ascent = samples.isEmpty ? 0 : zip(samples, samples.dropFirst())
+            .reduce(0.0) { $0 + max(0, $1.1.ele - $1.0.ele) }
+        ZStack(alignment: .topTrailing) {
+            Canvas { context, size in
+                guard samples.count >= 2, let span = samples.last?.dist, span > 0 else { return }
+                let eles = samples.map(\.ele)
+                let lo = eles.min() ?? 0
+                // Keep at least 40 m of vertical scale so flat roads don't
+                // amplify noise into fake mountains.
+                let range = max(40, (eles.max() ?? 0) - lo)
+                func pt(_ s: (dist: Double, ele: Double)) -> CGPoint {
+                    CGPoint(x: size.width * s.dist / span,
+                            y: size.height - 4 - (size.height - 10) * (s.ele - lo) / range)
+                }
+                var area = Path()
+                area.move(to: CGPoint(x: 0, y: size.height))
+                samples.forEach { area.addLine(to: pt($0)) }
+                area.addLine(to: CGPoint(x: size.width, y: size.height))
+                area.closeSubpath()
+                context.fill(area, with: .color(Theme.accent.opacity(0.35)))
+
+                var line = Path()
+                line.move(to: pt(samples[0]))
+                samples.dropFirst().forEach { line.addLine(to: pt($0)) }
+                context.stroke(line, with: .color(Theme.accent),
+                               style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+            }
+            HStack(spacing: 6) {
+                if let gradient {
+                    Text(verbatim: String(format: "%+.1f%%", gradient))
+                        .foregroundStyle(gradient > 3 ? Theme.threatMedium
+                                            : (gradient < -1 ? Theme.good : Theme.textPrimary))
+                }
+                if ascent >= 5 {
+                    Text(verbatim: "↗ \(Fmt.int(ascent)) m")
+                        .foregroundStyle(Theme.textSecondary)
+                }
+            }
+            .font(.system(size: 11, weight: .bold, design: .rounded))
+            .monospacedDigit()
+            .padding(.horizontal, 6)
+            .padding(.top, 3)
+        }
+        .background(RoundedRectangle(cornerRadius: 10).fill(Theme.panel.opacity(0.85)))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func profileSamples() -> [(dist: Double, ele: Double)] {
+        var samples: [(dist: Double, ele: Double)] = [(0, elevations[fromIndex])]
+        var dist = 0.0
+        var i = fromIndex
+        while i < route.path.count - 1, dist < windowMeters {
+            dist += PlannedRoute.meters(route.path[i].coordinate, route.path[i + 1].coordinate)
+            i += 1
+            samples.append((dist, elevations[i]))
+        }
+        return samples
+    }
+
+    /// Slope of the first ~150 m ahead, as a percentage.
+    private func aheadGradient(_ samples: [(dist: Double, ele: Double)]) -> Double? {
+        guard let end = samples.first(where: { $0.dist >= 120 }) ?? samples.last,
+              end.dist >= 40, let start = samples.first else { return nil }
+        return (end.ele - start.ele) / end.dist * 100
     }
 }

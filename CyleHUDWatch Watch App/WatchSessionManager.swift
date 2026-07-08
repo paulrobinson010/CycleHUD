@@ -480,6 +480,10 @@ extension WatchSessionManager: WCSessionDelegate {
         case "radarLost":
             device.play(.failure)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { device.play(.failure) }
+        case "turn":
+            // Route turn coming up — distinct from car taps; the phone
+            // speaks which way.
+            device.play(.directionUp)
         default:
             break
         }

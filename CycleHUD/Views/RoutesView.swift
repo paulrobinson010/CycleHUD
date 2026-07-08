@@ -76,7 +76,8 @@ struct RoutesView: View {
                 ShareSheet(items: [share.url])
             }
             .fileImporter(isPresented: $showImporter,
-                          allowedContentTypes: [Self.routeType, .json]) { result in
+                          allowedContentTypes: [Self.routeType, .json,
+                                                UTType(filenameExtension: "gpx") ?? .xml]) { result in
                 if case .success(let url) = result, routes.importRoute(from: url) != nil {
                     return
                 }
@@ -85,7 +86,7 @@ struct RoutesView: View {
             .alert("Couldn’t import that file", isPresented: $importFailed) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text("It doesn’t look like a CycleHUD route.")
+                Text("It doesn’t look like a CycleHUD route or a GPX file.")
             }
         }
     }
@@ -100,7 +101,8 @@ struct RoutesView: View {
                 Text(verbatim: route.name)
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
                 Text(verbatim: "\(distText(route.distanceMeters)) \(settings.distanceUnit.label)"
-                        + (route.loop ? " ⟳" : ""))
+                        + (route.loop ? " ⟳" : "")
+                        + (route.bestTimes?.last.map { " · 🏁 \(timeText($0))" } ?? ""))
                     .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(Theme.textSecondary)
             }
@@ -123,5 +125,14 @@ struct RoutesView: View {
 
     private func distText(_ meters: Double) -> String {
         Fmt.decimal(settings.distanceUnit.value(fromMeters: meters), 1)
+    }
+
+    /// The route's best (ghost) time, "1:02:33" or "48:12".
+    private func timeText(_ seconds: Double) -> String {
+        let s = Int(seconds.rounded())
+        if s >= 3600 {
+            return "\(s / 3600):\(String(format: "%02d", (s % 3600) / 60)):\(String(format: "%02d", s % 60))"
+        }
+        return "\(s / 60):\(String(format: "%02d", s % 60))"
     }
 }

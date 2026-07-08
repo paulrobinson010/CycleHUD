@@ -26,6 +26,15 @@ struct PlannedRoute: Codable, Identifiable, Equatable {
     var path: [Point]
     var distanceMeters: Double
     var createdAt = Date()
+    /// Elevation (m) per path point when the source provides it (BRouter does,
+    /// GPX usually does) — powers the climb-profile strip. Optional so routes
+    /// saved/shared before this existed still decode.
+    var elevations: [Double]? = nil
+    /// Ghost rider: the best complete run of this route — elapsed seconds at
+    /// each path point (dense, forward-filled), and when it was set. Travels
+    /// with shared route files, so friends can race your ghost.
+    var bestTimes: [Double]? = nil
+    var bestDate: Date? = nil
 
     // MARK: - Ride-time geometry
 
@@ -125,6 +134,43 @@ struct PlannedRoute: Codable, Identifiable, Equatable {
             total += Self.meters(path[i].coordinate, path[i + 1].coordinate)
         }
         return total
+    }
+
+    /// The direction the route arrives at point `index` from, averaged over
+    /// ~`lookback` metres of approach.
+    func bearingBefore(index: Int, lookback: Double = 25) -> Double? {
+        guard index > 0 else { return nil }
+        var travelled = 0.0
+        var i = index
+        while i > 0, travelled < lookback {
+            travelled += Self.meters(path[i - 1].coordinate, path[i].coordinate)
+            i -= 1
+        }
+        guard i < index else { return nil }
+        return Self.bearing(path[i].coordinate, path[index].coordinate)
+    }
+
+    /// The next place the route bends sharply after `index`: walks up to
+    /// `within` metres ahead and reports the first vertex where the heading
+    /// changes by ≥ 40° (measured over ~25 m either side, so gentle curves
+    /// don't trigger). `deltaDegrees` is signed: negative = left turn.
+    func nextTurn(after index: Int, within: Double)
+        -> (index: Int, distanceMeters: Double, deltaDegrees: Double)? {
+        var dist = 0.0
+        var i = index + 1
+        while i < path.count - 1, dist <= within {
+            dist += Self.meters(path[i - 1].coordinate, path[i].coordinate)
+            if dist > within { break }
+            if let before = bearingBefore(index: i),
+               let after = bearingAfter(index: i) {
+                let delta = (after - before + 540).truncatingRemainder(dividingBy: 360) - 180
+                if abs(delta) >= 40 {
+                    return (i, dist, delta)
+                }
+            }
+            i += 1
+        }
+        return nil
     }
 
     /// The direction the route heads roughly `lookahead` metres after passing

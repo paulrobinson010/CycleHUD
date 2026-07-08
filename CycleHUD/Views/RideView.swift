@@ -405,6 +405,10 @@ struct RideView: View {
                            radarConnected: ble.status(for: .radar) == .connected,
                            batteryPercent: ble.radarBatteryPercent,
                            etaSeconds: routeETASeconds,
+                           ghostDeltaSeconds: ride.status != .idle
+                               ? routes.ghostDelta(elapsed: ride.movingTimeSeconds) : nil,
+                           ghostCoordinate: ride.status != .idle
+                               ? routes.ghostCoordinate(elapsed: ride.movingTimeSeconds) : nil,
                            distanceUnit: settings.distanceUnit)
             } else {
                 RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,

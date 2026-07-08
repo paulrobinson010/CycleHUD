@@ -105,10 +105,10 @@ struct CycleHUDApp: App {
             .environmentObject(junctions)
             .environmentObject(routes)
             .preferredColorScheme(settings.appearanceTheme.colorScheme)
-            // Shared .cyclehudroute files ("open in CycleHUD" from Files,
-            // AirDrop, Messages…) land here and go straight into the list.
+            // Shared route files ("open in CycleHUD" from Files, AirDrop,
+            // Messages…) land here and go straight into the list.
             .onOpenURL { url in
-                if url.pathExtension.lowercased() == "cyclehudroute" {
+                if ["cyclehudroute", "gpx"].contains(url.pathExtension.lowercased()) {
                     _ = routes.importRoute(from: url)
                 }
             }
@@ -126,6 +126,7 @@ struct CycleHUDApp: App {
                 junctions.start()
                 routes.locationProvider = { location.currentLocation }
                 routes.startLeadInUpdates()
+                ride.routes = routes           // turn cues + ghost rider
                 sos.locationProvider = { location.currentLocation }
                 sos.contactProvider = { settings.emergencyContact }
                 sos.stateChanged = { active, seconds in

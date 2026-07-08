@@ -64,6 +64,10 @@ final class RideManager: ObservableObject {
     /// workout saving is on, and the OS supports Apple's effort score (iOS 18+).
     var canPromptEffort: Bool { settings.saveWorkouts && health.supportsEffortScore }
 
+    /// Wired in by the app: route following (turn cues + ghost rider) reads
+    /// the rider's progress from here.
+    var routes: RouteStore?
+
     /// Rider's perceived effort from the end-of-ride prompt → Apple Health.
     func recordEffort(_ score: Int) { health.recordEffort(score: score) }
 
@@ -209,6 +213,8 @@ final class RideManager: ObservableObject {
         rideStart = Date()
         stationarySeconds = 0
         movingSeconds = 0
+        lastTurnCueIndex = -1
+        routes?.beginGhostRun()
         lastGatedLocation = nil
         lastGpsAltitude = nil
         lastRelativeAltitude = nil
@@ -277,6 +283,7 @@ final class RideManager: ObservableObject {
 
     func stop() {
         AppLog.shared.log("Ride STOP (user) dist=\(Int(distanceMeters))m time=\(Int(movingTimeSeconds))s")
+        routes?.endGhostRun()                    // a complete run may become the ghost
         finalizeOpenPass()                       // capture a pass in progress at stop
         // If the rider marked any laps, close the final partial lap too so the
         // splits cover the whole ride.
@@ -593,6 +600,8 @@ final class RideManager: ObservableObject {
             updateAutoPause(dt: dt)
             sampleTrack(now: now)
             updateGradient()
+            checkTurnCue()
+            routes?.recordGhost(elapsed: movingTimeSeconds)
         case .autoPaused:
             updateAutoResume(dt: dt)
         case .paused, .idle:
@@ -734,6 +743,36 @@ final class RideManager: ObservableObject {
     /// Where the rider was when auto-pause engaged — the position-based
     /// resume check compares against this.
     private var autoPausedAt: CLLocation?
+
+    // MARK: - Route turn cues
+
+    /// Path index of the last turn announced, so each turn cues exactly once.
+    private var lastTurnCueIndex = -1
+    private var lastTurnCueTime: Date?
+
+    /// While following a route, announce the next sharp bend as it approaches:
+    /// a spoken "Left/Right turn ahead" and a wrist tap. Cue distance scales
+    /// with speed (~12 s out, clamped 80–250 m). A short cooldown collapses
+    /// bends that span adjacent path vertices into a single cue.
+    private func checkTurnCue() {
+        guard settings.routeTurnAlertsEnabled,
+              let store = routes, store.joinedActiveRoute,
+              let route = store.activeRoute, let idx = store.currentPathIndex,
+              let turn = route.nextTurn(after: idx, within: 300),
+              turn.index != lastTurnCueIndex else { return }
+        if let last = lastTurnCueTime, Date().timeIntervalSince(last) < 8 { return }
+        let cueAt = max(80, min(250, currentSpeedMps * 12))
+        guard turn.distanceMeters <= cueAt else { return }
+        lastTurnCueIndex = turn.index
+        lastTurnCueTime = Date()
+        let text = turn.deltaDegrees < 0
+            ? String(localized: "Left turn ahead", bundle: Lang.bundle)
+            : String(localized: "Right turn ahead", bundle: Lang.bundle)
+        AudioAlerts.shared.speak(text, language:
+            settings.appLanguage.isEmpty ? Locale.current.identifier : settings.appLanguage)
+        watch.sendTurnHaptic()
+        AppLog.shared.log("Turn cue: \(text) in \(Int(turn.distanceMeters)) m")
+    }
 
     private func updateAutoPause(dt: Double) {
         guard settings.autoPauseEnabled else { return }

@@ -16,6 +16,7 @@ struct RouteEditorView: View {
     @State private var name = ""
     @State private var path: [PlannedRoute.Point] = []
     @State private var distanceMeters: Double = 0
+    @State private var elevations: [Double]?
     @State private var planning = false
     @State private var planError: String?
     @State private var planTask: Task<Void, Never>?
@@ -164,6 +165,7 @@ struct RouteEditorView: View {
                 guard !Task.isCancelled else { return }
                 path = result.path
                 distanceMeters = result.distanceMeters
+                elevations = result.elevations
                 planning = false
             } catch {
                 guard !Task.isCancelled else { return }
@@ -176,7 +178,8 @@ struct RouteEditorView: View {
     private func save() {
         let route = PlannedRoute(name: name.trimmingCharacters(in: .whitespaces),
                                  waypoints: waypoints, loop: loop,
-                                 path: path, distanceMeters: distanceMeters)
+                                 path: path, distanceMeters: distanceMeters,
+                                 elevations: elevations)
         routes.add(route)
         routes.activeRouteID = route.id
         dismiss()
