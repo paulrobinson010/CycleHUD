@@ -22,7 +22,14 @@ struct RoutePanel: View {
     /// The radar's safety signal must survive the panel swap: when it's not
     /// connected, a warning overlays the route view.
     let radarConnected: Bool
+    /// Radar battery %, shown under the distance so it's never out of sight.
+    var batteryPercent: Int? = nil
+    /// Estimated seconds to the finish at the ride's average speed.
+    var etaSeconds: Double? = nil
     let distanceUnit: DistanceUnit
+
+    /// Pinch-zoom altitude, preserved across the once-a-second camera updates.
+    @State private var zoomDistance: Double = 1500
 
     /// Strayed after joining — amber "back to route" guidance.
     private var offRoute: Bool { joined && (progress?.offMeters ?? 0) > 80 }
@@ -62,9 +69,11 @@ struct RoutePanel: View {
     private func routeMap(rider: CLLocationCoordinate2D,
                           progress: (index: Int, offMeters: Double, remainingMeters: Double)) -> some View {
         let heading = course ?? routeHeading(progress.index)
-        let center = coordinate(from: rider, meters: 170, bearing: heading)
+        // Centre further ahead when zoomed out so the extra view is road to come.
+        let center = coordinate(from: rider, meters: zoomDistance * 0.11, bearing: heading)
         return Map(position: .constant(.camera(
-            MapCamera(centerCoordinate: center, distance: 1500, heading: heading)))) {
+            MapCamera(centerCoordinate: center, distance: zoomDistance, heading: heading))),
+                   interactionModes: .zoom) {
             MapPolyline(coordinates: route.path.map(\.coordinate))
                 .stroke(Theme.accent,
                         style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
@@ -104,7 +113,13 @@ struct RoutePanel: View {
             }
         }
         .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
-        .disabled(true)   // glanceable HUD, not an interactive map
+        // Pinch zoom is the one interaction allowed (no panning — the camera
+        // follows the rider). Remember the chosen zoom so the per-second
+        // camera refresh doesn't undo it.
+        .onMapCameraChange(frequency: .onEnd) { context in
+            let d = context.camera.distance
+            if abs(d - zoomDistance) > 1 { zoomDistance = min(8000, max(400, d)) }
+        }
     }
 
     private var header: some View {
@@ -126,8 +141,47 @@ struct RoutePanel: View {
             } else if let progress {
                 distancePill(progress.remainingMeters)
             }
+            if let etaSeconds, !offRoute, !headingToStart {
+                infoPill(icon: "clock", text: etaText(etaSeconds),
+                         tint: Theme.textPrimary)
+            }
+            if radarConnected, let batteryPercent {
+                infoPill(icon: "battery.100",
+                         iconVariable: Double(batteryPercent) / 100.0,
+                         text: "\(batteryPercent)%",
+                         tint: batteryColor(batteryPercent))
+            }
         }
         .padding(12)
+    }
+
+    /// Small readout pill (ETA, radar battery) under the distance.
+    private func infoPill(icon: String, iconVariable: Double = 1,
+                          text: String, tint: Color) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon, variableValue: iconVariable)
+                .font(.system(size: 11, weight: .bold))
+            Text(verbatim: text)
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .monospacedDigit()
+        }
+        .foregroundStyle(tint)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 3)
+        .background(Capsule().fill(Theme.panel.opacity(0.85)))
+    }
+
+    /// "≈ 38 min" / "≈ 1 h 05" at the ride's average speed.
+    private func etaText(_ seconds: Double) -> String {
+        let m = max(1, Int((seconds / 60).rounded()))
+        if m < 60 { return "≈ \(m) min" }
+        return "≈ \(m / 60) h \(String(format: "%02d", m % 60))"
+    }
+
+    private func batteryColor(_ pct: Int) -> Color {
+        if pct <= 15 { return Theme.threatHigh }
+        if pct <= 30 { return Theme.threatLow }
+        return Theme.good
     }
 
     /// Distance readout that stays readable over any map imagery.

@@ -47,12 +47,33 @@ struct PlannedRoute: Codable, Identifiable, Equatable {
         return deg < 0 ? deg + 360 : deg
     }
 
+    static func angleDiff(_ a: Double, _ b: Double) -> Double {
+        let d = abs(a - b).truncatingRemainder(dividingBy: 360)
+        return min(d, 360 - d)
+    }
+
+    /// The direction the path travels at point `i` (start→finish).
+    func localBearing(at i: Int) -> Double? {
+        if i < path.count - 1 { return Self.bearing(path[i].coordinate, path[i + 1].coordinate) }
+        if i > 0 { return Self.bearing(path[i - 1].coordinate, path[i].coordinate) }
+        return nil
+    }
+
     /// Index of the path point nearest `coord`, plus its distance in metres.
     /// With a `hint` the search is windowed around the last known position
     /// (fast, and keeps progress from jumping backwards where a loop crosses
     /// itself); pass nil to scan the whole path.
+    ///
+    /// `course` disambiguates out-and-back stretches: on a loop whose first
+    /// and last kilometres share the same road, the outbound and homebound
+    /// path points overlap — a rider heading home must match the HOMEBOUND
+    /// ones or the remaining distance (and junction guidance) jumps to the
+    /// outbound leg. Points whose travel direction opposes the course are
+    /// penalised, so same-distance ties always resolve to the leg the rider
+    /// is actually riding.
     func nearestPathIndex(to coord: CLLocationCoordinate2D,
-                          hint: Int? = nil, windowMeters: Double = 800) -> (index: Int, meters: Double)? {
+                          hint: Int? = nil, windowMeters: Double = 800,
+                          course: Double? = nil) -> (index: Int, meters: Double)? {
         guard !path.isEmpty else { return nil }
         var lo = 0, hi = path.count - 1
         if let hint {
@@ -61,12 +82,18 @@ struct PlannedRoute: Codable, Identifiable, Equatable {
             lo = max(0, hint - span / 4)
             hi = min(path.count - 1, hint + span)
         }
-        var best = (index: lo, meters: Double.greatestFiniteMagnitude)
+        var best: (index: Int, meters: Double, score: Double) =
+            (lo, Double.greatestFiniteMagnitude, Double.greatestFiniteMagnitude)
         for i in lo...hi {
             let d = Self.meters(coord, path[i].coordinate)
-            if d < best.meters { best = (i, d) }
+            var score = d
+            if let course, let b = localBearing(at: i),
+               Self.angleDiff(b, course) > 100 {
+                score += 500      // soft wrong-way penalty, not a hard filter
+            }
+            if score < best.score { best = (i, d, score) }
         }
-        return best
+        return (best.index, best.meters)
     }
 
     /// Riding distance along the path from `index` to the finish.

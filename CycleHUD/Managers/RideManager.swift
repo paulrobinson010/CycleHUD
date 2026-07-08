@@ -731,6 +731,10 @@ final class RideManager: ObservableObject {
         return sensor
     }
 
+    /// Where the rider was when auto-pause engaged — the position-based
+    /// resume check compares against this.
+    private var autoPausedAt: CLLocation?
+
     private func updateAutoPause(dt: Double) {
         guard settings.autoPauseEnabled else { return }
         if currentSpeedMps < movingThresholdMps {
@@ -738,6 +742,7 @@ final class RideManager: ObservableObject {
             if stationarySeconds >= autoPauseDelay {
                 status = .autoPaused
                 movingSeconds = 0
+                autoPausedAt = location.currentLocation
                 AppLog.shared.log("Auto-paused")
             }
         } else {
@@ -746,16 +751,35 @@ final class RideManager: ObservableObject {
     }
 
     private func updateAutoResume(dt: Double) {
+        // Position check first: if the rider has clearly moved away from the
+        // pause spot, resume regardless of what the speed estimate says. The
+        // speed can wedge near zero (a wheel sensor's 16-bit event clock wraps
+        // every 64 s, so its first frame after a long stop computes garbage;
+        // GPS speed reads invalid for a while after standstill) — but the
+        // POSITION always moves when the rider does. This is what stranded a
+        // real ride paused for kilometres.
+        if let ref = autoPausedAt, let cur = location.currentLocation,
+           cur.horizontalAccuracy >= 0, cur.horizontalAccuracy < 50,
+           cur.distance(from: ref) > 30 {
+            resumeFromAutoPause(reason: "moved \(Int(cur.distance(from: ref))) m from pause spot")
+            return
+        }
         if currentSpeedMps >= movingThresholdMps {
             movingSeconds += dt
             if movingSeconds >= autoResumeDelay {
-                status = .running
-                stationarySeconds = 0
-                AppLog.shared.log("Auto-resumed")
+                resumeFromAutoPause(reason: "speed")
             }
         } else {
             movingSeconds = 0
         }
+    }
+
+    private func resumeFromAutoPause(reason: String) {
+        status = .running
+        stationarySeconds = 0
+        movingSeconds = 0
+        autoPausedAt = nil
+        AppLog.shared.log("Auto-resumed (\(reason))")
     }
 
     // MARK: - Distance integration

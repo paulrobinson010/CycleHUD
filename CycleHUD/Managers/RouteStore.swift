@@ -154,9 +154,15 @@ final class RouteStore: ObservableObject {
     private var progressHint: Int?
     private var progressRouteID: UUID?
 
+    /// The rider's last matched path index — the junction guidance uses it to
+    /// look only FORWARD along the route (an out-and-back road would otherwise
+    /// match the outbound leg on the way home).
+    var currentPathIndex: Int? { progressHint }
+
     /// Where the rider is along the active route: nearest path index, distance
     /// off the path, and metres remaining to the finish. Nil if no active route.
-    func progress(at coord: CLLocationCoordinate2D)
+    /// `course` (direction of travel) disambiguates shared out-and-back roads.
+    func progress(at coord: CLLocationCoordinate2D, course: Double? = nil)
         -> (index: Int, offMeters: Double, remainingMeters: Double)? {
         guard let route = activeRoute else { progressHint = nil; return nil }
         if progressRouteID != route.id {
@@ -166,9 +172,9 @@ final class RouteStore: ObservableObject {
         }
         // Windowed search near the last position; if the rider has strayed
         // (off route / restarted elsewhere), fall back to a whole-path scan.
-        var match = route.nearestPathIndex(to: coord, hint: progressHint)
+        var match = route.nearestPathIndex(to: coord, hint: progressHint, course: course)
         if let m = match, m.meters > 150, progressHint != nil {
-            match = route.nearestPathIndex(to: coord, hint: nil)
+            match = route.nearestPathIndex(to: coord, hint: nil, course: course)
         }
         guard let m = match else { return nil }
         progressHint = m.index

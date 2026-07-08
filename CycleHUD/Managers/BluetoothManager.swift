@@ -943,8 +943,14 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
                 if dTime > 0 && dRevs < 1_000_000 {
                     let seconds = Double(dTime) / 1024.0
                     let distance = Double(dRevs) * settings.wheelCircumferenceMeters
-                    sensorSpeedMps = distance / seconds
-                    sensorSpeedUpdatedAt = Date()
+                    let speed = distance / seconds
+                    // The 16-bit event clock wraps every 64 s, so the first
+                    // frame after a long stop computes a bogus delta — an
+                    // implausible speed marks it as a resync frame, not data.
+                    if speed < 30 {
+                        sensorSpeedMps = speed
+                        sensorSpeedUpdatedAt = Date()
+                    }
                 } else if dRevs == 0 {
                     sensorSpeedMps = 0
                     sensorSpeedUpdatedAt = Date()

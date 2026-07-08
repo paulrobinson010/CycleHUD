@@ -397,10 +397,14 @@ struct RideView: View {
                 RoutePanel(route: route,
                            location: location.currentLocation,
                            course: location.courseDegrees ?? location.headingDegrees,
-                           progress: location.currentLocation.flatMap { routes.progress(at: $0.coordinate) },
+                           progress: location.currentLocation.flatMap {
+                               routes.progress(at: $0.coordinate, course: location.courseDegrees)
+                           },
                            joined: routes.joinedActiveRoute,
                            leadIn: routes.leadIn,
                            radarConnected: ble.status(for: .radar) == .connected,
+                           batteryPercent: ble.radarBatteryPercent,
+                           etaSeconds: routeETASeconds,
                            distanceUnit: settings.distanceUnit)
             } else {
                 RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
@@ -904,13 +908,29 @@ struct RideView: View {
     }
 
     /// The direction the active route leaves `junction`, or nil when no route
-    /// is being followed or it doesn't pass through this junction.
+    /// is being followed or it doesn't pass through this junction. Anchored
+    /// FORWARD from the rider's progress along the route, so on an
+    /// out-and-back road the junction gets the homebound direction on the way
+    /// home, not the outbound one.
     private func routeExitBearing(at junction: JunctionInfo) -> Double? {
         guard settings.routePlanningEnabled, let route = routes.activeRoute else { return nil }
         let coord = CLLocationCoordinate2D(latitude: junction.latitude,
                                            longitude: junction.longitude)
-        guard let near = route.nearestPathIndex(to: coord), near.meters <= 30 else { return nil }
+        guard let near = route.nearestPathIndex(to: coord,
+                                                hint: routes.currentPathIndex,
+                                                windowMeters: 1600),
+              near.meters <= 30 else { return nil }
         return route.bearingAfter(index: near.index, lookahead: 25)
+    }
+
+    /// Estimated time to the route finish at the ride's average speed (nil
+    /// until there's a meaningful average to project from).
+    private var routeETASeconds: Double? {
+        guard ride.averageSpeedMps > 0.5,
+              let loc = location.currentLocation,
+              let progress = routes.progress(at: loc.coordinate, course: location.courseDegrees)
+        else { return nil }
+        return progress.remainingMeters / ride.averageSpeedMps
     }
 
     /// A needle that always points north — no number, just the arrow.

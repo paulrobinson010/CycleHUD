@@ -62,11 +62,16 @@ final class JunctionManager: ObservableObject {
         "secondary|secondary_link|tertiary|tertiary_link|unclassified|" +
         "residential|living_street|cycleway|road"
 
-    private static let fetchRadius: Double = 1500       // half-size of the bbox, m
-    private static let refetchMargin: Double = 400      // refetch this close to the edge
     private static let matchRadius: Double = 35         // max GPS→road distance, m
     private static let headingTolerance: Double = 55    // course vs road bearing, °
     private static let maxLookahead: Double = 1200      // stop walking past this, m
+    /// Coverage must always reach `maxLookahead` past the rider or junctions
+    /// ahead sit outside the known graph and the tile shows "—" until the
+    /// rider is nearly on top of them (seen on device). Refetch fires at
+    /// (radius − margin) = 1200 m from the fetch centre, so even then the
+    /// full lookahead stays inside the fetched box.
+    private static let fetchRadius: Double = 2500       // half-size of the bbox, m
+    private static let refetchMargin: Double = 1300     // refetch this close to the edge
 
     /// Begin the once-a-second tick (idempotent). Cheap while disabled.
     func start() {
