@@ -36,6 +36,7 @@ struct RideSummaryView: View {
                     header
                     effortCard
                     statGrid
+                    powerZonesCard
                     routeMap
                     graphs
                     lapsSection
@@ -99,6 +100,50 @@ struct RideSummaryView: View {
             exportFile = ExportFile(url: url)
         } else {
             showExportError = true
+        }
+    }
+
+    /// Time in the 7 power zones as a proportional colour bar — only for rides
+    /// with power data and an FTP set.
+    @ViewBuilder private var powerZonesCard: some View {
+        if settings.ftpWatts > 0, let track = summary.track,
+           let zones = PowerZones.timeInZones(track, ftp: settings.ftpWatts),
+           zones.reduce(0, +) > 60 {
+            let total = zones.reduce(0, +)
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Time in power zones")
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Theme.textSecondary)
+                GeometryReader { geo in
+                    HStack(spacing: 2) {
+                        ForEach(0..<7, id: \.self) { z in
+                            if zones[z] > 0 {
+                                PowerZones.color(z + 1)
+                                    .frame(width: max(3, geo.size.width * zones[z] / total))
+                            }
+                        }
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                }
+                .frame(height: 14)
+                // Legend: only the zones actually ridden, with their share.
+                HStack(spacing: 10) {
+                    ForEach(0..<7, id: \.self) { z in
+                        if zones[z] / total >= 0.02 {
+                            HStack(spacing: 3) {
+                                Circle().fill(PowerZones.color(z + 1))
+                                    .frame(width: 7, height: 7)
+                                Text(verbatim: "Z\(z + 1) \(Fmt.int(zones[z] / total * 100))%")
+                                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                                    .foregroundStyle(Theme.textSecondary)
+                            }
+                        }
+                    }
+                    Spacer()
+                }
+            }
+            .padding(14)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
         }
     }
 
@@ -632,6 +677,13 @@ struct RideSummaryView: View {
         }
         if let watts = summary.averagePower {
             s.append((String(localized: "Avg Power"), Fmt.int(watts), "W"))
+        }
+        if let np = summary.normalizedPower {
+            s.append((String(localized: "Norm. Power"), Fmt.int(np), "W"))
+            if settings.ftpWatts > 0 {
+                s.append((String(localized: "Intensity"),
+                          Fmt.int(Double(np) / Double(settings.ftpWatts) * 100), "%"))
+            }
         }
         s.append((String(localized: "Ascent"), ascentValue, settings.distanceUnit.shortLabel))
         s.append((String(localized: "Calories"), caloriesValue, "kcal"))

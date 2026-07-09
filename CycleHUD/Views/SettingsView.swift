@@ -106,6 +106,22 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    HStack {
+                        Text("FTP")
+                        Spacer()
+                        TextField("W", text: ftpText)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 80)
+                        Text(verbatim: "W").foregroundStyle(.secondary)
+                    }
+                } header: {
+                    Text("Power")
+                } footer: {
+                    Text("Your functional threshold power sets the 7 power zones: with a power meter connected, the power tile colours by the zone you're riding in, and ride summaries show normalized power, intensity and time in zones.")
+                }
+
+                Section {
                     Toggle("Beep on new vehicle", isOn: $settings.beepEnabled)
                     Toggle("Spoken vehicle call-outs", isOn: $settings.voiceAlertsEnabled)
                     Toggle("Wrist haptics", isOn: $settings.hapticsEnabled)
@@ -309,6 +325,14 @@ struct SettingsView: View {
             }
         }
         .preferredColorScheme(settings.appearanceTheme.colorScheme)
+    }
+
+    /// FTP as text so the field is empty (not "0") until a value is entered.
+    private var ftpText: Binding<String> {
+        Binding(
+            get: { settings.ftpWatts > 0 ? String(settings.ftpWatts) : "" },
+            set: { settings.ftpWatts = Int($0) ?? 0 }
+        )
     }
 
     /// Weight as text so the field is empty (not "0") until a value is entered.

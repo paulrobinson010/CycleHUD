@@ -366,7 +366,9 @@ final class RideManager: ObservableObject {
                                       track: savedTrack.isEmpty ? nil : savedTrack,
                                       laps: savedLaps.isEmpty ? nil : savedLaps,
                                       averagePower: powerTime > 60
-                                          ? Int((powerSum / powerTime).rounded()) : nil)
+                                          ? Int((powerSum / powerTime).rounded()) : nil,
+                                      normalizedPower: powerTime > 60
+                                          ? PowerZones.normalizedPower(track) : nil)
             history.add(summary)
             finishedSummary = summary
             if settings.saveWorkouts {
@@ -733,7 +735,8 @@ final class RideManager: ObservableObject {
         track.append(TrackSample(t: now.timeIntervalSince(start),
                                  speedMps: currentSpeedMps,
                                  hr: currentHeartRate,
-                                 altitude: relativeAltitude))
+                                 altitude: relativeAltitude,
+                                 power: ble.freshSensorPower()))
     }
 
     /// Live road gradient (%), as rise over run across a short trailing window of

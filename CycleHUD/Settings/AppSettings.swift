@@ -9,6 +9,7 @@ final class AppSettings: ObservableObject {
         static let distanceUnit = "distanceUnit"
         static let wheelCircumferenceMM = "wheelCircumferenceMM"
         static let riderWeightKg = "riderWeightKg"
+        static let ftpWatts = "ftpWatts"
         static let beepEnabled = "beepEnabled"
         static let voiceAlertsEnabled = "voiceAlertsEnabled"
         static let hapticsEnabled = "hapticsEnabled"
@@ -65,6 +66,8 @@ final class AppSettings: ObservableObject {
     @Published var distanceUnit: DistanceUnit { didSet { defaults.set(distanceUnit.rawValue, forKey: Keys.distanceUnit) } }
     @Published var wheelCircumferenceMM: Double { didSet { defaults.set(wheelCircumferenceMM, forKey: Keys.wheelCircumferenceMM) } }
     @Published var riderWeightKg: Double { didSet { defaults.set(riderWeightKg, forKey: Keys.riderWeightKg) } }
+    /// Functional threshold power in watts; 0 = not set (no zone colouring).
+    @Published var ftpWatts: Int { didSet { defaults.set(ftpWatts, forKey: Keys.ftpWatts) } }
     @Published var beepEnabled: Bool { didSet { defaults.set(beepEnabled, forKey: Keys.beepEnabled) } }
     /// When on, a spoken call-out ("car behind" + distance) announces each new
     /// vehicle — handy with bone-conduction headphones. Independent of the beep.
@@ -200,6 +203,7 @@ final class AppSettings: ObservableObject {
             Keys.distanceUnit: DistanceUnit.km.rawValue,
             Keys.wheelCircumferenceMM: 2105.0,   // 700x25c default
             Keys.riderWeightKg: 0.0,             // 0 = not entered (no calories shown)
+            Keys.ftpWatts: 0,                    // 0 = not entered (no power zones)
             Keys.beepEnabled: true,
             Keys.voiceAlertsEnabled: false,
             Keys.hapticsEnabled: true,
@@ -231,6 +235,7 @@ final class AppSettings: ObservableObject {
         distanceUnit = DistanceUnit(rawValue: defaults.string(forKey: Keys.distanceUnit) ?? "") ?? .km
         wheelCircumferenceMM = defaults.double(forKey: Keys.wheelCircumferenceMM)
         riderWeightKg = defaults.double(forKey: Keys.riderWeightKg)
+        ftpWatts = defaults.integer(forKey: Keys.ftpWatts)
         beepEnabled = defaults.bool(forKey: Keys.beepEnabled)
         voiceAlertsEnabled = defaults.bool(forKey: Keys.voiceAlertsEnabled)
         hapticsEnabled = defaults.bool(forKey: Keys.hapticsEnabled)

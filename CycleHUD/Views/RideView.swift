@@ -905,9 +905,13 @@ struct RideView: View {
         case .climb:
             climbRowTile(height: height, valueSize: vs)
         case .power:
+            let watts = ble.freshSensorPower()
             MetricTile(title: kind.title,
-                       value: ble.freshSensorPower().map { Fmt.int($0) } ?? "—",
-                       unit: tileUnit("W"), valueSize: vs, height: height)
+                       value: watts.map { Fmt.int($0) } ?? "—",
+                       unit: tileUnit("W"), valueSize: vs, height: height,
+                       accent: settings.ftpWatts > 0 ? watts.map {
+                           PowerZones.color(PowerZones.zone(watts: $0, ftp: settings.ftpWatts))
+                       } : nil)
         case .rain:
             WeatherTile(nowcast: weather.nowcast, status: weather.status, height: height,
                         showUnit: settings.showTileUnits)

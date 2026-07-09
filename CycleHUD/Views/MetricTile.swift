@@ -89,6 +89,8 @@ struct MetricTile: View {
     var height: CGFloat = 84
     /// When true the tile floods red — used for the heart-rate warning.
     var alert: Bool = false
+    /// Tints the value — used for the power tile's zone colouring.
+    var accent: Color? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
@@ -101,7 +103,8 @@ struct MetricTile: View {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text(value)
                     .font(Theme.valueFont(valueSize))
-                    .foregroundStyle(alert ? AnyShapeStyle(Color.white) : Theme.valueStyle)
+                    .foregroundStyle(alert ? AnyShapeStyle(Color.white)
+                                     : accent.map(AnyShapeStyle.init) ?? Theme.valueStyle)
                     .shadow(color: alert ? .clear : Theme.glow, radius: 6)   // neon in Cyberpunk
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
