@@ -3466,6 +3466,46 @@
         }
       }
     },
+    "Couldn’t reroute its roundabouts. Check your connection and try again." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Kreisverkehre konnten nicht umgeplant werden. Prüfe deine Verbindung und versuche es erneut."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t reroute its roundabouts. Check your connection and try again."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t reroute its roundabouts. Check your connection and try again."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se han podido recalcular sus rotondas. Comprueba tu conexión e inténtalo de nuevo."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de recalculer ses ronds-points. Vérifiez votre connexion et réessayez."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile ricalcolare le sue rotonde. Controlla la connessione e riprova."
+          }
+        }
+      }
+    },
     "Crash detection" : {
       "localizations" : {
         "de-DE" : {

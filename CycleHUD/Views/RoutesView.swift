@@ -17,6 +17,7 @@ struct RoutesView: View {
     /// Route being checked for one-way roads before reversing (shows a spinner).
     @State private var reverseChecking: UUID?
     @State private var reverseBlocked = false
+    @State private var reverseRerouteFailed = false
 
     private struct ShareURL: Identifiable {
         let url: URL
@@ -100,6 +101,11 @@ struct RoutesView: View {
             } message: {
                 Text("Part of it runs along a one-way road.")
             }
+            .alert("Can’t ride this route in reverse", isPresented: $reverseRerouteFailed) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Couldn’t reroute its roundabouts. Check your connection and try again.")
+            }
             .alert("Couldn’t import that file", isPresented: $importFailed) {
                 Button("OK", role: .cancel) {}
             } message: {
@@ -158,20 +164,18 @@ struct RoutesView: View {
         }
     }
 
-    /// Reverse only when it's legal: check the route against OSM one-way
-    /// roads first (the original follows them legally; flipped, it wouldn't).
-    /// If the check can't run (offline), err on the side of allowing it —
-    /// same behaviour as before the check existed.
+    /// Reverse only when it's legal: one-way streets block it, roundabout
+    /// arcs get re-routed the legal way round (RouteStore handles both).
     private func attemptReverse(_ route: PlannedRoute) {
         reverseChecking = route.id
         Task {
-            let usesOneWay = await OneWayChecker.routeUsesOneWay(path: route.path)
+            let outcome = await routes.rideInReverse(route)
             await MainActor.run {
                 reverseChecking = nil
-                if usesOneWay == true {
-                    reverseBlocked = true
-                } else {
-                    routes.rideInReverse(route)
+                switch outcome {
+                case .activated: break
+                case .blockedOneWay: reverseBlocked = true
+                case .rerouteFailed: reverseRerouteFailed = true
                 }
             }
         }

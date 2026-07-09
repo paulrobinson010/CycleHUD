@@ -148,30 +148,111 @@ final class RouteStore: ObservableObject {
         persist()
     }
 
+    enum ReverseOutcome {
+        case activated          // reversed twin saved and following
+        case blockedOneWay      // route rides along a one-way street
+        case rerouteFailed      // roundabout fix needed but routing failed
+    }
+
     /// Activate a reversed twin of `route` — the same roads ridden the other
     /// way (handy when the wind colouring says the loop is better backwards).
-    /// The twin is a saved route named "<name> ⇋" (reversing a "⇋" route finds
-    /// its original), reusing an existing twin instead of stacking copies.
-    /// Ghosts don't transfer: a best time raced the other direction.
-    func rideInReverse(_ route: PlannedRoute) {
+    /// The reversal is checked against OSM first: a one-way STREET on the
+    /// route blocks it outright, while ROUNDABOUTS (directional but
+    /// re-navigable) get their arcs re-routed the legal way round via BRouter
+    /// and spliced in. The twin is a saved route named "<name> ⇋" (reversing
+    /// a "⇋" route finds its original), reusing an existing twin instead of
+    /// stacking copies. Ghosts don't transfer: a best time raced the other
+    /// direction. If the OSM check can't run at all (offline), the naive
+    /// reversal proceeds — a guard, not a gate.
+    func rideInReverse(_ route: PlannedRoute) async -> ReverseOutcome {
         let targetName = route.name.hasSuffix(" ⇋")
             ? String(route.name.dropLast(2))
             : route.name + " ⇋"
         if let existing = routes.first(where: { $0.name == targetName }) {
-            activeRouteID = existing.id
-            return
+            await MainActor.run { activeRouteID = existing.id }
+            return .activated
         }
+
+        var path = Array(route.path.reversed())
+        var elevations = route.elevations.map { Array($0.reversed()) }
+
+        if let analysis = await OneWayChecker.analyze(path: path) {
+            if analysis.oneWayHit { return .blockedOneWay }
+            if !analysis.roundaboutSpans.isEmpty {
+                guard let fixed = await splicingReroutes(into: path, elevations: elevations,
+                                                         spans: analysis.roundaboutSpans) else {
+                    return .rerouteFailed
+                }
+                (path, elevations) = fixed
+            }
+        }
+
         var reversed = route
         reversed.id = UUID()
         reversed.name = targetName
-        reversed.path = route.path.reversed()
+        reversed.path = path
         reversed.waypoints = route.waypoints.reversed()
-        reversed.elevations = route.elevations.map { Array($0.reversed()) }
+        reversed.elevations = elevations
+        var distance = 0.0
+        for i in 0..<(path.count - 1) {
+            distance += PlannedRoute.meters(path[i].coordinate, path[i + 1].coordinate)
+        }
+        reversed.distanceMeters = distance
         reversed.bestTimes = nil
         reversed.bestDate = nil
         reversed.createdAt = Date()
-        add(reversed)
-        activeRouteID = reversed.id
+        await MainActor.run {
+            add(reversed)
+            activeRouteID = reversed.id
+        }
+        return .activated
+    }
+
+    /// Replace each roundabout span (expanded by a small margin) with a
+    /// BRouter leg between the span's ends — the legal arc in this direction.
+    /// Elevations splice too when both sides carry them; nil on any failure.
+    private func splicingReroutes(into path: [PlannedRoute.Point],
+                                  elevations: [Double]?,
+                                  spans: [ClosedRange<Int>]) async
+        -> (path: [PlannedRoute.Point], elevations: [Double]?)? {
+        let margin = 3
+        var merged: [(lo: Int, hi: Int)] = []
+        for span in spans.sorted(by: { $0.lowerBound < $1.lowerBound }) {
+            let lo = max(0, span.lowerBound - margin)
+            let hi = min(path.count - 2, span.upperBound + margin)
+            if let last = merged.last, lo <= last.hi + 4 {
+                merged[merged.count - 1].hi = max(last.hi, hi)
+            } else {
+                merged.append((lo, hi))
+            }
+        }
+        var outPath: [PlannedRoute.Point] = []
+        var outElev: [Double]? = elevations != nil ? [] : nil
+        var cursor = 0
+        for span in merged {
+            let end = min(span.hi + 1, path.count - 1)
+            guard span.lo >= cursor else { return nil }
+            outPath.append(contentsOf: path[cursor..<span.lo])
+            if outElev != nil, let e = elevations {
+                outElev?.append(contentsOf: e[cursor..<span.lo])
+            }
+            guard let leg = try? await RoutePlanner.plan(
+                through: [path[span.lo], path[end]], loop: false) else { return nil }
+            outPath.append(contentsOf: leg.path)
+            if outElev != nil {
+                if let legElev = leg.elevations { outElev?.append(contentsOf: legElev) }
+                else { outElev = nil }
+            }
+            cursor = end + 1
+        }
+        if cursor < path.count {
+            outPath.append(contentsOf: path[cursor...])
+            if outElev != nil, let e = elevations {
+                outElev?.append(contentsOf: e[cursor...])
+            }
+        }
+        if let elev = outElev, elev.count != outPath.count { outElev = nil }
+        return outPath.count >= 2 ? (outPath, outElev) : nil
     }
 
     func delete(_ route: PlannedRoute) {
