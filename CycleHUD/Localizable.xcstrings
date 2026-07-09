@@ -1260,46 +1260,6 @@
         }
       }
     },
-    "Add your Strava API keys to enable uploads — see SETUP.md in the project for the two-minute walkthrough." : {
-      "localizations" : {
-        "de-DE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Füge deine Strava-API-Schlüssel hinzu, um Uploads zu aktivieren — die Zwei-Minuten-Anleitung steht in SETUP.md im Projekt."
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add your Strava API keys to enable uploads — see SETUP.md in the project for the two-minute walkthrough."
-          }
-        },
-        "en-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add your Strava API keys to enable uploads — see SETUP.md in the project for the two-minute walkthrough."
-          }
-        },
-        "es-ES" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Añade tus claves de la API de Strava para activar las subidas — consulta SETUP.md en el proyecto para la guía de dos minutos."
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajoutez vos clés d'API Strava pour activer l'envoi — voir SETUP.md dans le projet pour le guide de deux minutes."
-          }
-        },
-        "it-IT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aggiungi le chiavi API di Strava per abilitare i caricamenti — vedi SETUP.md nel progetto per la guida di due minuti."
-          }
-        }
-      }
-    },
     "Adds a Junction tile to the ride screen showing the next intersection ahead — its layout and the distance to it, counting down as you approach. Road data around your route is fetched from OpenStreetMap while this is on, which sends your approximate location to OpenStreetMap's servers. Nothing is sent while it's off." : {
       "localizations" : {
         "de-DE" : {

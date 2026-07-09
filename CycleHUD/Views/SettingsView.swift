@@ -258,35 +258,36 @@ struct SettingsView: View {
                     Text("Backs up your rides, routes and ghosts to your own iCloud and keeps a new phone in step. Everything stays in your personal iCloud Drive — no accounts and no CycleHUD servers. When two devices hold the same route, the faster ghost wins.")
                 }
 
-                Section {
-                    if strava.connected {
-                        HStack {
-                            Text("Connected")
-                            Spacer()
-                            if let name = strava.athleteName {
-                                Text(verbatim: name).foregroundStyle(.secondary)
+                // Hidden entirely in builds without Strava API keys compiled
+                // in — that's a developer-build state, not something an App
+                // Store user can act on.
+                if strava.configured {
+                    Section {
+                        if strava.connected {
+                            HStack {
+                                Text("Connected")
+                                Spacer()
+                                if let name = strava.athleteName {
+                                    Text(verbatim: name).foregroundStyle(.secondary)
+                                }
+                            }
+                            Toggle("Auto-upload rides", isOn: $settings.stravaAutoUploadEnabled)
+                            Button(role: .destructive) {
+                                strava.disconnect()
+                            } label: {
+                                Text("Disconnect Strava")
+                            }
+                        } else {
+                            Button {
+                                strava.connect()
+                            } label: {
+                                Label("Connect Strava", systemImage: "link")
                             }
                         }
-                        Toggle("Auto-upload rides", isOn: $settings.stravaAutoUploadEnabled)
-                        Button(role: .destructive) {
-                            strava.disconnect()
-                        } label: {
-                            Text("Disconnect Strava")
-                        }
-                    } else if strava.configured {
-                        Button {
-                            strava.connect()
-                        } label: {
-                            Label("Connect Strava", systemImage: "link")
-                        }
-                    }
-                } header: {
-                    Text(verbatim: "Strava")
-                } footer: {
-                    if strava.configured {
+                    } header: {
+                        Text(verbatim: "Strava")
+                    } footer: {
                         Text("Upload rides to Strava straight from the ride summary, or automatically when a ride ends. Your Strava login stays between you and Strava — CycleHUD keeps only its upload permission, in the Keychain.")
-                    } else {
-                        Text("Add your Strava API keys to enable uploads — see SETUP.md in the project for the two-minute walkthrough.")
                     }
                 }
 
