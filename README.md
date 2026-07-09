@@ -17,8 +17,10 @@ meters work too.
 ## Features
 
 - **Rear radar lane** — vehicles behind you are plotted by distance on a clean
-  perspective lane, coloured by how fast/close they are. The whole panel glows
-  amber→red as a vehicle closes in; a green “Clear” shows when the road is empty.
+  perspective lane, coloured by how fast/close they are, each labelled with its
+  distance **and closing speed** ("+18 km/h" — how much faster than you it's
+  approaching, straight off the radar). The whole panel glows amber→red as a
+  vehicle closes in; a green “Clear” shows when the road is empty.
 - **Apple Watch wrist alerts** — keep your eyes up and feel what's behind you:
   - a tap the moment a *new* vehicle appears,
   - escalating taps that get faster/stronger as it closes in,
@@ -37,10 +39,23 @@ meters work too.
   at riders using bone-conduction headphones; works alongside or instead of the
   beep.
 - **Live metrics** — current speed, average speed (moving time only), distance,
-  elapsed moving time, cadence, total ascent (barometer-based when available,
-  GPS-altitude fallback otherwise), live road **gradient**, plus heart rate and
-  calories. Heart rate comes from a paired Apple Watch **or a standard Bluetooth
-  heart-rate strap** (service 0x180D).
+  elapsed moving time, cadence, **power**, total ascent (barometer-based when
+  available, GPS-altitude fallback otherwise), live road **gradient**, plus
+  heart rate and calories. Heart rate comes from a paired Apple Watch **or a
+  standard Bluetooth heart-rate strap** (service 0x180D).
+- **Power zones** — set your FTP (Settings → Power) and the power tile colours
+  by the classic 7-zone model as you ride; ride summaries add **normalized
+  power**, an **intensity** percentage and a **time-in-zones** bar.
+- **Live Activity** — the ride lives on the **Lock Screen and in the Dynamic
+  Island**: speed, distance, time and heart rate, and when the radar sees a
+  vehicle behind you the whole strip floods with the threat colour — a pocketed
+  phone still shows what's coming.
+- **Live tracking** *(optional, off by default)* — each ride publishes a
+  private map link (position, speed, distance, updated every 15 s) you can send
+  to whoever should know where you are. No accounts and no servers: the data
+  travels through your own iCloud under an unguessable random address, and the
+  link **goes dead the moment you stop the ride**. (Needs the CloudKit
+  capability + a one-off dashboard step — see `docs/SETUP.md` §3c.)
 - **Customisable tiles & pages** — choose which metric tiles appear on the ride
   screen, and in what order. **Long-press any tile** (or the radar) to edit
   right on the ride screen: remove with the ⊖ badge, add from the dashed **+**
@@ -60,8 +75,12 @@ meters work too.
   time, distance and average speed are shown in the ride summary.
 - **Ride export** — share any ride (end-of-ride or from history) as a **GPX or
   TCX** file via the system share sheet — to Strava, Komoot, Ride with GPS,
-  Files, and more. *(This is a manual share, not an automatic upload — see note
-  below.)*
+  Files, and more.
+- **Strava upload** *(optional)* — connect your Strava account once and upload
+  any ride from the button on its summary, or flip on **auto-upload** to send
+  every finished ride. The login happens on Strava's own page; CycleHUD keeps
+  only the upload token, in the Keychain. (Needs your own free Strava API keys
+  — see `docs/SETUP.md` §3d, and the note below.)
 - **Crash detection → SOS** *(optional)* — a two-stage detector tuned on real
   roads: a violent impact (well above pothole/kerb spikes) is only a
   *candidate*, and the SOS fires **only if you come to a stop within 5
@@ -196,26 +215,28 @@ meters work too.
   reconnecting, red triangle = Bluetooth unavailable, grey = not set up.
 - **Demo mode** — Settings → Demo → *Start radar demo* plays a one-time preview
   on the main screen: low (yellow), medium (orange) and high (red) vehicles, the
-  beep, the **escalating wrist taps**, and a closing **radar-off** wrist alert —
-  so you can feel and fine-tune every alert before a ride. It runs through once
-  and stops; starting a ride also stops it.
+  beep, the **escalating wrist taps**, a **radar-off** wrist alert, and a
+  finale gliding along a real route — the **Central Park loop drive**, street
+  map, junction countdown, climb strip and ghost race all live — so you can
+  feel and fine-tune every alert before a ride. Cadence and power stay filled
+  throughout. It runs through once and stops; starting a ride also stops it.
 
 ### Getting rides into Strava
 
-CycleHUD deliberately has **no built-in Strava login** — Strava's API requires
-an OAuth account connection (and, done properly, a token-exchange server),
-which would break CycleHUD's core privacy promise: no accounts, no logins, no
-servers. Two paths cover it instead:
+Three paths, strictest-privacy first:
 
-- **Automatic** — every ride is already saved to **Apple Health** as a full
-  cycling workout (distance, duration, calories, GPS route). A Health→Strava
-  bridge app such as **HealthFit** or **RunGap** can watch Apple Health and
-  auto-upload each new workout to Strava (and Komoot, TrainingPeaks, Dropbox,
-  …). Set it up once and rides appear in Strava moments after you tap Stop.
-  The Strava login lives in the bridge app — CycleHUD never touches it.
+- **Built-in upload** — connect Strava in Settings and upload from the ride
+  summary (or automatically). Rides go **directly from the phone to Strava**
+  — there's still no CycleHUD server and no middleman; the trade-off is an
+  OAuth connection to your Strava account, stored as a token in the Keychain
+  and revocable any time (Settings → Disconnect, or from Strava's own apps
+  page). Requires your own free Strava API application (`docs/SETUP.md` §3d).
+- **Bridge app** — every ride is already saved to **Apple Health** as a full
+  cycling workout. A Health→Strava bridge such as **HealthFit** or **RunGap**
+  can auto-upload each new workout to Strava (and Komoot, TrainingPeaks, …);
+  the Strava login lives in the bridge app and CycleHUD never touches it.
 - **Manual** — open any ride's summary, tap the share button, pick **GPX** or
-  **TCX**, and send the file wherever you like (Strava's website, Komoot, Ride
-  with GPS, Files, email) through the share sheet.
+  **TCX**, and send the file wherever you like through the share sheet.
 
 ## Screenshots
 

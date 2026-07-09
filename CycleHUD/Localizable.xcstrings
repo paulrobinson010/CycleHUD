@@ -1260,6 +1260,46 @@
         }
       }
     },
+    "Add your Strava API keys to enable uploads — see SETUP.md in the project for the two-minute walkthrough." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füge deine Strava-API-Schlüssel hinzu, um Uploads zu aktivieren — die Zwei-Minuten-Anleitung steht in SETUP.md im Projekt."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add your Strava API keys to enable uploads — see SETUP.md in the project for the two-minute walkthrough."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add your Strava API keys to enable uploads — see SETUP.md in the project for the two-minute walkthrough."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade tus claves de la API de Strava para activar las subidas — consulta SETUP.md en el proyecto para la guía de dos minutos."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoutez vos clés d'API Strava pour activer l'envoi — voir SETUP.md dans le projet pour le guide de deux minutes."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi le chiavi API di Strava per abilitare i caricamenti — vedi SETUP.md nel progetto per la guida di due minuti."
+          }
+        }
+      }
+    },
     "Adds a Junction tile to the ride screen showing the next intersection ahead — its layout and the distance to it, counting down as you approach. Road data around your route is fetched from OpenStreetMap while this is on, which sends your approximate location to OpenStreetMap's servers. Nothing is sent while it's off." : {
       "localizations" : {
         "de-DE" : {
@@ -1456,6 +1496,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Avanzate"
+          }
+        }
+      }
+    },
+    "Afternoon ride" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nachmittagsfahrt"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afternoon ride"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afternoon ride"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salida de tarde"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie de l'après-midi"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giro pomeridiano"
           }
         }
       }
@@ -1858,6 +1938,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "PAUSA AUTO"
+          }
+        }
+      }
+    },
+    "Auto-upload rides" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fahrten automatisch hochladen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-upload rides"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-upload rides"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subida automática de salidas"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoi automatique des sorties"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caricamento automatico delle uscite"
           }
         }
       }
@@ -3264,6 +3384,46 @@
         }
       }
     },
+    "Connect Strava" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Strava verbinden"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect Strava"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect Strava"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conectar Strava"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecter Strava"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collega Strava"
+          }
+        }
+      }
+    },
     "Connect your radar and sensors here. You can reopen this screen any time from the %@ icon at the top of the main screen." : {
       "comment" : "A description of how to connect to a radar and speed/cadence sensor. The argument is the “antenna.radiowaves.left.and.right” symbol.",
       "isCommentAutoGenerated" : true,
@@ -4470,6 +4630,46 @@
         }
       }
     },
+    "Disconnect Strava" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strava trennen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnect Strava"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnect Strava"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desconectar Strava"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déconnecter Strava"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnetti Strava"
+          }
+        }
+      }
+    },
     "Display" : {
       "localizations" : {
         "de-DE" : {
@@ -5070,6 +5270,46 @@
         }
       }
     },
+    "Evening ride" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abendfahrt"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evening ride"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evening ride"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salida al anochecer"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie du soir"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giro serale"
+          }
+        }
+      }
+    },
     "Export GPX" : {
       "localizations" : {
         "de-DE" : {
@@ -5428,6 +5668,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dimentica"
+          }
+        }
+      }
+    },
+    "FTP" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FTP"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FTP"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FTP"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FTP"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FTP"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FTP"
           }
         }
       }
@@ -6235,6 +6515,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Statistiche"
+          }
+        }
+      }
+    },
+    "Intensity" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensität"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensity"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensity"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensidad"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensité"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensità"
           }
         }
       }
@@ -7121,6 +7441,46 @@
         }
       }
     },
+    "Live tracking" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live-Tracking"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live tracking"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live tracking"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguimiento en directo"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivi en direct"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tracciamento live"
+          }
+        }
+      }
+    },
     "Location is off" : {
       "localizations" : {
         "de-DE" : {
@@ -7687,6 +8047,46 @@
         }
       }
     },
+    "Morning ride" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morgenfahrt"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morning ride"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morning ride"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salida matutina"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie matinale"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giro mattutino"
+          }
+        }
+      }
+    },
     "Most climbing" : {
       "localizations" : {
         "de-DE" : {
@@ -7884,6 +8284,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nuovo percorso"
+          }
+        }
+      }
+    },
+    "Night ride" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nachtfahrt"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Night ride"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Night ride"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salida nocturna"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortie nocturne"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giro notturno"
           }
         }
       }
@@ -8327,6 +8767,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nessuna"
+          }
+        }
+      }
+    },
+    "Norm. Power" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Norm. Leistung"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Norm. Power"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Norm. Power"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pot. normalizada"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puiss. normalisée"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pot. normalizzata"
           }
         }
       }
@@ -11712,6 +12192,46 @@
         }
       }
     },
+    "Share live tracking link" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live-Tracking-Link teilen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share live tracking link"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share live tracking link"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartir enlace de seguimiento en directo"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager le lien de suivi en direct"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condividi il link di tracciamento live"
+          }
+        }
+      }
+    },
     "Share log file" : {
       "localizations" : {
         "de-DE" : {
@@ -11788,6 +12308,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Condividi percorso"
+          }
+        }
+      }
+    },
+    "Share tracking link" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tracking-Link teilen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share tracking link"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share tracking link"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartir enlace de seguimiento"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager le lien de suivi"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condividi link di tracciamento"
           }
         }
       }
@@ -13280,6 +13840,46 @@
         }
       }
     },
+    "Time in power zones" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeit in Leistungszonen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time in power zones"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time in power zones"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo en zonas de potencia"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps par zone de puissance"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo nelle zone di potenza"
+          }
+        }
+      }
+    },
     "To the start" : {
       "localizations" : {
         "de-DE" : {
@@ -13756,6 +14356,206 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aggiornamenti ricevuti"
+          }
+        }
+      }
+    },
+    "Upload failed — tap to retry" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload fehlgeschlagen — zum Wiederholen tippen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload failed — tap to retry"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload failed — tap to retry"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error al subir — toca para reintentar"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échec de l'envoi — touchez pour réessayer"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caricamento non riuscito — tocca per riprovare"
+          }
+        }
+      }
+    },
+    "Upload rides to Strava straight from the ride summary, or automatically when a ride ends. Your Strava login stays between you and Strava — CycleHUD keeps only its upload permission, in the Keychain." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lade Fahrten direkt aus der Zusammenfassung zu Strava hoch — oder automatisch am Ende jeder Fahrt. Dein Strava-Login bleibt zwischen dir und Strava; CycleHUD behält nur die Upload-Berechtigung, sicher im Schlüsselbund."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload rides to Strava straight from the ride summary, or automatically when a ride ends. Your Strava login stays between you and Strava — CycleHUD keeps only its upload permission, in the Keychain."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload rides to Strava straight from the ride summary, or automatically when a ride ends. Your Strava login stays between you and Strava — CycleHUD keeps only its upload permission, in the Keychain."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sube tus salidas a Strava desde el resumen, o automáticamente al terminar la salida. Tu cuenta de Strava queda entre tú y Strava — CycleHUD solo guarda el permiso de subida, en el llavero."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyez vos sorties vers Strava depuis le résumé, ou automatiquement à la fin de chaque sortie. Votre identifiant Strava reste entre vous et Strava — CycleHUD ne conserve que l'autorisation d'envoi, dans le trousseau."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carica le uscite su Strava direttamente dal riepilogo, o automaticamente a fine giro. Il tuo accesso Strava resta tra te e Strava — CycleHUD conserva solo il permesso di caricamento, nel portachiavi."
+          }
+        }
+      }
+    },
+    "Upload to Strava" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu Strava hochladen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload to Strava"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload to Strava"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subir a Strava"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyer vers Strava"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carica su Strava"
+          }
+        }
+      }
+    },
+    "Uploaded to Strava" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu Strava hochgeladen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uploaded to Strava"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uploaded to Strava"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subido a Strava"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyé vers Strava"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caricato su Strava"
+          }
+        }
+      }
+    },
+    "Uploading to Strava…" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird zu Strava hochgeladen …"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uploading to Strava…"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uploading to Strava…"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subiendo a Strava…"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoi vers Strava…"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caricamento su Strava…"
           }
         }
       }
@@ -14240,6 +15040,46 @@
         }
       }
     },
+    "When on, each ride publishes a private link showing your live position, speed and distance on a map — share it with whoever should know where you are. The link is an unguessable random address, updates every 15 seconds through your own iCloud, and goes dead the moment you stop the ride." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn aktiviert, veröffentlicht jede Fahrt einen privaten Link mit deiner Live-Position, Geschwindigkeit und Distanz auf einer Karte — teile ihn mit allen, die wissen sollen, wo du bist. Der Link ist eine nicht erratbare Zufallsadresse, aktualisiert sich alle 15 Sekunden über deine eigene iCloud und erlischt, sobald du die Fahrt beendest."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When on, each ride publishes a private link showing your live position, speed and distance on a map — share it with whoever should know where you are. The link is an unguessable random address, updates every 15 seconds through your own iCloud, and goes dead the moment you stop the ride."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When on, each ride publishes a private link showing your live position, speed and distance on a map — share it with whoever should know where you are. The link is an unguessable random address, updates every 15 seconds through your own iCloud, and goes dead the moment you stop the ride."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al activarlo, cada salida publica un enlace privado con tu posición, velocidad y distancia en directo sobre un mapa — compártelo con quien deba saber dónde estás. El enlace es una dirección aleatoria imposible de adivinar, se actualiza cada 15 segundos a través de tu propio iCloud y deja de funcionar en cuanto detienes la salida."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une fois activé, chaque sortie publie un lien privé montrant votre position, votre vitesse et votre distance en direct sur une carte — partagez-le avec qui doit savoir où vous êtes. Le lien est une adresse aléatoire impossible à deviner, se met à jour toutes les 15 secondes via votre propre iCloud et meurt dès que vous arrêtez la sortie."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando attivo, ogni uscita pubblica un link privato con posizione, velocità e distanza in tempo reale su una mappa — condividilo con chi deve sapere dove sei. Il link è un indirizzo casuale non indovinabile, si aggiorna ogni 15 secondi tramite il tuo iCloud e smette di funzionare appena termini il giro."
+          }
+        }
+      }
+    },
     "When your heart rate reaches this, the heart-rate readout turns red and a paired Apple Watch double-buzzes — repeating every 30 seconds while it stays high." : {
       "localizations" : {
         "de-DE" : {
@@ -14556,6 +15396,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tu %@"
+          }
+        }
+      }
+    },
+    "Your functional threshold power sets the 7 power zones: with a power meter connected, the power tile colours by the zone you're riding in, and ride summaries show normalized power, intensity and time in zones." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Schwellenleistung (FTP) legt die 7 Leistungszonen fest: Mit verbundenem Powermeter färbt sich die Leistungs-Kachel nach der gefahrenen Zone, und Zusammenfassungen zeigen Normalized Power, Intensität und Zeit in den Zonen."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your functional threshold power sets the 7 power zones: with a power meter connected, the power tile colours by the zone you're riding in, and ride summaries show normalized power, intensity and time in zones."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your functional threshold power sets the 7 power zones: with a power meter connected, the power tile colors by the zone you're riding in, and ride summaries show normalized power, intensity and time in zones."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu potencia umbral (FTP) define las 7 zonas de potencia: con un potenciómetro conectado, el mosaico de potencia se colorea según la zona en la que ruedas, y los resúmenes muestran potencia normalizada, intensidad y tiempo en zonas."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre puissance seuil (FTP) définit les 7 zones de puissance : avec un capteur de puissance connecté, la tuile Puissance se colore selon la zone dans laquelle vous roulez, et les résumés affichent la puissance normalisée, l'intensité et le temps par zone."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua potenza di soglia (FTP) definisce le 7 zone di potenza: con un misuratore collegato, il riquadro Potenza si colora in base alla zona in cui pedali, e i riepiloghi mostrano potenza normalizzata, intensità e tempo nelle zone."
           }
         }
       }
