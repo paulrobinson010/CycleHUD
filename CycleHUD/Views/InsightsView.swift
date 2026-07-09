@@ -265,7 +265,7 @@ struct InsightsData {
         var fastest: Double?
         for ride in rides {
             for pass in ride.passes ?? [] {
-                for sample in pass.cleanedSamples {
+                for sample in pass.cleanSamples {
                     let speedMps: Double = (sample.closingKmh + sample.riderKmh) / 3.6
                     if speedMps > (fastest ?? 0) { fastest = speedMps }
                 }
