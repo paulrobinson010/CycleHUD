@@ -64,7 +64,7 @@ struct RideView: View {
                         .environmentObject(ride).environmentObject(history).environmentObject(weather)
                         .environmentObject(sos).environmentObject(cloud)
                 case .routes: RoutesView().environmentObject(routes).environmentObject(settings)
-                        .environmentObject(weather)
+                        .environmentObject(weather).environmentObject(history)
                 }
             }
             .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)

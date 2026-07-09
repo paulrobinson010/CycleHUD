@@ -101,7 +101,11 @@ meters work too.
   point of the route, the distance to it, and a dashed link on the mini-map.
   Pick a route while away from it and CycleHUD plots a green **lead-in leg**
   along quiet roads from where you are to the start, with the arrow and
-  road-distance following the leg until you join. With junctions
+  road-distance following the leg until you join. Long-press a route for a
+  **weather preview**: choose a start time and the ride plays out against the
+  hourly forecast — riding time predicted from your own rides on similar
+  terrain, the map coloured by the wind at the time you'd reach each stretch,
+  and an hour-by-hour timeline of conditions from rollout to finish. With junctions
   on, the **Junction tile highlights the arm your route takes** in green.
   **Turn alerts** speak "left/right turn ahead" and tap your wrist as each
   bend approaches (cue distance scales with speed; toggle in Settings), and a

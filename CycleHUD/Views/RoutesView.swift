@@ -7,6 +7,7 @@ struct RoutesView: View {
     @EnvironmentObject var routes: RouteStore
     @EnvironmentObject var settings: AppSettings
     @EnvironmentObject var weather: WeatherManager
+    @EnvironmentObject var history: RideHistory
     @Environment(\.dismiss) private var dismiss
 
     @State private var showEditor = false
@@ -14,6 +15,8 @@ struct RoutesView: View {
     @State private var showImporter = false
     @State private var shareURL: ShareURL?
     @State private var importFailed = false
+    /// Route whose weather preview sheet is up.
+    @State private var weatherRoute: PlannedRoute?
     /// Route being checked for one-way roads before reversing (shows a spinner).
     @State private var reverseChecking: UUID?
     @State private var reverseBlocked = false
@@ -83,6 +86,12 @@ struct RoutesView: View {
                 RouteEditorView(editing: route)
                     .environmentObject(routes)
                     .environmentObject(settings)
+                    .environmentObject(weather)
+            }
+            .sheet(item: $weatherRoute) { route in
+                RouteWeatherView(route: route)
+                    .environmentObject(settings)
+                    .environmentObject(history)
                     .environmentObject(weather)
             }
             .sheet(item: $shareURL) { share in
@@ -155,6 +164,11 @@ struct RoutesView: View {
             routes.activeRouteID = active ? nil : route.id
         }
         .contextMenu {
+            Button {
+                weatherRoute = route
+            } label: {
+                Label("Weather preview", systemImage: "cloud.sun")
+            }
             Button {
                 attemptReverse(route)
             } label: {

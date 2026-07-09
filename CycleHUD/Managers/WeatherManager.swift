@@ -84,6 +84,41 @@ final class WeatherManager: ObservableObject {
         #endif
     }
 
+    // MARK: - Hourly forecast (route weather preview)
+
+    /// One forecast hour, distilled for the route preview.
+    struct HourForecast {
+        let date: Date
+        let temperatureC: Double
+        let windSpeedMps: Double
+        let windFromDegrees: Double
+        let precipitationChance: Double
+        let symbolName: String
+    }
+
+    /// Hourly forecast (~10 days out) at a coordinate — used to play a route
+    /// out against the weather at the times the rider would actually be on
+    /// each stretch. One fetch covers every start time the picker allows.
+    func hourly(at coordinate: CLLocationCoordinate2D) async -> [HourForecast]? {
+        guard isEnabled?() ?? false else { return nil }
+        #if canImport(WeatherKit)
+        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        guard let weather = try? await service.weather(for: location, including: .hourly) else {
+            return nil
+        }
+        return weather.forecast.map { h in
+            HourForecast(date: h.date,
+                         temperatureC: h.temperature.converted(to: .celsius).value,
+                         windSpeedMps: h.wind.speed.converted(to: .metersPerSecond).value,
+                         windFromDegrees: h.wind.direction.converted(to: .degrees).value,
+                         precipitationChance: h.precipitationChance,
+                         symbolName: h.symbolName)
+        }
+        #else
+        return nil
+        #endif
+    }
+
     #if canImport(WeatherKit)
     // MARK: - WeatherKit → RainNowcast
 
