@@ -88,8 +88,10 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
 - **Route planning** *(optional, off by default)* — plan rides on a map from a
   button on the ride screen: tap a start point, keep tapping waypoints, and the
   path snaps to **quiet roads and cycle paths** (BRouter's trekking profile over
-  OpenStreetMap data). Routes loop back to the start by default, or turn that
-  off to finish somewhere else. Save routes with a name and pick one to follow:
+  OpenStreetMap data). The planned line is **coloured by today's wind** — amber
+  where you'd fight a headwind, green where it pushes you — so which way round
+  to ride a loop answers itself. Routes loop back to the start by default, or
+  turn that off to finish somewhere else. Save routes with a name and pick one to follow:
   while the road behind is clear the **radar panel becomes a live street map**
   — rotated so your direction of travel points up, the route in blue with its
   waypoints dotted along it, and the distance remaining on top — and the

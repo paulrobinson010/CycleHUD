@@ -9,6 +9,7 @@ import MapKit
 struct RouteEditorView: View {
     @EnvironmentObject var routes: RouteStore
     @EnvironmentObject var settings: AppSettings
+    @EnvironmentObject var weather: WeatherManager
     @Environment(\.dismiss) private var dismiss
 
     /// Present with a route to edit it in place; nil creates a new one.
@@ -78,10 +79,13 @@ struct RouteEditorView: View {
         MapReader { proxy in
             Map(position: $camera) {
                 UserAnnotation()
-                if path.count >= 2 {
-                    MapPolyline(coordinates: path.map(\.coordinate))
-                        .stroke(Theme.accent, style: StrokeStyle(lineWidth: 4,
-                                                                 lineCap: .round, lineJoin: .round))
+                // The routed path, coloured by today's wind: amber where you'd
+                // fight a headwind, green where it pushes you — so "which way
+                // round do I ride this loop?" answers itself at a glance.
+                ForEach(windRuns) { run in
+                    MapPolyline(coordinates: run.coords)
+                        .stroke(run.color, style: StrokeStyle(lineWidth: 4,
+                                                              lineCap: .round, lineJoin: .round))
                 }
                 ForEach(Array(waypoints.enumerated()), id: \.offset) { i, wp in
                     Annotation(markerLabel(i), coordinate: wp.coordinate) {
@@ -95,6 +99,72 @@ struct RouteEditorView: View {
                 waypoints.append(PlannedRoute.Point(coord))
                 replan()
             }
+        }
+    }
+
+    /// The path split into runs of consistent wind exposure (today's wind vs
+    /// each segment's bearing): amber = headwind, green = tailwind, accent =
+    /// cross/calm or no weather data. Consecutive same-class segments merge
+    /// into one polyline so the map stays cheap.
+    private struct WindRun: Identifiable {
+        let id: Int
+        let coords: [CLLocationCoordinate2D]
+        let color: Color
+    }
+
+    private var windRuns: [WindRun] {
+        guard path.count >= 2 else { return [] }
+        guard settings.weatherEnabled, let conditions = weather.conditions else {
+            return [WindRun(id: 0, coords: path.map(\.coordinate), color: Theme.accent)]
+        }
+        func classify(_ i: Int) -> Int {
+            let head = conditions.headwindMps(
+                course: PlannedRoute.bearing(path[i].coordinate, path[i + 1].coordinate))
+            if head > 1.5 { return 1 }        // fighting it
+            if head < -1.5 { return -1 }      // free speed
+            return 0
+        }
+        func color(_ k: Int) -> Color {
+            k > 0 ? Theme.threatMedium : (k < 0 ? Theme.good : Theme.accent)
+        }
+        var runs: [WindRun] = []
+        var start = 0
+        var current = classify(0)
+        for i in 1..<(path.count - 1) where classify(i) != current {
+            runs.append(WindRun(id: runs.count,
+                                coords: path[start...i].map(\.coordinate),
+                                color: color(current)))
+            start = i
+            current = classify(i)
+        }
+        runs.append(WindRun(id: runs.count,
+                            coords: path[start...].map(\.coordinate),
+                            color: color(current)))
+        return runs
+    }
+
+    /// Legend for the wind colouring, shown while there's a routed path and
+    /// live wind to colour it with.
+    @ViewBuilder private var windLegend: some View {
+        if path.count >= 2, settings.weatherEnabled, let c = weather.conditions {
+            HStack(spacing: 10) {
+                Image(systemName: "wind")
+                    .font(.system(size: 12, weight: .semibold))
+                Text(verbatim: "\(Fmt.int(settings.speedUnit.value(fromMps: c.windSpeedMps))) \(settings.speedUnit.label)")
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                legendKey(Theme.threatMedium, "Headwind")
+                legendKey(Theme.good, "Tailwind")
+                Spacer()
+            }
+            .foregroundStyle(Theme.textSecondary)
+        }
+    }
+
+    private func legendKey(_ color: Color, _ label: LocalizedStringKey) -> some View {
+        HStack(spacing: 4) {
+            Capsule().fill(color).frame(width: 14, height: 4)
+            Text(label)
+                .font(.system(size: 12, weight: .medium, design: .rounded))
         }
     }
 
@@ -160,6 +230,7 @@ struct RouteEditorView: View {
                 .disabled(waypoints.isEmpty)
                 .accessibilityLabel("Clear all points")
             }
+            windLegend
             Toggle("Loop back to start", isOn: $loop)
                 .font(.system(size: 15, weight: .medium, design: .rounded))
                 .onChange(of: loop) { _, _ in replan() }

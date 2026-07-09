@@ -6,6 +6,7 @@ import UniformTypeIdentifiers
 struct RoutesView: View {
     @EnvironmentObject var routes: RouteStore
     @EnvironmentObject var settings: AppSettings
+    @EnvironmentObject var weather: WeatherManager
     @Environment(\.dismiss) private var dismiss
 
     @State private var showEditor = false
@@ -72,11 +73,13 @@ struct RoutesView: View {
                 RouteEditorView()
                     .environmentObject(routes)
                     .environmentObject(settings)
+                    .environmentObject(weather)
             }
             .sheet(item: $editRoute) { route in
                 RouteEditorView(editing: route)
                     .environmentObject(routes)
                     .environmentObject(settings)
+                    .environmentObject(weather)
             }
             .sheet(item: $shareURL) { share in
                 ShareSheet(items: [share.url])
