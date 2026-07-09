@@ -432,6 +432,7 @@ struct RideView: View {
                            distanceUnit: settings.distanceUnit)
             } else {
                 RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
+                          speedUnit: settings.speedUnit,
                           radarConnected: ble.status(for: .radar) == .connected,
                           batteryPercent: ble.radarBatteryPercent)
             }

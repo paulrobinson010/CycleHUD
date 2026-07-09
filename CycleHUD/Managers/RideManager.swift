@@ -79,6 +79,8 @@ final class RideManager: ObservableObject {
     private let history: RideHistory
     private let sos: SOSManager
     private let crash = CrashDetector()
+    /// Lock Screen / Dynamic Island Live Activity for the ride.
+    private let liveActivity = RideActivityController()
     /// When a big impact was detected; the SOS fires only if the rider stops
     /// (< 1 km/h) within `crashConfirmWindow` of it — a hard bump you ride
     /// through is not a crash.
@@ -243,7 +245,23 @@ final class RideManager: ObservableObject {
         applyScreenLock()
         try? FileManager.default.removeItem(at: routeURL)
         persistSnapshot()
+        liveActivity.start(speedUnit: settings.speedUnit,
+                           distanceUnit: settings.distanceUnit,
+                           state: activityState)
         AppLog.shared.log("Ride START")
+    }
+
+    /// The ride as the Live Activity sees it right now.
+    private var activityState: RideActivityAttributes.ContentState {
+        RideActivityAttributes.ContentState(
+            speedMps: currentSpeedMps,
+            distanceMeters: distanceMeters,
+            movingTimeSeconds: movingTimeSeconds,
+            heartRate: currentHeartRate,
+            threatLevel: ble.threats.map(\.level).max().map { $0.rawValue + 1 } ?? 0,
+            threatCount: ble.threats.count,
+            paused: status == .paused || status == .autoPaused,
+            radarConnected: ble.status(for: .radar) == .connected)
     }
 
     /// Snapshot the body metrics used for HR-based calories (from Health, with
@@ -282,10 +300,12 @@ final class RideManager: ObservableObject {
         stationarySeconds = 0
         movingSeconds = 0
         persistSnapshot()
+        liveActivity.update(activityState)
     }
 
     func stop() {
         AppLog.shared.log("Ride STOP (user) dist=\(Int(distanceMeters))m time=\(Int(movingTimeSeconds))s")
+        liveActivity.end(activityState)          // take the ride off the Lock Screen
         routes?.endGhostRun()                    // a complete run may become the ghost
         finalizeOpenPass()                       // capture a pass in progress at stop
         // If the rider marked any laps, close the final partial lap too so the
@@ -470,33 +490,34 @@ final class RideManager: ObservableObject {
         sendMirror()                  // push the RADAR OFF banner immediately
     }
 
-    /// A ~2 km organic loop around the rider (or a fixed spot with no fix),
-    /// with waypoint markers dotted around it — the demo's route preview.
+    /// The demo's route preview rides a real route in a real place: the
+    /// Central Park loop drive (shared with the sample ride), so the street
+    /// map, junctions and climb strip all sit on actual roads. Elevations
+    /// follow the park's real shape — rolling low ground with the one proper
+    /// climb up the Great Hill at the north end.
     private func makeDemoRoute() -> PlannedRoute {
-        let center = location.currentLocation?.coordinate
-            ?? CLLocationCoordinate2D(latitude: 52.4414, longitude: -0.8329)
-        var path: [PlannedRoute.Point] = []
-        let n = 160
-        for i in 0...n {
-            let t = Double(i) / Double(n) * 2 * .pi
-            // Wobbled radius so the loop bends like real lanes, not a circle.
-            let r = 260 + 90 * sin(2 * t) + 50 * sin(3 * t + 1)
-            let dLat = r * cos(t) / 111_320
-            let dLon = r * sin(t) / (111_320 * cos(center.latitude * .pi / 180))
-            path.append(PlannedRoute.Point(lat: center.latitude + dLat,
-                                           lon: center.longitude + dLon))
-        }
+        let coords = SampleRide.centralParkLoop()
+        let path = coords.map { PlannedRoute.Point(lat: $0.lat, lon: $0.lon) }
         var dist = 0.0
         for i in 0..<(path.count - 1) {
             dist += PlannedRoute.meters(path[i].coordinate, path[i + 1].coordinate)
         }
         let waypoints = stride(from: 0, to: path.count, by: max(1, path.count / 6)).map { path[$0] }
-        // Rolling synthetic elevations (climb strip) and a ghost that rides a
-        // touch slower than the demo speed, so the rider visibly pulls ahead.
-        let elevations = (0...n).map { i -> Double in
-            let t = Double(i) / Double(n) * 2 * .pi
-            return 100 + 26 * sin(2 * t + 0.6) + 9 * sin(5 * t)
+        // Central Park's profile, counterclockwise from Columbus Circle:
+        // gentle rolling around ~25 m with a dip at Harlem Meer and the Great
+        // Hill climb right after it — a real climb for the climb-strip demo.
+        func bump(_ t: Double, at c: Double, width w: Double) -> Double {
+            exp(-pow((t - c) / w, 2))
         }
+        let n = path.count - 1
+        let elevations = (0...n).map { i -> Double in
+            let t = Double(i) / Double(n)
+            return 26 + 7 * sin(4 * .pi * t + 3.8)
+                - 8 * bump(t, at: 0.47, width: 0.03)     // Harlem Meer
+                + 20 * bump(t, at: 0.56, width: 0.035)   // the Great Hill
+        }
+        // A ghost that rides a touch slower than the demo speed, so the rider
+        // visibly pulls ahead.
         var bestTimes: [Double] = [0]
         for i in 0..<(path.count - 1) {
             bestTimes.append(bestTimes[i]
@@ -513,7 +534,7 @@ final class RideManager: ObservableObject {
     /// countdown live; every third one is a roundabout for variety.
     private func updateDemoJunction() {
         guard let route = demoRoute else { return }
-        let spacing = 40                                       // path points apart
+        let spacing = 12                                       // path points apart (~290 m)
         if demoJunctionTarget <= demoRouteIndex + 2 {
             demoJunctionTarget = ((demoRouteIndex / spacing) + 1) * spacing
         }
@@ -690,6 +711,9 @@ final class RideManager: ObservableObject {
         checkRadarPresence()
         if status == .running || status == .autoPaused { updatePassLog(now: now) }
         sendMirror()
+        // Lock Screen / Dynamic Island (throttled inside; threat changes are
+        // pushed straight through).
+        liveActivity.update(activityState)
 
         // Persist so the ride survives the app being killed mid-ride. Tick is now
         // 2 Hz, so these counts target ~2 s and ~15 s.
@@ -1071,6 +1095,10 @@ final class RideManager: ObservableObject {
         startAltimeter()
         if settings.crashDetectionEnabled { crash.start() }
         applyScreenLock()
+        // Re-attach the Live Activity (it survives the app being killed).
+        liveActivity.start(speedUnit: settings.speedUnit,
+                           distanceUnit: settings.distanceUnit,
+                           state: activityState)
         AppLog.shared.log("Restored in-progress ride (status=\(snap.statusRaw), dist=\(Int(distanceMeters))m) — prior session likely crashed/terminated")
     }
 

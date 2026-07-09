@@ -6,7 +6,7 @@ import Foundation
 enum SampleRide {
 
     static func centralPark(now: Date) -> RideSummary {
-        let route = loopRoute()
+        let route = centralParkLoop()
         let radar = radarDetections(along: route)
         let passes = vehiclePasses(now: now, route: route)
 
@@ -76,8 +76,9 @@ enum SampleRide {
     /// grid (Manhattan runs ~29° off true north) so the track stays on the
     /// drives: Center Drive weaving past the Pond, East Drive up beside the
     /// reservoir, the northern curves at Harlem Meer, West Drive down past
-    /// the Lake. Interpolated into a smooth GPS-like track.
-    private static func loopRoute() -> [Coord] {
+    /// the Lake. Interpolated into a smooth GPS-like track. Also the demo
+    /// mode's route, so the demo rides real roads in a real place.
+    static func centralParkLoop() -> [Coord] {
         let waypoints: [(Double, Double)] = [
             (40.76860, -73.97936), (40.76783, -73.97830), (40.76725, -73.97697),
             (40.76699, -73.97554), (40.76716, -73.97421), (40.76765, -73.97292),

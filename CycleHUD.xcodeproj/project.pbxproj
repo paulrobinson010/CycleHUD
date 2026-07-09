@@ -10,6 +10,9 @@
 		2652AE3A2FEBF25A00EEC2C4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2652AE392FEBF25A00EEC2C4 /* WidgetKit.framework */; };
 		2652AE3C2FEBF25A00EEC2C4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2652AE3B2FEBF25A00EEC2C4 /* SwiftUI.framework */; };
 		2652AE4B2FEBF25B00EEC2C4 /* CycleHUDComplicationExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2652AE372FEBF25A00EEC2C4 /* CycleHUDComplicationExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		26A7C0012FEC010000EEC2C4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2652AE392FEBF25A00EEC2C4 /* WidgetKit.framework */; };
+		26A7C0022FEC010000EEC2C4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2652AE3B2FEBF25A00EEC2C4 /* SwiftUI.framework */; };
+		26A7C0032FEC010000EEC2C4 /* CycleHUDWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 26A7C0062FEC010000EEC2C4 /* CycleHUDWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		26F2F0D02FE9DFB900B4258D /* CyleHUDWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 26F2F0C62FE9DFB800B4258D /* CyleHUDWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -21,6 +24,13 @@
 			remoteGlobalIDString = 2652AE362FEBF25A00EEC2C4;
 			remoteInfo = CycleHUDComplicationExtension;
 		};
+		26A7C0042FEC010000EEC2C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A0000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 26A7C00D2FEC010000EEC2C4;
+			remoteInfo = CycleHUDWidgetsExtension;
+		};
 		26F2F0CE2FE9DFB900B4258D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A0000000000000000000001 /* Project object */;
@@ -31,6 +41,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		26A7C0052FEC010000EEC2C4 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				26A7C0032FEC010000EEC2C4 /* CycleHUDWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2652AE4C2FEBF25B00EEC2C4 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -60,6 +81,7 @@
 		2652AE372FEBF25A00EEC2C4 /* CycleHUDComplicationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CycleHUDComplicationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2652AE392FEBF25A00EEC2C4 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		2652AE3B2FEBF25A00EEC2C4 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		26A7C0062FEC010000EEC2C4 /* CycleHUDWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CycleHUDWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		26F2F0C62FE9DFB800B4258D /* CyleHUDWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CyleHUDWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -71,6 +93,20 @@
 			);
 			target = 1A0000000000000000000005 /* CycleHUD */;
 		};
+		26A7C0082FEC010000EEC2C4 /* Exceptions for "CycleHUDWidgets" folder in "CycleHUDWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 26A7C00D2FEC010000EEC2C4 /* CycleHUDWidgetsExtension */;
+		};
+		26A7C0092FEC010000EEC2C4 /* Exceptions for "CycleHUD" folder in "CycleHUDWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/RideActivityAttributes.swift,
+			);
+			target = 26A7C00D2FEC010000EEC2C4 /* CycleHUDWidgetsExtension */;
+		};
 		2652AE502FEBF25B00EEC2C4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -81,7 +117,8 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		1A0000000000000000000004 /* CycleHUD */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (1A0000000000000000000010 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CycleHUD; sourceTree = "<group>"; };
+		1A0000000000000000000004 /* CycleHUD */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (1A0000000000000000000010 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 26A7C0092FEC010000EEC2C4 /* Exceptions for "CycleHUD" folder in "CycleHUDWidgetsExtension" target */, ); explicitFileTypes = {}; explicitFolders = (); path = CycleHUD; sourceTree = "<group>"; };
+		26A7C0072FEC010000EEC2C4 /* CycleHUDWidgets */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (26A7C0082FEC010000EEC2C4 /* Exceptions for "CycleHUDWidgets" folder in "CycleHUDWidgetsExtension" target */, ); explicitFileTypes = {}; explicitFolders = (); path = CycleHUDWidgets; sourceTree = "<group>"; };
 		2652AE3D2FEBF25A00EEC2C4 /* CycleHUDComplication */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (2652AE502FEBF25B00EEC2C4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CycleHUDComplication; sourceTree = "<group>"; };
 		26F2F0C72FE9DFB800B4258D /* CyleHUDWatch Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "CyleHUDWatch Watch App"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -103,6 +140,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		26A7C00A2FEC010000EEC2C4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26A7C0022FEC010000EEC2C4 /* SwiftUI.framework in Frameworks */,
+				26A7C0012FEC010000EEC2C4 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		26F2F0C32FE9DFB800B4258D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -119,6 +165,7 @@
 				1A0000000000000000000004 /* CycleHUD */,
 				26F2F0C72FE9DFB800B4258D /* CyleHUDWatch Watch App */,
 				2652AE3D2FEBF25A00EEC2C4 /* CycleHUDComplication */,
+				26A7C0072FEC010000EEC2C4 /* CycleHUDWidgets */,
 				2652AE382FEBF25A00EEC2C4 /* Frameworks */,
 				1A0000000000000000000003 /* Products */,
 			);
@@ -130,6 +177,7 @@
 				1A0000000000000000000006 /* CycleHUD.app */,
 				26F2F0C62FE9DFB800B4258D /* CyleHUDWatch Watch App.app */,
 				2652AE372FEBF25A00EEC2C4 /* CycleHUDComplicationExtension.appex */,
+				26A7C0062FEC010000EEC2C4 /* CycleHUDWidgetsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -154,11 +202,13 @@
 				1A0000000000000000000008 /* Frameworks */,
 				1A0000000000000000000009 /* Resources */,
 				26F2F0D42FE9DFB900B4258D /* Embed Watch Content */,
+				26A7C0052FEC010000EEC2C4 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				26F2F0CF2FE9DFB900B4258D /* PBXTargetDependency */,
+				26A7C00F2FEC010000EEC2C4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				1A0000000000000000000004 /* CycleHUD */,
@@ -188,6 +238,28 @@
 			);
 			productName = CycleHUDComplicationExtension;
 			productReference = 2652AE372FEBF25A00EEC2C4 /* CycleHUDComplicationExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		26A7C00D2FEC010000EEC2C4 /* CycleHUDWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26A7C00E2FEC010000EEC2C4 /* Build configuration list for PBXNativeTarget "CycleHUDWidgetsExtension" */;
+			buildPhases = (
+				26A7C00B2FEC010000EEC2C4 /* Sources */,
+				26A7C00A2FEC010000EEC2C4 /* Frameworks */,
+				26A7C00C2FEC010000EEC2C4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				26A7C0072FEC010000EEC2C4 /* CycleHUDWidgets */,
+			);
+			name = CycleHUDWidgetsExtension;
+			packageProductDependencies = (
+			);
+			productName = CycleHUDWidgetsExtension;
+			productReference = 26A7C0062FEC010000EEC2C4 /* CycleHUDWidgetsExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		26F2F0C52FE9DFB800B4258D /* CyleHUDWatch Watch App */ = {
@@ -230,6 +302,9 @@
 					2652AE362FEBF25A00EEC2C4 = {
 						CreatedOnToolsVersion = 26.5;
 					};
+					26A7C00D2FEC010000EEC2C4 = {
+						CreatedOnToolsVersion = 26.5;
+					};
 					26F2F0C52FE9DFB800B4258D = {
 						CreatedOnToolsVersion = 26.5;
 					};
@@ -257,6 +332,7 @@
 				1A0000000000000000000005 /* CycleHUD */,
 				26F2F0C52FE9DFB800B4258D /* CyleHUDWatch Watch App */,
 				2652AE362FEBF25A00EEC2C4 /* CycleHUDComplicationExtension */,
+				26A7C00D2FEC010000EEC2C4 /* CycleHUDWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -270,6 +346,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2652AE352FEBF25A00EEC2C4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26A7C00C2FEC010000EEC2C4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -300,6 +383,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		26A7C00B2FEC010000EEC2C4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		26F2F0C22FE9DFB800B4258D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -310,6 +400,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		26A7C00F2FEC010000EEC2C4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 26A7C00D2FEC010000EEC2C4 /* CycleHUDWidgetsExtension */;
+			targetProxy = 26A7C0042FEC010000EEC2C4 /* PBXContainerItemProxy */;
+		};
 		2652AE4A2FEBF25B00EEC2C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2652AE362FEBF25A00EEC2C4 /* CycleHUDComplicationExtension */;
@@ -562,6 +657,58 @@
 			};
 			name = Release;
 		};
+		26A7C0102FEC010000EEC2C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UPF9A27355;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CycleHUDWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = CycleHUD;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.paulrobinson.CycleHUD.CycleHUDWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		26A7C0112FEC010000EEC2C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UPF9A27355;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CycleHUDWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = CycleHUD;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.paulrobinson.CycleHUD.CycleHUDWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		26F2F0D22FE9DFB900B4258D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -662,6 +809,15 @@
 			buildConfigurations = (
 				2652AE4D2FEBF25B00EEC2C4 /* Debug */,
 				2652AE4E2FEBF25B00EEC2C4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		26A7C00E2FEC010000EEC2C4 /* Build configuration list for PBXNativeTarget "CycleHUDWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26A7C0102FEC010000EEC2C4 /* Debug */,
+				26A7C0112FEC010000EEC2C4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

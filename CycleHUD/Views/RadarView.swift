@@ -7,6 +7,7 @@ import SwiftUI
 struct RadarView: View {
     let threats: [Threat]
     let distanceUnit: DistanceUnit
+    var speedUnit: SpeedUnit = .kmh
     let radarConnected: Bool
     var batteryPercent: Int? = nil
 
@@ -170,12 +171,21 @@ struct RadarView: View {
             VStack(spacing: 4) {
                 CarGlyph(color: alertActive ? .black : threat.level.color)
                     .frame(width: 33 * scale, height: 52 * scale)
-                Text(distanceLabel(threat.distanceMeters))
-                    .font(.system(size: 16, weight: .heavy, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 9)
-                    .padding(.vertical, 3)
-                    .background(Capsule().fill(Color.black))
+                // Distance, plus how fast the vehicle is closing in the
+                // rider's speed unit — the "how urgent" number at a glance.
+                HStack(spacing: 5) {
+                    Text(distanceLabel(threat.distanceMeters))
+                        .font(.system(size: 16, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white)
+                    if threat.approachSpeedKmh >= 1 {
+                        Text(verbatim: speedLabel(threat.approachSpeedKmh))
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.82))
+                    }
+                }
+                .padding(.horizontal, 9)
+                .padding(.vertical, 3)
+                .background(Capsule().fill(Color.black))
             }
             .position(x: w / 2, y: yy)
         }
@@ -224,6 +234,12 @@ struct RadarView: View {
     private func distanceLabel(_ meters: Double) -> String {
         let v = distanceUnit.shortValue(fromMeters: meters)
         return "\(Fmt.int(v)) \(distanceUnit.shortLabel)"
+    }
+
+    /// Closing speed ("+18 km/h"): how much faster than the rider the vehicle
+    /// is approaching — straight off the radar, no GPS involved.
+    private func speedLabel(_ closingKmh: Double) -> String {
+        "+\(Fmt.int(speedUnit.value(fromMps: closingKmh / 3.6))) \(speedUnit.label)"
     }
 }
 

@@ -105,6 +105,8 @@
 	<string>CycleHUD uses GPS to record your speed and distance during a ride, including while the screen is off.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>CycleHUD uses the barometer to measure your elevation gain accurately, and the accelerometer to detect a crash during a ride.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>CycleHUD7Seg.ttf</string>
