@@ -137,6 +137,11 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     @Published private(set) var threats: [Threat] = []
     @Published private(set) var radarBatteryPercent: Int?   // radar's battery (0–100)
     @Published private(set) var demoActive = false
+    /// The demo's sensor side (cadence/power values, live status pills) keeps
+    /// running through the radar-off preview and the route finale, long after
+    /// the scripted radar frames have finished; RideManager stops it with the
+    /// rest of the demo.
+    @Published private(set) var demoMetricsActive = false
 
     /// Human-readable BLE diagnostics (services/characteristics found, radar
     /// packets) shown in the Diagnostics screen to debug sensors in the field.
@@ -244,6 +249,9 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     func status(for role: DeviceRole) -> RoleStatus {
         if demoActive { return .connected }   // demo: show everything live
+        // After the scripted radar frames, the radar deliberately reads as off
+        // (the drop-out preview) but the other sensors stay live to the end.
+        if demoMetricsActive && role != .radar { return .connected }
         let matching = savedDevices.filter { $0.roles.contains(role) }
         guard !matching.isEmpty else { return .notConfigured }
         if !poweredOn { return .failed }
@@ -879,6 +887,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     func startDemo() {
         stopScan()
         demoActive = true
+        demoMetricsActive = true
         demoPaused = false
         demoStep = 0
         threats = []
@@ -891,36 +900,46 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     func stopDemo() {
         demoActive = false
+        demoMetricsActive = false
         demoPaused = false
         demoTimer?.invalidate()
         demoTimer = nil
         threats = []
-        cadenceRpm = nil          // clear so the tile resets immediately
+        cadenceRpm = nil          // clear so the tiles reset immediately
         cadenceUpdatedAt = nil
+        sensorPowerWatts = nil
+        sensorPowerUpdatedAt = nil
     }
 
     func setDemoPaused(_ paused: Bool) { demoPaused = paused }
 
     private func tickDemo() {
-        // While paused, freeze the radar/cadence but keep the value fresh.
-        guard !demoPaused else { cadenceUpdatedAt = Date(); return }
+        // While paused, freeze the radar/cadence/power but keep them fresh.
+        guard !demoPaused else {
+            cadenceUpdatedAt = Date()
+            sensorPowerUpdatedAt = Date()
+            return
+        }
 
-        // Keep a realistic cadence flowing for the duration of the demo.
-        cadenceRpm = Int.random(in: 78...96)
+        // Keep realistic cadence and power flowing for the whole demo — the
+        // radar frames, the drop-out preview AND the route finale — so no
+        // sensor tile ever reads "—" mid-demo. Both drift within a believable
+        // band rather than jumping about.
+        cadenceRpm = min(96, max(78, (cadenceRpm ?? 87) + Int.random(in: -2...2)))
         cadenceUpdatedAt = Date()
+        sensorPowerWatts = min(295, max(165, (sensorPowerWatts ?? 215) + Int.random(in: -14...14)))
+        sensorPowerUpdatedAt = Date()
 
-        // Run once through the sequence, then stop on the final (clear) frame.
+        // Run once through the radar sequence; after the final (clear) frame
+        // the radar side goes quiet (the drop-out preview) while this timer
+        // keeps the other sensors alive until RideManager ends the demo.
         guard demoStep < demoFrames.count else {
-            // Stop the radar side (so the phone shows the radar-off preview) but
-            // leave the cadence value fresh — it was just set above, so its 4 s
-            // freshness window covers the ride's ~3.5 s radar-off tail and the
-            // Cadence tile keeps showing instead of flashing "—" at the end.
-            demoActive = false
-            demoPaused = false
-            demoTimer?.invalidate()
-            demoTimer = nil
-            threats = []
-            onDemoFinished?()
+            if demoActive {
+                demoActive = false
+                demoPaused = false
+                threats = []
+                onDemoFinished?()
+            }
             return
         }
         let frame = demoFrames[demoStep]

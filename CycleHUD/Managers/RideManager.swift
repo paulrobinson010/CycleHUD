@@ -437,6 +437,9 @@ final class RideManager: ObservableObject {
         demoRouteCarry = 0
         demoTimer?.invalidate()
         demoTimer = nil
+        // The BLE side keeps cadence/power flowing to the end of the demo;
+        // stop it with the rest (safe to call twice when the UI already has).
+        ble.stopDemo()
         distanceMeters = 0
         movingTimeSeconds = 0
         elevationGainMeters = 0
