@@ -630,6 +630,9 @@ struct RideSummaryView: View {
             s.append((String(localized: "Avg HR"), Fmt.int(avg), "bpm"))
             s.append((String(localized: "Max HR"), summary.maxHeartRate.map { Fmt.int($0) } ?? "—", "bpm"))
         }
+        if let watts = summary.averagePower {
+            s.append((String(localized: "Avg Power"), Fmt.int(watts), "W"))
+        }
         s.append((String(localized: "Ascent"), ascentValue, settings.distanceUnit.shortLabel))
         s.append((String(localized: "Calories"), caloriesValue, "kcal"))
         if let radar = summary.radarPoints, !radar.isEmpty {

@@ -452,14 +452,25 @@ struct RideView: View {
 
     // MARK: - Status bar
 
+    /// Sensor pills show only for roles the rider has actually paired — an
+    /// app that's never seen a speed sensor shouldn't nag that one's missing.
+    /// (The radar pill always shows: it's the app's reason to exist.)
     private var statusBar: some View {
         HStack(spacing: 6) {
             RolePill(label: String(localized: "RAD", comment: "3-letter pill for the Radar sensor"),
                      fullName: String(localized: "Radar"), status: ble.status(for: .radar))
-            RolePill(label: String(localized: "SPD", comment: "3-letter pill for the Speed sensor"),
-                     fullName: String(localized: "Speed"), status: ble.status(for: .speed))
-            RolePill(label: String(localized: "CAD", comment: "3-letter pill for the Cadence sensor"),
-                     fullName: String(localized: "Cadence"), status: ble.status(for: .cadence))
+            if ble.status(for: .speed) != .notConfigured {
+                RolePill(label: String(localized: "SPD", comment: "3-letter pill for the Speed sensor"),
+                         fullName: String(localized: "Speed"), status: ble.status(for: .speed))
+            }
+            if ble.status(for: .cadence) != .notConfigured {
+                RolePill(label: String(localized: "CAD", comment: "3-letter pill for the Cadence sensor"),
+                         fullName: String(localized: "Cadence"), status: ble.status(for: .cadence))
+            }
+            if ble.status(for: .power) != .notConfigured {
+                RolePill(label: String(localized: "POW", comment: "3-letter pill for the Power sensor"),
+                         fullName: String(localized: "Power"), status: ble.status(for: .power))
+            }
             gpsPill
 
             Spacer(minLength: 4)
@@ -892,6 +903,10 @@ struct RideView: View {
             junctionTile(height: height, valueSize: vs)
         case .climb:
             climbRowTile(height: height, valueSize: vs)
+        case .power:
+            MetricTile(title: kind.title,
+                       value: ble.freshSensorPower().map { Fmt.int($0) } ?? "—",
+                       unit: tileUnit("W"), valueSize: vs, height: height)
         case .rain:
             WeatherTile(nowcast: weather.nowcast, status: weather.status, height: height,
                         showUnit: settings.showTileUnits)

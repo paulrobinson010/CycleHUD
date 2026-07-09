@@ -49,6 +49,8 @@ struct RideSummary: Identifiable, Codable, Equatable {
     let passes: [VehiclePass]?      // per-vehicle approach traces for review
     let track: [TrackSample]?       // downsampled speed/HR/elevation series for graphs
     let laps: [Lap]?                // manually-marked lap splits, if any
+    // Optional so summaries saved before power support existed still decode.
+    var averagePower: Int? = nil    // watts, when a power meter was connected
 
     var averageSpeedMps: Double {
         movingTimeSeconds > 0 ? distanceMeters / movingTimeSeconds : 0

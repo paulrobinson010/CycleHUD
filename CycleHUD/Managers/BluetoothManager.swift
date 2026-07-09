@@ -9,6 +9,7 @@ enum DeviceRole: String, Codable, CaseIterable {
     case speed = "Speed"
     case cadence = "Cadence"
     case heartRate = "Heart Rate"
+    case power = "Power"
 
     var systemImage: String {
         switch self {
@@ -16,6 +17,7 @@ enum DeviceRole: String, Codable, CaseIterable {
         case .speed: return "speedometer"
         case .cadence: return "bicycle"
         case .heartRate: return "heart.fill"
+        case .power: return "bolt.fill"
         }
     }
 }
@@ -116,6 +118,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     // armbands, etc.) — lets a HR sensor feed the ride without an Apple Watch.
     static let heartRateService = CBUUID(string: "180D")
     static let heartRateMeasurement = CBUUID(string: "2A37")
+
+    // Cycling Power (standard BLE): flags UInt16 then instantaneous watts SInt16.
+    static let powerService = CBUUID(string: "1818")
+    static let powerMeasurement = CBUUID(string: "2A63")
     static let batteryLevel = CBUUID(string: "2A19")   // standard 0–100% battery
     private let savedDevicesKey = "savedDevicesV3"
 
@@ -143,6 +149,8 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
 
     @Published private(set) var sensorSpeedMps: Double?
     @Published private(set) var cadenceRpm: Int?
+    @Published private(set) var sensorPowerWatts: Int?
+    private var sensorPowerUpdatedAt: Date?
     @Published private(set) var sensorHeartRate: Int?   // from a BLE HR strap, if paired
     private var sensorSpeedUpdatedAt: Date?
     private var cadenceUpdatedAt: Date?
@@ -442,6 +450,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         if let services = advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] {
             if services.contains(BluetoothManager.radarService) { roles.insert(.radar) }
             if services.contains(BluetoothManager.heartRateService) { roles.insert(.heartRate) }
+            if services.contains(BluetoothManager.powerService) { roles.insert(.power) }
         }
 
         let device = DiscoveredDevice(id: peripheral.identifier, name: name,
@@ -530,6 +539,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
                 peripheral.setNotifyValue(true, for: ch)
                 upsertSavedDevice(id: peripheral.identifier, name: peripheral.name ?? "", addRole: .heartRate)
                 diag("  → subscribed Heart Rate")
+            } else if ch.uuid == BluetoothManager.powerMeasurement {
+                peripheral.setNotifyValue(true, for: ch)
+                upsertSavedDevice(id: peripheral.identifier, name: peripheral.name ?? "", addRole: .power)
+                diag("  → subscribed Power")
             } else if ch.uuid == BluetoothManager.coospoRadarControl {
                 // The TR70 stays silent until poked here, and won't detect cars
                 // until it's put into active mode (the activate command).
@@ -634,6 +647,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         }
         if characteristic.uuid == BluetoothManager.heartRateMeasurement {
             parseHeartRate(data)
+            return
+        }
+        if characteristic.uuid == BluetoothManager.powerMeasurement {
+            parsePower(data, from: peripheral.identifier)
             return
         }
         // The TR70 streams radar frames on FDB1 (its FDB0-service data char).
@@ -978,6 +995,27 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             lastCrankRevs = revs
             lastCrankEventTime = eventTime
         }
+    }
+
+    /// Decode a standard Cycling Power Measurement (0x2A63): a UInt16 flags
+    /// field, then instantaneous power as a signed 16-bit watt value. The many
+    /// optional fields that can follow (pedal balance, torque, crank data…)
+    /// are irrelevant here — instantaneous power is always at offset 2.
+    private func parsePower(_ data: Data, from id: UUID) {
+        let bytes = [UInt8](data)
+        guard bytes.count >= 4 else { return }
+        let raw = Int16(bitPattern: UInt16(bytes[2]) | (UInt16(bytes[3]) << 8))
+        // Negative watts exist in the spec (e.g. trainers braking) but are
+        // meaningless on a ride display; clamp for sanity.
+        sensorPowerWatts = max(0, Int(raw))
+        sensorPowerUpdatedAt = Date()
+        markCapability(.power, for: id)
+    }
+
+    /// Fresh power reading, or nil once the meter has gone quiet.
+    func freshSensorPower(staleAfter seconds: TimeInterval = 5) -> Int? {
+        guard let w = sensorPowerWatts, let at = sensorPowerUpdatedAt else { return nil }
+        return Date().timeIntervalSince(at) <= seconds ? w : nil
     }
 
     /// Decode a standard Heart Rate Measurement (0x2A37): flags byte, then the

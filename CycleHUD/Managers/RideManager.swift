@@ -109,6 +109,8 @@ final class RideManager: ObservableObject {
 
     // Heart-rate accumulation for the ride summary.
     private var hrSum = 0.0
+    private var powerSum = 0.0          // watt-seconds while running
+    private var powerTime = 0.0
     private var hrCount = 0
     private var hrMax = 0
 
@@ -203,6 +205,7 @@ final class RideManager: ObservableObject {
         caloriesKcal = 0
         currentHeartRate = nil
         hrSum = 0; hrCount = 0; hrMax = 0
+        powerSum = 0; powerTime = 0
         lastCalorieAscent = 0
         route = []
         radarPoints = []
@@ -341,7 +344,9 @@ final class RideManager: ObservableObject {
                                       radarPoints: savedRadarPoints.isEmpty ? nil : savedRadarPoints,
                                       passes: savedPasses.isEmpty ? nil : savedPasses,
                                       track: savedTrack.isEmpty ? nil : savedTrack,
-                                      laps: savedLaps.isEmpty ? nil : savedLaps)
+                                      laps: savedLaps.isEmpty ? nil : savedLaps,
+                                      averagePower: powerTime > 60
+                                          ? Int((powerSum / powerTime).rounded()) : nil)
             history.add(summary)
             finishedSummary = summary
             if settings.saveWorkouts {
@@ -654,6 +659,11 @@ final class RideManager: ObservableObject {
         }
         if let hr = currentHeartRate, hr > 0 {
             hrSum += Double(hr); hrCount += 1; hrMax = max(hrMax, hr)
+        }
+        // Time-weighted power average (coasting at 0 W counts — that's honest).
+        if status == .running, let watts = ble.freshSensorPower() {
+            powerSum += Double(watts) * dt
+            powerTime += dt
         }
 
         switch status {
