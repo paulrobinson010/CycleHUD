@@ -18,6 +18,8 @@ struct RideView: View {
     @EnvironmentObject var junctions: JunctionManager
     @EnvironmentObject var routes: RouteStore
     @EnvironmentObject var cloud: CloudSync
+    @EnvironmentObject var strava: StravaManager
+    @EnvironmentObject var liveTrack: LiveTrackManager
 
     private enum ActiveSheet: Int, Identifiable {
         case pairing, settings, routes
@@ -63,6 +65,7 @@ struct RideView: View {
                 case .settings: SettingsView().environmentObject(settings).environmentObject(ble)
                         .environmentObject(ride).environmentObject(history).environmentObject(weather)
                         .environmentObject(sos).environmentObject(cloud)
+                        .environmentObject(strava).environmentObject(liveTrack)
                 case .routes: RoutesView().environmentObject(routes).environmentObject(settings)
                         .environmentObject(weather).environmentObject(history)
                 }
@@ -74,6 +77,7 @@ struct RideView: View {
                             effort: ride.canPromptEffort ? { ride.recordEffort($0) } : nil)
                 .environmentObject(settings)
                 .environmentObject(history)
+                .environmentObject(strava)
                 .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
         }
         .fullScreenCover(isPresented: Binding(
@@ -1065,6 +1069,9 @@ struct RideView: View {
                 }
             } else {
                 if controlStatus == .running && !ride.demoActive { lapButton }
+                if !ride.demoActive, liveTrack.state != .off, let url = liveTrack.shareURL {
+                    liveShareButton(url: url)
+                }
                 primaryButton(title: controlStatus == .running ? "Pause" : "Resume",
                               system: controlStatus == .running ? "pause.fill" : "play.fill",
                               color: Theme.accent) {
@@ -1080,6 +1087,19 @@ struct RideView: View {
                 }
             }
         }
+    }
+
+    /// Compact icon-only share button for the live-tracking link, shown while
+    /// a session is publishing (amber when saves are failing).
+    private func liveShareButton(url: URL) -> some View {
+        ShareLink(item: url) {
+            Image(systemName: "location.fill.viewfinder")
+                .font(.system(size: 22, weight: .bold))
+                .foregroundStyle(liveTrack.state == .failed ? Theme.threatMedium : Theme.good)
+                .frame(width: 58, height: 58)
+                .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panelRaised))
+        }
+        .accessibilityLabel("Share live tracking link")
     }
 
     /// Compact icon-only lap button: closes the current lap and starts a new one.

@@ -43,6 +43,8 @@ struct CycleHUDApp: App {
     @StateObject private var junctions: JunctionManager
     @StateObject private var routes: RouteStore
     @StateObject private var cloud: CloudSync
+    @StateObject private var strava: StravaManager
+    @StateObject private var liveTrack: LiveTrackManager
     /// Branded splash (website hero) shown over the HUD at launch, then faded.
     @State private var showSplash = true
 
@@ -63,6 +65,8 @@ struct CycleHUDApp: App {
         let junctions = JunctionManager()
         let routes = RouteStore()
         let cloud = CloudSync()
+        let strava = StravaManager()
+        let liveTrack = LiveTrackManager()
         _settings = StateObject(wrappedValue: settings)
         _ble = StateObject(wrappedValue: ble)
         _location = StateObject(wrappedValue: location)
@@ -75,6 +79,8 @@ struct CycleHUDApp: App {
         _junctions = StateObject(wrappedValue: junctions)
         _routes = StateObject(wrappedValue: routes)
         _cloud = StateObject(wrappedValue: cloud)
+        _strava = StateObject(wrappedValue: strava)
+        _liveTrack = StateObject(wrappedValue: liveTrack)
     }
 
     var body: some Scene {
@@ -108,6 +114,8 @@ struct CycleHUDApp: App {
             .environmentObject(junctions)
             .environmentObject(routes)
             .environmentObject(cloud)
+            .environmentObject(strava)
+            .environmentObject(liveTrack)
             .preferredColorScheme(settings.appearanceTheme.colorScheme)
             // Shared route files ("open in CycleHUD" from Files, AirDrop,
             // Messages…) land here and go straight into the list.
@@ -131,6 +139,9 @@ struct CycleHUDApp: App {
                 routes.locationProvider = { location.currentLocation }
                 routes.startLeadInUpdates()
                 ride.routes = routes           // turn cues + ghost rider
+                ride.liveTrack = liveTrack     // share-my-ride sessions
+                ride.strava = strava           // auto-upload finished rides
+                liveTrack.isEnabled = { settings.liveTrackingEnabled }
                 cloud.isEnabled = { settings.iCloudSyncEnabled }
                 routes.cloud = cloud
                 history.cloud = cloud

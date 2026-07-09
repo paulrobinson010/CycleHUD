@@ -11,6 +11,7 @@ struct RideSummaryView: View {
     var effort: ((Int) -> Void)? = nil
     @EnvironmentObject var settings: AppSettings
     @EnvironmentObject var history: RideHistory
+    @EnvironmentObject var strava: StravaManager
     @Environment(\.dismiss) private var dismiss
     @State private var effortScore: Int?
     /// Stretches of this ride ridden before, compared against the previous best.
@@ -37,6 +38,7 @@ struct RideSummaryView: View {
                     effortCard
                     statGrid
                     powerZonesCard
+                    stravaButton
                     routeMap
                     graphs
                     lapsSection
@@ -100,6 +102,42 @@ struct RideSummaryView: View {
             exportFile = ExportFile(url: url)
         } else {
             showExportError = true
+        }
+    }
+
+    /// One-tap Strava upload, when an account is connected and the ride has
+    /// enough GPS to send.
+    @ViewBuilder private var stravaButton: some View {
+        if strava.connected, RideExporter.canExport(summary) {
+            let state = strava.uploadState(summary.id)
+            Button {
+                guard state == .idle || state == .failed else { return }
+                Task { await strava.upload(summary) }
+            } label: {
+                HStack(spacing: 8) {
+                    switch state {
+                    case .uploading:
+                        ProgressView().controlSize(.small)
+                        Text("Uploading to Strava…")
+                    case .done:
+                        Image(systemName: "checkmark.circle.fill").foregroundStyle(Theme.good)
+                        Text("Uploaded to Strava")
+                    case .failed:
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(Theme.threatMedium)
+                        Text("Upload failed — tap to retry")
+                    case .idle:
+                        Image(systemName: "arrow.up.circle.fill")
+                        Text("Upload to Strava")
+                    }
+                }
+                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .background(RoundedRectangle(cornerRadius: 14).fill(Theme.panel))
+            }
+            .buttonStyle(.plain)
+            .disabled(state == .uploading || state == .done)
         }
     }
 

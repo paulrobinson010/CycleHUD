@@ -92,6 +92,44 @@ in place; enable the capability once:
 Without the capability (or with iCloud Drive off) the feature quietly does
 nothing — everything else works as before.
 
+## 3c. Live tracking (share-my-ride link — optional)
+
+Live tracking publishes the rider's position to the app's own **CloudKit
+public database** under a random token; the website (`docs/live.html`) reads
+it back, so followers just open a link — no app, no account. To enable:
+
+1. In Xcode, on the **CycleHUD target → Signing & Capabilities → iCloud**
+   capability, additionally tick **CloudKit** (the container stays
+   `iCloud.$(PRODUCT_BUNDLE_IDENTIFIER)`). The entitlement is already in the
+   repo; Xcode just needs to register the container.
+2. Run the app once and start a ride with **Settings → Live tracking** on —
+   the first save creates the `LiveRide` record type in the **Development**
+   environment.
+3. In the [CloudKit Dashboard](https://icloud.developer.apple.com/) select the
+   container, then:
+   - **Schema → Deploy Schema Changes…** to push `LiveRide` to **Production**.
+   - **API Access → New Token**: create an API token (read access to the
+     public database is all the page uses), and paste it into
+     `docs/live.html` as `API_TOKEN`.
+4. Push the site. Share links look like
+   `https://cyclehud.robbo-online.uk/live.html#<token>`; they update every
+   15 s and go dead the moment the ride stops (the record is deleted).
+
+## 3d. Strava upload (optional)
+
+Uploads go straight from the phone to Strava's API — no middleman server.
+You need your own (free) Strava API application:
+
+1. On [strava.com/settings/api](https://www.strava.com/settings/api) create an
+   API application. Set **Authorization Callback Domain** to `localhost`
+   (the app's OAuth redirect is `cyclehud://localhost`).
+2. Copy the **Client ID** and **Client Secret** into `CycleHUD/Info.plist`
+   under the `StravaClientID` / `StravaClientSecret` keys.
+3. Build/run, then **Settings → Strava → Connect Strava** — the Strava login
+   opens in a system sheet. Tokens are stored in the Keychain.
+4. Upload from the button on any ride summary, or flip on **Auto-upload
+   rides** to send every finished ride.
+
 ## 3b. Translations (optional)
 
 The app is localization-ready. To add languages:

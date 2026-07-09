@@ -107,6 +107,21 @@
 	<string>CycleHUD uses the barometer to measure your elevation gain accurately, and the accelerometer to detect a crash during a ride.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>StravaClientID</key>
+	<string></string>
+	<key>StravaClientSecret</key>
+	<string></string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.paulrobinson.CycleHUD.oauth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>cyclehud</string>
+			</array>
+		</dict>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>CycleHUD7Seg.ttf</string>

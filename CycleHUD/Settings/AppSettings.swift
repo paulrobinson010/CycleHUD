@@ -31,6 +31,8 @@ final class AppSettings: ObservableObject {
         static let routeElevationEnabled = "routeElevationEnabled"
         static let routeTrafficEnabled = "routeTrafficEnabled"
         static let iCloudSyncEnabled = "iCloudSyncEnabled"
+        static let liveTrackingEnabled = "liveTrackingEnabled"
+        static let stravaAutoUploadEnabled = "stravaAutoUploadEnabled"
         static let appLanguage = "appLanguage"
         static let metricTiles = "metricTilesV2"   // legacy single-page tiles, migrated
         static let topTileCountLegacy = "topTileCount"
@@ -118,6 +120,10 @@ final class AppSettings: ObservableObject {
     @Published var routeTrafficEnabled: Bool { didSet { defaults.set(routeTrafficEnabled, forKey: Keys.routeTrafficEnabled) } }
     /// Mirror rides/routes/ghosts into the rider's own iCloud (no accounts).
     @Published var iCloudSyncEnabled: Bool { didSet { defaults.set(iCloudSyncEnabled, forKey: Keys.iCloudSyncEnabled) } }
+    /// When on, every ride publishes a live-location share link (see LiveTrackManager).
+    @Published var liveTrackingEnabled: Bool { didSet { defaults.set(liveTrackingEnabled, forKey: Keys.liveTrackingEnabled) } }
+    /// When on (and Strava is connected), finished rides upload automatically.
+    @Published var stravaAutoUploadEnabled: Bool { didSet { defaults.set(stravaAutoUploadEnabled, forKey: Keys.stravaAutoUploadEnabled) } }
     /// In-app language override (BCP-47 code, or "" to follow the device).
     @Published var appLanguage: String {
         didSet { defaults.set(appLanguage, forKey: Keys.appLanguage); applyLanguage() }
@@ -222,6 +228,8 @@ final class AppSettings: ObservableObject {
             Keys.routeElevationEnabled: true,
             Keys.routeTrafficEnabled: true,
             Keys.iCloudSyncEnabled: true,
+            Keys.liveTrackingEnabled: false,
+            Keys.stravaAutoUploadEnabled: false,
             Keys.appLanguage: "",
             Keys.showTileUnits: true,
             Keys.currentRidePage: 0,
@@ -262,6 +270,8 @@ final class AppSettings: ObservableObject {
         routeElevationEnabled = defaults.bool(forKey: Keys.routeElevationEnabled)
         routeTrafficEnabled = defaults.bool(forKey: Keys.routeTrafficEnabled)
         iCloudSyncEnabled = defaults.bool(forKey: Keys.iCloudSyncEnabled)
+        liveTrackingEnabled = defaults.bool(forKey: Keys.liveTrackingEnabled)
+        stravaAutoUploadEnabled = defaults.bool(forKey: Keys.stravaAutoUploadEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
         // (appearance applied below once all stored properties are initialised)
         // Ride pages: decode, or migrate the old single-page tile settings.

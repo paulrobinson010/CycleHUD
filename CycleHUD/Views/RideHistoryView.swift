@@ -5,6 +5,7 @@ import SwiftUI
 struct RideHistoryView: View {
     @EnvironmentObject var history: RideHistory
     @EnvironmentObject var settings: AppSettings
+    @EnvironmentObject var strava: StravaManager
     @State private var selected: RideSummary?
 
     var body: some View {
@@ -26,6 +27,7 @@ struct RideHistoryView: View {
         .sheet(item: $selected) { ride in
             RideSummaryView(summary: ride).environmentObject(settings)
                 .environmentObject(history)
+                .environmentObject(strava)
         }
     }
 

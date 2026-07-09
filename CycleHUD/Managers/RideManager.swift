@@ -67,6 +67,10 @@ final class RideManager: ObservableObject {
     /// Wired in by the app: route following (turn cues + ghost rider) reads
     /// the rider's progress from here.
     var routes: RouteStore?
+    /// Wired in by the app: live-tracking sessions follow the ride.
+    var liveTrack: LiveTrackManager?
+    /// Wired in by the app: finished rides auto-upload when enabled.
+    var strava: StravaManager?
 
     /// Rider's perceived effort from the end-of-ride prompt → Apple Health.
     func recordEffort(_ score: Int) { health.recordEffort(score: score) }
@@ -248,6 +252,7 @@ final class RideManager: ObservableObject {
         liveActivity.start(speedUnit: settings.speedUnit,
                            distanceUnit: settings.distanceUnit,
                            state: activityState)
+        if settings.liveTrackingEnabled { liveTrack?.beginSession() }
         AppLog.shared.log("Ride START")
     }
 
@@ -306,6 +311,7 @@ final class RideManager: ObservableObject {
     func stop() {
         AppLog.shared.log("Ride STOP (user) dist=\(Int(distanceMeters))m time=\(Int(movingTimeSeconds))s")
         liveActivity.end(activityState)          // take the ride off the Lock Screen
+        liveTrack?.endSession()                  // kill the share link + its record
         routes?.endGhostRun()                    // a complete run may become the ghost
         finalizeOpenPass()                       // capture a pass in progress at stop
         // If the rider marked any laps, close the final partial lap too so the
@@ -371,6 +377,9 @@ final class RideManager: ObservableObject {
                                           ? PowerZones.normalizedPower(track) : nil)
             history.add(summary)
             finishedSummary = summary
+            if settings.stravaAutoUploadEnabled, strava?.connected == true {
+                Task { [strava] in await strava?.upload(summary) }
+            }
             if settings.saveWorkouts {
                 Task { [health] in
                     await health.saveRide(start: start, end: end,
@@ -716,6 +725,12 @@ final class RideManager: ObservableObject {
         // Lock Screen / Dynamic Island (throttled inside; threat changes are
         // pushed straight through).
         liveActivity.update(activityState)
+        // Live-tracking record (throttled inside to one save per 15 s).
+        liveTrack?.update(location: location.currentLocation,
+                          distanceMeters: distanceMeters,
+                          speedMps: currentSpeedMps,
+                          movingSeconds: movingTimeSeconds,
+                          paused: status != .running)
 
         // Persist so the ride survives the app being killed mid-ride. Tick is now
         // 2 Hz, so these counts target ~2 s and ~15 s.

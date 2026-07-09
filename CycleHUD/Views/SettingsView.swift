@@ -9,6 +9,8 @@ struct SettingsView: View {
     @EnvironmentObject var weather: WeatherManager
     @EnvironmentObject var cloud: CloudSync
     @EnvironmentObject var sos: SOSManager
+    @EnvironmentObject var strava: StravaManager
+    @EnvironmentObject var liveTrack: LiveTrackManager
     @Environment(\.dismiss) private var dismiss
 
     /// Set when the rider explicitly picks "Custom" in the wheel-size picker, so
@@ -254,6 +256,51 @@ struct SettingsView: View {
                     Text("Data")
                 } footer: {
                     Text("Backs up your rides, routes and ghosts to your own iCloud and keeps a new phone in step. Everything stays in your personal iCloud Drive — no accounts and no CycleHUD servers. When two devices hold the same route, the faster ghost wins.")
+                }
+
+                Section {
+                    if strava.connected {
+                        HStack {
+                            Text("Connected")
+                            Spacer()
+                            if let name = strava.athleteName {
+                                Text(verbatim: name).foregroundStyle(.secondary)
+                            }
+                        }
+                        Toggle("Auto-upload rides", isOn: $settings.stravaAutoUploadEnabled)
+                        Button(role: .destructive) {
+                            strava.disconnect()
+                        } label: {
+                            Text("Disconnect Strava")
+                        }
+                    } else if strava.configured {
+                        Button {
+                            strava.connect()
+                        } label: {
+                            Label("Connect Strava", systemImage: "link")
+                        }
+                    }
+                } header: {
+                    Text(verbatim: "Strava")
+                } footer: {
+                    if strava.configured {
+                        Text("Upload rides to Strava straight from the ride summary, or automatically when a ride ends. Your Strava login stays between you and Strava — CycleHUD keeps only its upload permission, in the Keychain.")
+                    } else {
+                        Text("Add your Strava API keys to enable uploads — see SETUP.md in the project for the two-minute walkthrough.")
+                    }
+                }
+
+                Section {
+                    Toggle("Live tracking", isOn: $settings.liveTrackingEnabled)
+                    if settings.liveTrackingEnabled, let url = liveTrack.shareURL {
+                        ShareLink(item: url) {
+                            Label("Share tracking link", systemImage: "location.fill.viewfinder")
+                        }
+                    }
+                } header: {
+                    Text("Live tracking")
+                } footer: {
+                    Text("When on, each ride publishes a private link showing your live position, speed and distance on a map — share it with whoever should know where you are. The link is an unguessable random address, updates every 15 seconds through your own iCloud, and goes dead the moment you stop the ride.")
                 }
 
                 Section {
