@@ -192,6 +192,66 @@ struct PlannedRoute: Codable, Identifiable, Equatable {
 }
 
 extension PlannedRoute {
+    /// A detected climb on the route (ClimbPro-style), in path indices and
+    /// metres-along-the-route.
+    struct Climb: Equatable {
+        let startIndex: Int
+        let endIndex: Int
+        let startMeters: Double
+        let endMeters: Double
+        let ascentMeters: Double
+        var lengthMeters: Double { endMeters - startMeters }
+        var averageGrade: Double { lengthMeters > 0 ? ascentMeters / lengthMeters * 100 : 0 }
+    }
+
+    /// Detect the route's climbs from its elevations: grade measured over a
+    /// ~100 m forward window; a climb opens at ≥3%, survives dips while the
+    /// grade pops back over 1% within 150 m, and closes at the last strong
+    /// point. Kept when it gains ≥15 m over ≥200 m — enough to matter on a
+    /// bike, ignoring roller noise.
+    func climbs() -> [Climb] {
+        guard let elevations, elevations.count == path.count, path.count > 2 else { return [] }
+        var dist = [0.0]
+        dist.reserveCapacity(path.count)
+        for i in 1..<path.count {
+            dist.append(dist[i - 1] + Self.meters(path[i - 1].coordinate, path[i].coordinate))
+        }
+        func grade(at i: Int) -> Double {
+            var j = i
+            while j < path.count - 1, dist[j] - dist[i] < 100 { j += 1 }
+            let run = dist[j] - dist[i]
+            guard run >= 40 else { return 0 }
+            return (elevations[j] - elevations[i]) / run * 100
+        }
+        var found: [Climb] = []
+        var i = 0
+        while i < path.count - 1 {
+            guard grade(at: i) >= 3 else { i += 1; continue }
+            // Ride the climb out: it stays alive while the grade returns to
+            // ≥1% within 150 m of the last strong point.
+            var lastStrong = i
+            var j = i
+            while j < path.count - 1 {
+                if grade(at: j) >= 1 { lastStrong = j }
+                if dist[j] - dist[lastStrong] > 150 { break }
+                j += 1
+            }
+            // The 100 m grade window looks ahead, so the top is about a
+            // window past the last strong point.
+            var end = lastStrong
+            while end < path.count - 1, dist[end] - dist[lastStrong] < 100 { end += 1 }
+            let ascent = max(0, elevations[end] - elevations[i])
+            let length = dist[end] - dist[i]
+            if ascent >= 15, length >= 200 {
+                found.append(Climb(startIndex: i, endIndex: end,
+                                   startMeters: dist[i], endMeters: dist[end],
+                                   ascentMeters: ascent))
+            }
+            i = end + 1
+        }
+        return found
+    }
+
     /// A stretch of path with consistent wind exposure: 1 = headwind,
     /// -1 = tailwind, 0 = cross/calm.
     struct WindRun {

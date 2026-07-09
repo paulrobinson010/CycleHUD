@@ -77,10 +77,42 @@ struct RoutePanel: View {
             .overlay(alignment: .topTrailing) { junctionBadge }
             .overlay(alignment: .bottom) {
                 VStack(spacing: 6) {
-                    climbStrip
+                    if let climb = activeClimb, let progress {
+                        // On (or about to start) a climb: THIS climb takes the
+                        // strip's slot — and appears even when the whole-route
+                        // strip is off or living in the Distance & Climb row.
+                        ClimbCard(route: route, climb: climb,
+                                  riddenMeters: max(0, route.remainingMeters(from: 0) - progress.remainingMeters),
+                                  progressIndex: progress.index,
+                                  distanceUnit: distanceUnit)
+                            .frame(height: 54)
+                            .padding(.horizontal, 10)
+                    } else {
+                        climbStrip
+                    }
                     radarWarning
                 }
             }
+        }
+    }
+
+    /// Climbs are detected once per route and cached (main-thread only).
+    private static var climbCache: [UUID: [PlannedRoute.Climb]] = [:]
+
+    private var routeClimbs: [PlannedRoute.Climb] {
+        if let cached = Self.climbCache[route.id] { return cached }
+        let detected = route.climbs()
+        Self.climbCache[route.id] = detected
+        return detected
+    }
+
+    /// The climb the rider is on — or about to start within 200 m — while
+    /// riding the route.
+    private var activeClimb: PlannedRoute.Climb? {
+        guard joined, let progress else { return nil }
+        let ridden = max(0, route.remainingMeters(from: 0) - progress.remainingMeters)
+        return routeClimbs.first {
+            ridden >= $0.startMeters - 200 && ridden < $0.endMeters - 20
         }
     }
 
@@ -485,6 +517,88 @@ struct RoutePanel: View {
         let dLon = meters * sin(rad) / (111_320 * max(0.2, cos(c.latitude * .pi / 180)))
         return CLLocationCoordinate2D(latitude: c.latitude + dLat,
                                       longitude: c.longitude + dLon)
+    }
+}
+
+/// The climb underway: how much further to the top, the ascent left, the
+/// grade of what remains, and the climb's own profile filling in as the
+/// rider gains it. Takes the elevation strip's slot while a climb is live.
+struct ClimbCard: View {
+    let route: PlannedRoute
+    let climb: PlannedRoute.Climb
+    let riddenMeters: Double
+    let progressIndex: Int
+    let distanceUnit: DistanceUnit
+
+    private var toTopMeters: Double { max(0, climb.endMeters - riddenMeters) }
+    private var ascentLeft: Double {
+        guard let elevations = route.elevations else { return 0 }
+        let at = min(max(progressIndex, climb.startIndex), climb.endIndex)
+        return max(0, elevations[climb.endIndex] - elevations[at])
+    }
+    private var gradeLeft: Double {
+        toTopMeters > 20 ? ascentLeft / toTopMeters * 100 : 0
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            profile
+                .frame(maxWidth: .infinity)
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(verbatim: toTopText)
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(Theme.textPrimary)
+                Text(verbatim: "↗ \(Fmt.int(ascentLeft)) m · \(String(format: "%.1f", gradeLeft))%")
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(gradeLeft > 6 ? Theme.threatMedium : Theme.textSecondary)
+            }
+            .fixedSize()
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(RoundedRectangle(cornerRadius: 10).fill(Theme.panel.opacity(0.9)))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    /// "820 m" close in, "1.4 km" further out (rider's units).
+    private var toTopText: String {
+        if toTopMeters < 950 {
+            return "\(Fmt.int(distanceUnit.shortValue(fromMeters: toTopMeters))) \(distanceUnit.shortLabel)"
+        }
+        return "\(Fmt.decimal(distanceUnit.value(fromMeters: toTopMeters), 1)) \(distanceUnit.label)"
+    }
+
+    /// Just this climb in profile, the gained part filled solid.
+    private var profile: some View {
+        Canvas { context, size in
+            guard let elevations = route.elevations else { return }
+            let lo = climb.startIndex, hi = climb.endIndex
+            guard hi > lo else { return }
+            let eles = Array(elevations[lo...hi])
+            let bottom = eles.min() ?? 0
+            let range = max(10, (eles.max() ?? 0) - bottom)
+            let span = max(1, climb.lengthMeters)
+            func pt(_ k: Int) -> CGPoint {
+                CGPoint(x: size.width * CGFloat(k) / CGFloat(hi - lo),
+                        y: size.height - 3 - (size.height - 8) * (eles[k] - bottom) / range)
+            }
+            var area = Path()
+            area.move(to: CGPoint(x: 0, y: size.height))
+            for k in 0...(hi - lo) { area.addLine(to: pt(k)) }
+            area.addLine(to: CGPoint(x: size.width, y: size.height))
+            area.closeSubpath()
+            context.fill(area, with: .color(Theme.accent.opacity(0.25)))
+
+            // The part already gained, filled solid up to the rider.
+            let frac = min(1, max(0, (riddenMeters - climb.startMeters) / span))
+            if frac > 0 {
+                context.clip(to: Path(CGRect(x: 0, y: 0,
+                                             width: size.width * frac, height: size.height)))
+                context.fill(area, with: .color(Theme.accent.opacity(0.8)))
+            }
+        }
     }
 }
 
