@@ -2263,6 +2263,46 @@
         }
       }
     },
+    "Can’t ride this route in reverse" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Route kann nicht in Gegenrichtung gefahren werden"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can’t ride this route in reverse"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can’t ride this route in reverse"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta ruta no puede recorrerse en sentido inverso"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de parcourir cet itinéraire en sens inverse"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo percorso non può essere fatto al contrario"
+          }
+        }
+      }
+    },
     "Can’t send a text from this device" : {
       "localizations" : {
         "de-DE" : {
@@ -8047,6 +8087,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apri Impostazioni"
+          }
+        }
+      }
+    },
+    "Part of it runs along a one-way road." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Teil davon verläuft auf einer Einbahnstraße."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Part of it runs along a one-way road."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Part of it runs along a one-way road."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una parte discurre por una calle de sentido único."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une partie emprunte une route à sens unique."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una parte percorre una strada a senso unico."
           }
         }
       }

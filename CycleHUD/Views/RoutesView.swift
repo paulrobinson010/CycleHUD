@@ -14,6 +14,9 @@ struct RoutesView: View {
     @State private var showImporter = false
     @State private var shareURL: ShareURL?
     @State private var importFailed = false
+    /// Route being checked for one-way roads before reversing (shows a spinner).
+    @State private var reverseChecking: UUID?
+    @State private var reverseBlocked = false
 
     private struct ShareURL: Identifiable {
         let url: URL
@@ -92,6 +95,11 @@ struct RoutesView: View {
                 }
                 importFailed = true
             }
+            .alert("Can’t ride this route in reverse", isPresented: $reverseBlocked) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Part of it runs along a one-way road.")
+            }
             .alert("Couldn’t import that file", isPresented: $importFailed) {
                 Button("OK", role: .cancel) {}
             } message: {
@@ -116,6 +124,9 @@ struct RoutesView: View {
                     .foregroundStyle(Theme.textSecondary)
             }
             Spacer()
+            if reverseChecking == route.id {
+                ProgressView().controlSize(.small)
+            }
             Button { editRoute = route } label: {
                 Image(systemName: "pencil")
                     .font(.system(size: 16, weight: .semibold))
@@ -139,9 +150,29 @@ struct RoutesView: View {
         }
         .contextMenu {
             Button {
-                routes.rideInReverse(route)
+                attemptReverse(route)
             } label: {
                 Label("Ride in reverse", systemImage: "arrow.left.arrow.right")
+            }
+            .disabled(reverseChecking != nil)
+        }
+    }
+
+    /// Reverse only when it's legal: check the route against OSM one-way
+    /// roads first (the original follows them legally; flipped, it wouldn't).
+    /// If the check can't run (offline), err on the side of allowing it —
+    /// same behaviour as before the check existed.
+    private func attemptReverse(_ route: PlannedRoute) {
+        reverseChecking = route.id
+        Task {
+            let usesOneWay = await OneWayChecker.routeUsesOneWay(path: route.path)
+            await MainActor.run {
+                reverseChecking = nil
+                if usesOneWay == true {
+                    reverseBlocked = true
+                } else {
+                    routes.rideInReverse(route)
+                }
             }
         }
     }
