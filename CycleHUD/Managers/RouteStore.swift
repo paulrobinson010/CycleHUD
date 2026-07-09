@@ -148,6 +148,32 @@ final class RouteStore: ObservableObject {
         persist()
     }
 
+    /// Activate a reversed twin of `route` — the same roads ridden the other
+    /// way (handy when the wind colouring says the loop is better backwards).
+    /// The twin is a saved route named "<name> ⇋" (reversing a "⇋" route finds
+    /// its original), reusing an existing twin instead of stacking copies.
+    /// Ghosts don't transfer: a best time raced the other direction.
+    func rideInReverse(_ route: PlannedRoute) {
+        let targetName = route.name.hasSuffix(" ⇋")
+            ? String(route.name.dropLast(2))
+            : route.name + " ⇋"
+        if let existing = routes.first(where: { $0.name == targetName }) {
+            activeRouteID = existing.id
+            return
+        }
+        var reversed = route
+        reversed.id = UUID()
+        reversed.name = targetName
+        reversed.path = route.path.reversed()
+        reversed.waypoints = route.waypoints.reversed()
+        reversed.elevations = route.elevations.map { Array($0.reversed()) }
+        reversed.bestTimes = nil
+        reversed.bestDate = nil
+        reversed.createdAt = Date()
+        add(reversed)
+        activeRouteID = reversed.id
+    }
+
     func delete(_ route: PlannedRoute) {
         routes.removeAll { $0.id == route.id }
         if activeRouteID == route.id { activeRouteID = nil }

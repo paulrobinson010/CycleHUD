@@ -9584,6 +9584,46 @@
         }
       }
     },
+    "Ride in reverse" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Gegenrichtung fahren"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ride in reverse"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ride in reverse"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recorrer en sentido inverso"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parcourir en sens inverse"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Percorri al contrario"
+          }
+        }
+      }
+    },
     "Ride screen" : {
       "localizations" : {
         "de-DE" : {
@@ -11877,42 +11917,42 @@
         }
       }
     },
-    "Tap a route to follow it on the ride screen; tap again to stop following. The route replaces the radar lane until a vehicle appears." : {
+    "Tap a route to follow it on the ride screen; tap again to stop following. The route replaces the radar lane until a vehicle appears. Touch and hold a route for more, like riding it in reverse." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippe auf eine Route, um ihr auf dem Fahrbildschirm zu folgen; erneut tippen beendet das Folgen. Die Route ersetzt die Radarspur, bis ein Fahrzeug erscheint."
+            "value" : "Tippe auf eine Route, um ihr auf dem Fahrbildschirm zu folgen; erneut tippen beendet das Folgen. Die Route ersetzt die Radarspur, bis ein Fahrzeug erscheint. Halte eine Route gedrückt für mehr, etwa das Fahren in Gegenrichtung."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tap a route to follow it on the ride screen; tap again to stop following. The route replaces the radar lane until a vehicle appears."
+            "value" : "Tap a route to follow it on the ride screen; tap again to stop following. The route replaces the radar lane until a vehicle appears. Touch and hold a route for more, like riding it in reverse."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tap a route to follow it on the ride screen; tap again to stop following. The route replaces the radar lane until a vehicle appears."
+            "value" : "Tap a route to follow it on the ride screen; tap again to stop following. The route replaces the radar lane until a vehicle appears. Touch and hold a route for more, like riding it in reverse."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca una ruta para seguirla en la pantalla de marcha; toca de nuevo para dejar de seguirla. La ruta sustituye al carril del radar hasta que aparece un vehículo."
+            "value" : "Toca una ruta para seguirla en la pantalla de marcha; toca de nuevo para dejar de seguirla. La ruta sustituye al carril del radar hasta que aparece un vehículo. Mantén pulsada una ruta para más opciones, como recorrerla en sentido inverso."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touchez un itinéraire pour le suivre sur l’écran de conduite ; touchez à nouveau pour arrêter. L’itinéraire remplace la voie radar jusqu’à ce qu’un véhicule apparaisse."
+            "value" : "Touchez un itinéraire pour le suivre sur l’écran de conduite ; touchez à nouveau pour arrêter. L’itinéraire remplace la voie radar jusqu’à ce qu’un véhicule apparaisse. Maintenez un itinéraire appuyé pour plus d’options, comme le parcourir en sens inverse."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tocca un percorso per seguirlo nella schermata di guida; tocca di nuovo per smettere. Il percorso sostituisce la corsia radar finché non compare un veicolo."
+            "value" : "Tocca un percorso per seguirlo nella schermata di guida; tocca di nuovo per smettere. Il percorso sostituisce la corsia radar finché non compare un veicolo. Tieni premuto un percorso per altre opzioni, come percorrerlo al contrario."
           }
         }
       }

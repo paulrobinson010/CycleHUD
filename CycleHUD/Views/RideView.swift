@@ -404,6 +404,7 @@ struct RideView: View {
                            junction: !visibleMetricKinds.contains(.junction) ? ride.demoJunction : nil,
                            junctionRouteBearing: ride.demoJunctionExitBearing,
                            showTraffic: settings.routeTrafficEnabled,
+                           windConditions: settings.weatherEnabled ? weather.conditions : nil,
                            distanceUnit: settings.distanceUnit)
             } else if let route = routes.activeRoute, settings.routePlanningEnabled, ble.threats.isEmpty {
                 RoutePanel(route: route,
@@ -427,6 +428,7 @@ struct RideView: View {
                                ? junctions.next : nil,
                            junctionRouteBearing: junctions.next.flatMap(routeExitBearing),
                            showTraffic: settings.routeTrafficEnabled,
+                           windConditions: settings.weatherEnabled ? weather.conditions : nil,
                            distanceUnit: settings.distanceUnit)
             } else {
                 RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,

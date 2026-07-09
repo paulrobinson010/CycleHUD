@@ -191,6 +191,39 @@ struct PlannedRoute: Codable, Identifiable, Equatable {
     }
 }
 
+extension PlannedRoute {
+    /// A stretch of path with consistent wind exposure: 1 = headwind,
+    /// -1 = tailwind, 0 = cross/calm.
+    struct WindRun {
+        let coords: [CLLocationCoordinate2D]
+        let exposure: Int
+    }
+
+    /// Split `path` into wind-exposure runs against `conditions` (today's
+    /// wind vs each segment's bearing). Consecutive same-class segments merge
+    /// so maps draw a handful of polylines, not thousands.
+    static func windRuns(path: [Point], conditions: WeatherConditions) -> [WindRun] {
+        guard path.count >= 2 else { return [] }
+        func classify(_ i: Int) -> Int {
+            let head = conditions.headwindMps(
+                course: bearing(path[i].coordinate, path[i + 1].coordinate))
+            if head > 1.5 { return 1 }        // fighting it
+            if head < -1.5 { return -1 }      // free speed
+            return 0
+        }
+        var runs: [WindRun] = []
+        var start = 0
+        var current = classify(0)
+        for i in 1..<(path.count - 1) where classify(i) != current {
+            runs.append(WindRun(coords: path[start...i].map(\.coordinate), exposure: current))
+            start = i
+            current = classify(i)
+        }
+        runs.append(WindRun(coords: path[start...].map(\.coordinate), exposure: current))
+        return runs
+    }
+}
+
 /// On-disk / shared file envelope, versioned so old builds can reject newer
 /// files gracefully. This is the `.cyclehudroute` format.
 struct RouteFile: Codable {

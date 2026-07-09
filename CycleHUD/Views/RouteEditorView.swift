@@ -82,10 +82,10 @@ struct RouteEditorView: View {
                 // The routed path, coloured by today's wind: amber where you'd
                 // fight a headwind, green where it pushes you — so "which way
                 // round do I ride this loop?" answers itself at a glance.
-                ForEach(windRuns) { run in
+                ForEach(Array(windRuns.enumerated()), id: \.offset) { _, run in
                     MapPolyline(coordinates: run.coords)
-                        .stroke(run.color, style: StrokeStyle(lineWidth: 4,
-                                                              lineCap: .round, lineJoin: .round))
+                        .stroke(windColor(run.exposure),
+                                style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
                 }
                 ForEach(Array(waypoints.enumerated()), id: \.offset) { i, wp in
                     Annotation(markerLabel(i), coordinate: wp.coordinate) {
@@ -102,45 +102,18 @@ struct RouteEditorView: View {
         }
     }
 
-    /// The path split into runs of consistent wind exposure (today's wind vs
-    /// each segment's bearing): amber = headwind, green = tailwind, accent =
-    /// cross/calm or no weather data. Consecutive same-class segments merge
-    /// into one polyline so the map stays cheap.
-    private struct WindRun: Identifiable {
-        let id: Int
-        let coords: [CLLocationCoordinate2D]
-        let color: Color
-    }
-
-    private var windRuns: [WindRun] {
+    /// The path split into wind-exposure runs (shared helper): amber =
+    /// headwind, green = tailwind, accent = cross/calm or no weather data.
+    private var windRuns: [PlannedRoute.WindRun] {
         guard path.count >= 2 else { return [] }
         guard settings.weatherEnabled, let conditions = weather.conditions else {
-            return [WindRun(id: 0, coords: path.map(\.coordinate), color: Theme.accent)]
+            return [PlannedRoute.WindRun(coords: path.map(\.coordinate), exposure: 0)]
         }
-        func classify(_ i: Int) -> Int {
-            let head = conditions.headwindMps(
-                course: PlannedRoute.bearing(path[i].coordinate, path[i + 1].coordinate))
-            if head > 1.5 { return 1 }        // fighting it
-            if head < -1.5 { return -1 }      // free speed
-            return 0
-        }
-        func color(_ k: Int) -> Color {
-            k > 0 ? Theme.threatMedium : (k < 0 ? Theme.good : Theme.accent)
-        }
-        var runs: [WindRun] = []
-        var start = 0
-        var current = classify(0)
-        for i in 1..<(path.count - 1) where classify(i) != current {
-            runs.append(WindRun(id: runs.count,
-                                coords: path[start...i].map(\.coordinate),
-                                color: color(current)))
-            start = i
-            current = classify(i)
-        }
-        runs.append(WindRun(id: runs.count,
-                            coords: path[start...].map(\.coordinate),
-                            color: color(current)))
-        return runs
+        return PlannedRoute.windRuns(path: path, conditions: conditions)
+    }
+
+    private func windColor(_ exposure: Int) -> Color {
+        exposure > 0 ? Theme.threatMedium : (exposure < 0 ? Theme.good : Theme.accent)
     }
 
     /// Legend for the wind colouring, shown while there's a routed path and

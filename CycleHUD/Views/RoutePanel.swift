@@ -39,6 +39,9 @@ struct RoutePanel: View {
     var junctionRouteBearing: Double? = nil
     /// Apple's live traffic layer (jams and closure icons painted on the map).
     var showTraffic: Bool = false
+    /// Today's wind — the route underlay is tinted amber (headwind) / green
+    /// (tailwind) per stretch when available.
+    var windConditions: WeatherConditions? = nil
     let distanceUnit: DistanceUnit
 
     /// Pinch-zoom altitude, preserved across the once-a-second camera updates.
@@ -143,13 +146,17 @@ struct RoutePanel: View {
         return Map(position: .constant(.camera(
             MapCamera(centerCoordinate: center, distance: zoomDistance, heading: heading))),
                    interactionModes: .zoom) {
-            // Whole route as a muted underlay; only the NEXT kilometre is
-            // bright. Where a loop crosses itself (or shares an out-and-back
-            // road) both passes are drawn, and without this split the
-            // homebound leg reads as "the way" at an outbound junction.
-            MapPolyline(coordinates: route.path.map(\.coordinate))
-                .stroke(Theme.accent.opacity(0.35),
-                        style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+            // Whole route as a muted underlay — tinted by today's wind when
+            // known (amber = headwind stretch, green = tailwind) — with only
+            // the NEXT kilometre bright. Where a loop crosses itself (or
+            // shares an out-and-back road) both passes are drawn, and without
+            // the bright/muted split the homebound leg reads as "the way" at
+            // an outbound junction.
+            ForEach(Array(underlayRuns.enumerated()), id: \.offset) { _, run in
+                MapPolyline(coordinates: run.coords)
+                    .stroke(underlayColor(run.exposure),
+                            style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+            }
             MapPolyline(coordinates: upcomingSlice(from: joined ? progress.index : 0))
                 .stroke(Theme.accent,
                         style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
@@ -205,6 +212,23 @@ struct RoutePanel: View {
         .onMapCameraChange(frequency: .onEnd) { context in
             let d = context.camera.distance
             if abs(d - zoomDistance) > 1 { zoomDistance = min(8000, max(400, d)) }
+        }
+    }
+
+    /// The route underlay split by wind exposure (single plain run when no
+    /// wind data is available).
+    private var underlayRuns: [PlannedRoute.WindRun] {
+        if let windConditions {
+            return PlannedRoute.windRuns(path: route.path, conditions: windConditions)
+        }
+        return [PlannedRoute.WindRun(coords: route.path.map(\.coordinate), exposure: 0)]
+    }
+
+    private func underlayColor(_ exposure: Int) -> Color {
+        switch exposure {
+        case 1: return Theme.threatMedium.opacity(0.55)
+        case -1: return Theme.good.opacity(0.55)
+        default: return Theme.accent.opacity(0.35)
         }
     }
 

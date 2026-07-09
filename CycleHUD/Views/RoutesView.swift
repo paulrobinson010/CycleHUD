@@ -137,6 +137,13 @@ struct RoutesView: View {
         .onTapGesture {
             routes.activeRouteID = active ? nil : route.id
         }
+        .contextMenu {
+            Button {
+                routes.rideInReverse(route)
+            } label: {
+                Label("Ride in reverse", systemImage: "arrow.left.arrow.right")
+            }
+        }
     }
 
     private func distText(_ meters: Double) -> String {
