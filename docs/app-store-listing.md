@@ -16,38 +16,45 @@ See cars approach from behind
 
 ## Promotional Text (max 170 — editable any time without review)
 ```
-Your rear radar on a clean lane you can read at a glance, with Apple Watch wrist alerts the moment a vehicle approaches. Eyes on the road, not on your phone.
+See every car behind you, follow quiet-road routes on a live map, and race the ghost of your own best ride — with Apple Watch alerts keeping your eyes on the road.
 ```
+(163 chars.)
 
 ## Keywords (max 100, comma-separated, no spaces)
 ```
-radar,bike,cycling,rear radar,road safety,commute,cadence,heart rate,speed,watch,ride,gps,tr70
+radar,bike,cycling,rear radar,route,navigation,ghost,commute,cadence,heart rate,speed,watch,tr70
 ```
-(94 chars. `tr70` targets owners of the radar directly. Dropped `bicycle`
-as redundant with `bike`/`cycling` to make room. See note on brands below.)
+(97 chars. Added `route,navigation,ghost` for 1.5; dropped `road safety`,
+`ride`, `gps` — weak or implied terms. `tr70` targets radar owners directly.
+See note on brands below.)
 
-## Description (max 4000)
+## Description (max 4000) — rewritten for 1.5
 ```
-CycleHUD turns your rear radar into a clear, glanceable heads-up display, so you always know what's coming up behind you without taking your eyes off the road.
+CycleHUD turns your rear radar into a clear, glanceable heads-up display — and now a quiet-roads navigator and a racing partner too. Always know what's coming up behind you, where you're going, and how you compare with your best, without taking your eyes off the road.
 
-Vehicles approaching from behind appear on a clean perspective lane, nearest at the top, and the whole panel glows amber to red as a car closes in. A green "Clear" shows when the road behind is empty. Pair an Apple Watch and you'll feel it too: a tap for each new vehicle, faster as it nears, and a distinct buzz if the radar ever drops out. Eyes up, hands on the bars.
+EYES BEHIND YOU
+Vehicles approaching from behind appear on a clean perspective lane, nearest at the top, and the whole panel glows amber to red as a car closes in. A green "Clear" shows when the road behind is empty. Pair an Apple Watch and you'll feel it too: a tap for each new vehicle, faster as it nears, and a distinct buzz if the radar ever drops out. After the ride, every vehicle that passed you is pinned on your route map with its distance and speed.
+
+ROUTES ON QUIET ROADS
+Plan a ride by tapping a start and waypoints on a map — the path snaps to quiet roads and cycle paths, looping back to the start or finishing wherever you choose. While the road behind is clear, the radar panel becomes a live street map: your route ahead, live traffic and closures, the whole ride's elevation profile with the gradient coming up, and the next junction's real layout counting down — with the turn your route takes glowing green. Spoken turn alerts and wrist taps call each bend. Pick a route from across town and CycleHUD plots a lead-in to the start. The moment a vehicle appears behind you, the radar takes the screen back. Routes share as plain GPX and import from anywhere — Strava, Komoot, RideWithGPS, a friend's export.
+
+RACE YOUR GHOST
+Complete a route once and that run becomes its best. Every ride after is a race: a live ahead/behind readout and a ghost marker riding the map beside you. Beat it and the new run takes over. Ghosts travel inside shared GPX files, so you can race a friend's best — or import any recorded ride and chase it.
 
 BUILT FOR THE RIDE
-- Rear-radar lane, colour-coded by how fast and close a vehicle is
-- Apple Watch wrist alerts that escalate with proximity
-- Optional new-vehicle beep through the phone
-- Live metrics: speed, average, distance, time, cadence, ascent, heart rate and calories
-- Every ride saved as an Apple Health workout (optional)
-- Ride summary and history with a map of your route
-- See exactly where vehicles passed you, each one pinned on the map with the distance and speed to review afterwards
+- Live metrics on customisable, swipeable tile pages: speed, cadence, heart rate, ascent, live gradient, wind (as headwind or tailwind), compass, rain nowcast and more
+- Every ride saved as an Apple Health workout, with a post-ride effort rating for Health's training load (iOS 18+)
+- Ride summaries with graphs you can scrub, laps, and your previous bests over the same stretches of road
+- Optional crash detection: a hard impact followed by a stop starts an SOS countdown on the phone AND your watch — dismiss it or call your emergency contact straight from the wrist
 - Heart-rate warning that flashes the display and buzzes your wrist
-- Light or dark theme, plus a fixed-landscape layout for your handlebars
+- iCloud sync: rides, routes and ghosts back up to your own iCloud and follow you to a new phone
+- Light, dark and Cyberpunk themes, a digital-dash font, and a fixed-landscape layout for your handlebars
 
 WORKS WITH YOUR SENSORS
-Built around the Coospo TR70 rear radar, and also works with Garmin Varia-compatible radars and standard Bluetooth speed and cadence sensors. Speed falls back to GPS when no sensor is connected.
+Built around the Coospo TR70 rear radar, and also works with Garmin Varia-compatible radars, standard Bluetooth speed and cadence sensors and heart-rate straps. Speed falls back to GPS when no sensor is connected.
 
 PRIVATE BY DESIGN
-No accounts. No servers. No tracking, ads or analytics. Your location, heart rate and ride data stay on your device and in Apple Health, which you control.
+No accounts. No servers. No tracking, ads or analytics. Your data lives on your device, in Apple Health and in your own iCloud — all under your control. The optional routing and junction features fetch open road data (OpenStreetMap, BRouter) and say so plainly in Settings.
 
 CycleHUD is a focused, no-nonsense tool made by a rider who wanted exactly this, and nothing more.
 ```
