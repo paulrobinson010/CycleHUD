@@ -4,7 +4,8 @@ A personal, quality-of-life cycling HUD for iPhone + Apple Watch, built around
 the **Coospo TR70** rear radar. The focus is a **clear, glanceable UI**,
 **wrist haptics** so you can keep your eyes on the road, and a clean finish that
 saves each ride as an **Apple Health workout**. Garmin Varia–compatible radars,
-standard BLE speed/cadence sensors and heart-rate straps work too.
+standard BLE speed/cadence sensors, heart-rate straps and cycling power
+meters work too.
 
 **Now on the App Store:**
 [Download CycleHUD](https://apps.apple.com/app/cyclehud/id6784582667)
@@ -121,6 +122,14 @@ standard BLE speed/cadence sensors and heart-rate straps work too.
   inside shared GPX as ordinary track timestamps, so friends can race your
   ghost — and importing any *recorded* ride GPX (a Strava activity export,
   say) turns that ride into a ghost you can race.
+- **Climb card** — riding a route, each detected climb takes over the bottom
+  of the map as you reach it: distance to the top, ascent left, the gradient
+  of what *remains*, and the climb's own profile filling in as you gain it.
+- **Insights** *(Settings → Insights)* — trends (distance and ascent by week),
+  personal records (longest, most climbing, fastest average, top speed) and
+  radar-powered **traffic statistics** no other app has: vehicles detected,
+  detections per km, your fastest overtake, your busiest ride, and a map of
+  everywhere vehicles passed you. All computed on-device from local history.
 - **Upcoming junctions** *(optional, off by default)* — a **Junction** tile
   shows the next intersection ahead: a schematic of its road arms at their true
   angles (T, crossroads, roundabout…) in your frame of travel, with the distance

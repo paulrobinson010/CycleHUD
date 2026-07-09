@@ -40,6 +40,11 @@ struct SettingsView: View {
                     } label: {
                         Label("Previous rides", systemImage: "list.bullet.rectangle")
                     }
+                    NavigationLink {
+                        InsightsView().environmentObject(history).environmentObject(settings)
+                    } label: {
+                        Label("Insights", systemImage: "chart.bar.xaxis")
+                    }
                 }
 
                 Section("Units") {
