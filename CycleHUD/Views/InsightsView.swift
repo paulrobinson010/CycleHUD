@@ -255,16 +255,33 @@ struct InsightsData {
             return (top, ride.date)
         }.max { $0.0 < $1.0 }
 
-        totalVehicles = rides.reduce(0) { $0 + ($1.radarPoints?.count ?? 0) }
+        var vehicles = 0
+        for ride in rides { vehicles += ride.radarPoints?.count ?? 0 }
+        totalVehicles = vehicles
+
         // Estimated overtake speed = closing speed + the rider's own speed.
-        fastestOvertakeMps = rides.flatMap { $0.passes ?? [] }
-            .flatMap(\.cleanedSamples)
-            .map { ($0.closingKmh + $0.riderKmh) / 3.6 }
-            .max()
-        busiestRide = rides.filter { $0.distanceMeters >= 5000 }
-            .map { BusiestRide(date: $0.date,
-                               perKm: Double($0.radarPoints?.count ?? 0) / ($0.distanceMeters / 1000)) }
-            .max { $0.perKm < $1.perKm }
+        // (Plain loops: the chained flatMap/map/max version type-checked too
+        // slowly for the compiler.)
+        var fastest: Double?
+        for ride in rides {
+            for pass in ride.passes ?? [] {
+                for sample in pass.cleanedSamples {
+                    let speedMps: Double = (sample.closingKmh + sample.riderKmh) / 3.6
+                    if speedMps > (fastest ?? 0) { fastest = speedMps }
+                }
+            }
+        }
+        fastestOvertakeMps = fastest
+
+        var busiest: BusiestRide?
+        for ride in rides where ride.distanceMeters >= 5000 {
+            let count = Double(ride.radarPoints?.count ?? 0)
+            let perKm: Double = count / (ride.distanceMeters / 1000)
+            if perKm > (busiest?.perKm ?? 0) {
+                busiest = BusiestRide(date: ride.date, perKm: perKm)
+            }
+        }
+        busiestRide = busiest
 
         // Pass locations, most recent first, capped so the map stays light.
         let coords = rides.flatMap { ride in
