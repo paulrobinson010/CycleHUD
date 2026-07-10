@@ -208,7 +208,11 @@ meters work too.
 - **Light, dark or Cyberpunk** — three appearances in Settings: a clean light
   theme (default), an all-black dark HUD, and a neon **Cyberpunk** theme
   matching the CycleHUD artwork — cyan→magenta backdrop with glow, gradient
-  numerals, neon tile and pill rims. Pair it with the **Digital** digits option
+  numerals, neon tile and pill rims, and the full **CRT treatment**: phosphor
+  scanlines, a shadow-mask vignette, and every so often a burst of magnetic
+  interference — the picture jitters, tear lines flash and a sync bar rolls
+  through. (Interference politely waits while a vehicle is on the radar, so
+  alerts are never garbled.) Pair it with the **Digital** digits option
   for a retro 7-segment LCD readout (an original display font, bundled), in any
   theme.
 - **Ride control** — Start / Pause / Resume / Stop, with **auto-pause /

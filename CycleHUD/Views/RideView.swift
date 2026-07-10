@@ -61,6 +61,10 @@ struct RideView: View {
         .overlay(alignment: .top) { completionToast }
         .animation(.spring(duration: 0.45), value: routes.completion)
         .animation(.spring(duration: 0.45), value: routes.routeStart)
+        // Cyberpunk = an old tube monitor: scanlines, vignette, and the odd
+        // burst of magnetic interference (never while a car is behind).
+        .crtEffect(enabled: settings.appearanceTheme == .cyberpunk,
+                   glitchesAllowed: ble.threats.isEmpty)
         .sheet(item: $activeSheet) { sheet in
             Group {
                 switch sheet {
