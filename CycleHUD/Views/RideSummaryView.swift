@@ -16,6 +16,9 @@ struct RideSummaryView: View {
     @State private var effortScore: Int?
     /// Stretches of this ride ridden before, compared against the previous best.
     @State private var comparisons: [SegmentComparison] = []
+    /// The comparison stretch the rider tapped — banded on the graphs and
+    /// drawn bold on the map until tapped again.
+    @State private var highlightedComparison: SegmentComparison?
     @State private var showRouteMap = false
     @State private var exportFile: ExportFile?
     @State private var showExportError = false
@@ -212,6 +215,17 @@ struct RideSummaryView: View {
                         Self.speedColoredRoute(coords, speeds: speeds, lineWidth: 4)
                     } else {
                         MapPolyline(coordinates: coords).stroke(Theme.accent, lineWidth: 4)
+                    }
+                    // The tapped comparison stretch, bold over the route.
+                    if let hl = highlightedComparison,
+                       let slice = highlightSlice(hl), slice.count >= 2 {
+                        MapPolyline(coordinates: slice)
+                            .stroke(.white, style: StrokeStyle(lineWidth: 8, lineCap: .round,
+                                                               lineJoin: .round))
+                        MapPolyline(coordinates: slice)
+                            .stroke(hl.isFastest ? Theme.good : Theme.threatHigh,
+                                    style: StrokeStyle(lineWidth: 5, lineCap: .round,
+                                                       lineJoin: .round))
                     }
                     ForEach(Array(summary.radarCoordinates.enumerated()), id: \.offset) { _, c in
                         Annotation("", coordinate: c) { Self.radarDot }
@@ -442,6 +456,7 @@ struct RideSummaryView: View {
                 }
                 .padding(.bottom, 8)
                 ForEach(comparisons) { c in
+                    let selected = highlightedComparison?.id == c.id
                     HStack(spacing: 10) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(verbatim: rangeText(c))
@@ -465,8 +480,23 @@ struct RideSummaryView: View {
                             .background(Capsule().fill(c.isFastest ? Theme.good : Theme.threatHigh))
                     }
                     .padding(.vertical, 7)
+                    .padding(.horizontal, 6)
+                    .background(RoundedRectangle(cornerRadius: 10)
+                        .fill(selected ? (c.isFastest ? Theme.good : Theme.threatHigh).opacity(0.14)
+                                       : Color.clear))
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            highlightedComparison = selected ? nil : c
+                        }
+                    }
                     if c.id != comparisons.last?.id { Divider() }
                 }
+                Text("Tap a stretch to see it on the map and graphs.")
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .foregroundStyle(Theme.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 6)
             }
             .padding(16)
             .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
@@ -475,6 +505,42 @@ struct RideSummaryView: View {
 
     private func distText(_ meters: Double) -> String {
         Fmt.decimal(settings.distanceUnit.value(fromMeters: meters), 1)
+    }
+
+    // MARK: - Comparison highlight (list ⇄ map ⇄ graphs)
+    //
+    // A comparison covers [startMeters, endMeters] along the stored route, the
+    // same cumulative-distance axis SegmentComparer measured on. Route index
+    // maps to ride time by uniform fraction — the same bridge the scrubber
+    // uses — so one index range lights up both the map and the charts.
+
+    /// Route point indices covering the comparison's distance range.
+    private func highlightIndexRange(_ c: SegmentComparison) -> ClosedRange<Int>? {
+        let coords = summary.coordinates
+        guard coords.count >= 2 else { return nil }
+        var dist = 0.0
+        var ia: Int?
+        var ib: Int?
+        for i in 1..<coords.count {
+            dist += PlannedRoute.meters(coords[i - 1], coords[i])
+            if ia == nil, dist >= c.startMeters { ia = i - 1 }
+            if dist <= c.endMeters { ib = i }
+        }
+        guard let a = ia, let b = ib, a < b else { return nil }
+        return a...b
+    }
+
+    private func highlightSlice(_ c: SegmentComparison) -> [CLLocationCoordinate2D]? {
+        guard let r = highlightIndexRange(c) else { return nil }
+        return Array(summary.coordinates[r])
+    }
+
+    /// The comparison's stretch as ride seconds, for the chart bands.
+    private func highlightTimeRange(_ c: SegmentComparison) -> ClosedRange<Double>? {
+        guard let r = highlightIndexRange(c) else { return nil }
+        let n = Double(max(1, summary.coordinates.count - 1))
+        return (Double(r.lowerBound) / n * trackDuration)
+            ...(Double(r.upperBound) / n * trackDuration)
     }
 
     /// "2.1–8.3 km" along this ride, in the rider's units.
@@ -577,17 +643,30 @@ struct RideSummaryView: View {
     /// charts and on the route map, with a readout of the values at that point.
     @ViewBuilder private var graphs: some View {
         if let track = summary.track, track.count >= 2 {
+            let hlRange = highlightedComparison.flatMap(highlightTimeRange)
+            let hlColor: Color = (highlightedComparison?.isFastest ?? true)
+                ? Theme.good : Theme.threatHigh
             VStack(spacing: 16) {
                 scrubReadout
                 metricChart(title: String(localized: "Speed"), unit: settings.speedUnit.label,
                             color: Theme.accent,
+                            highlightRange: hlRange, highlightColor: hlColor,
                             points: track.map { ($0.t, settings.speedUnit.value(fromMps: $0.speedMps)) })
                 if track.contains(where: { ($0.hr ?? 0) > 0 }) {
+                    // Axis spans the ride's actual HR band (rounded out to 10s),
+                    // not zero — nobody rides at 0 bpm, and the flat-liner scale
+                    // squashed all the detail into the top of the chart.
+                    let hrs = track.compactMap(\.hr).filter { $0 > 0 }
+                    let lo = Double((hrs.min() ?? 60) / 10 * 10)
+                    let hi = max(Double(((hrs.max() ?? 100) + 9) / 10 * 10), lo + 10)
                     metricChart(title: String(localized: "Heart rate"), unit: "bpm", color: Theme.threatHigh,
+                                yDomain: lo...hi,
+                                highlightRange: hlRange, highlightColor: hlColor,
                                 points: track.compactMap { s in s.hr.map { (s.t, Double($0)) } })
                 }
                 metricChart(title: String(localized: "Elevation"), unit: settings.distanceUnit.shortLabel,
                             color: Theme.good, filled: true,
+                            highlightRange: hlRange, highlightColor: hlColor,
                             points: track.map { ($0.t, settings.distanceUnit.shortValue(fromMeters: $0.altitude)) })
             }
             .padding(16)
@@ -625,6 +704,9 @@ struct RideSummaryView: View {
 
     private func metricChart(title: String, unit: String, color: Color,
                              filled: Bool = false,
+                             yDomain: ClosedRange<Double>? = nil,
+                             highlightRange: ClosedRange<Double>? = nil,
+                             highlightColor: Color = .clear,
                              points: [(Double, Double)]) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline) {
@@ -636,7 +718,13 @@ struct RideSummaryView: View {
                     .font(.system(size: 11, weight: .semibold, design: .rounded))
                     .foregroundStyle(Theme.textSecondary)
             }
-            Chart {
+            let base = Chart {
+                // A tapped comparison stretch, banded behind the series.
+                if let highlightRange {
+                    RectangleMark(xStart: .value("min", highlightRange.lowerBound / 60.0),
+                                  xEnd: .value("min", highlightRange.upperBound / 60.0))
+                        .foregroundStyle(highlightColor.opacity(0.14))
+                }
                 ForEach(points.indices, id: \.self) { i in
                     if filled {
                         AreaMark(x: .value("min", points[i].0 / 60.0),
@@ -658,6 +746,13 @@ struct RideSummaryView: View {
                             .foregroundStyle(color)
                             .symbolSize(70)
                     }
+                }
+            }
+            Group {
+                if let yDomain {
+                    base.chartYScale(domain: yDomain)
+                } else {
+                    base
                 }
             }
             .chartXAxis {

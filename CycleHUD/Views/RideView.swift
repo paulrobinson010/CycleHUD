@@ -60,6 +60,7 @@ struct RideView: View {
         .environment(\.locale, settings.appLocale)
         .overlay(alignment: .top) { completionToast }
         .animation(.spring(duration: 0.45), value: routes.completion)
+        .animation(.spring(duration: 0.45), value: routes.routeStart)
         .sheet(item: $activeSheet) { sheet in
             Group {
                 switch sheet {
@@ -977,10 +978,48 @@ struct RideView: View {
         .buttonStyle(.plain)
     }
 
-    /// Route-finish toast: floats in from the top when the active route is
-    /// completed — final time, and the verdict against the route's best.
-    /// Dismisses itself after a few seconds, or on tap.
+    /// Route toasts, floating in from the top: "route started" with the time
+    /// to beat when the run first touches the route, and the finish card with
+    /// the final time and verdict. Self-dismissing, or tap to clear.
     @ViewBuilder private var completionToast: some View {
+        if routes.completion == nil, let s = routes.routeStart {
+            VStack(spacing: 3) {
+                HStack(spacing: 7) {
+                    Image(systemName: "flag.2.crossed")
+                        .font(.system(size: 16, weight: .bold))
+                    Text("Route started")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                }
+                .foregroundStyle(Theme.textPrimary)
+                if let best = s.bestSeconds {
+                    Text(verbatim: toastTime(best))
+                        .font(.system(size: 40, weight: .heavy, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(Theme.textPrimary)
+                    Text("Time to beat")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.purple)
+                } else {
+                    Text("No ghost yet — this run sets it")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.purple)
+                        .padding(.top, 2)
+                }
+            }
+            .padding(.horizontal, 26)
+            .padding(.vertical, 14)
+            .background(RoundedRectangle(cornerRadius: 22).fill(Theme.panelRaised)
+                .shadow(color: .black.opacity(0.35), radius: 12, y: 4))
+            .overlay(RoundedRectangle(cornerRadius: 22)
+                .strokeBorder(Theme.tileStroke.opacity(0.6), lineWidth: 1.5))
+            .padding(.top, 8)
+            .transition(.move(edge: .top).combined(with: .opacity))
+            .onTapGesture { routes.routeStart = nil }
+            .task {
+                try? await Task.sleep(nanoseconds: 8_000_000_000)
+                routes.routeStart = nil
+            }
+        }
         if let c = routes.completion {
             VStack(spacing: 3) {
                 HStack(spacing: 7) {

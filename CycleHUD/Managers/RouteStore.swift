@@ -407,13 +407,20 @@ final class RouteStore: ObservableObject {
         ghostRunStart = nil
         completionFired = false
         completion = nil
+        routeStart = nil
     }
 
     /// Call each tick while riding: stamp the rider's progress point.
     func recordGhost(elapsed: Double) {
         guard var run = ghostRun, let route = activeRoute, route.id == ghostRouteID,
               joinedActiveRoute, let idx = progressHint, idx < run.count else { return }
-        if ghostRunStart == nil { ghostRunStart = elapsed }
+        if ghostRunStart == nil {
+            ghostRunStart = elapsed
+            // First touch of the route: the run's clock starts here — tell the
+            // rider the race is on, and what time they're chasing.
+            routeStart = RouteStart(routeName: route.name,
+                                    bestSeconds: route.bestTimes?.last)
+        }
         let onRoute = elapsed - (ghostRunStart ?? elapsed)
         if run[idx] < 0 {
             run[idx] = onRoute
@@ -421,6 +428,15 @@ final class RouteStore: ObservableObject {
         }
         checkCompletion(run: run, route: route, index: idx, onRoute: onRoute)
     }
+
+    /// Fired once when the run first touches the route — the ride screen
+    /// toasts "route started" with the time to beat.
+    struct RouteStart: Equatable {
+        let routeName: String
+        let bestSeconds: Double?    // nil = no ghost yet; this run sets it
+    }
+
+    @Published var routeStart: RouteStart?
 
     /// The moment the rider crosses the finish: fires once per run, with the
     /// final time and how it compares to the route's (previous) best.
@@ -445,6 +461,7 @@ final class RouteStore: ObservableObject {
         let covered = run.filter { $0 >= 0 }.count
         guard Double(covered) >= 0.9 * Double(run.count) else { return }
         completionFired = true
+        routeStart = nil     // the finish card replaces a lingering start card
         let best = route.bestTimes?.last
         completion = RouteCompletion(routeName: route.name,
                                      seconds: onRoute,
