@@ -82,9 +82,23 @@ async function poll() {
     return;
   }
   const json = await response.json().catch(() => null);
+  console.log("CloudKit lookup", response.status, json);
+  // Configuration problems come back as top-level or per-record error codes
+  // that are NOT the ride's fault — surface them instead of "ride ended".
+  const topError = json && json.serverErrorCode;
   const record = json && json.records && json.records[0];
-  if (!record || record.serverErrorCode) {
-    // Deleted record = the ride has ended (the app removes it on Stop).
+  const recError = record && record.serverErrorCode;
+  if (topError || (recError && recError !== "NOT_FOUND")) {
+    const code = topError || recError;
+    showMessage(`CloudKit error: ${code}. Check the API token, its allowed ` +
+                `origins, and that the LiveRide schema is deployed to the ` +
+                `${ENVIRONMENT} environment.`, true);
+    return;
+  }
+  if (!record || recError === "NOT_FOUND") {
+    // No record = the ride has ended (the app deletes it on Stop) — or it was
+    // published to the other CloudKit environment (dev builds write to
+    // Development; this page reads the environment configured above).
     gone += 1;
     if (trailCoords.length) {
       setStatus("Ride finished — the link is no longer live.", false);
