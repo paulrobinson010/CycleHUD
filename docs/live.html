@@ -61,9 +61,33 @@ const API_TOKEN = "412a74af6e4e8d1d722a1efda56fc6572f4ad2d20d3608bc8e83e42edcfde
 const ENVIRONMENT = "production";
 // ---------------------------------------------------------------------------
 
-const token = location.hash.slice(1);
+// The fragment carries "token.key": the record name and the AES-GCM key that
+// decrypts it. Fragments are never sent to any server — CloudKit holds only
+// ciphertext, and only people with the full link can read the ride.
+const [token, keyB64] = location.hash.slice(1).split(".");
 const message = document.getElementById("message");
 const useMiles = navigator.language.startsWith("en-US") || navigator.language.startsWith("en-GB");
+
+let cryptoKey = null;
+function b64ToBytes(s, urlSafe) {
+  if (urlSafe) {
+    s = s.replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) s += "=";
+  }
+  return Uint8Array.from(atob(s), c => c.charCodeAt(0));
+}
+async function decryptPayload(b64) {
+  if (!cryptoKey) {
+    cryptoKey = await crypto.subtle.importKey("raw", b64ToBytes(keyB64, true),
+                                              "AES-GCM", false, ["decrypt"]);
+  }
+  // CryptoKit's combined box = 12-byte nonce + ciphertext + 16-byte tag;
+  // WebCrypto wants the nonce separately and ciphertext||tag together.
+  const bytes = b64ToBytes(b64, false);
+  const plain = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: bytes.slice(0, 12) }, cryptoKey, bytes.slice(12));
+  return JSON.parse(new TextDecoder().decode(plain));
+}
 
 let map, marker, trail, routeLine, fitted = false, trailCoords = [];
 
@@ -133,7 +157,21 @@ async function poll() {
     return;
   }
   const f = record.fields || {};
-  const lat = f.lat && f.lat.value, lon = f.lon && f.lon.value;
+  if (!f.payload || !f.payload.value) {
+    showMessage("This ride can't be shown — it was published by a different app version.", true);
+    clearInterval(pollTimer);
+    return;
+  }
+  let d;
+  try {
+    d = await decryptPayload(f.payload.value);
+  } catch (e) {
+    console.log("decrypt failed", e);
+    showMessage("Couldn't decrypt this ride — the link's key doesn't match. Ask the rider to re-share the full link.", true);
+    clearInterval(pollTimer);
+    return;
+  }
+  const lat = d.lat, lon = d.lon;
   if (typeof lat !== "number" || typeof lon !== "number") return;
 
   document.getElementById("mapwrap").hidden = false;
@@ -150,8 +188,8 @@ async function poll() {
                                           fillColor: "#38e07b", fillOpacity: 1 }).addTo(map);
   }
   // The planned route (published once by the app), dashed under the trail.
-  if (!routeLine && f.route && f.route.value) {
-    routeLine = L.polyline(decodePath(f.route.value),
+  if (!routeLine && d.route) {
+    routeLine = L.polyline(decodePath(d.route),
                            { color: "#7c8cf8", weight: 4, opacity: 0.75,
                              dashArray: "7 7" }).addTo(map);
     routeLine.bringToBack();
@@ -159,8 +197,8 @@ async function poll() {
   // Path ridden so far: the app publishes the whole trail, so a watcher who
   // opens the link late still sees the full ride, not just from now on.
   const p = [lat, lon];
-  if (f.trail && f.trail.value) {
-    trailCoords = decodePath(f.trail.value);
+  if (d.trail) {
+    trailCoords = decodePath(d.trail);
   } else {
     const last = trailCoords[trailCoords.length - 1];
     if (!last || last[0] !== lat || last[1] !== lon) trailCoords.push(p);
@@ -177,9 +215,9 @@ async function poll() {
     map.panTo(p);
   }
 
-  const speed = (f.speedMps ? f.speedMps.value : 0) * (useMiles ? 2.23694 : 3.6);
-  const meters = f.distanceMeters ? f.distanceMeters.value : 0;
-  const seconds = f.movingSeconds ? f.movingSeconds.value : 0;
+  const speed = (d.speedMps || 0) * (useMiles ? 2.23694 : 3.6);
+  const meters = d.distanceMeters || 0;
+  const seconds = d.movingSeconds || 0;
   const dist = meters / (useMiles ? 1609.344 : 1000);
   const avg = seconds > 0 ? dist / (seconds / 3600) : 0;
   document.getElementById("speed").textContent = speed.toFixed(1);
@@ -190,8 +228,8 @@ async function poll() {
   document.getElementById("time").textContent = fmtTime(seconds);
 
   // ETA to the route's end, when the ride is following one.
-  const etaSecs = f.etaSeconds && f.etaSeconds.value;
-  const remaining = f.remainingMeters && f.remainingMeters.value;
+  const etaSecs = d.etaSeconds;
+  const remaining = d.remainingMeters;
   const etaCell = document.getElementById("etaCell");
   if (etaSecs != null && etaSecs > 0) {
     etaCell.hidden = false;
@@ -205,10 +243,11 @@ async function poll() {
     etaCell.hidden = true;
   }
 
-  const updated = f.updatedAt && f.updatedAt.value;
-  const ago = updated ? Math.round((Date.now() - updated) / 1000) : null;
-  const paused = f.paused && f.paused.value === 1;
-  setStatus((paused ? "Paused · " : "") + (ago != null ? `updated ${ago}s ago` : "live"), false);
+  const ago = d.updatedAt ? Math.round((Date.now() - d.updatedAt) / 1000) : null;
+  const paused = d.paused === 1;
+  setStatus((paused ? "Paused · " : "")
+            + (ago != null ? `updated ${ago}s ago` : "live")
+            + " · end-to-end encrypted", false);
 }
 
 function setStatus(text, isError) {
@@ -221,6 +260,8 @@ function setStatus(text, isError) {
 let pollTimer;
 if (!token) {
   showMessage("No ride token in the link.");
+} else if (!keyB64) {
+  showMessage("This link is incomplete — it's missing its decryption key. Ask the rider to share the full link.");
 } else if (API_TOKEN.startsWith("PASTE_")) {
   showMessage("Live tracking isn't configured on this site yet (missing CloudKit web token).");
 } else {

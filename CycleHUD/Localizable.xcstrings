@@ -15046,9 +15046,7 @@
         }
       }
     },
-    "W" : {
-
-    },
+    "W" : {},
     "Waiting for GPS…" : {
       "localizations" : {
         "de-DE" : {
@@ -15333,42 +15331,42 @@
         }
       }
     },
-    "When on, each ride publishes a private link showing your live position, speed and distance on a map — share it with whoever should know where you are. The link is an unguessable random address, updates every 15 seconds through your own iCloud, and goes dead the moment you stop the ride." : {
+    "When on, each ride publishes a private link showing your live position, speed and distance on a map — share it with whoever should know where you are. The link is an unguessable random address, updates every 15 seconds through your own iCloud, and goes dead the moment you stop the ride. Everything is end-to-end encrypted: the key travels only inside the link itself, so nobody without it — not even CycleHUD — can read where you are." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn aktiviert, veröffentlicht jede Fahrt einen privaten Link mit deiner Live-Position, Geschwindigkeit und Distanz auf einer Karte — teile ihn mit allen, die wissen sollen, wo du bist. Der Link ist eine nicht erratbare Zufallsadresse, aktualisiert sich alle 15 Sekunden über deine eigene iCloud und erlischt, sobald du die Fahrt beendest."
+            "value" : "Wenn aktiviert, veröffentlicht jede Fahrt einen privaten Link mit deiner Live-Position, Geschwindigkeit und Distanz auf einer Karte — teile ihn mit allen, die wissen sollen, wo du bist. Der Link ist eine nicht erratbare Zufallsadresse, aktualisiert sich alle 15 Sekunden über deine eigene iCloud und erlischt, sobald du die Fahrt beendest. Alles ist Ende-zu-Ende verschlüsselt: Der Schlüssel reist nur im Link selbst — ohne ihn kann niemand, auch nicht CycleHUD, deine Position lesen."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "When on, each ride publishes a private link showing your live position, speed and distance on a map — share it with whoever should know where you are. The link is an unguessable random address, updates every 15 seconds through your own iCloud, and goes dead the moment you stop the ride."
+            "value" : "When on, each ride publishes a private link showing your live position, speed and distance on a map — share it with whoever should know where you are. The link is an unguessable random address, updates every 15 seconds through your own iCloud, and goes dead the moment you stop the ride. Everything is end-to-end encrypted: the key travels only inside the link itself, so nobody without it — not even CycleHUD — can read where you are."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "When on, each ride publishes a private link showing your live position, speed and distance on a map — share it with whoever should know where you are. The link is an unguessable random address, updates every 15 seconds through your own iCloud, and goes dead the moment you stop the ride."
+            "value" : "When on, each ride publishes a private link showing your live position, speed and distance on a map — share it with whoever should know where you are. The link is an unguessable random address, updates every 15 seconds through your own iCloud, and goes dead the moment you stop the ride. Everything is end-to-end encrypted: the key travels only inside the link itself, so nobody without it — not even CycleHUD — can read where you are."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al activarlo, cada salida publica un enlace privado con tu posición, velocidad y distancia en directo sobre un mapa — compártelo con quien deba saber dónde estás. El enlace es una dirección aleatoria imposible de adivinar, se actualiza cada 15 segundos a través de tu propio iCloud y deja de funcionar en cuanto detienes la salida."
+            "value" : "Al activarlo, cada salida publica un enlace privado con tu posición, velocidad y distancia en directo sobre un mapa — compártelo con quien deba saber dónde estás. El enlace es una dirección aleatoria imposible de adivinar, se actualiza cada 15 segundos a través de tu propio iCloud y deja de funcionar en cuanto detienes la salida. Todo va cifrado de extremo a extremo: la clave viaja solo dentro del enlace — sin ella nadie, ni siquiera CycleHUD, puede leer dónde estás."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une fois activé, chaque sortie publie un lien privé montrant votre position, votre vitesse et votre distance en direct sur une carte — partagez-le avec qui doit savoir où vous êtes. Le lien est une adresse aléatoire impossible à deviner, se met à jour toutes les 15 secondes via votre propre iCloud et meurt dès que vous arrêtez la sortie."
+            "value" : "Une fois activé, chaque sortie publie un lien privé montrant votre position, votre vitesse et votre distance en direct sur une carte — partagez-le avec qui doit savoir où vous êtes. Le lien est une adresse aléatoire impossible à deviner, se met à jour toutes les 15 secondes via votre propre iCloud et meurt dès que vous arrêtez la sortie. Le tout est chiffré de bout en bout : la clé ne voyage que dans le lien lui-même — sans elle, personne, pas même CycleHUD, ne peut lire où vous êtes."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quando attivo, ogni uscita pubblica un link privato con posizione, velocità e distanza in tempo reale su una mappa — condividilo con chi deve sapere dove sei. Il link è un indirizzo casuale non indovinabile, si aggiorna ogni 15 secondi tramite il tuo iCloud e smette di funzionare appena termini il giro."
+            "value" : "Quando attivo, ogni uscita pubblica un link privato con posizione, velocità e distanza in tempo reale su una mappa — condividilo con chi deve sapere dove sei. Il link è un indirizzo casuale non indovinabile, si aggiorna ogni 15 secondi tramite il tuo iCloud e smette di funzionare appena termini il giro. Tutto è cifrato end-to-end: la chiave viaggia solo nel link stesso — senza di essa nessuno, nemmeno CycleHUD, può leggere dove sei."
           }
         }
       }

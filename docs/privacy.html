@@ -64,13 +64,17 @@
             sharing a route is a file you send yourself (AirDrop, Messages, …) — there is no
             route server.</li>
           <li><strong>Live tracking (optional, off by default)</strong> — if you turn on
-            live tracking, each ride publishes your current position, speed, distance and
-            riding time to the app's own <strong>iCloud (CloudKit)</strong> public database
-            under an unguessable random link, so people you share the link with can follow
-            the ride on this website. The record updates every 15 seconds and is
-            <em>deleted the moment you stop the ride</em> — nothing about the ride stays
-            published, and no name or identifier travels with it. Anyone opening the
-            share page also fetches map tiles from OpenStreetMap.</li>
+            live tracking, each ride publishes your current position, path, speed, distance
+            and riding time to the app's own <strong>iCloud (CloudKit)</strong> public
+            database under an unguessable random link, so people you share the link with
+            can follow the ride on this website. It is <strong>end-to-end encrypted</strong>:
+            your phone seals every update with a key that travels only inside the share
+            link itself (the part after the #, which browsers never send to any server) —
+            what iCloud stores is unreadable ciphertext, so neither CycleHUD nor Apple can
+            see where you are; only people holding your link can. The record updates every
+            15 seconds and is <em>deleted the moment you stop the ride</em> — nothing about
+            the ride stays published, and no name or identifier travels with it. Anyone
+            opening the share page also fetches map tiles from OpenStreetMap.</li>
           <li><strong>Strava upload (optional, off by default)</strong> — if you connect a
             Strava account, rides you choose to upload (or all rides, with auto-upload on)
             are sent directly from your phone to <strong>Strava</strong>, governed by
@@ -95,10 +99,10 @@
           <li>No servers of our own — CycleHUD has no backend. The only network features are the
             optional rain nowcast (location to Apple Weather), the optional upcoming-junctions
             tile (approximate location to OpenStreetMap), optional route planning (tapped
-            map points to BRouter), optional live tracking (position to your own iCloud,
-            deleted when the ride ends) and optional Strava upload (rides you send to your
-            own Strava account); all can be turned off in Settings, and everything except
-            the nowcast is off by default.</li>
+            map points to BRouter), optional live tracking (end-to-end encrypted position
+            through your own iCloud, deleted when the ride ends) and optional Strava
+            upload (rides you send to your own Strava account); all can be turned off in
+            Settings, and everything except the nowcast is off by default.</li>
           <li>No analytics, advertising, tracking, or third-party SDKs.</li>
           <li>We do not sell, rent, or share your personal information with anyone.</li>
         </ul>

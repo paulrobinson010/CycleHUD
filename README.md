@@ -51,9 +51,13 @@ meters work too.
   vehicle behind you the whole strip floods with the threat colour — a pocketed
   phone still shows what's coming.
 - **Live tracking** *(optional, off by default)* — each ride publishes a
-  private map link (position, speed, distance, updated every 15 s) you can send
-  to whoever should know where you are. No accounts and no servers: the data
-  travels through your own iCloud under an unguessable random address, and the
+  private map link you can send to whoever should know where you are: live
+  position, the **path ridden so far**, the **planned route** (dashed) when
+  following one, speed, average, distance, riding time and an **ETA** to the
+  route's end, updated every 15 s. No accounts and no servers — and
+  **end-to-end encrypted**: the key travels only inside the link itself
+  (the URL fragment never reaches a server), so iCloud stores ciphertext
+  and nobody without the link — including us — can read where you are. The
   link **goes dead the moment you stop the ride**. (Needs the CloudKit
   capability + a one-off dashboard step — see `docs/SETUP.md` §3c.)
 - **Customisable tiles & pages** — choose which metric tiles appear on the ride

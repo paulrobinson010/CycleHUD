@@ -301,7 +301,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Live tracking")
                 } footer: {
-                    Text("When on, each ride publishes a private link showing your live position, speed and distance on a map — share it with whoever should know where you are. The link is an unguessable random address, updates every 15 seconds through your own iCloud, and goes dead the moment you stop the ride.")
+                    Text("When on, each ride publishes a private link showing your live position, speed and distance on a map — share it with whoever should know where you are. The link is an unguessable random address, updates every 15 seconds through your own iCloud, and goes dead the moment you stop the ride. Everything is end-to-end encrypted: the key travels only inside the link itself, so nobody without it — not even CycleHUD — can read where you are.")
                 }
 
                 Section {
