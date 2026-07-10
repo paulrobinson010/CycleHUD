@@ -40,7 +40,9 @@ struct DirectionTile: View {
                 .frame(maxWidth: .infinity)
             } else {
                 HStack(spacing: 6) {
-                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    // Unit tucked in small under the value (never beside it),
+                    // so the number and the arrow keep their room.
+                    VStack(alignment: .leading, spacing: 0) {
                         Text(value)
                             .font(Theme.valueFont(valueSize))
                             .foregroundStyle(Theme.valueStyle)
@@ -49,9 +51,9 @@ struct DirectionTile: View {
                             .minimumScaleFactor(0.5)
                         if !unit.isEmpty {
                             Text(unit)
-                                .font(.system(size: max(11, valueSize * 0.3),
-                                              weight: .semibold, design: .rounded))
+                                .font(.system(size: 10, weight: .semibold, design: .rounded))
                                 .foregroundStyle(Theme.unitColor)
+                                .lineLimit(1)
                         }
                     }
                     Spacer(minLength: 4)
@@ -100,20 +102,20 @@ struct MetricTile: View {
                 .foregroundStyle(alert ? Color.white.opacity(0.85) : Theme.textSecondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
-            HStack(alignment: .firstTextBaseline, spacing: 4) {
-                Text(value)
-                    .font(Theme.valueFont(valueSize))
-                    .foregroundStyle(alert ? AnyShapeStyle(Color.white)
-                                     : accent.map(AnyShapeStyle.init) ?? Theme.valueStyle)
-                    .shadow(color: alert ? .clear : Theme.glow, radius: 6)   // neon in Cyberpunk
+            Text(value)
+                .font(Theme.valueFont(valueSize))
+                .foregroundStyle(alert ? AnyShapeStyle(Color.white)
+                                 : accent.map(AnyShapeStyle.init) ?? Theme.valueStyle)
+                .shadow(color: alert ? .clear : Theme.glow, radius: 6)   // neon in Cyberpunk
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+            // Unit tucked in small under the value, so the number keeps the
+            // whole width to itself.
+            if !unit.isEmpty {
+                Text(unit)
+                    .font(.system(size: 10, weight: .semibold, design: .rounded))
+                    .foregroundStyle(alert ? Color.white.opacity(0.85) : Theme.unitColor)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.5)
-                if !unit.isEmpty {
-                    Text(unit)
-                        .font(.system(size: max(11, valueSize * 0.3),
-                                      weight: .semibold, design: .rounded))
-                        .foregroundStyle(alert ? Color.white.opacity(0.85) : Theme.unitColor)
-                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -51,19 +51,18 @@ struct ClimbRowTile: View {
                 .foregroundStyle(Theme.textSecondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
-            HStack(alignment: .firstTextBaseline, spacing: 4) {
-                Text(value)
-                    .font(Theme.valueFont(valueSize))
-                    .foregroundStyle(Theme.valueStyle)
-                    .shadow(color: Theme.glow, radius: 6)
+            Text(value)
+                .font(Theme.valueFont(valueSize))
+                .foregroundStyle(Theme.valueStyle)
+                .shadow(color: Theme.glow, radius: 6)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+            // Unit tucked in small under the value, matching MetricTile.
+            if !unit.isEmpty {
+                Text(unit)
+                    .font(.system(size: 10, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Theme.unitColor)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.5)
-                if !unit.isEmpty {
-                    Text(unit)
-                        .font(.system(size: max(11, valueSize * 0.3),
-                                      weight: .semibold, design: .rounded))
-                        .foregroundStyle(Theme.unitColor)
-                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
