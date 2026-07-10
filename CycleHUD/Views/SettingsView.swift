@@ -189,7 +189,6 @@ struct SettingsView: View {
                     } label: {
                         Label("Ride screen tiles", systemImage: "square.grid.2x2")
                     }
-                    Toggle("Show units on tiles", isOn: $settings.showTileUnits)
                     Picker("Appearance", selection: $settings.appearanceTheme) {
                         ForEach(AppearanceTheme.allCases) { Text($0.label).tag($0) }
                     }

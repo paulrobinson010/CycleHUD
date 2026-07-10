@@ -856,15 +856,15 @@ struct RideView: View {
     }
 
     /// Value font scaled to the tile height so shrunken landscape tiles still
-    /// fit; with units hidden the freed space goes to bigger numerals.
+    /// fit.
     private func valueSize(for height: CGFloat) -> CGFloat {
-        let cap: CGFloat = settings.showTileUnits ? 32 : 36
-        return max(22, min(cap, height * 0.42))
+        max(22, min(32, height * 0.42))
     }
 
-    /// The tile's unit label, or nothing when the rider has hidden units.
+    /// The tile's unit label. (Once a toggle; units are always shown now that
+    /// they sit small under the value instead of beside it.)
     private func tileUnit(_ unit: String) -> String {
-        settings.showTileUnits ? unit : ""
+        unit
     }
 
     /// Build the tile for one metric, pulling live values from the managers.
@@ -927,8 +927,7 @@ struct RideView: View {
                            PowerZones.color(PowerZones.zone(watts: $0, ftp: settings.ftpWatts))
                        } : nil)
         case .rain:
-            WeatherTile(nowcast: weather.nowcast, status: weather.status, height: height,
-                        showUnit: settings.showTileUnits)
+            WeatherTile(nowcast: weather.nowcast, status: weather.status, height: height)
         }
     }
 

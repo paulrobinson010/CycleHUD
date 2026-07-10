@@ -38,7 +38,6 @@ final class AppSettings: ObservableObject {
         static let topTileCountLegacy = "topTileCount"
         static let ridePages = "ridePagesV1"
         static let currentRidePage = "currentRidePage"
-        static let showTileUnits = "showTileUnits"
         static let radarOnRight = "radarOnRight"
         static let crashDetectionEnabled = "crashDetectionEnabled"
         static let emergencyContactName = "emergencyContactName"
@@ -159,7 +158,6 @@ final class AppSettings: ObservableObject {
 
     /// Show the unit label (km/h, bpm, …) next to each tile's value. Off frees
     /// the space for bigger numbers — for riders who know their units.
-    @Published var showTileUnits: Bool { didSet { defaults.set(showTileUnits, forKey: Keys.showTileUnits) } }
     /// How many leading entries of the CURRENT page's tiles sit ABOVE the radar
     /// in portrait (dragged there in the ride screen's edit mode).
     var topTileCount: Int {
@@ -231,7 +229,6 @@ final class AppSettings: ObservableObject {
             Keys.liveTrackingEnabled: false,
             Keys.stravaAutoUploadEnabled: false,
             Keys.appLanguage: "",
-            Keys.showTileUnits: true,
             Keys.currentRidePage: 0,
             Keys.radarOnRight: false,
             Keys.crashDetectionEnabled: false,
@@ -290,7 +287,6 @@ final class AppSettings: ObservableObject {
             pages = [page]
         }
         currentPageIndex = defaults.integer(forKey: Keys.currentRidePage)
-        showTileUnits = defaults.bool(forKey: Keys.showTileUnits)
         radarOnRight = defaults.bool(forKey: Keys.radarOnRight)
         crashDetectionEnabled = defaults.bool(forKey: Keys.crashDetectionEnabled)
         emergencyContactName = defaults.string(forKey: Keys.emergencyContactName) ?? ""
@@ -314,7 +310,6 @@ final class AppSettings: ObservableObject {
     func resetToDefaults() {
         pages = [.standard]
         currentPageIndex = 0
-        showTileUnits = true
         appearanceTheme = .light
         digitStyle = .standard
         beepEnabled = true

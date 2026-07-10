@@ -12717,46 +12717,6 @@
         }
       }
     },
-    "Show units on tiles" : {
-      "localizations" : {
-        "de-DE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einheiten auf Kacheln anzeigen"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Show units on tiles"
-          }
-        },
-        "en-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Show units on tiles"
-          }
-        },
-        "es-ES" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar unidades en las casillas"
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Afficher les unités sur les tuiles"
-          }
-        },
-        "it-IT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostra le unità sulle schede"
-          }
-        }
-      }
-    },
     "Show welcome screen again" : {
       "localizations" : {
         "de-DE" : {

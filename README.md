@@ -72,9 +72,9 @@ meters work too.
   speed, average/max speed, cadence, distance, time, ascent, gradient, lap time,
   heart rate, calories, a compass, and the weather tiles (rain, temperature,
   wind — the wind tile shows the speed with a direction arrow relative to your
-  travel, tinted for headwind or tailwind). A
-  **Show units on tiles** toggle drops the unit labels for bigger numerals, and
-  **Reset to defaults** (bottom of Settings) restores the original three rows.
+  travel, tinted for headwind or tailwind). Units sit small under each value,
+  and **Reset to defaults** (bottom of Settings) restores the original three
+  rows.
 - **Manual laps** — tap the lap button while riding to split the ride; each lap's
   time, distance and average speed are shown in the ride summary.
 - **Ride export** — share any ride (end-of-ride or from history) as a **GPX or
