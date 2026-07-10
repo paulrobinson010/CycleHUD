@@ -108,8 +108,12 @@ it back, so followers just open a link — no app, no account. To enable:
 3. In the [CloudKit Dashboard](https://icloud.developer.apple.com/) select the
    container, then:
    - **Schema → Deploy Schema Changes…** to push `LiveRide` to **Production**.
-   - **API Access → New Token**: create an API token (read access to the
-     public database is all the page uses), and paste it into
+   - **Settings → Tokens & Keys → ＋ API Token** — and make sure the
+     environment breadcrumb at the top says **Production** first: tokens are
+     scoped to the environment they're created in, and one minted while the
+     console sits in Development only ever authenticates against
+     Development (`AUTHENTICATION_FAILED` from the production URL). Allowed
+     Origins: restrict to the site's domain. Paste the token into
      `docs/live.html` as `API_TOKEN`.
 4. Push the site. Share links look like
    `https://cyclehud.robbo-online.uk/live.html#<token>`; they update every
