@@ -141,12 +141,11 @@ enum Theme {
     }
     static var tileStrokeWidth: CGFloat { cyber ? 1 : 0 }
 
-    /// Ink for the big metric numerals: a cyan→purple gradient in Cyberpunk,
-    /// the plain text colour otherwise.
+    /// Ink for the big metric numerals. Cyberpunk used a cyan→purple
+    /// gradient, but under the CRT scanlines it lost too much contrast —
+    /// white reads at a glance, and the neon glow shadow keeps the look.
     static var valueStyle: AnyShapeStyle {
-        cyber ? AnyShapeStyle(LinearGradient(colors: [cyberAccent, cyberPurple],
-                                             startPoint: .top, endPoint: .bottom))
-              : AnyShapeStyle(textPrimary)
+        AnyShapeStyle(textPrimary)
     }
 
     /// Unit labels next to the numerals: neon pink in Cyberpunk.

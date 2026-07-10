@@ -37,7 +37,7 @@ struct CRTEffect: ViewModifier {
             .task(id: enabled && glitchesAllowed) {
                 guard enabled, glitchesAllowed else { return }
                 while !Task.isCancelled {
-                    let wait = UInt64.random(in: 12_000_000_000...35_000_000_000)
+                    let wait = UInt64.random(in: 5_000_000_000...14_000_000_000)
                     try? await Task.sleep(nanoseconds: wait)
                     guard !Task.isCancelled else { return }
                     await runGlitch()
@@ -67,12 +67,12 @@ struct CRTEffect: ViewModifier {
         Canvas { ctx, size in
             var y: CGFloat = 0
             while y < size.height {
-                ctx.fill(Path(CGRect(x: 0, y: y, width: size.width, height: 1)),
-                         with: .color(.black.opacity(0.32)))
+                ctx.fill(Path(CGRect(x: 0, y: y, width: size.width, height: 1.2)),
+                         with: .color(.black.opacity(0.5)))
                 y += 3
             }
         }
-        .opacity(0.5)
+        .opacity(0.62)
     }
 
     /// Corners fall off into dark, like a tube's shadow mask.
