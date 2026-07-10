@@ -1011,7 +1011,7 @@ struct RideView: View {
             .background(RoundedRectangle(cornerRadius: 22).fill(Theme.panelRaised)
                 .shadow(color: .black.opacity(0.35), radius: 12, y: 4))
             .overlay(RoundedRectangle(cornerRadius: 22)
-                .strokeBorder(Theme.tileStroke.opacity(0.6), lineWidth: 1.5))
+                .strokeBorder(Theme.textSecondary.opacity(0.25), lineWidth: 1.5))
             .padding(.top, 8)
             .transition(.move(edge: .top).combined(with: .opacity))
             .onTapGesture { routes.routeStart = nil }
@@ -1053,7 +1053,8 @@ struct RideView: View {
             .background(RoundedRectangle(cornerRadius: 22).fill(Theme.panelRaised)
                 .shadow(color: .black.opacity(0.35), radius: 12, y: 4))
             .overlay(RoundedRectangle(cornerRadius: 22)
-                .strokeBorder((c.newBest ? Theme.good : Theme.tileStroke).opacity(0.6),
+                .strokeBorder(c.newBest ? Theme.good.opacity(0.6)
+                                        : Theme.textSecondary.opacity(0.25),
                               lineWidth: 1.5))
             .padding(.top, 8)
             .transition(.move(edge: .top).combined(with: .opacity))
