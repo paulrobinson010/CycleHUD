@@ -1260,6 +1260,46 @@
         }
       }
     },
+    "Adds a “Mark car” button to the ride screen so you can tag the moment a vehicle passes — handy for checking radar timing. Most riders can leave this off." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fügt dem Fahrtbildschirm eine Schaltfläche „Auto markieren“ hinzu, um den Moment einer Vorbeifahrt zu markieren — praktisch zum Prüfen des Radar-Timings. Die meisten können das ausgeschaltet lassen."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds a “Mark car” button to the ride screen so you can tag the moment a vehicle passes — handy for checking radar timing. Most riders can leave this off."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds a “Mark car” button to the ride screen so you can tag the moment a vehicle passes — handy for checking radar timing. Most riders can leave this off."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade un botón « Marcar coche » a la pantalla de ruta para marcar cuándo pasa un vehículo: útil para comprobar el sincronismo del radar. La mayoría puede dejarlo desactivado."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute un bouton « Marquer voiture » à l'écran de sortie pour marquer le passage d'un véhicule — pratique pour vérifier le timing du radar. La plupart des cyclistes peuvent le laisser désactivé."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiunge un pulsante « Segna auto » alla schermata dell'uscita per segnare il momento di un passaggio — utile per verificare i tempi del radar. La maggior parte può lasciarlo disattivato."
+          }
+        }
+      }
+    },
     "Adds a Junction tile to the ride screen showing the next intersection ahead — its layout and the distance to it, counting down as you approach. Road data around your route is fetched from OpenStreetMap while this is on, which sends your approximate location to OpenStreetMap's servers. Nothing is sent while it's off." : {
       "localizations" : {
         "de-DE" : {
@@ -1336,46 +1376,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aggiunge alla schermata di guida un pulsante mappa per pianificare e scegliere i percorsi. Pianifica toccando partenza e tappe su una mappa – il tracciato segue strade tranquille e piste ciclabili e torna alla partenza, a meno che tu non scelga un arrivo diverso. Mentre segui un percorso, questo appare nel pannello radar finché la strada dietro è libera, e il riquadro Incrocio indica la direzione; se attivi un percorso lontano da esso, CycleHUD traccia anche un avvicinamento alla partenza. La pianificazione e l’avvicinamento inviano i punti necessari al servizio di routing BRouter (brouter.de, dati OpenStreetMap); i percorsi salvati restano sul tuo dispositivo e possono essere condivisi come file."
-          }
-        }
-      }
-    },
-    "Adds a “Mark car” button to the ride screen so you can tag the moment a vehicle passes — handy for checking radar timing. Most riders can leave this off." : {
-      "localizations" : {
-        "de-DE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fügt dem Fahrtbildschirm eine Schaltfläche „Auto markieren“ hinzu, um den Moment einer Vorbeifahrt zu markieren — praktisch zum Prüfen des Radar-Timings. Die meisten können das ausgeschaltet lassen."
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adds a “Mark car” button to the ride screen so you can tag the moment a vehicle passes — handy for checking radar timing. Most riders can leave this off."
-          }
-        },
-        "en-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adds a “Mark car” button to the ride screen so you can tag the moment a vehicle passes — handy for checking radar timing. Most riders can leave this off."
-          }
-        },
-        "es-ES" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Añade un botón « Marcar coche » a la pantalla de ruta para marcar cuándo pasa un vehículo: útil para comprobar el sincronismo del radar. La mayoría puede dejarlo desactivado."
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajoute un bouton « Marquer voiture » à l'écran de sortie pour marquer le passage d'un véhicule — pratique pour vérifier le timing du radar. La plupart des cyclistes peuvent le laisser désactivé."
-          }
-        },
-        "it-IT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aggiunge un pulsante « Segna auto » alla schermata dell'uscita per segnare il momento di un passaggio — utile per verificare i tempi del radar. La maggior parte può lasciarlo disattivato."
           }
         }
       }
@@ -6319,6 +6319,46 @@
         }
       }
     },
+    "I’m OK — cancel" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mir geht’s gut – abbrechen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I’m OK — cancel"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I’m OK — cancel"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estoy bien — cancelar"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je vais bien — annuler"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sto bene — annulla"
+          }
+        }
+      }
+    },
     "iCloud isn’t available — check you’re signed in and iCloud Drive is on." : {
       "localizations" : {
         "de-DE" : {
@@ -6395,206 +6435,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sincronizzazione iCloud"
-          }
-        }
-      }
-    },
-    "Import route" : {
-      "localizations" : {
-        "de-DE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Route importieren"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import route"
-          }
-        },
-        "en-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import route"
-          }
-        },
-        "es-ES" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importar ruta"
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importer un itinéraire"
-          }
-        },
-        "it-IT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importa percorso"
-          }
-        }
-      }
-    },
-    "Insights" : {
-      "localizations" : {
-        "de-DE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einblicke"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Insights"
-          }
-        },
-        "en-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Insights"
-          }
-        },
-        "es-ES" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estadísticas"
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Statistiques"
-          }
-        },
-        "it-IT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Statistiche"
-          }
-        }
-      }
-    },
-    "Intensity" : {
-      "localizations" : {
-        "de-DE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intensität"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intensity"
-          }
-        },
-        "en-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intensity"
-          }
-        },
-        "es-ES" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intensidad"
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intensité"
-          }
-        },
-        "it-IT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intensità"
-          }
-        }
-      }
-    },
-    "It doesn’t look like a CycleHUD route or a GPX file." : {
-      "localizations" : {
-        "de-DE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das sieht nicht nach einer CycleHUD-Route oder einer GPX-Datei aus."
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "It doesn’t look like a CycleHUD route or a GPX file."
-          }
-        },
-        "en-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "It doesn’t look like a CycleHUD route or a GPX file."
-          }
-        },
-        "es-ES" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No parece una ruta de CycleHUD ni un archivo GPX."
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cela ne ressemble pas à un itinéraire CycleHUD ni à un fichier GPX."
-          }
-        },
-        "it-IT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non sembra un percorso CycleHUD né un file GPX."
-          }
-        }
-      }
-    },
-    "I’m OK — cancel" : {
-      "localizations" : {
-        "de-DE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mir geht’s gut – abbrechen"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I’m OK — cancel"
-          }
-        },
-        "en-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I’m OK — cancel"
-          }
-        },
-        "es-ES" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estoy bien — cancelar"
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Je vais bien — annuler"
-          }
-        },
-        "it-IT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sto bene — annulla"
           }
         }
       }
@@ -6679,6 +6519,46 @@
         }
       }
     },
+    "Import route" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route importieren"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import route"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import route"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importar ruta"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importer un itinéraire"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importa percorso"
+          }
+        }
+      }
+    },
     "in about %@ min" : {
       "localizations" : {
         "de-DE" : {
@@ -6715,6 +6595,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tra circa %@ min"
+          }
+        }
+      }
+    },
+    "Insights" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einblicke"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insights"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insights"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estadísticas"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistiques"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistiche"
+          }
+        }
+      }
+    },
+    "Intensity" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensität"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensity"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensity"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensidad"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensité"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensità"
           }
         }
       }
@@ -6795,6 +6755,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "lo"
+          }
+        }
+      }
+    },
+    "It doesn’t look like a CycleHUD route or a GPX file." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das sieht nicht nach einer CycleHUD-Route oder einer GPX-Datei aus."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It doesn’t look like a CycleHUD route or a GPX file."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It doesn’t look like a CycleHUD route or a GPX file."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No parece una ruta de CycleHUD ni un archivo GPX."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela ne ressemble pas à un itinéraire CycleHUD ni à un fichier GPX."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non sembra un percorso CycleHUD né un file GPX."
           }
         }
       }
@@ -9496,6 +9496,7 @@
       }
     },
     "POW" : {
+      "comment" : "3-letter pill for the Power sensor",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -13517,7 +13518,12 @@
         }
       }
     },
+    "Tap a route to follow it on the ride screen; tap again to stop following. The route replaces the radar lane until a vehicle appears." : {
+      "comment" : "A description of how to follow a route.",
+      "isCommentAutoGenerated" : true
+    },
     "Tap a route to follow it on the ride screen; tap again to stop following. The route replaces the radar lane until a vehicle appears. Touch and hold a route for more, like riding it in reverse." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
@@ -15040,6 +15046,9 @@
         }
       }
     },
+    "W" : {
+
+    },
     "Waiting for GPS…" : {
       "localizations" : {
         "de-DE" : {
@@ -15199,6 +15208,10 @@
           }
         }
       }
+    },
+    "Week" : {
+      "comment" : "Bar chart showing the distance travelled each week.",
+      "isCommentAutoGenerated" : true
     },
     "Weight" : {
       "localizations" : {

@@ -41,17 +41,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		26A7C0052FEC010000EEC2C4 /* Embed Foundation Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				26A7C0032FEC010000EEC2C4 /* CycleHUDWidgetsExtension.appex in Embed Foundation Extensions */,
-			);
-			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		2652AE4C2FEBF25B00EEC2C4 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -59,6 +48,17 @@
 			dstSubfolderSpec = 13;
 			files = (
 				2652AE4B2FEBF25B00EEC2C4 /* CycleHUDComplicationExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26A7C0052FEC010000EEC2C4 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				26A7C0032FEC010000EEC2C4 /* CycleHUDWidgetsExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -93,20 +93,6 @@
 			);
 			target = 1A0000000000000000000005 /* CycleHUD */;
 		};
-		26A7C0082FEC010000EEC2C4 /* Exceptions for "CycleHUDWidgets" folder in "CycleHUDWidgetsExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 26A7C00D2FEC010000EEC2C4 /* CycleHUDWidgetsExtension */;
-		};
-		26A7C0092FEC010000EEC2C4 /* Exceptions for "CycleHUD" folder in "CycleHUDWidgetsExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Models/RideActivityAttributes.swift,
-			);
-			target = 26A7C00D2FEC010000EEC2C4 /* CycleHUDWidgetsExtension */;
-		};
 		2652AE502FEBF25B00EEC2C4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -114,12 +100,26 @@
 			);
 			target = 2652AE362FEBF25A00EEC2C4 /* CycleHUDComplicationExtension */;
 		};
+		26A7C0082FEC010000EEC2C4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 26A7C00D2FEC010000EEC2C4 /* CycleHUDWidgetsExtension */;
+		};
+		26A7C0092FEC010000EEC2C4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/RideActivityAttributes.swift,
+			);
+			target = 26A7C00D2FEC010000EEC2C4 /* CycleHUDWidgetsExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		1A0000000000000000000004 /* CycleHUD */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (1A0000000000000000000010 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 26A7C0092FEC010000EEC2C4 /* Exceptions for "CycleHUD" folder in "CycleHUDWidgetsExtension" target */, ); explicitFileTypes = {}; explicitFolders = (); path = CycleHUD; sourceTree = "<group>"; };
-		26A7C0072FEC010000EEC2C4 /* CycleHUDWidgets */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (26A7C0082FEC010000EEC2C4 /* Exceptions for "CycleHUDWidgets" folder in "CycleHUDWidgetsExtension" target */, ); explicitFileTypes = {}; explicitFolders = (); path = CycleHUDWidgets; sourceTree = "<group>"; };
+		1A0000000000000000000004 /* CycleHUD */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (1A0000000000000000000010 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 26A7C0092FEC010000EEC2C4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CycleHUD; sourceTree = "<group>"; };
 		2652AE3D2FEBF25A00EEC2C4 /* CycleHUDComplication */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (2652AE502FEBF25B00EEC2C4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CycleHUDComplication; sourceTree = "<group>"; };
+		26A7C0072FEC010000EEC2C4 /* CycleHUDWidgets */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (26A7C0082FEC010000EEC2C4 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CycleHUDWidgets; sourceTree = "<group>"; };
 		26F2F0C72FE9DFB800B4258D /* CyleHUDWatch Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "CyleHUDWatch Watch App"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -400,15 +400,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		26A7C00F2FEC010000EEC2C4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 26A7C00D2FEC010000EEC2C4 /* CycleHUDWidgetsExtension */;
-			targetProxy = 26A7C0042FEC010000EEC2C4 /* PBXContainerItemProxy */;
-		};
 		2652AE4A2FEBF25B00EEC2C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2652AE362FEBF25A00EEC2C4 /* CycleHUDComplicationExtension */;
 			targetProxy = 2652AE492FEBF25B00EEC2C4 /* PBXContainerItemProxy */;
+		};
+		26A7C00F2FEC010000EEC2C4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 26A7C00D2FEC010000EEC2C4 /* CycleHUDWidgetsExtension */;
+			targetProxy = 26A7C0042FEC010000EEC2C4 /* PBXContainerItemProxy */;
 		};
 		26F2F0CF2FE9DFB900B4258D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -544,7 +544,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CycleHUD/CycleHUD.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 111;
+				CURRENT_PROJECT_VERSION = 123;
 				DEVELOPMENT_TEAM = UPF9A27355;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -555,7 +555,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.paulrobinson.CycleHUD;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -571,7 +571,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = CycleHUD/CycleHUD.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 111;
+				CURRENT_PROJECT_VERSION = 123;
 				DEVELOPMENT_TEAM = UPF9A27355;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -582,7 +582,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.paulrobinson.CycleHUD;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
