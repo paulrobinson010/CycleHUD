@@ -32,7 +32,7 @@ struct RouteWeatherView: View {
                 VStack(spacing: 18) {
                     DatePicker("Start time", selection: $startDate,
                                in: Date()...Date().addingTimeInterval(8 * 24 * 3600))
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .font(Theme.font(size: 15, weight: .semibold))
                         .padding(14)
                         .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panel))
 
@@ -46,7 +46,7 @@ struct RouteWeatherView: View {
                         }
                     } else if loaded {
                         Text("No forecast available.")
-                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .font(Theme.font(size: 14, weight: .medium))
                             .foregroundStyle(Theme.textSecondary)
                     } else {
                         ProgressView().padding(.top, 30)
@@ -82,26 +82,26 @@ struct RouteWeatherView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Riding time")
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .font(Theme.font(size: 12, weight: .semibold))
                         .foregroundStyle(Theme.textSecondary)
                     Text(verbatim: timeText(elapsedSeconds))
-                        .font(.system(size: 22, weight: .heavy, design: .rounded))
+                        .font(Theme.font(size: 22, weight: .heavy))
                         .monospacedDigit()
                         .foregroundStyle(Theme.textPrimary)
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("Estimated finish")
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .font(Theme.font(size: 12, weight: .semibold))
                         .foregroundStyle(Theme.textSecondary)
                     Text(finishDate.formatted(date: .omitted, time: .shortened))
-                        .font(.system(size: 22, weight: .heavy, design: .rounded))
+                        .font(Theme.font(size: 22, weight: .heavy))
                         .monospacedDigit()
                         .foregroundStyle(Theme.textPrimary)
                 }
             }
             Text("Based on your rides on similar terrain.")
-                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .font(Theme.font(size: 12, weight: .medium))
                 .foregroundStyle(Theme.textSecondary)
         }
         .padding(16)
@@ -220,16 +220,16 @@ struct RouteWeatherView: View {
             ForEach(Array(relevantHours(hours).enumerated()), id: \.offset) { _, hour in
                 HStack(spacing: 10) {
                     Text(hour.date.formatted(date: .omitted, time: .shortened))
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .font(Theme.font(size: 14, weight: .semibold))
                         .monospacedDigit()
                         .foregroundStyle(Theme.textPrimary)
                         .frame(width: 64, alignment: .leading)
                     Image(systemName: hour.symbolName)
-                        .font(.system(size: 15))
+                        .font(Theme.font(size: 15))
                         .foregroundStyle(Theme.textSecondary)
                         .frame(width: 26)
                     Text(verbatim: temperatureText(hour.temperatureC))
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .font(.system(size: 14, weight: .medium))
                         .monospacedDigit()
                         .foregroundStyle(Theme.textPrimary)
                         .frame(width: 42, alignment: .leading)
@@ -238,14 +238,14 @@ struct RouteWeatherView: View {
                             .font(.system(size: 10, weight: .bold))
                             .rotationEffect(.degrees(hour.windFromDegrees + 180))
                         Text(verbatim: "\(Fmt.int(settings.speedUnit.value(fromMps: hour.windSpeedMps))) \(settings.speedUnit.label)")
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .font(Theme.font(size: 13, weight: .medium))
                             .monospacedDigit()
                     }
                     .foregroundStyle(Theme.textSecondary)
                     Spacer()
                     if hour.precipitationChance >= 0.15 {
                         Text(verbatim: "☂ \(Fmt.int(hour.precipitationChance * 100))%")
-                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .font(Theme.font(size: 13, weight: .semibold))
                             .foregroundStyle(Theme.accent)
                     }
                 }

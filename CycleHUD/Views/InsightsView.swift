@@ -16,10 +16,15 @@ struct InsightsView: View {
             VStack(spacing: 18) {
                 if let data {
                     if data.rideCount == 0 {
-                        Text("No rides yet — insights build as you ride.")
-                            .font(.system(size: 14, weight: .medium, design: .rounded))
-                            .foregroundStyle(Theme.textSecondary)
-                            .padding(.top, 40)
+                        VStack(spacing: 10) {
+                            Image(systemName: "chart.bar.xaxis")
+                                .font(.system(size: 38))
+                                .foregroundStyle(Theme.textSecondary.opacity(0.45))
+                            Text("No rides yet — insights build as you ride.")
+                                .font(Theme.font(size: 14, weight: .medium))
+                                .foregroundStyle(Theme.textSecondary)
+                        }
+                        .padding(.top, 40)
                     } else {
                         trendsCard(data)
                         recordsCard(data)
@@ -50,7 +55,7 @@ struct InsightsView: View {
     private func trendsCard(_ data: InsightsData) -> some View {
         card("Trends") {
             Text("Distance by week")
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .font(Theme.font(size: 12, weight: .semibold))
                 .foregroundStyle(Theme.textSecondary)
             Chart(data.weeks, id: \.start) { week in
                 BarMark(x: .value("Week", week.start, unit: .weekOfYear),
@@ -62,11 +67,11 @@ struct InsightsView: View {
             .chartXAxis {
                 AxisMarks(values: .stride(by: .weekOfYear)) {
                     AxisValueLabel(format: .dateTime.day().month(), centered: true)
-                        .font(.system(size: 9))
+                        .font(Theme.font(size: 9))
                 }
             }
             Text("Ascent by week")
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(Theme.textSecondary)
                 .padding(.top, 6)
             Chart(data.weeks, id: \.start) { week in
@@ -111,16 +116,16 @@ struct InsightsView: View {
     private func recordRow(_ title: LocalizedStringKey, _ value: String, _ date: Date) -> some View {
         HStack {
             Text(title)
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(Theme.font(size: 14, weight: .medium))
                 .foregroundStyle(Theme.textSecondary)
             Spacer()
             VStack(alignment: .trailing, spacing: 1) {
                 Text(verbatim: value)
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .font(Theme.font(size: 15, weight: .bold))
                     .monospacedDigit()
                     .foregroundStyle(Theme.textPrimary)
                 Text(date.formatted(date: .abbreviated, time: .omitted))
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .font(Theme.font(size: 11, weight: .medium))
                     .foregroundStyle(Theme.textSecondary)
             }
         }
@@ -148,11 +153,11 @@ struct InsightsView: View {
     private func statRow(_ title: LocalizedStringKey, _ value: String) -> some View {
         HStack {
             Text(title)
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(Theme.font(size: 14, weight: .medium))
                 .foregroundStyle(Theme.textSecondary)
             Spacer()
             Text(verbatim: value)
-                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .font(Theme.font(size: 15, weight: .bold))
                 .monospacedDigit()
                 .foregroundStyle(Theme.textPrimary)
         }
@@ -184,7 +189,7 @@ struct InsightsView: View {
                       @ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
-                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .font(Theme.font(size: 14, weight: .bold))
                 .foregroundStyle(Theme.textPrimary)
                 .padding(.bottom, 2)
             content()

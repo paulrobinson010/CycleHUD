@@ -35,9 +35,17 @@ struct RoutesView: View {
             List {
                 if routes.routes.isEmpty {
                     Section {
-                        Text("No routes yet. Tap + to plan one on the map, or import a shared route file.")
-                            .font(.system(size: 14))
-                            .foregroundStyle(Theme.textSecondary)
+                        VStack(spacing: 10) {
+                            Image(systemName: "map")
+                                .font(.system(size: 38))
+                                .foregroundStyle(Theme.textSecondary.opacity(0.45))
+                            Text("No routes yet. Tap + to plan one on the map, or import a shared route file.")
+                                .font(Theme.font(size: 14))
+                                .foregroundStyle(Theme.textSecondary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 18)
                     }
                 } else {
                     Section {
@@ -131,11 +139,11 @@ struct RoutesView: View {
                 .foregroundStyle(active ? Theme.good : Theme.textSecondary)
             VStack(alignment: .leading, spacing: 2) {
                 Text(verbatim: route.name)
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .font(Theme.font(size: 16, weight: .semibold))
                 Text(verbatim: "\(distText(route.distanceMeters)) \(settings.distanceUnit.label)"
                         + (route.loop ? " ⟳" : "")
                         + (route.bestTimes?.last.map { " · 🏁 \(timeText($0))" } ?? ""))
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .font(Theme.font(size: 13, weight: .medium))
                     .foregroundStyle(Theme.textSecondary)
             }
             Spacer()

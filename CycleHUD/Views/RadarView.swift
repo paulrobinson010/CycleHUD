@@ -70,7 +70,7 @@ struct RadarView: View {
                 Image(systemName: "battery.100", variableValue: Double(pct) / 100.0)
                 Text("\(pct)%")
             }
-            .font(.system(size: 12, weight: .bold, design: .rounded))
+            .font(Theme.font(size: 12, weight: .bold))
             .foregroundStyle(batteryColor(pct))
             .padding(.horizontal, 8)
             .padding(.vertical, 5)
@@ -156,7 +156,7 @@ struct RadarView: View {
                 .stroke(lineColor, style: StrokeStyle(lineWidth: 1, dash: [4, 5]))
 
                 Text(distanceLabel(distance))
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
+                    .font(Theme.font(size: 10, weight: .semibold))
                     .foregroundStyle(labelColor)
                     .position(x: min(w / 2 + hw + 16, w - 24), y: yy)
             }
@@ -175,11 +175,11 @@ struct RadarView: View {
                 // rider's speed unit — the "how urgent" number at a glance.
                 HStack(spacing: 5) {
                     Text(distanceLabel(threat.distanceMeters))
-                        .font(.system(size: 16, weight: .heavy, design: .rounded))
+                        .font(Theme.font(size: 16, weight: .heavy))
                         .foregroundStyle(.white)
                     if threat.approachSpeedKmh >= 1 {
                         Text(verbatim: speedLabel(threat.approachSpeedKmh))
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .font(Theme.font(size: 12, weight: .semibold))
                             .foregroundStyle(.white.opacity(0.82))
                     }
                 }
@@ -206,21 +206,33 @@ struct RadarView: View {
         return alertActive ? Color.white : Theme.good
     }
 
+    /// Slow breath on the Clear shield so the radar reads as *watching*, not
+    /// frozen — reassurance that the safety device is alive.
+    @State private var breathe = false
+
     @ViewBuilder private func centerBadge(h: CGFloat) -> some View {
         VStack(spacing: 8) {
             if radarConnected {
                 Image(systemName: "checkmark.shield.fill")
-                    .font(.system(size: 26))
+                    .font(Theme.font(size: 26))
                     .foregroundStyle(Theme.good)
+                    .scaleEffect(breathe ? 1.08 : 0.94)
+                    .opacity(breathe ? 1.0 : 0.72)
+                    .onAppear {
+                        breathe = false
+                        withAnimation(.easeInOut(duration: 2.2)
+                            .repeatForever(autoreverses: true)) { breathe = true }
+                    }
+                    .onDisappear { breathe = false }
                 Text("Clear")
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Theme.good)
             } else {
                 Image(systemName: "antenna.radiowaves.left.and.right.slash")
-                    .font(.system(size: 26))
+                    .font(Theme.font(size: 26))
                     .foregroundStyle(Theme.threatHigh)
                 Text("NOT CONNECTED")
-                    .font(.system(size: 13, weight: .heavy, design: .rounded))
+                    .font(.system(size: 13, weight: .heavy))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 5)

@@ -86,14 +86,14 @@ struct RouteMapView: View {
     @ViewBuilder private var speedLegend: some View {
         if routeSpeeds.count == coordinates.count {
             HStack(spacing: 6) {
-                Text("slow").font(.system(size: 11, weight: .semibold, design: .rounded))
+                Text("slow").font(Theme.font(size: 11, weight: .semibold))
                 LinearGradient(
                     colors: stride(from: 0.0, through: 1.0, by: 0.2)
                         .map { RideSummaryView.speedColor($0, lo: 0, hi: 1) },
                     startPoint: .leading, endPoint: .trailing)
                     .frame(width: 70, height: 6)
                     .clipShape(Capsule())
-                Text("fast").font(.system(size: 11, weight: .semibold, design: .rounded))
+                Text("fast").font(Theme.font(size: 11, weight: .semibold))
             }
             .foregroundStyle(Theme.textPrimary)
             .padding(.horizontal, 10)

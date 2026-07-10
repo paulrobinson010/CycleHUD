@@ -14,7 +14,7 @@ struct WindDetailView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("Wind")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(Theme.font(size: 20, weight: .bold))
                 Spacer()
                 Button { dismiss() } label: {
                     Image(systemName: "xmark.circle.fill")
@@ -48,11 +48,11 @@ struct WindDetailView: View {
                      color: Color = Theme.textPrimary) -> some View {
         HStack {
             Text(label)
-                .font(.system(size: 15, weight: .medium, design: .rounded))
+                .font(Theme.font(size: 15, weight: .medium))
                 .foregroundStyle(Theme.textSecondary)
             Spacer()
             Text(value)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .font(Theme.font(size: 16, weight: .bold))
                 .monospacedDigit()
                 .foregroundStyle(color)
         }

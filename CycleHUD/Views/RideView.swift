@@ -184,18 +184,18 @@ struct RideView: View {
         } else {
             VStack(spacing: 16) {
                 Image(systemName: "exclamationmark.bubble")
-                    .font(.system(size: 40)).foregroundStyle(Theme.threatHigh)
+                    .font(Theme.font(size: 40)).foregroundStyle(Theme.threatHigh)
                 Text("Can’t send a text from this device")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold))
                 if let contact = settings.emergencyContact {
                     Text(contact.name.isEmpty ? contact.phone : "\(contact.name) — \(contact.phone)")
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .font(Theme.font(size: 16, weight: .semibold))
                 }
                 Text(sos.messageBody)
                     .font(.footnote).foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                 Button("Close") { sos.composerFinished() }
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(Theme.font(size: 17, weight: .bold))
                     .padding(.top, 8)
             }
             .padding(28)
@@ -317,7 +317,7 @@ struct RideView: View {
                         Image(systemName: "arrow.up.square")
                         Text("Drag tiles here")
                     }
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .font(Theme.font(size: 14, weight: .semibold))
                     .foregroundStyle(Theme.textSecondary)
                 )
                 .contentShape(Rectangle())
@@ -516,7 +516,7 @@ struct RideView: View {
     private var gpsPill: some View {
         let connected = location.hasFix
         return Text("GPS")
-            .font(.system(size: 12, weight: .bold, design: .rounded))
+            .font(Theme.font(size: 12, weight: .bold))
             .lineLimit(1)
             .foregroundStyle(connected ? Theme.good : Theme.textSecondary)
             .frame(height: 30)
@@ -529,7 +529,7 @@ struct RideView: View {
 
     private var statusBadge: some View {
         Text(statusText)
-            .font(.system(size: 11, weight: .bold, design: .rounded))
+            .font(Theme.font(size: 11, weight: .bold))
             .lineLimit(1)
             .fixedSize(horizontal: true, vertical: false)
             .foregroundStyle(statusColor)
@@ -818,7 +818,7 @@ struct RideView: View {
                     Image(systemName: "checkmark")
                     Text("Done")
                 }
-                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .font(Theme.font(size: 20, weight: .bold))
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 58)
@@ -991,21 +991,21 @@ struct RideView: View {
                     Image(systemName: "flag.2.crossed")
                         .font(.system(size: 16, weight: .bold))
                     Text("Route started")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .font(Theme.font(size: 16, weight: .bold))
                 }
                 .foregroundStyle(Theme.textPrimary)
                 if let best = s.bestSeconds {
                     Text(verbatim: toastTime(best))
-                        .font(.system(size: 40, weight: .heavy, design: .rounded))
+                        .font(Theme.font(size: 40, weight: .heavy))
                         .monospacedDigit()
                         .foregroundStyle(Theme.textPrimary)
                     Text("Time to beat")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.purple)
+                        .font(Theme.font(size: 14, weight: .semibold))
+                        .foregroundStyle(Theme.ghost)
                 } else {
                     Text("No ghost yet — this run sets it")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.purple)
+                        .font(Theme.font(size: 14, weight: .semibold))
+                        .foregroundStyle(Theme.ghost)
                         .padding(.top, 2)
                 }
             }
@@ -1029,11 +1029,11 @@ struct RideView: View {
                     Image(systemName: "flag.checkered")
                         .font(.system(size: 16, weight: .bold))
                     Text("Route complete")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .font(Theme.font(size: 16, weight: .bold))
                 }
                 .foregroundStyle(Theme.textPrimary)
                 Text(verbatim: toastTime(c.seconds))
-                    .font(.system(size: 40, weight: .heavy, design: .rounded))
+                    .font(Theme.font(size: 40, weight: .heavy))
                     .monospacedDigit()
                     .foregroundStyle(Theme.textPrimary)
                 if let delta = c.deltaToBest {
@@ -1043,12 +1043,12 @@ struct RideView: View {
                             .monospacedDigit()
                         if !c.newBest { Text("vs best") }
                     }
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(Theme.font(size: 18, weight: .bold))
                     .foregroundStyle(c.newBest ? Theme.good : Theme.threatHigh)
                 } else {
                     Text("Your first time — the ghost is set")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.purple)
+                        .font(Theme.font(size: 14, weight: .semibold))
+                        .foregroundStyle(Theme.ghost)
                 }
             }
             .padding(.horizontal, 26)
@@ -1215,6 +1215,7 @@ struct RideView: View {
                 .frame(width: 58, height: 58)
                 .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panelRaised))
         }
+        .buttonStyle(PressableButtonStyle())
         .accessibilityLabel("Share live tracking link")
     }
 
@@ -1230,6 +1231,7 @@ struct RideView: View {
                 .frame(width: 58, height: 58)
                 .background(RoundedRectangle(cornerRadius: 16).fill(Theme.panelRaised))
         }
+        .buttonStyle(PressableButtonStyle())
         .accessibilityLabel("Mark lap")
     }
 
@@ -1241,7 +1243,7 @@ struct RideView: View {
                 Image(systemName: system)
                 Text(title)
             }
-            .font(.system(size: 20, weight: .bold, design: .rounded))
+            .font(Theme.font(size: 20, weight: .bold))
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .frame(height: 58)
@@ -1249,6 +1251,7 @@ struct RideView: View {
                 .fill(cta ? Theme.ctaStyle(color) : AnyShapeStyle(color))
                 .shadow(color: Theme.glow, radius: 10))
         }
+        .buttonStyle(PressableButtonStyle())
     }
 
     // MARK: - Car mark (protocol-decode aid)
@@ -1268,7 +1271,7 @@ struct RideView: View {
                 Image(systemName: "car.fill")
                 Text(carMarkFlash ? String(localized: "Marked \(ble.carMarkCount)") : String(localized: "Mark car"))
             }
-            .font(.system(size: 15, weight: .bold, design: .rounded))
+            .font(Theme.font(size: 15, weight: .bold))
             .foregroundStyle(.white)
             .padding(.horizontal, 16)
             .padding(.vertical, 11)
@@ -1389,7 +1392,7 @@ struct RolePill: View {
     var body: some View {
         HStack(spacing: 3) {
             Text(label)
-                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .font(Theme.font(size: 12, weight: .bold))
                 .lineLimit(1)
             trailing
         }

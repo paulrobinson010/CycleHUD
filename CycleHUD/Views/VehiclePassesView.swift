@@ -18,7 +18,7 @@ struct VehiclePassesView: View {
                     Label("\(fastCount) fast \(fastCount == 1 ? "pass" : "passes")",
                           systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(Theme.threatHigh)
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .font(Theme.font(size: 15, weight: .semibold))
                 }
             }
             Section {
@@ -63,14 +63,14 @@ struct VehiclePassesView: View {
                     Text("· \(estSpeed(pass))")
                         .foregroundStyle(Theme.textSecondary)
                 }
-                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .font(Theme.font(size: 15, weight: .semibold))
                 Text(subtitle(pass))
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .font(Theme.font(size: 12, weight: .medium))
                     .foregroundStyle(Theme.textSecondary)
             }
             Spacer()
             Text(pass.date.formatted(date: .omitted, time: .shortened))
-                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .font(Theme.font(size: 12, weight: .medium))
                 .foregroundStyle(Theme.textSecondary)
         }
         .padding(.vertical, 2)
@@ -161,10 +161,10 @@ struct PassDetailView: View {
                                           @ViewBuilder _ content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(title).font(.system(size: 15, weight: .bold, design: .rounded))
+                Text(title).font(Theme.font(size: 15, weight: .bold))
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
-                Text(unit).font(.system(size: 12, weight: .semibold, design: .rounded))
+                Text(unit).font(Theme.font(size: 12, weight: .semibold))
                     .foregroundStyle(Theme.textSecondary)
             }
             content()

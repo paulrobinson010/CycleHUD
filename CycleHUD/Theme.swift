@@ -244,9 +244,37 @@ enum Theme {
         }
     }
 
-    static var labelFont: Font {
-        unicorn ? .custom("ChalkboardSE-Regular", size: 13)
-                : .system(size: 13, weight: .semibold, design: .rounded)
+    static var labelFont: Font { font(size: 13, weight: .semibold) }
+
+    /// Theme-aware text face for ALL interface text: SF Rounded normally,
+    /// Chalkboard SE (regular/bold — its only weights) in Unicorn, so a theme
+    /// change costumes every string, not just the tile numerals.
+    static func font(size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        if unicorn {
+            let heavy: [Font.Weight] = [.semibold, .bold, .heavy, .black]
+            return .custom(heavy.contains(weight) ? "ChalkboardSE-Bold"
+                                                  : "ChalkboardSE-Regular", size: size)
+        }
+        return .system(size: size, weight: weight, design: .rounded)
+    }
+
+    /// The ghost rider's colour — distinct from the accent in every theme.
+    static var ghost: Color {
+        cyber ? cyberPurple
+              : unicorn ? Color(red: 0.38, green: 0.55, blue: 0.95)   // cornflower
+              : .purple
+    }
+}
+
+
+/// Press-down feedback for the big ride-control buttons: a quick squeeze,
+/// so a gloved tap visibly registered.
+struct PressableButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .opacity(configuration.isPressed ? 0.9 : 1)
+            .animation(.spring(duration: 0.2), value: configuration.isPressed)
     }
 }
 

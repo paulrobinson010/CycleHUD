@@ -35,7 +35,7 @@ struct WeatherTile: View {
                     .minimumScaleFactor(0.5)
                 if !unit.isEmpty {
                     Text(unit)
-                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .font(Theme.font(size: 11, weight: .semibold))
                         .foregroundStyle(Theme.unitColor)
                 }
             }
@@ -117,15 +117,15 @@ struct WeatherDetailView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("Rain nowcast")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(Theme.font(size: 20, weight: .bold))
                 Spacer()
                 Button { dismiss() } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 24)).foregroundStyle(Theme.textSecondary)
+                        .font(Theme.font(size: 24)).foregroundStyle(Theme.textSecondary)
                 }
             }
             Text(detail)
-                .font(.system(size: 16, weight: .medium, design: .rounded))
+                .font(.system(size: 16, weight: .medium))
                 .foregroundStyle(Theme.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
             if !nowcast.usedMinuteData {

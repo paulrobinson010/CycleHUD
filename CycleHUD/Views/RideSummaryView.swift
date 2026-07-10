@@ -134,7 +134,7 @@ struct RideSummaryView: View {
                         Text("Upload to Strava")
                     }
                 }
-                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .font(Theme.font(size: 15, weight: .semibold))
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .background(RoundedRectangle(cornerRadius: 14).fill(Theme.panel))
@@ -153,7 +153,7 @@ struct RideSummaryView: View {
             let total = zones.reduce(0, +)
             VStack(alignment: .leading, spacing: 8) {
                 Text("Time in power zones")
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(Theme.font(size: 13, weight: .semibold))
                     .foregroundStyle(Theme.textSecondary)
                 GeometryReader { geo in
                     HStack(spacing: 2) {
@@ -175,7 +175,7 @@ struct RideSummaryView: View {
                                 Circle().fill(PowerZones.color(z + 1))
                                     .frame(width: 7, height: 7)
                                 Text(verbatim: "Z\(z + 1) \(Fmt.int(zones[z] / total * 100))%")
-                                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                                    .font(Theme.font(size: 11, weight: .medium))
                                     .foregroundStyle(Theme.textSecondary)
                             }
                         }
@@ -194,10 +194,10 @@ struct RideSummaryView: View {
                 .font(Theme.valueFont(56))
                 .foregroundStyle(Theme.textPrimary)
             Text(settings.distanceUnit.label)
-                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .font(Theme.font(size: 15, weight: .semibold))
                 .foregroundStyle(Theme.textSecondary)
             Text(summary.date.formatted(date: .abbreviated, time: .shortened))
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(Theme.font(size: 14, weight: .medium))
                 .foregroundStyle(Theme.textSecondary)
                 .padding(.top, 6)
         }
@@ -332,14 +332,14 @@ struct RideSummaryView: View {
             VStack(spacing: 10) {
                 HStack {
                     Text("How hard was that ride?")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .font(Theme.font(size: 14, weight: .bold))
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
                     if let effortScore {
                         // Strips carry no numbers (matching the Watch picker),
                         // so echo the pick here: "7 · Hard".
                         Text(verbatim: "\(effortScore) · \(effortBandName(effortScore))")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .font(Theme.font(size: 13, weight: .bold))
                             .foregroundStyle(effortColor(effortScore))
                     }
                 }
@@ -378,7 +378,7 @@ struct RideSummaryView: View {
                     ]
                     ForEach(labels, id: \.1) { label in
                         Text(verbatim: label.0)
-                            .font(.system(size: 10, weight: .semibold, design: .rounded))
+                            .font(Theme.font(size: 10, weight: .semibold))
                             .foregroundStyle(Theme.textSecondary)
                             .fixedSize()
                             .position(x: geo.size.width * label.1, y: 6)
@@ -388,9 +388,9 @@ struct RideSummaryView: View {
                 if effortScore != nil {
                     HStack(spacing: 5) {
                         Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 12))
+                            .font(Theme.font(size: 12))
                         Text("Saved to Apple Health")
-                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .font(.system(size: 12, weight: .medium))
                         Spacer()
                     }
                     .foregroundStyle(Theme.textSecondary)
@@ -436,7 +436,7 @@ struct RideSummaryView: View {
             VStack(spacing: 0) {
                 HStack {
                     Text("Previous bests")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .font(Theme.font(size: 14, weight: .bold))
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
                 }
@@ -444,13 +444,13 @@ struct RideSummaryView: View {
                 HStack {
                     Text(String(localized: "\(distText(comparedMeters)) of \(distText(summary.distanceMeters)) \(settings.distanceUnit.label) compared",
                                 bundle: Lang.bundle))
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Theme.font(size: 13, weight: .medium))
                         .foregroundStyle(Theme.textSecondary)
                     Spacer()
                     Text(totalDelta <= 0
                             ? String(localized: "\(lapTimeString(abs(totalDelta))) faster", bundle: Lang.bundle)
                             : String(localized: "\(lapTimeString(totalDelta)) slower", bundle: Lang.bundle))
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .font(Theme.font(size: 13, weight: .bold))
                         .monospacedDigit()
                         .foregroundStyle(totalDelta <= 0 ? Theme.good : Theme.threatHigh)
                 }
@@ -460,19 +460,19 @@ struct RideSummaryView: View {
                     HStack(spacing: 10) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(verbatim: rangeText(c))
-                                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                .font(Theme.font(size: 15, weight: .semibold))
                                 .foregroundStyle(Theme.textPrimary)
                             Text(String(localized: "Best: \(bestText(c))", bundle: Lang.bundle))
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .font(Theme.font(size: 12, weight: .medium))
                                 .foregroundStyle(Theme.textSecondary)
                         }
                         Spacer()
                         Text(verbatim: lapTimeString(c.currentSeconds))
-                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .font(Theme.font(size: 16, weight: .bold))
                             .monospacedDigit()
                             .foregroundStyle(Theme.textPrimary)
                         Text(verbatim: deltaText(c))
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .font(Theme.font(size: 13, weight: .bold))
                             .monospacedDigit()
                             .foregroundStyle(.white)
                             .padding(.horizontal, 7)
@@ -493,7 +493,7 @@ struct RideSummaryView: View {
                     if c.id != comparisons.last?.id { Divider() }
                 }
                 Text("Tap a stretch to see it on the map and graphs.")
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .font(Theme.font(size: 11, weight: .medium))
                     .foregroundStyle(Theme.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 6)
@@ -566,7 +566,7 @@ struct RideSummaryView: View {
         if let laps = summary.laps, !laps.isEmpty {
             VStack(spacing: 0) {
                 HStack {
-                    Text("Laps").font(.system(size: 14, weight: .bold, design: .rounded))
+                    Text("Laps").font(Theme.font(size: 14, weight: .bold))
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
                 }
@@ -574,19 +574,19 @@ struct RideSummaryView: View {
                 ForEach(laps) { lap in
                     HStack {
                         Text("\(Fmt.int(lap.number))")
-                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .font(Theme.font(size: 15, weight: .bold))
                             .foregroundStyle(Theme.textSecondary)
                             .frame(width: 28, alignment: .leading)
                         Text(lapTimeString(lap.durationSeconds))
-                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .font(Theme.font(size: 16, weight: .semibold))
                             .monospacedDigit()
                             .foregroundStyle(Theme.textPrimary)
                         Spacer()
                         Text("\(Fmt.decimal(settings.distanceUnit.value(fromMeters: lap.distanceMeters), 2)) \(settings.distanceUnit.label)")
-                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .font(Theme.font(size: 14, weight: .medium))
                             .foregroundStyle(Theme.textSecondary)
                         Text("\(Fmt.decimal(settings.speedUnit.value(fromMps: lap.averageSpeedMps), 1)) \(settings.speedUnit.label)")
-                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .font(Theme.font(size: 14, weight: .medium))
                             .foregroundStyle(Theme.textSecondary)
                             .frame(width: 80, alignment: .trailing)
                     }
@@ -619,11 +619,11 @@ struct RideSummaryView: View {
                         .foregroundStyle(fast > 0 ? Theme.threatHigh : Theme.accent)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Vehicle passes")
-                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .font(Theme.font(size: 16, weight: .semibold))
                             .foregroundStyle(Theme.textPrimary)
                         Text(fast > 0 ? String(localized: "\(passes.count) logged · \(fast) fast")
                                        : String(localized: "\(passes.count) logged"))
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .font(Theme.font(size: 13, weight: .medium))
                             .foregroundStyle(Theme.textSecondary)
                     }
                     Spacer()
@@ -680,7 +680,7 @@ struct RideSummaryView: View {
         if let t = scrubT, let s = scrubSample {
             HStack(spacing: 12) {
                 Text(verbatim: lapTimeString(t))
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(Theme.font(size: 14, weight: .bold))
                     .monospacedDigit()
                     .foregroundStyle(Theme.textPrimary)
                 Text(verbatim: "\(Fmt.decimal(settings.speedUnit.value(fromMps: s.speedMps), 1)) \(settings.speedUnit.label)")
@@ -694,12 +694,12 @@ struct RideSummaryView: View {
                 Spacer()
                 Button { scrubT = nil } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 17))
+                        .font(Theme.font(size: 17))
                         .foregroundStyle(Theme.textSecondary)
                 }
                 .accessibilityLabel(Text(verbatim: "Clear"))
             }
-            .font(.system(size: 13, weight: .semibold, design: .rounded))
+            .font(.system(size: 13, weight: .semibold))
         }
     }
 
@@ -712,11 +712,11 @@ struct RideSummaryView: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline) {
                 Text(title)
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(Theme.font(size: 14, weight: .bold))
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text(unit)
-                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .font(Theme.font(size: 11, weight: .semibold))
                     .foregroundStyle(Theme.textSecondary)
             }
             let base = Chart {
@@ -839,7 +839,7 @@ struct RideSummaryView: View {
                     .lineLimit(1).minimumScaleFactor(0.5)
                 if !unit.isEmpty {
                     Text(unit)
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .font(Theme.font(size: 13, weight: .semibold))
                         .foregroundStyle(Theme.textSecondary)
                 }
             }

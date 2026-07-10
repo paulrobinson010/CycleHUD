@@ -61,7 +61,7 @@ struct RoutePanel: View {
                     routeMap(rider: location.coordinate, progress: progress)
                 } else {
                     Text("Waiting for GPS…")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .font(Theme.font(size: 14, weight: .semibold))
                         .foregroundStyle(Theme.textSecondary)
                 }
                 if offRoute || headingToStart, let location, let progress {
@@ -127,7 +127,7 @@ struct RoutePanel: View {
                 JunctionGlyph(info: junction, routeBearing: junctionRouteBearing)
                     .frame(width: 30, height: 30)
                 Text(verbatim: "\(Fmt.int(distanceUnit.shortValue(fromMeters: junction.distanceMeters))) \(distanceUnit.shortLabel)")
-                    .font(.system(size: 13, weight: .heavy, design: .rounded))
+                    .font(Theme.font(size: 13, weight: .heavy))
                     .monospacedDigit()
                     .foregroundStyle(Theme.textPrimary)
             }
@@ -229,12 +229,12 @@ struct RoutePanel: View {
                     if let ghostBearing {
                         Image(systemName: "location.north.fill")
                             .font(.system(size: 18, weight: .bold))
-                            .foregroundStyle(.purple.opacity(0.85))
+                            .foregroundStyle(Theme.ghost.opacity(0.85))
                             .shadow(color: .black.opacity(0.4), radius: 2)
                             .rotationEffect(.degrees(ghostBearing - heading))
                     } else {
                         Circle()
-                            .fill(.purple.opacity(0.85))
+                            .fill(Theme.ghost.opacity(0.85))
                             .frame(width: 14, height: 14)
                             .overlay(Circle().stroke(.white, lineWidth: 1.5))
                             .shadow(color: .black.opacity(0.4), radius: 2)
@@ -294,13 +294,13 @@ struct RoutePanel: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(verbatim: route.name)
-                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .font(Theme.font(size: 13, weight: .bold))
                 .foregroundStyle(Theme.textPrimary)
                 .lineLimit(1)
                 .shadow(color: .black.opacity(0.4), radius: 2)
             if offRoute {
                 Text("Off route")
-                    .font(.system(size: 13, weight: .heavy, design: .rounded))
+                    .font(Theme.font(size: 13, weight: .heavy))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
@@ -337,7 +337,7 @@ struct RoutePanel: View {
             Image(systemName: icon, variableValue: iconVariable)
                 .font(.system(size: 11, weight: .bold))
             Text(verbatim: text)
-                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .font(Theme.font(size: 12, weight: .bold))
                 .monospacedDigit()
         }
         .foregroundStyle(tint)
@@ -354,7 +354,7 @@ struct RoutePanel: View {
             Image(systemName: icon)
                 .font(.system(size: 20, weight: .bold))
             Text(verbatim: text)
-                .font(.system(size: 24, weight: .heavy, design: .rounded))
+                .font(Theme.font(size: 24, weight: .heavy))
                 .monospacedDigit()
         }
         .foregroundStyle(tint)
@@ -385,7 +385,7 @@ struct RoutePanel: View {
     /// Distance readout that stays readable over any map imagery.
     private func distancePill(_ meters: Double) -> some View {
         Text(verbatim: "\(Fmt.decimal(distanceUnit.value(fromMeters: meters), 1)) \(distanceUnit.label)")
-            .font(.system(size: 15, weight: .heavy, design: .rounded))
+            .font(Theme.font(size: 15, weight: .heavy))
             .monospacedDigit()
             .foregroundStyle(Theme.textPrimary)
             .padding(.horizontal, 8)
@@ -401,7 +401,7 @@ struct RoutePanel: View {
                 Image(systemName: "antenna.radiowaves.left.and.right.slash")
                 Text("NOT CONNECTED")
             }
-            .font(.system(size: 13, weight: .heavy, design: .rounded))
+            .font(Theme.font(size: 13, weight: .heavy))
             .foregroundStyle(.white)
             .padding(.horizontal, 12)
             .padding(.vertical, 5)
@@ -435,14 +435,14 @@ struct RoutePanel: View {
                 .shadow(color: .black.opacity(0.5), radius: 4)
                 .animation(.easeInOut(duration: 0.4), value: toTarget - heading)
             Text(verbatim: offDistText(distance))
-                .font(.system(size: 17, weight: .heavy, design: .rounded))
+                .font(Theme.font(size: 17, weight: .heavy))
                 .monospacedDigit()
                 .foregroundStyle(Theme.textPrimary)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 2)
                 .background(Capsule().fill(Theme.panel.opacity(0.85)))
             Text(headingToStart ? "To the start" : "Back to route")
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .font(Theme.font(size: 12, weight: .semibold))
                 .foregroundStyle(Theme.textPrimary)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 2)
@@ -577,11 +577,11 @@ struct ClimbCard: View {
                 .frame(maxWidth: .infinity)
             VStack(alignment: .trailing, spacing: 2) {
                 Text(verbatim: toTopText)
-                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .font(Theme.font(size: 17, weight: .heavy))
                     .monospacedDigit()
                     .foregroundStyle(Theme.textPrimary)
                 Text(verbatim: "↗ \(Fmt.int(ascentLeft)) m · \(String(format: "%.1f", gradeLeft))%")
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .font(Theme.font(size: 12, weight: .bold))
                     .monospacedDigit()
                     .foregroundStyle(gradeLeft > 6 ? Theme.threatMedium : Theme.textSecondary)
             }
@@ -707,7 +707,7 @@ struct ClimbProfileStrip: View {
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
-                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .font(Theme.font(size: 11, weight: .bold))
                 .monospacedDigit()
                 .padding(.horizontal, 6)
                 .padding(.top, 3)

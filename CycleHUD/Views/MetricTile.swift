@@ -49,9 +49,11 @@ struct DirectionTile: View {
                             .shadow(color: Theme.glow, radius: 6)
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
+                            .contentTransition(.numericText())
+                            .animation(.snappy(duration: 0.3), value: value)
                         if !unit.isEmpty {
                             Text(unit)
-                                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                                .font(Theme.font(size: 10, weight: .semibold))
                                 .foregroundStyle(Theme.unitColor)
                                 .lineLimit(1)
                         }
@@ -109,11 +111,13 @@ struct MetricTile: View {
                 .shadow(color: alert ? .clear : Theme.glow, radius: 6)   // neon in Cyberpunk
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
+                .contentTransition(.numericText())
+                .animation(.snappy(duration: 0.3), value: value)
             // Unit tucked in small under the value, so the number keeps the
             // whole width to itself.
             if !unit.isEmpty {
                 Text(unit)
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
+                    .font(Theme.font(size: 10, weight: .semibold))
                     .foregroundStyle(alert ? Color.white.opacity(0.85) : Theme.unitColor)
                     .lineLimit(1)
             }

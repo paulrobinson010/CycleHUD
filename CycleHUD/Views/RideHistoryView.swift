@@ -11,8 +11,16 @@ struct RideHistoryView: View {
     var body: some View {
         List {
             if history.rides.isEmpty {
-                Text("No rides yet. Your completed rides will appear here.")
-                    .foregroundStyle(.secondary)
+                VStack(spacing: 10) {
+                    Image(systemName: "bicycle")
+                        .font(.system(size: 38))
+                        .foregroundStyle(Theme.textSecondary.opacity(0.45))
+                    Text("No rides yet. Your completed rides will appear here.")
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 18)
             } else {
                 ForEach(history.rides) { ride in
                     Button { selected = ride } label: { row(ride) }

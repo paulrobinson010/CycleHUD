@@ -26,18 +26,21 @@ struct JunctionTile: View {
                 .minimumScaleFactor(0.7)
                 .frame(maxWidth: .infinity, alignment: .leading)
             HStack(spacing: 6) {
-                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                // Unit tucked in small under the value, matching MetricTile.
+                VStack(alignment: .leading, spacing: 0) {
                     Text(value)
                         .font(Theme.valueFont(valueSize))
                         .foregroundStyle(Theme.valueStyle)
                         .shadow(color: Theme.glow, radius: 6)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
+                        .contentTransition(.numericText())
+                        .animation(.snappy(duration: 0.3), value: value)
                     if !unit.isEmpty {
                         Text(unit)
-                            .font(.system(size: max(11, valueSize * 0.3),
-                                          weight: .semibold, design: .rounded))
+                            .font(Theme.font(size: 10, weight: .semibold))
                             .foregroundStyle(Theme.unitColor)
+                            .lineLimit(1)
                     }
                 }
                 Spacer(minLength: 4)

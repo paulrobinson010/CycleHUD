@@ -57,10 +57,12 @@ struct ClimbRowTile: View {
                 .shadow(color: Theme.glow, radius: 6)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
+                .contentTransition(.numericText())
+                .animation(.snappy(duration: 0.3), value: value)
             // Unit tucked in small under the value, matching MetricTile.
             if !unit.isEmpty {
                 Text(unit)
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
+                    .font(Theme.font(size: 10, weight: .semibold))
                     .foregroundStyle(Theme.unitColor)
                     .lineLimit(1)
             }

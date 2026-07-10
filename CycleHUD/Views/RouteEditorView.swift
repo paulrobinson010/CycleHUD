@@ -124,7 +124,7 @@ struct RouteEditorView: View {
                 Image(systemName: "wind")
                     .font(.system(size: 12, weight: .semibold))
                 Text(verbatim: "\(Fmt.int(settings.speedUnit.value(fromMps: c.windSpeedMps))) \(settings.speedUnit.label)")
-                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .font(Theme.font(size: 12, weight: .semibold))
                 legendKey(Theme.threatMedium, "Headwind")
                 legendKey(Theme.good, "Tailwind")
                 Spacer()
@@ -137,7 +137,7 @@ struct RouteEditorView: View {
         HStack(spacing: 4) {
             Capsule().fill(color).frame(width: 14, height: 4)
             Text(label)
-                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .font(Theme.font(size: 12, weight: .medium))
         }
     }
 
@@ -166,20 +166,20 @@ struct RouteEditorView: View {
                 if planning {
                     ProgressView().controlSize(.small)
                     Text("Finding quiet roads…")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Theme.font(size: 13, weight: .medium))
                         .foregroundStyle(Theme.textSecondary)
                 } else if let planError {
                     Text(verbatim: planError)
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Theme.font(size: 13, weight: .medium))
                         .foregroundStyle(Theme.threatHigh)
                         .lineLimit(2)
                 } else if path.count >= 2 {
                     Text(verbatim: "\(Fmt.decimal(settings.distanceUnit.value(fromMeters: distanceMeters), 1)) \(settings.distanceUnit.label)")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .font(Theme.font(size: 15, weight: .bold))
                         .foregroundStyle(Theme.textPrimary)
                 } else {
                     Text("Tap the map to set the start, then keep tapping to add waypoints.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Theme.font(size: 13, weight: .medium))
                         .foregroundStyle(Theme.textSecondary)
                         .lineLimit(2)
                 }
@@ -205,13 +205,13 @@ struct RouteEditorView: View {
             }
             windLegend
             Toggle("Loop back to start", isOn: $loop)
-                .font(.system(size: 15, weight: .medium, design: .rounded))
+                .font(Theme.font(size: 15, weight: .medium))
                 .onChange(of: loop) { _, _ in replan() }
             TextField("Route name", text: $name)
                 .textFieldStyle(.roundedBorder)
             if pointsChanged, editing?.bestTimes != nil {
                 Text("Changing the points clears this route’s best time — the ghost raced the old roads. Renaming keeps it.")
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .font(Theme.font(size: 12, weight: .medium))
                     .foregroundStyle(Theme.threatMedium)
             }
         }
