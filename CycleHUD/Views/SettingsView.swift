@@ -108,15 +108,21 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    HStack {
-                        Text("FTP")
-                        Spacer()
-                        TextField("W", text: ftpText)
-                            .keyboardType(.numberPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
-                        Text(verbatim: "W").foregroundStyle(.secondary)
+                    // A scrollable list beats typing here: FTP is picked once
+                    // and nudged occasionally, always to a round-ish number.
+                    Picker("FTP", selection: $settings.ftpWatts) {
+                        Text("Off").tag(0)
+                        // Keep an oddball value (typed in an earlier version)
+                        // selectable so the picker never shows nothing.
+                        if settings.ftpWatts > 0 && (settings.ftpWatts % 5 != 0
+                            || settings.ftpWatts < 80 || settings.ftpWatts > 400) {
+                            Text(verbatim: "\(settings.ftpWatts) W").tag(settings.ftpWatts)
+                        }
+                        ForEach(Array(stride(from: 80, through: 400, by: 5)), id: \.self) { w in
+                            Text(verbatim: "\(w) W").tag(w)
+                        }
                     }
+                    .pickerStyle(.navigationLink)
                 } header: {
                     Text("Power")
                 } footer: {
@@ -373,14 +379,6 @@ struct SettingsView: View {
             }
         }
         .preferredColorScheme(settings.appearanceTheme.colorScheme)
-    }
-
-    /// FTP as text so the field is empty (not "0") until a value is entered.
-    private var ftpText: Binding<String> {
-        Binding(
-            get: { settings.ftpWatts > 0 ? String(settings.ftpWatts) : "" },
-            set: { settings.ftpWatts = Int($0) ?? 0 }
-        )
     }
 
     /// Weight as text so the field is empty (not "0") until a value is entered.
