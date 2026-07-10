@@ -539,8 +539,9 @@ struct RideSummaryView: View {
     private func highlightTimeRange(_ c: SegmentComparison) -> ClosedRange<Double>? {
         guard let r = highlightIndexRange(c) else { return nil }
         let n = Double(max(1, summary.coordinates.count - 1))
-        return (Double(r.lowerBound) / n * trackDuration)
-            ...(Double(r.upperBound) / n * trackDuration)
+        let lo = Double(r.lowerBound) / n * trackDuration
+        let hi = Double(r.upperBound) / n * trackDuration
+        return lo...hi
     }
 
     /// "2.1–8.3 km" along this ride, in the rider's units.
