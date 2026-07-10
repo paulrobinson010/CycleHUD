@@ -454,14 +454,31 @@ final class RouteStore: ObservableObject {
     }
 
     /// Where the ghost is right now (it "set off" when this run first touched
-    /// the route) — drawn as a marker on the route map.
-    func ghostCoordinate(elapsed: Double) -> CLLocationCoordinate2D? {
+    /// the route) — drawn as a marker on the route map. Interpolated along its
+    /// current segment by time, so it glides instead of jumping point-to-point
+    /// (route points can be hundreds of metres apart on straights), and its
+    /// direction of travel comes along so the marker can face the right way.
+    func ghostPosition(elapsed: Double) -> (coordinate: CLLocationCoordinate2D, bearing: Double?)? {
         guard joinedActiveRoute, let route = activeRoute, let best = route.bestTimes,
-              best.count == route.path.count, let start = ghostRunStart else { return nil }
+              best.count == route.path.count, best.count >= 2,
+              let start = ghostRunStart else { return nil }
         let onRoute = elapsed - start
         var i = best.firstIndex(where: { $0 > onRoute }) ?? best.count
         i = max(0, i - 1)
-        return route.path[i].coordinate
+        let a = route.path[i].coordinate
+        guard i + 1 < route.path.count else {
+            // Finished: sit on the last point, facing the way the route ends.
+            return (a, PlannedRoute.bearing(route.path[i - 1].coordinate, a))
+        }
+        let b = route.path[i + 1].coordinate
+        let t0 = best[i], t1 = best[i + 1]
+        // Forward-filled best times can repeat; a zero-length window means the
+        // ghost passes instantly, so sit on the segment start.
+        let f = t1 > t0 ? min(1, max(0, (onRoute - t0) / (t1 - t0))) : 0
+        let coord = CLLocationCoordinate2D(
+            latitude: a.latitude + (b.latitude - a.latitude) * f,
+            longitude: a.longitude + (b.longitude - a.longitude) * f)
+        return (coord, PlannedRoute.bearing(a, b))
     }
 
     // MARK: - Ride-time progress

@@ -271,10 +271,16 @@ final class WatchSessionManager: NSObject, ObservableObject {
         if let v = data["hrWarn"] as? Int { hrWarningBpm = v }
         if let v = data["hapticsMuted"] as? Bool { hapticsMuted = v }
         if var s = data["status"] as? String {
-            // Staleness guard: only a *recent* payload may claim an active ride.
-            // A missing/old timestamp downgrades to idle (payloads are sent ~2 Hz
-            // during a real ride, so a fresh one always follows within seconds).
-            if s != "idle" {
+            // Staleness guard: only a *recent* payload may START a ride — a
+            // replayed applicationContext hours after a dead ride was starting
+            // phantom workout sessions. But a stale payload must never STOP a
+            // live one: watchOS coalesces context transfers, so right after a
+            // Bluetooth hiccup mid-ride the queued context arrives minutes old,
+            // and downgrading it to idle killed the workout session (and with
+            // it the app's keep-alive and the heart-rate stream) on every link
+            // burp. While a ride is already active, abandonment is the 5-minute
+            // watchdog's call, not this guard's.
+            if s != "idle", !rideActive {
                 let sentAt = data["sentAt"] as? TimeInterval ?? 0
                 if Date().timeIntervalSince1970 - sentAt > Self.mirrorFreshness {
                     s = "idle"

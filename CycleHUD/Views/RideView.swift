@@ -402,7 +402,8 @@ struct RideView: View {
                            batteryPercent: 76,
                            etaSeconds: demoRoute.remainingMeters(from: ride.demoRouteIndex) / 7.0,
                            ghostDeltaSeconds: demoGhostDelta,
-                           ghostCoordinate: demoGhostCoordinate,
+                           ghostCoordinate: demoGhostPosition?.coordinate,
+                           ghostBearing: demoGhostPosition?.bearing,
                            showClimbStrip: settings.routeElevationEnabled
                                && !visibleMetricKinds.contains(.climb),
                            junction: !visibleMetricKinds.contains(.junction) ? ride.demoJunction : nil,
@@ -425,7 +426,9 @@ struct RideView: View {
                            ghostDeltaSeconds: ride.status != .idle
                                ? routes.ghostDelta(elapsed: ride.movingTimeSeconds) : nil,
                            ghostCoordinate: ride.status != .idle
-                               ? routes.ghostCoordinate(elapsed: ride.movingTimeSeconds) : nil,
+                               ? routes.ghostPosition(elapsed: ride.movingTimeSeconds)?.coordinate : nil,
+                           ghostBearing: ride.status != .idle
+                               ? routes.ghostPosition(elapsed: ride.movingTimeSeconds)?.bearing : nil,
                            showClimbStrip: settings.routeElevationEnabled
                                && !visibleMetricKinds.contains(.climb),
                            junction: settings.junctionsEnabled && !visibleMetricKinds.contains(.junction)
@@ -980,12 +983,22 @@ struct RideView: View {
         return ride.demoRouteElapsed - best[ride.demoRouteIndex]
     }
 
-    private var demoGhostCoordinate: CLLocationCoordinate2D? {
+    private var demoGhostPosition: (coordinate: CLLocationCoordinate2D, bearing: Double?)? {
         guard let route = ride.demoRoute, let best = route.bestTimes,
-              best.count == route.path.count else { return nil }
+              best.count == route.path.count, best.count >= 2 else { return nil }
         var i = best.firstIndex(where: { $0 > ride.demoRouteElapsed }) ?? best.count
         i = max(0, i - 1)
-        return route.path[i].coordinate
+        let a = route.path[i].coordinate
+        guard i + 1 < route.path.count else {
+            return (a, PlannedRoute.bearing(route.path[i - 1].coordinate, a))
+        }
+        // Glide along the segment by time, like the real ghost.
+        let b = route.path[i + 1].coordinate
+        let t0 = best[i], t1 = best[i + 1]
+        let f = t1 > t0 ? min(1, max(0, (ride.demoRouteElapsed - t0) / (t1 - t0))) : 0
+        return (CLLocationCoordinate2D(latitude: a.latitude + (b.latitude - a.latitude) * f,
+                                       longitude: a.longitude + (b.longitude - a.longitude) * f),
+                PlannedRoute.bearing(a, b))
     }
 
     /// The distance-and-climb row: distance / live gradient / ascent overlaid

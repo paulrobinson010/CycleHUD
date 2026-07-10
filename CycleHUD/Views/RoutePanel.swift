@@ -27,9 +27,11 @@ struct RoutePanel: View {
     /// Estimated seconds to the finish at the ride's average speed.
     var etaSeconds: Double? = nil
     /// Ghost rider: seconds vs this route's best run (− = ahead), and where
-    /// the ghost is right now on the map.
+    /// the ghost is right now on the map (with its direction of travel, so
+    /// the marker faces the way it's going).
     var ghostDeltaSeconds: Double? = nil
     var ghostCoordinate: CLLocationCoordinate2D? = nil
+    var ghostBearing: Double? = nil
     /// False when the climb row tile is on the current page — the row carries
     /// the profile, so the map keeps its full height.
     var showClimbStrip: Bool = true
@@ -220,11 +222,23 @@ struct RoutePanel: View {
             }
             if let ghostCoordinate {
                 Annotation("", coordinate: ghostCoordinate) {
-                    // The route's best run, riding it live alongside you.
-                    Image(systemName: "location.north.fill")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(.purple.opacity(0.85))
-                        .shadow(color: .black.opacity(0.4), radius: 2)
+                    // The route's best run, riding it live alongside you —
+                    // facing its own direction of travel (annotations are
+                    // screen-aligned, so subtract the camera's rotation).
+                    // Without a bearing it's a dot, never a wrong-way arrow.
+                    if let ghostBearing {
+                        Image(systemName: "location.north.fill")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundStyle(.purple.opacity(0.85))
+                            .shadow(color: .black.opacity(0.4), radius: 2)
+                            .rotationEffect(.degrees(ghostBearing - heading))
+                    } else {
+                        Circle()
+                            .fill(.purple.opacity(0.85))
+                            .frame(width: 14, height: 14)
+                            .overlay(Circle().stroke(.white, lineWidth: 1.5))
+                            .shadow(color: .black.opacity(0.4), radius: 2)
+                    }
                 }
             }
             Annotation("", coordinate: rider) {
@@ -302,9 +316,10 @@ struct RoutePanel: View {
             }
             if let ghostDeltaSeconds, !offRoute, !headingToStart {
                 // The race against this route's best run: green = ahead.
-                infoPill(icon: "flag.checkered",
-                         text: deltaText(ghostDeltaSeconds),
-                         tint: ghostDeltaSeconds <= 0 ? Theme.good : Theme.threatHigh)
+                // Double-size pill — this is the number the rider actually
+                // races, and it has to be readable at a glance on the bars.
+                ghostPill(deltaText(ghostDeltaSeconds),
+                          tint: ghostDeltaSeconds <= 0 ? Theme.good : Theme.threatHigh)
             }
             if radarConnected, let batteryPercent {
                 infoPill(icon: "battery.100",
@@ -329,6 +344,22 @@ struct RoutePanel: View {
         .foregroundStyle(tint)
         .padding(.horizontal, 8)
         .padding(.vertical, 3)
+        .background(Capsule().fill(Theme.panel.opacity(0.85)))
+    }
+
+    /// The ghost race readout at twice the info-pill size, so ahead/behind is
+    /// readable without leaning in.
+    private func ghostPill(_ text: String, tint: Color) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: "flag.checkered")
+                .font(.system(size: 20, weight: .bold))
+            Text(verbatim: text)
+                .font(.system(size: 24, weight: .heavy, design: .rounded))
+                .monospacedDigit()
+        }
+        .foregroundStyle(tint)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 5)
         .background(Capsule().fill(Theme.panel.opacity(0.85)))
     }
 
