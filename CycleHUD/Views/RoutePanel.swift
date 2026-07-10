@@ -311,15 +311,14 @@ struct RoutePanel: View {
                 distancePill(progress.remainingMeters)
             }
             if let etaSeconds, !offRoute, !headingToStart {
-                infoPill(icon: "clock", text: etaText(etaSeconds),
-                         tint: Theme.textPrimary)
+                bigPill(icon: "clock", text: etaText(etaSeconds),
+                        tint: Theme.textPrimary)
             }
             if let ghostDeltaSeconds, !offRoute, !headingToStart {
                 // The race against this route's best run: green = ahead.
-                // Double-size pill — this is the number the rider actually
-                // races, and it has to be readable at a glance on the bars.
-                ghostPill(deltaText(ghostDeltaSeconds),
-                          tint: ghostDeltaSeconds <= 0 ? Theme.good : Theme.threatHigh)
+                bigPill(icon: "flag.checkered",
+                        text: deltaText(ghostDeltaSeconds),
+                        tint: ghostDeltaSeconds <= 0 ? Theme.good : Theme.threatHigh)
             }
             if radarConnected, let batteryPercent {
                 infoPill(icon: "battery.100",
@@ -347,11 +346,12 @@ struct RoutePanel: View {
         .background(Capsule().fill(Theme.panel.opacity(0.85)))
     }
 
-    /// The ghost race readout at twice the info-pill size, so ahead/behind is
-    /// readable without leaning in.
-    private func ghostPill(_ text: String, tint: Color) -> some View {
+    /// The numbers being ridden against — ETA and the ghost race — at twice
+    /// the info-pill size, readable at a glance on the bars. (The radar
+    /// battery keeps the small pill; it's a check, not a race.)
+    private func bigPill(icon: String, text: String, tint: Color) -> some View {
         HStack(spacing: 6) {
-            Image(systemName: "flag.checkered")
+            Image(systemName: icon)
                 .font(.system(size: 20, weight: .bold))
             Text(verbatim: text)
                 .font(.system(size: 24, weight: .heavy, design: .rounded))
