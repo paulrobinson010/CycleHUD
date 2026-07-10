@@ -253,7 +253,13 @@ final class RideManager: ObservableObject {
         liveActivity.start(speedUnit: settings.speedUnit,
                            distanceUnit: settings.distanceUnit,
                            state: activityState)
-        if settings.liveTrackingEnabled { liveTrack?.beginSession() }
+        if settings.liveTrackingEnabled {
+            // Publish the planned route too (when one is being followed), so
+            // watchers see where the ride is headed, not just where it's been.
+            let routePath = settings.routePlanningEnabled
+                ? routes?.activeRoute?.path.map { ($0.lat, $0.lon) } : nil
+            liveTrack?.beginSession(routePath: routePath)
+        }
         AppLog.shared.log("Ride START")
     }
 
@@ -727,12 +733,24 @@ final class RideManager: ObservableObject {
         // Lock Screen / Dynamic Island (throttled inside; threat changes are
         // pushed straight through).
         liveActivity.update(activityState)
-        // Live-tracking record (throttled inside to one save per 15 s).
+        // Live-tracking record (throttled inside to one save per 15 s). When
+        // a route is being followed, include how far is left and the ETA so
+        // watchers know when to put the kettle on.
+        var liveRemaining: Double?
+        var liveETA: Double?
+        if let store = routes, store.joinedActiveRoute,
+           let loc = location.currentLocation,
+           let p = store.progress(at: loc.coordinate, course: location.courseDegrees) {
+            liveRemaining = p.remainingMeters
+            if averageSpeedMps > 0.5 { liveETA = p.remainingMeters / averageSpeedMps }
+        }
         liveTrack?.update(location: location.currentLocation,
                           distanceMeters: distanceMeters,
                           speedMps: currentSpeedMps,
                           movingSeconds: movingTimeSeconds,
-                          paused: status != .running)
+                          paused: status != .running,
+                          remainingMeters: liveRemaining,
+                          etaSeconds: liveETA)
 
         // Persist so the ride survives the app being killed mid-ride. Tick is now
         // 2 Hz, so these counts target ~2 s and ~15 s.

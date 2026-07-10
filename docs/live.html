@@ -23,7 +23,7 @@
             background: #e5484d; color: #fff; font-size: 15px; font-weight: 700;
             padding: 10px 18px; border-radius: 999px; white-space: nowrap;
             box-shadow: 0 4px 14px rgba(0,0,0,.45); z-index: 1000; }
-  #stats { display: flex; gap: 18px; padding: 12px 16px; background: #101731; }
+  #stats { display: flex; flex-wrap: wrap; gap: 14px 18px; padding: 12px 16px; background: #101731; }
   .stat b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
   .stat small { color: #93a0c4; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
   #status { padding: 8px 16px; font-size: 13px; color: #93a0c4; background: #101731;
@@ -42,8 +42,10 @@
 <div id="message" class="center">Loading…</div>
 <div id="stats" hidden>
   <div class="stat"><b id="speed">–</b><small id="speedUnit">km/h</small></div>
+  <div class="stat"><b id="avg">–</b><small>avg</small></div>
   <div class="stat"><b id="distance">–</b><small id="distanceUnit">km</small></div>
   <div class="stat"><b id="time">–</b><small>riding time</small></div>
+  <div class="stat" id="etaCell" hidden><b id="eta">–</b><small id="etaLabel">eta</small></div>
 </div>
 <div id="status" hidden></div>
 
@@ -63,7 +65,13 @@ const token = location.hash.slice(1);
 const message = document.getElementById("message");
 const useMiles = navigator.language.startsWith("en-US") || navigator.language.startsWith("en-GB");
 
-let map, marker, trail, trailCoords = [];
+let map, marker, trail, routeLine, fitted = false, trailCoords = [];
+
+/// "lat,lon;lat,lon;…" → [[lat, lon], …]
+function decodePath(s) {
+  return s.split(";").map(p => p.split(",").map(Number))
+          .filter(p => p.length === 2 && !p.some(isNaN));
+}
 
 function fmtTime(s) {
   s = Math.floor(s);
@@ -141,22 +149,61 @@ async function poll() {
     marker = L.circleMarker([lat, lon], { radius: 9, color: "#fff", weight: 2,
                                           fillColor: "#38e07b", fillOpacity: 1 }).addTo(map);
   }
-  const p = [lat, lon];
-  const last = trailCoords[trailCoords.length - 1];
-  if (!last || last[0] !== lat || last[1] !== lon) {
-    trailCoords.push(p);
-    trail.setLatLngs(trailCoords);
+  // The planned route (published once by the app), dashed under the trail.
+  if (!routeLine && f.route && f.route.value) {
+    routeLine = L.polyline(decodePath(f.route.value),
+                           { color: "#7c8cf8", weight: 4, opacity: 0.75,
+                             dashArray: "7 7" }).addTo(map);
+    routeLine.bringToBack();
   }
+  // Path ridden so far: the app publishes the whole trail, so a watcher who
+  // opens the link late still sees the full ride, not just from now on.
+  const p = [lat, lon];
+  if (f.trail && f.trail.value) {
+    trailCoords = decodePath(f.trail.value);
+  } else {
+    const last = trailCoords[trailCoords.length - 1];
+    if (!last || last[0] !== lat || last[1] !== lon) trailCoords.push(p);
+  }
+  trail.setLatLngs(trailCoords);
   marker.setLatLng(p);
-  map.panTo(p);
+  // First fix: frame the whole picture (route + trail); after that, follow.
+  if (!fitted) {
+    fitted = true;
+    const all = trailCoords.concat(routeLine ? routeLine.getLatLngs()
+                                               .map(ll => [ll.lat, ll.lng]) : [], [p]);
+    if (all.length > 1) map.fitBounds(all, { padding: [30, 30] });
+  } else {
+    map.panTo(p);
+  }
 
   const speed = (f.speedMps ? f.speedMps.value : 0) * (useMiles ? 2.23694 : 3.6);
-  const dist = (f.distanceMeters ? f.distanceMeters.value : 0) / (useMiles ? 1609.344 : 1000);
+  const meters = f.distanceMeters ? f.distanceMeters.value : 0;
+  const seconds = f.movingSeconds ? f.movingSeconds.value : 0;
+  const dist = meters / (useMiles ? 1609.344 : 1000);
+  const avg = seconds > 0 ? dist / (seconds / 3600) : 0;
   document.getElementById("speed").textContent = speed.toFixed(1);
   document.getElementById("speedUnit").textContent = useMiles ? "mph" : "km/h";
+  document.getElementById("avg").textContent = avg.toFixed(1);
   document.getElementById("distance").textContent = dist.toFixed(1);
   document.getElementById("distanceUnit").textContent = useMiles ? "mi" : "km";
-  document.getElementById("time").textContent = fmtTime(f.movingSeconds ? f.movingSeconds.value : 0);
+  document.getElementById("time").textContent = fmtTime(seconds);
+
+  // ETA to the route's end, when the ride is following one.
+  const etaSecs = f.etaSeconds && f.etaSeconds.value;
+  const remaining = f.remainingMeters && f.remainingMeters.value;
+  const etaCell = document.getElementById("etaCell");
+  if (etaSecs != null && etaSecs > 0) {
+    etaCell.hidden = false;
+    const arrive = new Date(Date.now() + etaSecs * 1000);
+    document.getElementById("eta").textContent =
+      arrive.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    document.getElementById("etaLabel").textContent = remaining != null
+      ? `eta · ${(remaining / (useMiles ? 1609.344 : 1000)).toFixed(1)} ${useMiles ? "mi" : "km"} left`
+      : "eta";
+  } else {
+    etaCell.hidden = true;
+  }
 
   const updated = f.updatedAt && f.updatedAt.value;
   const ago = updated ? Math.round((Date.now() - updated) / 1000) : null;

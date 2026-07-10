@@ -119,6 +119,12 @@ it back, so followers just open a link — no app, no account. To enable:
    `https://cyclehud.robbo-online.uk/live.html#<token>`; they update every
    15 s and go dead the moment the ride stops (the record is deleted).
 
+> **Whenever an app update adds fields to `LiveRide`** (e.g. the trail /
+> route / ETA fields), the schema has to catch up: run one ride on a
+> **development** build so the new fields appear in the Development schema,
+> then **Deploy Schema Changes → Production** again. Production rejects
+> unknown fields, so TestFlight/App Store saves fail until the deploy.
+
 ## 3d. Strava upload (optional)
 
 Uploads go straight from the phone to Strava's API — no middleman server.

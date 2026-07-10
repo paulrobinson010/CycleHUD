@@ -26,30 +26,47 @@ final class LiveTrackManager: ObservableObject {
     private var record: CKRecord?
     private var lastPush = Date.distantPast
     private let pushInterval: TimeInterval = 15
+    /// The path ridden so far, appended one point per push and thinned when
+    /// it grows past ~400 points — a few KB encoded, well inside record limits.
+    private var trail: [(Double, Double)] = []
+    /// The planned route's path (when one was active at ride start), encoded
+    /// once so watchers see where the ride is headed.
+    private var routeEncoded: String?
 
-    func beginSession() {
+    func beginSession(routePath: [(Double, Double)]? = nil) {
         guard isEnabled?() ?? false, state == .off else { return }
         let token = Self.makeToken()
         record = CKRecord(recordType: "LiveRide",
                           recordID: CKRecord.ID(recordName: "live-\(token)"))
         shareURL = URL(string: "https://cyclehud.robbo-online.uk/live.html#\(token)")
         lastPush = .distantPast
+        trail = []
+        routeEncoded = routePath.map { Self.encode($0) }
         state = .live
         AppLog.shared.log("Live tracking session started")
     }
 
     /// Push the rider's position and stats; throttled to one save per 15 s.
     func update(location: CLLocation?, distanceMeters: Double, speedMps: Double,
-                movingSeconds: Double, paused: Bool) {
+                movingSeconds: Double, paused: Bool,
+                remainingMeters: Double? = nil, etaSeconds: Double? = nil) {
         guard let record, let location else { return }
         guard Date().timeIntervalSince(lastPush) >= pushInterval else { return }
         lastPush = Date()
+        trail.append((location.coordinate.latitude, location.coordinate.longitude))
+        if trail.count > 400 {
+            trail = trail.enumerated().compactMap { $0.offset % 2 == 0 ? $0.element : nil }
+        }
         record["lat"] = location.coordinate.latitude
         record["lon"] = location.coordinate.longitude
         record["speedMps"] = speedMps
         record["distanceMeters"] = distanceMeters
         record["movingSeconds"] = movingSeconds
         record["paused"] = paused ? 1 : 0
+        record["trail"] = Self.encode(trail)
+        record["route"] = routeEncoded
+        record["remainingMeters"] = remainingMeters
+        record["etaSeconds"] = etaSeconds
         record["updatedAt"] = Date()
         database.save(record) { [weak self] saved, error in
             DispatchQueue.main.async {
@@ -78,6 +95,17 @@ final class LiveTrackManager: ObservableObject {
                 AppLog.shared.log("Live tracking session ended")
             }
         }
+    }
+
+    /// "lat,lon;lat,lon;…" at 5 decimals (~1 m), thinned to ≤300 points —
+    /// compact enough to live inside the record, trivial for the page to parse.
+    private static func encode(_ path: [(Double, Double)]) -> String {
+        var pts = path
+        if pts.count > 300 {
+            let stride = Double(pts.count - 1) / 299.0
+            pts = (0..<300).map { path[Int((Double($0) * stride).rounded())] }
+        }
+        return pts.map { String(format: "%.5f,%.5f", $0.0, $0.1) }.joined(separator: ";")
     }
 
     /// 10 random base32 characters — unguessable enough for a transient link.
