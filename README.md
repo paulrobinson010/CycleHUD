@@ -141,7 +141,10 @@ meters work too.
   shows seconds ahead (green) or behind (red), and a purple ghost marker rides
   the map at exactly where your best run was at this point — timed from when
   each run first touches the route, so a long roll to the start doesn't skew
-  the race. Beat it and the new run takes over as the ghost. Bests travel
+  the race. Beat it and the new run takes over as the ghost. **Crossing the
+  finish** toasts the completion — final time, big — with the verdict against
+  your best (or "the ghost is set" on a first run), a spoken call-out and a
+  celebratory wrist tap. Bests travel
   inside shared GPX as ordinary track timestamps, so friends can race your
   ghost — and importing any *recorded* ride GPX (a Strava activity export,
   say) turns that ride into a ghost you can race.

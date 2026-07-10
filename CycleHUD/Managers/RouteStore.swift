@@ -405,6 +405,8 @@ final class RouteStore: ObservableObject {
         ghostRun = activeRoute.map { Array(repeating: -1, count: $0.path.count) }
         ghostRouteID = activeRouteID
         ghostRunStart = nil
+        completionFired = false
+        completion = nil
     }
 
     /// Call each tick while riding: stamp the rider's progress point.
@@ -417,6 +419,37 @@ final class RouteStore: ObservableObject {
             run[idx] = onRoute
             ghostRun = run
         }
+        checkCompletion(run: run, route: route, index: idx, onRoute: onRoute)
+    }
+
+    /// The moment the rider crosses the finish: fires once per run, with the
+    /// final time and how it compares to the route's (previous) best.
+    struct RouteCompletion: Equatable {
+        let routeName: String
+        let seconds: Double
+        /// vs the previous best (negative = faster); nil = first completion.
+        let deltaToBest: Double?
+        let newBest: Bool
+    }
+
+    /// Set when the active route is completed mid-ride; the ride screen shows
+    /// it as a toast and clears it.
+    @Published var completion: RouteCompletion?
+    private var completionFired = false
+
+    private func checkCompletion(run: [Double], route: PlannedRoute, index: Int, onRoute: Double) {
+        // Finish = reaching the last path points having actually ridden the
+        // route (same 90% coverage bar as the ghost, and long enough that a
+        // loop's shared start/finish can't fire at the first pedal stroke).
+        guard !completionFired, index >= run.count - 2, onRoute > 60 else { return }
+        let covered = run.filter { $0 >= 0 }.count
+        guard Double(covered) >= 0.9 * Double(run.count) else { return }
+        completionFired = true
+        let best = route.bestTimes?.last
+        completion = RouteCompletion(routeName: route.name,
+                                     seconds: onRoute,
+                                     deltaToBest: best.map { onRoute - $0 },
+                                     newBest: best.map { onRoute < $0 } ?? true)
     }
 
     /// Call at ride stop: a run that covered ≥90% of the route and beat the

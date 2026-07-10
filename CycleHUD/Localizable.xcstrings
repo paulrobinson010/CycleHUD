@@ -8208,6 +8208,46 @@
         }
       }
     },
+    "New best" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neue Bestzeit"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New best"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New best"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuevo récord"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouveau record"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuovo record"
+          }
+        }
+      }
+    },
     "New route" : {
       "localizations" : {
         "de-DE" : {
@@ -11140,6 +11180,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Percorso"
+          }
+        }
+      }
+    },
+    "Route complete" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route abgeschlossen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route complete"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route complete"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ruta completada"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinéraire terminé"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Percorso completato"
+          }
+        }
+      }
+    },
+    "Route complete — new best time" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route abgeschlossen — neue Bestzeit"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route complete — new best time"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route complete — new best time"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ruta completada — nuevo récord"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinéraire terminé — nouveau record"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Percorso completato — nuovo record"
           }
         }
       }
@@ -14720,6 +14840,46 @@
         }
       }
     },
+    "vs best" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "zur Bestzeit"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vs best"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vs best"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vs récord"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vs record"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dal record"
+          }
+        }
+      }
+    },
     "Waiting for GPS…" : {
       "localizations" : {
         "de-DE" : {
@@ -15356,6 +15516,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tu %@"
+          }
+        }
+      }
+    },
+    "Your first time — the ghost is set" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine erste Zeit — der Geist ist gesetzt"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your first time — the ghost is set"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your first time — the ghost is set"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu primer tiempo — el fantasma queda fijado"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre premier temps — le fantôme est créé"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo primo tempo — il fantasma è pronto"
           }
         }
       }

@@ -500,6 +500,10 @@ extension WatchSessionManager: WCSessionDelegate {
             // Route turn coming up — distinct from car taps; the phone
             // speaks which way.
             device.play(.directionUp)
+        case "routeDone":
+            // Route completed — a celebratory double success tap.
+            device.play(.success)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { device.play(.success) }
         default:
             break
         }

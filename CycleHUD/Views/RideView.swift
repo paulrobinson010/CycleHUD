@@ -58,6 +58,8 @@ struct RideView: View {
             }
         }
         .environment(\.locale, settings.appLocale)
+        .overlay(alignment: .top) { completionToast }
+        .animation(.spring(duration: 0.45), value: routes.completion)
         .sheet(item: $activeSheet) { sheet in
             Group {
                 switch sheet {
@@ -973,6 +975,64 @@ struct RideView: View {
                           arrowDegrees: arrow, arrowColor: color)
         }
         .buttonStyle(.plain)
+    }
+
+    /// Route-finish toast: floats in from the top when the active route is
+    /// completed — final time, and the verdict against the route's best.
+    /// Dismisses itself after a few seconds, or on tap.
+    @ViewBuilder private var completionToast: some View {
+        if let c = routes.completion {
+            VStack(spacing: 3) {
+                HStack(spacing: 7) {
+                    Image(systemName: "flag.checkered")
+                        .font(.system(size: 16, weight: .bold))
+                    Text("Route complete")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                }
+                .foregroundStyle(Theme.textPrimary)
+                Text(verbatim: toastTime(c.seconds))
+                    .font(.system(size: 40, weight: .heavy, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(Theme.textPrimary)
+                if let delta = c.deltaToBest {
+                    HStack(spacing: 5) {
+                        if c.newBest { Text("New best") }
+                        Text(verbatim: "\(delta <= 0 ? "−" : "+")\(toastTime(abs(delta)))")
+                            .monospacedDigit()
+                        if !c.newBest { Text("vs best") }
+                    }
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundStyle(c.newBest ? Theme.good : Theme.threatHigh)
+                } else {
+                    Text("Your first time — the ghost is set")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.purple)
+                }
+            }
+            .padding(.horizontal, 26)
+            .padding(.vertical, 14)
+            .background(RoundedRectangle(cornerRadius: 22).fill(Theme.panelRaised)
+                .shadow(color: .black.opacity(0.35), radius: 12, y: 4))
+            .overlay(RoundedRectangle(cornerRadius: 22)
+                .strokeBorder((c.newBest ? Theme.good : Theme.tileStroke).opacity(0.6),
+                              lineWidth: 1.5))
+            .padding(.top, 8)
+            .transition(.move(edge: .top).combined(with: .opacity))
+            .onTapGesture { routes.completion = nil }
+            .task {
+                try? await Task.sleep(nanoseconds: 12_000_000_000)
+                routes.completion = nil
+            }
+        }
+    }
+
+    /// "12:34" / "1:02:33" for the completion toast.
+    private func toastTime(_ seconds: Double) -> String {
+        let s = Int(seconds.rounded())
+        if s >= 3600 {
+            return "\(s / 3600):\(String(format: "%02d", (s % 3600) / 60)):\(String(format: "%02d", s % 60))"
+        }
+        return "\(s / 60):\(String(format: "%02d", s % 60))"
     }
 
     /// The demo's ghost race: the pretend rider (7 m/s-ish) vs the demo

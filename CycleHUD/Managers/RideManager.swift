@@ -223,6 +223,7 @@ final class RideManager: ObservableObject {
         stationarySeconds = 0
         movingSeconds = 0
         lastTurnCueIndex = -1
+        completionAnnounced = false
         routes?.beginGhostRun()
         lastGatedLocation = nil
         lastGpsAltitude = nil
@@ -712,6 +713,7 @@ final class RideManager: ObservableObject {
             updateGradient()
             checkTurnCue()
             routes?.recordGhost(elapsed: movingTimeSeconds)
+            announceCompletionIfNeeded()
         case .autoPaused:
             updateAutoResume(dt: dt)
         case .paused, .idle:
@@ -894,6 +896,24 @@ final class RideManager: ObservableObject {
             settings.appLanguage.isEmpty ? Locale.current.identifier : settings.appLanguage)
         watch.sendTurnHaptic()
         AppLog.shared.log("Turn cue: \(text) in \(Int(turn.distanceMeters)) m")
+    }
+
+    /// One-shot voice + wrist celebration when the active route is completed
+    /// (RouteStore fires `completion` once per run; the toast is the UI's job).
+    private var completionAnnounced = false
+
+    private func announceCompletionIfNeeded() {
+        guard let c = routes?.completion, !completionAnnounced else { return }
+        completionAnnounced = true
+        if settings.routeTurnAlertsEnabled || settings.voiceAlertsEnabled {
+            let text = c.newBest
+                ? String(localized: "Route complete — new best time", bundle: Lang.bundle)
+                : String(localized: "Route complete", bundle: Lang.bundle)
+            AudioAlerts.shared.speak(text, language:
+                settings.appLanguage.isEmpty ? Locale.current.identifier : settings.appLanguage)
+        }
+        watch.sendRouteDoneHaptic()
+        AppLog.shared.log("Route completed in \(Int(c.seconds)) s (newBest=\(c.newBest))")
     }
 
     private func updateAutoPause(dt: Double) {
