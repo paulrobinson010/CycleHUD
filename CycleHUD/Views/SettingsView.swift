@@ -197,7 +197,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Display")
                 } footer: {
-                    Text("Choose which metric tiles show on the ride screen, and in what order. Appearance offers a clean light theme, an all-black dark theme, or a neon Cyberpunk theme matching the CycleHUD artwork. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait.")
+                    Text("Choose which metric tiles show on the ride screen, and in what order. Appearance offers a clean light theme, an all-black dark theme, a neon Cyberpunk theme matching the CycleHUD artwork — full CRT scanlines and interference included — or a pastel Unicorn theme with a fun hand-drawn font. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait.")
                 }
 
                 Section {

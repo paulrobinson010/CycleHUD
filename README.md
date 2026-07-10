@@ -205,16 +205,19 @@ meters work too.
   landscape: the radar on one side (left or right — your choice) and your ride
   data and controls on the other. The HUD stays landscape regardless of how you
   hold the phone; Settings and other screens stay portrait.
-- **Light, dark or Cyberpunk** — three appearances in Settings: a clean light
-  theme (default), an all-black dark HUD, and a neon **Cyberpunk** theme
-  matching the CycleHUD artwork — cyan→magenta backdrop with glow, gradient
-  numerals, neon tile and pill rims, and the full **CRT treatment**: phosphor
-  scanlines, a shadow-mask vignette, and every so often a burst of magnetic
+- **Light, dark, Cyberpunk or Unicorn** — four appearances in Settings: a
+  clean light theme (default), an all-black dark HUD, a neon **Cyberpunk**
+  theme matching the CycleHUD artwork — cyan→magenta backdrop with glow,
+  neon tile and pill rims, and the full **CRT treatment**: phosphor
+  scanlines, a shadow-mask vignette, and every few seconds a burst of magnetic
   interference — the picture jitters, tear lines flash and a sync bar rolls
   through. (Interference politely waits while a vehicle is on the radar, so
-  alerts are never garbled.) Pair it with the **Digital** digits option
-  for a retro 7-segment LCD readout (an original display font, bundled), in any
-  theme.
+  alerts are never garbled.) And its antithesis: a pastel **Unicorn** theme —
+  pink-to-mint wash, candy tile rims, deep-plum numerals in a fun hand-drawn
+  font, with threat colours still unmistakably yellow/orange/raspberry (it's
+  a safety display, glitter or not). Pair any of them with the **Digital**
+  digits option for a retro 7-segment LCD readout (an original display font,
+  bundled).
 - **Ride control** — Start / Pause / Resume / Stop, with **auto-pause /
   auto-resume** (pauses after you're stopped < 1 km/h for 5 s, resumes ~1 s
   after you move again).

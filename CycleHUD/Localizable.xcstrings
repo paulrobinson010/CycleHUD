@@ -2904,42 +2904,42 @@
         }
       }
     },
-    "Choose which metric tiles show on the ride screen, and in what order. Appearance offers a clean light theme, an all-black dark theme, or a neon Cyberpunk theme matching the CycleHUD artwork. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait." : {
+    "Choose which metric tiles show on the ride screen, and in what order. Appearance offers a clean light theme, an all-black dark theme, a neon Cyberpunk theme matching the CycleHUD artwork — full CRT scanlines and interference included — or a pastel Unicorn theme with a fun hand-drawn font. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle, welche Kacheln im Fahrtbildschirm erscheinen und in welcher Reihenfolge. Als Erscheinungsbild stehen ein helles Design, ein komplett schwarzer Dunkelmodus oder ein Neon-Cyberpunk-Design passend zum CycleHUD-Artwork zur Wahl. Das Querformat fixiert den Fahrtbildschirm im Querformat – Radar links, Fahrtdaten und Steuerung rechts – und dreht sich nicht, wenn du das Telefon drehst; Einstellungen und andere Bildschirme bleiben im Hochformat."
+            "value" : "Wähle, welche Kacheln im Fahrtbildschirm erscheinen und in welcher Reihenfolge. Als Erscheinungsbild stehen ein helles Design, ein komplett schwarzer Dunkelmodus, ein Neon-Cyberpunk-Design passend zum CycleHUD-Artwork — komplett mit CRT-Scanlines und Störbildern — oder ein pastelliges Einhorn-Design mit verspielter Schrift zur Wahl. Das Querformat fixiert den Fahrtbildschirm im Querformat – Radar links, Fahrtdaten und Steuerung rechts – und dreht sich nicht, wenn du das Telefon drehst; Einstellungen und andere Bildschirme bleiben im Hochformat."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose which metric tiles show on the ride screen, and in what order. Appearance offers a clean light theme, an all-black dark theme, or a neon Cyberpunk theme matching the CycleHUD artwork. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait."
+            "value" : "Choose which metric tiles show on the ride screen, and in what order. Appearance offers a clean light theme, an all-black dark theme, a neon Cyberpunk theme matching the CycleHUD artwork — full CRT scanlines and interference included — or a pastel Unicorn theme with a fun hand-drawn font. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose which metric tiles show on the ride screen, and in what order. Appearance offers a clean light theme, an all-black dark theme, or a neon Cyberpunk theme matching the CycleHUD artwork. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait."
+            "value" : "Choose which metric tiles show on the ride screen, and in what order. Appearance offers a clean light theme, an all-black dark theme, a neon Cyberpunk theme matching the CycleHUD artwork — full CRT scanlines and interference included — or a pastel Unicorn theme with a fun hand-drawn font. Landscape layout fixes the ride screen in landscape — radar on the left, ride data and controls on the right — and won't flip when you rotate the phone; Settings and other screens stay in portrait."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige qué casillas de datos se muestran en la pantalla de ruta y en qué orden. La apariencia ofrece un tema claro, un modo oscuro todo negro o un tema Cyberpunk de neón a juego con la imagen de CycleHUD. El diseño horizontal fija la pantalla de ruta en horizontal —radar a la izquierda, datos y controles a la derecha— y no gira al rotar el teléfono; los Ajustes y otras pantallas siguen en vertical."
+            "value" : "Elige qué casillas de datos se muestran en la pantalla de ruta y en qué orden. La apariencia ofrece un tema claro, un modo oscuro todo negro, un tema Cyberpunk de neón a juego con la imagen de CycleHUD —con líneas de barrido CRT e interferencias incluidas— o un tema Unicornio pastel con una tipografía divertida. El diseño horizontal fija la pantalla de ruta en horizontal —radar a la izquierda, datos y controles a la derecha— y no gira al rotar el teléfono; los Ajustes y otras pantallas siguen en vertical."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisissez quelles tuiles de données s’affichent sur l’écran de sortie, et dans quel ordre. L’apparence propose un thème clair, un mode sombre tout noir ou un thème Cyberpunk néon assorti à l’identité visuelle de CycleHUD. Le mode paysage fixe l’écran de sortie en paysage – radar à gauche, données et commandes à droite – et ne bascule pas quand vous tournez le téléphone ; les Réglages et les autres écrans restent en portrait."
+            "value" : "Choisissez quelles tuiles de données s’affichent sur l’écran de sortie, et dans quel ordre. L’apparence propose un thème clair, un mode sombre tout noir, un thème Cyberpunk néon assorti à l’identité visuelle de CycleHUD — lignes de balayage CRT et parasites compris — ou un thème Licorne pastel à la police amusante. Le mode paysage fixe l’écran de sortie en paysage – radar à gauche, données et commandes à droite – et ne bascule pas quand vous tournez le téléphone ; les Réglages et les autres écrans restent en portrait."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli quali schede dei dati mostrare nella schermata dell’uscita e in che ordine. L’aspetto offre un tema chiaro, un modo scuro tutto nero o un tema Cyberpunk al neon in linea con la grafica di CycleHUD. Il layout orizzontale blocca la schermata dell’uscita in orizzontale – radar a sinistra, dati e comandi a destra – e non ruota quando giri il telefono; Impostazioni e altre schermate restano in verticale."
+            "value" : "Scegli quali schede dei dati mostrare nella schermata dell’uscita e in che ordine. L’aspetto offre un tema chiaro, un modo scuro tutto nero, un tema Cyberpunk al neon in linea con la grafica di CycleHUD — scanline CRT e disturbi compresi — o un tema Unicorno pastello con un font divertente. Il layout orizzontale blocca la schermata dell’uscita in orizzontale – radar a sinistra, dati e comandi a destra – e non ruota quando giri il telefono; Impostazioni e altre schermate restano in verticale."
           }
         }
       }
@@ -14482,6 +14482,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annulla l’ultimo punto"
+          }
+        }
+      }
+    },
+    "Unicorn" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einhorn"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unicorn"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unicorn"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unicornio"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licorne"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unicorno"
           }
         }
       }
