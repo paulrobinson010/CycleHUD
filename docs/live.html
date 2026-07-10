@@ -54,7 +54,7 @@ const token = location.hash.slice(1);
 const message = document.getElementById("message");
 const useMiles = navigator.language.startsWith("en-US") || navigator.language.startsWith("en-GB");
 
-let map, marker, trail, trailCoords = [], gone = 0;
+let map, marker, trail, trailCoords = [];
 
 function fmtTime(s) {
   s = Math.floor(s);
@@ -98,16 +98,15 @@ async function poll() {
   if (!record || recError === "NOT_FOUND") {
     // No record = the ride has ended (the app deletes it on Stop) — or it was
     // published to the other CloudKit environment (dev builds write to
-    // Development; this page reads the environment configured above).
-    gone += 1;
+    // Development; this page reads the environment configured above). Errors
+    // are reported separately now, so a missing record is definitive.
     if (trailCoords.length) {
       setStatus("Ride finished — the link is no longer live.", false);
-    } else if (gone > 2) {
-      showMessage("This ride has ended, or the link has expired.");
+    } else {
+      showMessage("This ride has ended, or the link has expired. Links are only live while the ride is being recorded.");
     }
     return;
   }
-  gone = 0;
   const f = record.fields || {};
   const lat = f.lat && f.lat.value, lon = f.lon && f.lon.value;
   if (typeof lat !== "number" || typeof lon !== "number") return;
