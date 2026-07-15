@@ -125,12 +125,17 @@ final class WatchSessionManager: NSObject, ObservableObject {
         // it always discards.) Energy/HR share lets the live builder collect HR.
         let share: Set<HKSampleType> = [HKObjectType.workoutType(),
                                         HKQuantityType(.activeEnergyBurned), hrType]
-        let read: Set<HKObjectType> = [hrType]
+        // Workout READ access lets the purge below find (and delete) any
+        // workout this app accidentally saved.
+        let read: Set<HKObjectType> = [hrType, HKObjectType.workoutType()]
         healthStore.requestAuthorization(toShare: share, read: read) { [weak self] success, _ in
             DispatchQueue.main.async {
                 guard let self else { return }
                 self.authorizationComplete = true
-                if success { self.startHeartRateQuery() }
+                if success {
+                    self.startHeartRateQuery()
+                    self.purgeAccidentalWorkouts()
+                }
                 // A ride may have started while auth was still in flight; run the
                 // deferred workout start now that startActivity won't silently fail.
                 if self.startWhenAuthorized {
@@ -352,6 +357,37 @@ final class WatchSessionManager: NSObject, ObservableObject {
     func refreshFromContext() {
         let ctx = WCSession.default.receivedApplicationContext
         if !ctx.isEmpty { apply(ctx) }
+        purgeAccidentalWorkouts()
+    }
+
+    // MARK: - Phantom-workout purge
+    //
+    // The watch must NEVER own a saved workout — the phone saves the
+    // authoritative one. But if watchOS suspends the app in the gap between
+    // session.end() and the discard callback, the system finalises the orphan
+    // itself and SAVES it as an empty workout (one bad morning of link churn
+    // minted 21 of them). So any workout this app's source ever saved is by
+    // definition an accident: find them all and delete them, including
+    // historical strays from before this backstop existed.
+
+    private var lastPurgeAt = Date.distantPast
+
+    private func purgeAccidentalWorkouts() {
+        guard HKHealthStore.isHealthDataAvailable(), healthUsageStringsPresent,
+              authorizationComplete, !rideActive,
+              Date().timeIntervalSince(lastPurgeAt) > 300 else { return }
+        lastPurgeAt = Date()
+        let ownSource = HKQuery.predicateForObjects(from: HKSource.default())
+        let query = HKSampleQuery(sampleType: .workoutType(), predicate: ownSource,
+                                  limit: HKObjectQueryNoLimit, sortDescriptors: nil) {
+            [weak self] _, samples, _ in
+            guard let self, let workouts = samples, !workouts.isEmpty else { return }
+            self.healthStore.delete(workouts) { done, error in
+                print("Purged \(workouts.count) accidental watch workout(s): "
+                      + (done ? "OK" : error?.localizedDescription ?? "failed"))
+            }
+        }
+        healthStore.execute(query)
     }
 
     // MARK: - Heart-rate warning
