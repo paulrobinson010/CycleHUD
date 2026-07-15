@@ -495,12 +495,19 @@ final class RouteStore: ObservableObject {
     }
 
     /// Live race state: seconds ahead (−) or behind (+) the route's best run,
-    /// measured from each run's own first touch of the route.
+    /// measured from each run's own first touch of the route. The best run's
+    /// clock is interpolated at the rider's exact position along the current
+    /// segment — comparing against best[idx] alone made the readout lurch at
+    /// every path point (they can be hundreds of metres apart on straights).
     func ghostDelta(elapsed: Double) -> Double? {
         guard joinedActiveRoute, let route = activeRoute,
               let best = route.bestTimes, let idx = progressHint, idx < best.count,
               let start = ghostRunStart else { return nil }
-        return (elapsed - start) - best[idx]
+        var bestHere = best[idx]
+        if idx + 1 < best.count {
+            bestHere += (best[idx + 1] - bestHere) * progressFrac
+        }
+        return (elapsed - start) - bestHere
     }
 
     /// Where the ghost is right now (it "set off" when this run first touched
@@ -537,6 +544,9 @@ final class RouteStore: ObservableObject {
     /// progress can't jump backwards where a loop crosses itself.
     private var progressHint: Int?
     private var progressRouteID: UUID?
+    /// How far along the current segment the rider is (0…1), from the last
+    /// progress() call — lets the ghost delta interpolate between path points.
+    private var progressFrac: Double = 0
 
     /// The rider's last matched path index — the junction guidance uses it to
     /// look only FORWARD along the route (an out-and-back road would otherwise
@@ -562,6 +572,13 @@ final class RouteStore: ObservableObject {
         }
         guard let m = match else { return nil }
         progressHint = m.index
+        if m.index + 1 < route.path.count {
+            let segLen = PlannedRoute.meters(route.path[m.index].coordinate,
+                                             route.path[m.index + 1].coordinate)
+            progressFrac = segLen > 0 ? min(1, max(0, m.along / segLen)) : 0
+        } else {
+            progressFrac = 0
+        }
         if m.meters < 60 { joinedActiveRoute = true }
         // Remaining distance measured from the projection, not the segment
         // start, so it ticks down smoothly along sparse straight segments.

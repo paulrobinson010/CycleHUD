@@ -312,7 +312,12 @@ final class WatchSessionManager: NSObject, ObservableObject {
 
     private var lastMirrorAt: Date?
     private var rideWatchdog: Timer?
-    private static let mirrorTimeout: TimeInterval = 300   // 5 min without updates
+    /// Generous on purpose: the session is ALWAYS discarded (never saved), so
+    /// a long-lived orphan can't pollute Health — the watchdog only guards
+    /// battery. The old 5-minute timeout was killing live rides whenever
+    /// mirror delivery went quiet with the app backgrounded, which dropped
+    /// the workout keep-alive, suspended the app and lost heart rate.
+    private static let mirrorTimeout: TimeInterval = 1800   // 30 min without updates
 
     private func updateRideWatchdog() {
         if rideActive {
@@ -327,7 +332,9 @@ final class WatchSessionManager: NSObject, ObservableObject {
     }
 
     private func checkMirrorLiveness() {
-        guard rideActive,
+        // A reachable phone means the link is alive even if mirrors aren't
+        // being parsed right now — never kill a ride out from under it.
+        guard rideActive, !WCSession.default.isReachable,
               Date().timeIntervalSince(lastMirrorAt ?? .distantPast) > Self.mirrorTimeout
         else { return }
         statusRaw = "idle"
@@ -335,6 +342,16 @@ final class WatchSessionManager: NSObject, ObservableObject {
         updateWorkout()        // ends the session → discarded, never saved
         updateRideWatchdog()
         updateHapticLoop()
+    }
+
+    /// Re-apply the last mirrored state — applicationContext persists across
+    /// launches — so a watch app reopened mid-ride restarts its workout
+    /// session on the spot instead of waiting for the next push. The
+    /// staleness guard still stops a long-dead "running" from starting a
+    /// phantom session.
+    func refreshFromContext() {
+        let ctx = WCSession.default.receivedApplicationContext
+        if !ctx.isEmpty { apply(ctx) }
     }
 
     // MARK: - Heart-rate warning
@@ -517,9 +534,19 @@ extension WatchSessionManager: HKWorkoutSessionDelegate {
                         didChangeTo toState: HKWorkoutSessionState,
                         from fromState: HKWorkoutSessionState, date: Date) {
         // DISCARD, never finish — the phone saves the authoritative workout (with
-        // the GPS route), so the watch must never save its own.
-        if toState == .ended {
+        // the GPS route), so the watch must never save its own. finalizeDiscard
+        // re-runs updateWorkout afterwards, so a session that ended WITHOUT us
+        // asking (watchOS reclaiming it, water lock, a system stop) restarts
+        // immediately while the ride is still active.
+        switch toState {
+        case .ended:
             DispatchQueue.main.async { [weak self] in self?.finalizeDiscard() }
+        case .stopped:
+            // A stop we didn't request: drive it to .ended so the discard +
+            // restart path runs.
+            session.end()
+        default:
+            break
         }
     }
 

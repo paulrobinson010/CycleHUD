@@ -74,15 +74,22 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
         ]
         if let nearestThreatMeters { payload["nearest"] = nearestThreatMeters }
         // applicationContext is the reliable background path (latest state always
-        // gets through), but it's coalesced and slow. When the Watch app is open
-        // (reachable), also push it live via sendMessage so speed/HR update in
-        // real time and the Watch starts its workout promptly.
-        try? session.updateApplicationContext(payload)
+        // gets through), but it's coalesced and slow — and pushing it at the
+        // mirror's full 2 Hz put far more pressure on WCSession than the API is
+        // built for. Throttle it to ~2 s; the live sendMessage path keeps the
+        // Watch real-time whenever it's reachable.
+        if Date().timeIntervalSince(lastContextPush) >= 2 {
+            lastContextPush = Date()
+            try? session.updateApplicationContext(payload)
+        }
         if session.isReachable {
             session.sendMessage(payload, replyHandler: nil, errorHandler: nil)
         }
         #endif
     }
+
+    /// Last applicationContext push (they're throttled; see sendMirror).
+    private var lastContextPush = Date.distantPast
 
     /// Tell the Watch to tap the wrist for a newly-detected vehicle.
     func sendNewCarHaptic() {
