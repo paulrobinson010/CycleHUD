@@ -308,7 +308,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
     /// later — which watchOS then saves as an empty workout when the app dies.
     private static let mirrorFreshness: TimeInterval = 60
 
-    private func apply(_ data: [String: Any]) {
+    private func apply(_ data: [String: Any], replay: Bool = false) {
         if let v = data["spdV"] as? Double { speedDisplay = v }
         if let v = data["spdU"] as? String { speedUnitLabel = v }
         if let v = data["dstV"] as? Double { distanceDisplay = v }
@@ -328,16 +328,28 @@ final class WatchSessionManager: NSObject, ObservableObject {
             // it the app's keep-alive and the heart-rate stream) on every link
             // burp. While a ride is already active, abandonment is the 5-minute
             // watchdog's call, not this guard's.
-            if s != "idle", !rideActive {
+            if s != "idle" {
                 let sentAt = data["sentAt"] as? TimeInterval ?? 0
                 let age = Date().timeIntervalSince1970 - sentAt
-                if age > Self.mirrorFreshness {
+                if replay {
+                    // Replayed contexts (app launch, wrist-raise) are history,
+                    // not news. The phone pushes context at least every ~2 s
+                    // while riding, so anything older than 15 s means the ride
+                    // is over or the phone is gone — and unlike live mirrors,
+                    // a stale REPLAY also ENDS a lingering session: it's how a
+                    // watch that missed the final "idle" recovers the moment
+                    // the rider looks at it.
+                    if age > 15 {
+                        wlog("replayed \(s) context is \(Int(age)) s old — treating as idle")
+                        s = "idle"
+                    }
+                } else if !rideActive, age > Self.mirrorFreshness {
                     wlog("stale \(s) mirror (\(Int(age)) s old) — not starting a ride from it")
                     s = "idle"
                 }
             }
             if rideActive, s == "idle" {
-                wlog("mirror says idle — ride over")
+                wlog("mirror says idle — ride over\(replay ? " (from replayed context)" : "")")
             }
             // The phone's demo: display exactly like a running ride, but NEVER
             // start a workout session for it — a session orphaned when watchOS
@@ -405,7 +417,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
     /// phantom session.
     func refreshFromContext() {
         let ctx = WCSession.default.receivedApplicationContext
-        if !ctx.isEmpty { apply(ctx) }
+        if !ctx.isEmpty { apply(ctx, replay: true) }
         purgeAccidentalWorkouts()
     }
 
@@ -525,7 +537,7 @@ extension WatchSessionManager: WCSessionDelegate {
         // picks up the running status (and starts the HR session) without waiting
         // for the next push from the phone.
         let ctx = session.receivedApplicationContext
-        if !ctx.isEmpty { DispatchQueue.main.async { self.apply(ctx) } }
+        if !ctx.isEmpty { DispatchQueue.main.async { self.apply(ctx, replay: true) } }
     }
 
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {

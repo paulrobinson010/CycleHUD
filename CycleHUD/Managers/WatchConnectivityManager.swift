@@ -76,10 +76,13 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
         // applicationContext is the reliable background path (latest state always
         // gets through), but it's coalesced and slow — and pushing it at the
         // mirror's full 2 Hz put far more pressure on WCSession than the API is
-        // built for. Throttle it to ~2 s; the live sendMessage path keeps the
-        // Watch real-time whenever it's reachable.
-        if Date().timeIntervalSince(lastContextPush) >= 2 {
+        // built for. Throttle it to ~2 s — EXCEPT when the ride status changes:
+        // dropping the final "idle" left "running" as the stored context, and a
+        // wrist-raise replayed it into a phantom counting-up session.
+        let statusChanged = rideStatusRaw != lastContextStatus
+        if statusChanged || Date().timeIntervalSince(lastContextPush) >= 2 {
             lastContextPush = Date()
+            lastContextStatus = rideStatusRaw
             try? session.updateApplicationContext(payload)
         }
         if session.isReachable {
@@ -90,6 +93,7 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
 
     /// Last applicationContext push (they're throttled; see sendMirror).
     private var lastContextPush = Date.distantPast
+    private var lastContextStatus = ""
 
     /// Tell the Watch to tap the wrist for a newly-detected vehicle.
     func sendNewCarHaptic() {
