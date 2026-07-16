@@ -297,6 +297,14 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Toggle("Live Activity", isOn: $settings.liveActivityEnabled)
+                } header: {
+                    Text("Lock Screen")
+                } footer: {
+                    Text("Shows the ride on the Lock Screen and in the Dynamic Island, flooding with the threat colour when a vehicle is behind. Note: iPhone Live Activities also appear on Apple Watch and can take over the watch screen when you raise your wrist — if you ride with the CycleHUD watch app, turn this off, or disable Settings → General → Auto-Launch → Live Activities on the watch.")
+                }
+
+                Section {
                     Toggle("Live tracking", isOn: $settings.liveTrackingEnabled)
                     if settings.liveTrackingEnabled, let url = liveTrack.shareURL {
                         ShareLink(item: url) {

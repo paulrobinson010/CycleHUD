@@ -32,6 +32,7 @@ final class AppSettings: ObservableObject {
         static let routeTrafficEnabled = "routeTrafficEnabled"
         static let iCloudSyncEnabled = "iCloudSyncEnabled"
         static let liveTrackingEnabled = "liveTrackingEnabled"
+        static let liveActivityEnabled = "liveActivityEnabled"
         static let stravaAutoUploadEnabled = "stravaAutoUploadEnabled"
         static let appLanguage = "appLanguage"
         static let metricTiles = "metricTilesV2"   // legacy single-page tiles, migrated
@@ -227,6 +228,7 @@ final class AppSettings: ObservableObject {
             Keys.routeTrafficEnabled: true,
             Keys.iCloudSyncEnabled: true,
             Keys.liveTrackingEnabled: false,
+            Keys.liveActivityEnabled: true,
             Keys.stravaAutoUploadEnabled: false,
             Keys.appLanguage: "",
             Keys.currentRidePage: 0,
@@ -268,6 +270,7 @@ final class AppSettings: ObservableObject {
         routeTrafficEnabled = defaults.bool(forKey: Keys.routeTrafficEnabled)
         iCloudSyncEnabled = defaults.bool(forKey: Keys.iCloudSyncEnabled)
         liveTrackingEnabled = defaults.bool(forKey: Keys.liveTrackingEnabled)
+        liveActivityEnabled = defaults.bool(forKey: Keys.liveActivityEnabled)
         stravaAutoUploadEnabled = defaults.bool(forKey: Keys.stravaAutoUploadEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
         // (appearance applied below once all stored properties are initialised)

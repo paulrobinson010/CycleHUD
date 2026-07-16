@@ -7401,6 +7401,46 @@
         }
       }
     },
+    "Live Activity" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live-Aktivität"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Activity"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Activity"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actividad en directo"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activité en direct"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attività in diretta"
+          }
+        }
+      }
+    },
     "Live tracking" : {
       "localizations" : {
         "de-DE" : {
@@ -7477,6 +7517,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La posizione è disattivata"
+          }
+        }
+      }
+    },
+    "Lock Screen" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sperrbildschirm"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock Screen"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock Screen"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pantalla de bloqueo"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écran verrouillé"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schermata di blocco"
           }
         }
       }
@@ -12793,6 +12873,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrate"
+          }
+        }
+      }
+    },
+    "Shows the ride on the Lock Screen and in the Dynamic Island, flooding with the threat colour when a vehicle is behind. Note: iPhone Live Activities also appear on Apple Watch and can take over the watch screen when you raise your wrist — if you ride with the CycleHUD watch app, turn this off, or disable Settings → General → Auto-Launch → Live Activities on the watch." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt die Fahrt auf dem Sperrbildschirm und in der Dynamic Island; bei einem Fahrzeug hinter dir färbt sich der Streifen in der Warnfarbe. Hinweis: iPhone-Live-Aktivitäten erscheinen auch auf der Apple Watch und können beim Anheben des Handgelenks den Bildschirm übernehmen — wer mit der CycleHUD-Watch-App fährt, schaltet dies aus oder deaktiviert auf der Uhr Einstellungen → Allgemein → Automatisch öffnen → Live-Aktivitäten."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows the ride on the Lock Screen and in the Dynamic Island, flooding with the threat colour when a vehicle is behind. Note: iPhone Live Activities also appear on Apple Watch and can take over the watch screen when you raise your wrist — if you ride with the CycleHUD watch app, turn this off, or disable Settings → General → Auto-Launch → Live Activities on the watch."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows the ride on the Lock Screen and in the Dynamic Island, flooding with the threat color when a vehicle is behind. Note: iPhone Live Activities also appear on Apple Watch and can take over the watch screen when you raise your wrist — if you ride with the CycleHUD watch app, turn this off, or disable Settings → General → Auto-Launch → Live Activities on the watch."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra la salida en la pantalla de bloqueo y en la Dynamic Island, tiñéndose del color de amenaza cuando hay un vehículo detrás. Nota: las Actividades en directo del iPhone también aparecen en el Apple Watch y pueden ocupar su pantalla al levantar la muñeca — si usas la app de CycleHUD para el reloj, desactiva esto o desactiva en el reloj Ajustes → General → Apertura automática → Actividades en directo."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche la sortie sur l'écran verrouillé et dans la Dynamic Island, avec la couleur d'alerte quand un véhicule arrive derrière. Remarque : les activités en direct de l'iPhone apparaissent aussi sur l'Apple Watch et peuvent prendre l'écran au lever du poignet — si vous roulez avec l'app CycleHUD de la montre, désactivez ceci, ou désactivez sur la montre Réglages → Général → Lancement auto → Activités en direct."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra l'uscita nella schermata di blocco e nella Dynamic Island, colorandosi del colore di allerta quando c'è un veicolo dietro. Nota: le attività in diretta dell'iPhone compaiono anche su Apple Watch e possono occuparne lo schermo quando alzi il polso — se usi l'app CycleHUD per l'orologio, disattiva questa opzione o disattiva sull'orologio Impostazioni → Generali → Apertura automatica → Attività in diretta."
           }
         }
       }

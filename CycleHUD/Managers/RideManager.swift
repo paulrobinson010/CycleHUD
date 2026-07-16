@@ -250,9 +250,11 @@ final class RideManager: ObservableObject {
         applyScreenLock()
         try? FileManager.default.removeItem(at: routeURL)
         persistSnapshot()
-        liveActivity.start(speedUnit: settings.speedUnit,
-                           distanceUnit: settings.distanceUnit,
-                           state: activityState)
+        if settings.liveActivityEnabled {
+            liveActivity.start(speedUnit: settings.speedUnit,
+                               distanceUnit: settings.distanceUnit,
+                               state: activityState)
+        }
         if settings.liveTrackingEnabled {
             // Publish the planned route too (when one is being followed), so
             // watchers see where the ride is headed, not just where it's been.
@@ -731,8 +733,13 @@ final class RideManager: ObservableObject {
         if status == .running || status == .autoPaused { updatePassLog(now: now) }
         sendMirror()
         // Lock Screen / Dynamic Island (throttled inside; threat changes are
-        // pushed straight through).
-        liveActivity.update(activityState)
+        // pushed straight through). Toggling the setting off mid-ride takes
+        // the activity down immediately.
+        if settings.liveActivityEnabled {
+            liveActivity.update(activityState)
+        } else {
+            liveActivity.end(activityState)
+        }
         // Live-tracking record (throttled inside to one save per 15 s). When
         // a route is being followed, include how far is left and the ETA so
         // watchers know when to put the kettle on.
@@ -1152,9 +1159,11 @@ final class RideManager: ObservableObject {
         if settings.crashDetectionEnabled { crash.start() }
         applyScreenLock()
         // Re-attach the Live Activity (it survives the app being killed).
-        liveActivity.start(speedUnit: settings.speedUnit,
-                           distanceUnit: settings.distanceUnit,
-                           state: activityState)
+        if settings.liveActivityEnabled {
+            liveActivity.start(speedUnit: settings.speedUnit,
+                               distanceUnit: settings.distanceUnit,
+                               state: activityState)
+        }
         AppLog.shared.log("Restored in-progress ride (status=\(snap.statusRaw), dist=\(Int(distanceMeters))m) — prior session likely crashed/terminated")
     }
 
