@@ -246,9 +246,12 @@ final class WatchSessionManager: NSObject, ObservableObject {
             // discarded at the end (see the session-state delegate), so the watch
             // never saves one — the phone owns the authoritative workout.
             builder.beginCollection(withStart: start) { _, _ in }
-            workoutActive = true
+            sessionStartedAt = Date()
+            // workoutActive (the ● on the face) is set when the session
+            // actually reaches .running — startActivity can fail silently,
+            // and an optimistic flag hid exactly that for a whole ride.
             startHeartRateQuery()
-            wlog("workout session started")
+            wlog("workout session requested")
         } catch {
             workoutSession = nil
             wlog("session create FAILED: \(error.localizedDescription)")
@@ -276,6 +279,27 @@ final class WatchSessionManager: NSObject, ObservableObject {
         clearWorkout()
         wlog("session discarded")
         updateWorkout()   // if a ride is somehow still active, start a fresh session
+    }
+
+    /// When the session was last requested; gives startActivity a grace
+    /// period to reach .running before the verifier declares it dead.
+    private var sessionStartedAt: Date?
+
+    /// The killer failure mode this guards against: startActivity fails
+    /// SILENTLY, leaving a session object that never runs — no background
+    /// keep-alive, so the app suspends the moment the wrist drops, while the
+    /// code thinks a session exists and never retries. Called on every
+    /// mirror and every foreground: a session that hasn't reached .running
+    /// within 10 s is torn down and recreated.
+    private func verifySessionRunning() {
+        guard rideActive, !workoutSuppressed, !pendingDiscard,
+              let session = workoutSession, session.state != .running,
+              let started = sessionStartedAt, Date().timeIntervalSince(started) > 10
+        else { return }
+        wlog("session stuck in state \(session.state.rawValue) — recreating")
+        builder?.discardWorkout()
+        clearWorkout()
+        updateWorkout()
     }
 
     private func startDiscardTimeout() {
@@ -364,6 +388,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
             updateWorkout()
             updateRideWatchdog()
         }
+        verifySessionRunning()
         updateHapticLoop()
         evaluateHRWarning()
     }
@@ -637,6 +662,9 @@ extension WatchSessionManager: HKWorkoutSessionDelegate {
         // asking (watchOS reclaiming it, water lock, a system stop) restarts
         // immediately while the ride is still active.
         wlog("session state \(fromState.rawValue) → \(toState.rawValue)")
+        if toState == .running {
+            DispatchQueue.main.async { self.workoutActive = true }
+        }
         switch toState {
         case .ended:
             DispatchQueue.main.async { [weak self] in self?.finalizeDiscard() }
@@ -652,6 +680,7 @@ extension WatchSessionManager: HKWorkoutSessionDelegate {
     private func clearWorkout() {
         workoutSession = nil
         builder = nil
+        sessionStartedAt = nil
         workoutActive = false
         heartRate = 0
         hrWarningActive = false
