@@ -122,6 +122,10 @@ final class AppSettings: ObservableObject {
     @Published var iCloudSyncEnabled: Bool { didSet { defaults.set(iCloudSyncEnabled, forKey: Keys.iCloudSyncEnabled) } }
     /// When on, every ride publishes a live-location share link (see LiveTrackManager).
     @Published var liveTrackingEnabled: Bool { didSet { defaults.set(liveTrackingEnabled, forKey: Keys.liveTrackingEnabled) } }
+    /// Ride on the Lock Screen / Dynamic Island. Off for watch-app riders:
+    /// watchOS mirrors iPhone Live Activities into the Smart Stack and
+    /// auto-launches them on wrist-raise, displacing the watch app.
+    @Published var liveActivityEnabled: Bool { didSet { defaults.set(liveActivityEnabled, forKey: Keys.liveActivityEnabled) } }
     /// When on (and Strava is connected), finished rides upload automatically.
     @Published var stravaAutoUploadEnabled: Bool { didSet { defaults.set(stravaAutoUploadEnabled, forKey: Keys.stravaAutoUploadEnabled) } }
     /// In-app language override (BCP-47 code, or "" to follow the device).
