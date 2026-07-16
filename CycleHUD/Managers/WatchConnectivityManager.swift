@@ -167,11 +167,22 @@ extension WatchConnectivityManager: WCSessionDelegate {
             DispatchQueue.main.async { self.onSOSCancel?() }
             return
         }
+        // Watch session-lifecycle events, into the phone's diagnostics log so
+        // a mid-ride heart-rate drop can be diagnosed after the ride.
+        if let line = message["watchLog"] as? String {
+            AppLog.shared.log("WATCH: \(line)")
+            return
+        }
         guard let hr = message["heartRate"] as? Double else { return }
         DispatchQueue.main.async {
             self.latestHeartRate = Int(hr.rounded())
             self.heartRateUpdatedAt = Date()
         }
+    }
+
+    /// Queued transfers (used for watch logs when unreachable) land here.
+    func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+        handleIncoming(userInfo)
     }
 }
 #endif

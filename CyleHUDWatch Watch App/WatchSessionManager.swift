@@ -73,7 +73,8 @@ final class WatchSessionManager: NSObject, ObservableObject {
         if want, workoutSession == nil {
             startWorkout()
         } else if !want, workoutSession != nil {
-            stopWorkout()
+            stopWorkout(reason: workoutSuppressed ? "demo mirror"
+                                                  : "ride over (status \(statusRaw))")
         }
     }
 
@@ -85,6 +86,43 @@ final class WatchSessionManager: NSObject, ObservableObject {
         }
         requestHealthAuthorization()
         discardOrphanedWorkout()
+        wlog("watch app \(buildStamp) launched")
+    }
+
+    // MARK: - Event log (relayed to the phone's diagnostics)
+    //
+    // Session lifecycle events are the evidence we need when the watch drops
+    // heart rate in the field: every start/stop/discard/failure is stamped,
+    // kept on-screen (last few lines) and relayed to the phone, where it lands
+    // in AppLog with a WATCH: prefix — readable post-ride from Diagnostics.
+
+    @Published private(set) var recentLog: [String] = []
+
+    /// "v1.0 (7)" — shown on the watch face so a stale install is obvious.
+    var buildStamp: String {
+        let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+        let b = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+        return "v\(v)(\(b))"
+    }
+
+    private func wlog(_ line: String) {
+        let entry = "\(Date().formatted(date: .omitted, time: .standard)) \(line)"
+        print("WATCHLOG \(entry)")
+        DispatchQueue.main.async {
+            self.recentLog.append(entry)
+            if self.recentLog.count > 10 {
+                self.recentLog.removeFirst(self.recentLog.count - 10)
+            }
+        }
+        guard WCSession.default.activationState == .activated else { return }
+        let payload = ["watchLog": entry]
+        if WCSession.default.isReachable {
+            WCSession.default.sendMessage(payload, replyHandler: nil) { _ in
+                WCSession.default.transferUserInfo(payload)   // queue it instead
+            }
+        } else {
+            WCSession.default.transferUserInfo(payload)       // queued, survives background
+        }
     }
 
     /// If a previous run was killed mid-ride, watchOS keeps that workout session
@@ -183,6 +221,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
         // startActivity silently fails (no HR, watchOS offers its own workout).
         guard authorizationComplete else {
             startWhenAuthorized = true
+            wlog("session start deferred until HealthKit auth resolves")
             requestHealthAuthorization()   // no-op if already asked; completion re-runs the start
             return
         }
@@ -209,13 +248,16 @@ final class WatchSessionManager: NSObject, ObservableObject {
             builder.beginCollection(withStart: start) { _, _ in }
             workoutActive = true
             startHeartRateQuery()
+            wlog("workout session started")
         } catch {
             workoutSession = nil
+            wlog("session create FAILED: \(error.localizedDescription)")
         }
     }
 
-    private func stopWorkout() {
+    private func stopWorkout(reason: String) {
         guard let session = workoutSession, !pendingDiscard else { return }
+        wlog("ending session — \(reason)")
         pendingDiscard = true
         startDiscardTimeout()
         session.end()   // → didChangeTo .ended → finalizeDiscard (discards, never saves)
@@ -232,6 +274,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
         discardTimeoutTimer = nil
         builder?.discardWorkout()
         clearWorkout()
+        wlog("session discarded")
         updateWorkout()   // if a ride is somehow still active, start a fresh session
     }
 
@@ -287,9 +330,14 @@ final class WatchSessionManager: NSObject, ObservableObject {
             // watchdog's call, not this guard's.
             if s != "idle", !rideActive {
                 let sentAt = data["sentAt"] as? TimeInterval ?? 0
-                if Date().timeIntervalSince1970 - sentAt > Self.mirrorFreshness {
+                let age = Date().timeIntervalSince1970 - sentAt
+                if age > Self.mirrorFreshness {
+                    wlog("stale \(s) mirror (\(Int(age)) s old) — not starting a ride from it")
                     s = "idle"
                 }
+            }
+            if rideActive, s == "idle" {
+                wlog("mirror says idle — ride over")
             }
             // The phone's demo: display exactly like a running ride, but NEVER
             // start a workout session for it — a session orphaned when watchOS
@@ -342,6 +390,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
         guard rideActive, !WCSession.default.isReachable,
               Date().timeIntervalSince(lastMirrorAt ?? .distantPast) > Self.mirrorTimeout
         else { return }
+        wlog("watchdog: 30 min without mirrors and phone unreachable — ending ride")
         statusRaw = "idle"
         rideActive = false
         updateWorkout()        // ends the session → discarded, never saved
@@ -383,8 +432,8 @@ final class WatchSessionManager: NSObject, ObservableObject {
             [weak self] _, samples, _ in
             guard let self, let workouts = samples, !workouts.isEmpty else { return }
             self.healthStore.delete(workouts) { done, error in
-                print("Purged \(workouts.count) accidental watch workout(s): "
-                      + (done ? "OK" : error?.localizedDescription ?? "failed"))
+                self.wlog("purged \(workouts.count) accidental workout(s): "
+                          + (done ? "OK" : error?.localizedDescription ?? "failed"))
             }
         }
         healthStore.execute(query)
@@ -551,7 +600,8 @@ extension WatchSessionManager: WCSessionDelegate {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { device.play(.failure) }
         case "turn":
             // Route turn coming up — distinct from car taps; the phone
-            // speaks which way.
+            // speaks which way. Gated on an active ride like the car taps.
+            guard rideActive else { break }
             device.play(.directionUp)
         case "routeDone":
             // Route completed — a celebratory double success tap.
@@ -574,6 +624,7 @@ extension WatchSessionManager: HKWorkoutSessionDelegate {
         // re-runs updateWorkout afterwards, so a session that ended WITHOUT us
         // asking (watchOS reclaiming it, water lock, a system stop) restarts
         // immediately while the ride is still active.
+        wlog("session state \(fromState.rawValue) → \(toState.rawValue)")
         switch toState {
         case .ended:
             DispatchQueue.main.async { [weak self] in self?.finalizeDiscard() }
@@ -597,6 +648,7 @@ extension WatchSessionManager: HKWorkoutSessionDelegate {
 
     func workoutSession(_ session: HKWorkoutSession, didFailWithError error: Error) {
         // Treat a failed session like an end — discard so nothing is saved.
+        wlog("session FAILED: \(error.localizedDescription)")
         DispatchQueue.main.async { [weak self] in self?.finalizeDiscard() }
     }
 }

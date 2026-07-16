@@ -71,6 +71,13 @@ struct WatchContentView: View {
                        value: Fmt.decimal(session.distanceDisplay, 2))
             }
             .padding(.top, 2)
+
+            // Field diagnostics: which build is on the wrist, and whether the
+            // workout keep-alive is live (● running / ○ not) — the two facts
+            // needed when heart rate drops mid-ride.
+            Text(verbatim: "\(session.buildStamp) \(session.workoutActive ? "●" : "○")")
+                .font(.system(size: 9, weight: .medium, design: .rounded))
+                .foregroundStyle(.secondary.opacity(0.8))
         }
         .padding(.horizontal, 6)
         .containerBackground(bannerColor.gradient, for: .navigation)
