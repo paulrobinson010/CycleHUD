@@ -47,6 +47,30 @@ struct VehiclePass: Identifiable, Codable, Equatable {
         return kept.count >= 3 ? kept : samples   // never blank the trace entirely
     }
 
+    /// `cleanSamples` smoothed for charting: each point becomes a weighted
+    /// average of itself (×2) and its immediate neighbours (×1 each). The
+    /// radar quantises distance to whole metres and closing speed to whole
+    /// m/s (≈3.6 km/h), so the raw trace staircases up and down every frame;
+    /// the real quantities change smoothly, and the neighbour blend is a
+    /// better estimate of them. Charts only — the headline stats (closest,
+    /// fastest) keep the measured extremes.
+    var smoothSamples: [PassSample] {
+        let xs = cleanSamples
+        guard xs.count >= 3 else { return xs }
+        return xs.indices.map { i in
+            let prev = xs[max(0, i - 1)]
+            let cur = xs[i]
+            let next = xs[min(xs.count - 1, i + 1)]
+            func blend(_ v: (PassSample) -> Double) -> Double {
+                (v(prev) + 2 * v(cur) + v(next)) / 4
+            }
+            return PassSample(t: cur.t,
+                              distance: blend(\.distance),
+                              closingKmh: blend(\.closingKmh),
+                              riderKmh: blend(\.riderKmh))
+        }
+    }
+
     private static func median(_ xs: [Double]) -> Double {
         let s = xs.sorted()
         guard !s.isEmpty else { return 0 }
