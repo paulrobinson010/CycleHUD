@@ -305,6 +305,14 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Toggle("Dim screen when clear", isOn: $settings.dimWhenClearEnabled)
+                } header: {
+                    Text("Battery")
+                } footer: {
+                    Text("Gently dims the display after 20 seconds with no vehicle behind — the screen is by far the biggest battery cost on a long ride. Full brightness returns instantly when the radar detects a vehicle, or the moment you touch the screen.")
+                }
+
+                Section {
                     Toggle("Live tracking", isOn: $settings.liveTrackingEnabled)
                     if settings.liveTrackingEnabled, let url = liveTrack.shareURL {
                         ShareLink(item: url) {

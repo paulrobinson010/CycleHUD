@@ -40,6 +40,12 @@ struct RideView: View {
     @State private var currentIssue: PermissionIssue?
     @State private var dismissedIssueID: String?
 
+    /// Battery saver: the screen is dimmed after 20 s of all-clear riding.
+    /// `savedBrightness` is the rider's own level, restored on any event.
+    @State private var dimmed = false
+    @State private var savedBrightness: CGFloat = 0.5
+    @State private var dimTask: Task<Void, Never>?
+
     var body: some View {
         ZStack {
             ThemeBackground().ignoresSafeArea()
@@ -111,7 +117,23 @@ struct RideView: View {
             UnitsOnboardingView().environmentObject(settings)
                 .preferredColorScheme(appColorScheme).environment(\.locale, settings.appLocale)
         }
-        .onAppear { updateOrientation(); checkPermissions() }
+        .onAppear {
+            updateOrientation()
+            checkPermissions()
+            if dimEligible { scheduleDim() }   // restored mid-ride launch
+        }
+        .onChange(of: dimEligible) { _, eligible in
+            if eligible { scheduleDim() } else { undim(rearm: false) }
+        }
+        .overlay {
+            if dimmed {
+                // Invisible touch catcher: while dimmed, the first touch
+                // anywhere restores brightness instead of hitting a control.
+                Color.black.opacity(0.001)
+                    .ignoresSafeArea()
+                    .onTapGesture { undim(rearm: true) }
+            }
+        }
         .onChange(of: scenePhase) { _, phase in
             switch phase {
             case .active:
@@ -172,6 +194,54 @@ struct RideView: View {
     /// The app-wide light/dark choice, applied to presented sheets/covers too so
     /// toggling it updates onboarding and Settings live, not just the main screen.
     private var appColorScheme: ColorScheme { settings.appearanceTheme.colorScheme }
+
+    // MARK: - Battery saver (screen dimming)
+
+    /// All-clear conditions under which the screen may dim: mid-ride (not a
+    /// demo), app frontmost, no vehicle behind, no SOS, nothing presented.
+    /// Any of these flipping restores the rider's brightness instantly.
+    private var dimEligible: Bool {
+        settings.dimWhenClearEnabled
+            && scenePhase == .active
+            && ride.status != .idle
+            && !ride.demoActive
+            && ble.threats.isEmpty
+            && !sos.isCountingDown
+            && activeSheet == nil
+            && ride.finishedSummary == nil
+    }
+
+    /// Arm the 20 s countdown to dimming (cancelling any previous one).
+    private func scheduleDim() {
+        dimTask?.cancel()
+        dimTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 20_000_000_000)
+            guard !Task.isCancelled, dimEligible, !dimmed else { return }
+            savedBrightness = UIScreen.main.brightness
+            dimmed = true
+            // Ramp down gently — a snap to dark reads as the app dying. The
+            // ramp aborts mid-way if anything cancels the dim.
+            let target = min(savedBrightness, 0.25)
+            for step in 1...12 {
+                guard !Task.isCancelled, dimmed else { return }
+                UIScreen.main.brightness =
+                    savedBrightness + (target - savedBrightness) * CGFloat(step) / 12
+                try? await Task.sleep(nanoseconds: 50_000_000)
+            }
+        }
+    }
+
+    /// Restore the rider's brightness NOW. `rearm` restarts the countdown
+    /// (a touch woke the screen but the road is still clear).
+    private func undim(rearm: Bool) {
+        dimTask?.cancel()
+        dimTask = nil
+        if dimmed {
+            UIScreen.main.brightness = savedBrightness
+            dimmed = false
+        }
+        if rearm && dimEligible { scheduleDim() }
+    }
 
     /// The SOS message composer, or a manual fallback when the device can't send
     /// texts (no SIM/iMessage) — showing the number and message to send by hand.

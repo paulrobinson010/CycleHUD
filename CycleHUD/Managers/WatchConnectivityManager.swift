@@ -85,7 +85,19 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
             lastContextStatus = rideStatusRaw
             try? session.updateApplicationContext(payload)
         }
-        if session.isReachable {
+        // The live path runs the mirror loop's full 2 Hz by default — but the
+        // Watch face only shows whole km/h and tenths of a km, so 1 Hz is
+        // visually identical and halves the Bluetooth chatter. Safety-relevant
+        // transitions (ride state, threat level, radar dropout) still go out
+        // the moment they happen.
+        let urgent = statusChanged
+            || threatLevel != lastMessageThreat
+            || radarLost != lastMessageRadarLost
+        if session.isReachable,
+           urgent || Date().timeIntervalSince(lastMessagePush) >= 1 {
+            lastMessagePush = Date()
+            lastMessageThreat = threatLevel
+            lastMessageRadarLost = radarLost
             session.sendMessage(payload, replyHandler: nil, errorHandler: nil)
         }
         #endif
@@ -94,6 +106,10 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
     /// Last applicationContext push (they're throttled; see sendMirror).
     private var lastContextPush = Date.distantPast
     private var lastContextStatus = ""
+    /// Last live sendMessage push (throttled to ~1 Hz; see sendMirror).
+    private var lastMessagePush = Date.distantPast
+    private var lastMessageThreat = -1
+    private var lastMessageRadarLost = false
 
     /// Tell the Watch to tap the wrist for a newly-detected vehicle.
     func sendNewCarHaptic() {

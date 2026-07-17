@@ -2222,6 +2222,46 @@
         }
       }
     },
+    "Battery" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batterie"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battery"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Battery"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batería"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batterie"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batteria"
+          }
+        }
+      }
+    },
     "Beep on new vehicle" : {
       "localizations" : {
         "de-DE" : {
@@ -4550,6 +4590,46 @@
         }
       }
     },
+    "Dim screen when clear" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirm bei freier Straße dimmen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dim screen when clear"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dim screen when clear"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atenuar la pantalla con la vía libre"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atténuer l’écran quand la route est libre"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attenua lo schermo a strada libera"
+          }
+        }
+      }
+    },
     "Direction" : {
       "localizations" : {
         "de-DE" : {
@@ -5668,6 +5748,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "FTP"
+          }
+        }
+      }
+    },
+    "Gently dims the display after 20 seconds with no vehicle behind — the screen is by far the biggest battery cost on a long ride. Full brightness returns instantly when the radar detects a vehicle, or the moment you touch the screen." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dunkelt das Display sanft ab, wenn 20 Sekunden lang kein Fahrzeug von hinten kommt — das Display ist mit Abstand der größte Batterieverbraucher auf einer langen Fahrt. Die volle Helligkeit kehrt sofort zurück, sobald das Radar ein Fahrzeug erkennt oder du den Bildschirm berührst."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gently dims the display after 20 seconds with no vehicle behind — the screen is by far the biggest battery cost on a long ride. Full brightness returns instantly when the radar detects a vehicle, or the moment you touch the screen."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gently dims the display after 20 seconds with no vehicle behind — the screen is by far the biggest battery cost on a long ride. Full brightness returns instantly when the radar detects a vehicle, or the moment you touch the screen."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atenúa suavemente la pantalla tras 20 segundos sin vehículos detrás — la pantalla es, con diferencia, el mayor consumo de batería en una salida larga. El brillo completo vuelve al instante en cuanto el radar detecta un vehículo o en el momento en que tocas la pantalla."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atténue doucement l’écran après 20 secondes sans véhicule derrière — l’écran est de loin le plus gros poste de consommation de batterie sur une longue sortie. La pleine luminosité revient instantanément dès que le radar détecte un véhicule, ou dès que vous touchez l’écran."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attenua gradualmente lo schermo dopo 20 secondi senza veicoli alle spalle — lo schermo è di gran lunga il maggior consumo di batteria in un giro lungo. La luminosità piena torna all’istante appena il radar rileva un veicolo o non appena tocchi lo schermo."
           }
         }
       }

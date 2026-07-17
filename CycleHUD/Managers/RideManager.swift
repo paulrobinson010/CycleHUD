@@ -263,6 +263,12 @@ final class RideManager: ObservableObject {
             liveTrack?.beginSession(routePath: routePath)
         }
         AppLog.shared.log("Ride START")
+        // Battery drain instrumentation: level at start, every 10 minutes,
+        // and at stop — so a hungry ride can be diagnosed from the log.
+        UIDevice.current.isBatteryMonitoringEnabled = true
+        rideStartBattery = nil
+        logBattery("ride start")
+        rideStartBattery = batteryLevelNow()
     }
 
     /// The ride as the Live Activity sees it right now.
@@ -319,6 +325,8 @@ final class RideManager: ObservableObject {
 
     func stop() {
         AppLog.shared.log("Ride STOP (user) dist=\(Int(distanceMeters))m time=\(Int(movingTimeSeconds))s")
+        logBattery("ride stop")
+        rideStartBattery = nil
         liveActivity.end(activityState)          // take the ride off the Lock Screen
         liveTrack?.endSession()                  // kill the share link + its record
         routes?.endGhostRun()                    // a complete run may become the ghost
@@ -764,6 +772,29 @@ final class RideManager: ObservableObject {
         saveTick += 1
         if saveTick % 4 == 0 { persistSnapshot() }      // ~every 2 s
         if saveTick % 30 == 0 { persistRoute() }        // ~every 15 s
+        if saveTick % 1200 == 0 { logBattery("mid-ride") }   // ~every 10 min
+    }
+
+    // MARK: - Battery instrumentation
+
+    /// Battery level when the ride started (nil when unknown, e.g. simulator).
+    private var rideStartBattery: Float?
+
+    private func batteryLevelNow() -> Float? {
+        let level = UIDevice.current.batteryLevel
+        return level >= 0 ? level : nil
+    }
+
+    /// One AppLog line: current %, plus the drain since the ride started.
+    private func logBattery(_ label: String) {
+        guard let level = batteryLevelNow() else { return }
+        let pct = Int((level * 100).rounded())
+        if let start = rideStartBattery {
+            let drain = Int(((start - level) * 100).rounded())
+            AppLog.shared.log("Battery (\(label)): \(pct)% — \(drain)% used since start")
+        } else {
+            AppLog.shared.log("Battery (\(label)): \(pct)%")
+        }
     }
 
     /// Record a speed/HR/elevation sample roughly every 2 s while riding, for the
@@ -1165,6 +1196,12 @@ final class RideManager: ObservableObject {
                                state: activityState)
         }
         AppLog.shared.log("Restored in-progress ride (status=\(snap.statusRaw), dist=\(Int(distanceMeters))m) — prior session likely crashed/terminated")
+        // Re-baseline the battery instrumentation from here (the pre-kill
+        // start level is gone; drain figures cover the restored stretch).
+        UIDevice.current.isBatteryMonitoringEnabled = true
+        rideStartBattery = nil
+        logBattery("ride restored")
+        rideStartBattery = batteryLevelNow()
     }
 
     private func loadRoute() -> [CLLocation] {

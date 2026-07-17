@@ -46,8 +46,17 @@ struct RoutePanel: View {
     var windConditions: WeatherConditions? = nil
     let distanceUnit: DistanceUnit
 
-    /// Pinch-zoom altitude, preserved across the once-a-second camera updates.
+    /// Pinch-zoom altitude, preserved across camera updates.
     @State private var zoomDistance: Double = 1500
+
+    /// The camera as owned state, moved only when the rider has meaningfully
+    /// moved or turned. The previous `.constant(.camera(...))` handed MapKit a
+    /// brand-new camera on every SwiftUI render (2 Hz), forcing a continuous
+    /// re-animation of the map — a measurable battery cost over a long ride.
+    @State private var camera: MapCameraPosition = .automatic
+    @State private var camCenter: CLLocationCoordinate2D?
+    @State private var camHeading: Double = 0
+    @State private var camDistance: Double = 1500
 
     /// Strayed after joining — amber "back to route" guidance.
     private var offRoute: Bool { joined && (progress?.offMeters ?? 0) > 80 }
@@ -172,14 +181,7 @@ struct RoutePanel: View {
     private func routeMap(rider: CLLocationCoordinate2D,
                           progress: (index: Int, offMeters: Double, remainingMeters: Double)) -> some View {
         let heading = course ?? routeHeading(progress.index)
-        // Centre ahead of the rider so most of the view is road to come — but
-        // less so when the climb strip occupies the bottom of the panel, or
-        // the rider's own arrow ends up hidden behind it (seen on device).
-        let aheadFactor = hasClimbStrip ? 0.04 : 0.10
-        let center = coordinate(from: rider, meters: zoomDistance * aheadFactor, bearing: heading)
-        return Map(position: .constant(.camera(
-            MapCamera(centerCoordinate: center, distance: zoomDistance, heading: heading))),
-                   interactionModes: .zoom) {
+        return Map(position: $camera, interactionModes: .zoom) {
             // Whole route as a muted underlay — tinted by today's wind when
             // known (amber = headwind stretch, green = tailwind) — with only
             // the NEXT kilometre bright. Where a loop crosses itself (or
@@ -259,6 +261,59 @@ struct RoutePanel: View {
             let d = context.camera.distance
             if abs(d - zoomDistance) > 1 { zoomDistance = min(8000, max(400, d)) }
         }
+        .onAppear { updateCamera(rider: rider, index: progress.index, animated: false) }
+        .onChange(of: CameraKey(lat: rider.latitude, lon: rider.longitude,
+                                course: course, zoom: zoomDistance,
+                                index: progress.index, climbStrip: hasClimbStrip)) { _, _ in
+            updateCamera(rider: rider, index: progress.index)
+        }
+    }
+
+    /// Everything the camera target depends on, as one Equatable trigger.
+    private struct CameraKey: Equatable {
+        let lat: Double
+        let lon: Double
+        let course: Double?
+        let zoom: Double
+        let index: Int
+        let climbStrip: Bool
+    }
+
+    /// Re-aim the camera — but only when the rider has moved ≥ 3 m, turned
+    /// ≥ 2°, or the zoom changed. Tiny GPS jitter no longer restarts a map
+    /// animation on every fix.
+    private func updateCamera(rider: CLLocationCoordinate2D, index: Int,
+                              animated: Bool = true) {
+        let heading = course ?? routeHeading(index)
+        // Centre ahead of the rider so most of the view is road to come — but
+        // less so when the climb strip occupies the bottom of the panel, or
+        // the rider's own arrow ends up hidden behind it (seen on device).
+        let aheadFactor = hasClimbStrip ? 0.04 : 0.10
+        let center = coordinate(from: rider, meters: zoomDistance * aheadFactor, bearing: heading)
+        if let last = camCenter {
+            let moved = PlannedRoute.meters(last, center)
+            let turned = abs(angleDelta(heading, camHeading))
+            let zoomed = abs(zoomDistance - camDistance)
+            guard moved >= 3 || turned >= 2 || zoomed > 1 else { return }
+        }
+        camCenter = center
+        camHeading = heading
+        camDistance = zoomDistance
+        let target = MapCameraPosition.camera(
+            MapCamera(centerCoordinate: center, distance: zoomDistance, heading: heading))
+        if animated {
+            withAnimation(.easeInOut(duration: 0.45)) { camera = target }
+        } else {
+            camera = target
+        }
+    }
+
+    /// Signed smallest difference between two bearings, in degrees.
+    private func angleDelta(_ a: Double, _ b: Double) -> Double {
+        var d = (a - b).truncatingRemainder(dividingBy: 360)
+        if d > 180 { d -= 360 }
+        if d < -180 { d += 360 }
+        return d
     }
 
     /// The route underlay split by wind exposure (single plain run when no

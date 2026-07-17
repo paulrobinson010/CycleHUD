@@ -33,6 +33,7 @@ final class AppSettings: ObservableObject {
         static let iCloudSyncEnabled = "iCloudSyncEnabled"
         static let liveTrackingEnabled = "liveTrackingEnabled"
         static let liveActivityEnabled = "liveActivityEnabled"
+        static let dimWhenClearEnabled = "dimWhenClearEnabled"
         static let stravaAutoUploadEnabled = "stravaAutoUploadEnabled"
         static let appLanguage = "appLanguage"
         static let metricTiles = "metricTilesV2"   // legacy single-page tiles, migrated
@@ -126,6 +127,10 @@ final class AppSettings: ObservableObject {
     /// watchOS mirrors iPhone Live Activities into the Smart Stack and
     /// auto-launches them on wrist-raise, displacing the watch app.
     @Published var liveActivityEnabled: Bool { didSet { defaults.set(liveActivityEnabled, forKey: Keys.liveActivityEnabled) } }
+    /// Dim the screen while the road behind is clear (the biggest battery
+    /// saver available — the display at outdoor brightness dwarfs everything
+    /// else). Brightness snaps back the instant the radar sees a vehicle.
+    @Published var dimWhenClearEnabled: Bool { didSet { defaults.set(dimWhenClearEnabled, forKey: Keys.dimWhenClearEnabled) } }
     /// When on (and Strava is connected), finished rides upload automatically.
     @Published var stravaAutoUploadEnabled: Bool { didSet { defaults.set(stravaAutoUploadEnabled, forKey: Keys.stravaAutoUploadEnabled) } }
     /// In-app language override (BCP-47 code, or "" to follow the device).
@@ -233,6 +238,7 @@ final class AppSettings: ObservableObject {
             Keys.iCloudSyncEnabled: true,
             Keys.liveTrackingEnabled: false,
             Keys.liveActivityEnabled: true,
+            Keys.dimWhenClearEnabled: true,
             Keys.stravaAutoUploadEnabled: false,
             Keys.appLanguage: "",
             Keys.currentRidePage: 0,
@@ -275,6 +281,7 @@ final class AppSettings: ObservableObject {
         iCloudSyncEnabled = defaults.bool(forKey: Keys.iCloudSyncEnabled)
         liveTrackingEnabled = defaults.bool(forKey: Keys.liveTrackingEnabled)
         liveActivityEnabled = defaults.bool(forKey: Keys.liveActivityEnabled)
+        dimWhenClearEnabled = defaults.bool(forKey: Keys.dimWhenClearEnabled)
         stravaAutoUploadEnabled = defaults.bool(forKey: Keys.stravaAutoUploadEnabled)
         appLanguage = defaults.string(forKey: Keys.appLanguage) ?? ""
         // (appearance applied below once all stored properties are initialised)
@@ -337,6 +344,7 @@ final class AppSettings: ObservableObject {
         routeElevationEnabled = true
         routeTrafficEnabled = true
         crashDetectionEnabled = false
+        dimWhenClearEnabled = true
     }
 
     var wheelCircumferenceMeters: Double { wheelCircumferenceMM / 1000.0 }
