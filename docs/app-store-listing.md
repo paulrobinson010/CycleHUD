@@ -96,6 +96,49 @@ FIXES
 As always: no accounts, no CycleHUD servers, no tracking. The optional junction and routing features fetch open road data (OpenStreetMap, BRouter) and are clearly disclosed in Settings and the privacy policy.
 ```
 
+## What's New (1.6) — en-US, 4000 char limit
+```
+CycleHUD 1.6: your ride goes live — and the radar tells you more.
+
+LIVE TRACKING (optional, off by default)
+• Share a private link and someone can watch your ride live: position, the path so far, your planned route, speed, average and an ETA — updated every 15 seconds.
+• End-to-end encrypted: the key travels only inside the link itself, so nobody without it — not even us — can see where you are. No accounts, no servers; it runs through your own iCloud.
+• The link goes dead the moment you stop the ride.
+
+RIDE ON YOUR LOCK SCREEN
+• A Live Activity shows speed, distance, time and heart rate on the Lock Screen and in the Dynamic Island — and floods with the threat color the instant the radar sees a car behind you.
+• Riding with the Watch app instead? One toggle turns it off.
+
+THE RADAR SAYS HOW FAST
+• Every vehicle on the lane now shows its closing speed beside its distance — how much faster than you it's approaching, straight from the radar.
+
+POWER ZONES
+• Set your FTP and the power tile colors by the classic 7 zones as you ride. Ride summaries add normalized power, intensity, and a time-in-zones bar.
+
+ROUTES CELEBRATE
+• Joining a route now toasts the time to beat; crossing the finish shows your time and the verdict against your best — with a spoken call-out and a wrist tap.
+• The ghost glides smoothly along the road and faces the way it's riding, and the ghost and ETA readouts are twice the size.
+• Ride any route in reverse — one-way roads are checked first and roundabouts re-routed the legal way around.
+• Weather preview: pick a route and a start time and watch the ride play out — the map colored by the wind you'd actually meet at your predicted pace, hour by hour.
+• While riding, the route tints by headwind and tailwind stretch.
+
+CLIMBS AND INSIGHTS
+• A climb card takes over the map as each climb begins: distance to the top, ascent left, and the gradient of what remains.
+• Insights: weekly distance and climbing trends, personal records, and radar traffic statistics no other app has — vehicles detected, detections per km, your fastest overtake, and a map of everywhere cars passed you. All computed on your device.
+
+TWO NEW LOOKS
+• Cyberpunk goes full CRT: phosphor scanlines, a tube vignette, and random bursts of magnetic interference — politely suppressed whenever a car is behind you.
+• And its antithesis: Unicorn. Pastel skies, candy tile rims, a hand-drawn font.
+
+POLISH & FIXES
+• Heart-rate graphs no longer start at zero; tap a Previous Bests stretch to light it up on the map and graphs.
+• Units tuck neatly under each value; sensor status pills only show sensors you've set up.
+• Big Apple Watch reliability fixes: the workout keep-alive can no longer die quietly mid-ride, and any accidental zero-time workouts clean themselves up automatically.
+• The demo now rides a real route — the Central Park loop.
+
+As always: no accounts, no CycleHUD servers, no tracking. Every network feature is optional and disclosed in Settings and the privacy policy.
+```
+
 ## URLs
 - Marketing URL: `https://paulrobinson010.github.io/CycleHUD/`
 - Support URL: `https://paulrobinson010.github.io/CycleHUD/` (or the privacy page)
