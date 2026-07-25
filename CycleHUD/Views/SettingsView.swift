@@ -184,6 +184,14 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Toggle("Map when no route", isOn: $settings.mapWhenClearEnabled)
+                } header: {
+                    Text("Map")
+                } footer: {
+                    Text("Shows a street map of where you are in the radar panel while the road behind is clear and you're not following a route — the radar takes the panel back the instant a vehicle is detected. With a route active, the route map appears instead, as usual.")
+                }
+
+                Section {
                     NavigationLink {
                         MetricTilesView().environmentObject(settings)
                     } label: {
@@ -304,12 +312,21 @@ struct SettingsView: View {
                     Text("Shows the ride on the Lock Screen and in the Dynamic Island, flooding with the threat colour when a vehicle is behind. Note: iPhone Live Activities also appear on Apple Watch and can take over the watch screen when you raise your wrist — if you ride with the CycleHUD watch app, turn this off, or disable Settings → General → Auto-Launch → Live Activities on the watch.")
                 }
 
-                Section {
-                    Toggle("Dim screen when clear", isOn: $settings.dimWhenClearEnabled)
-                } header: {
-                    Text("Battery")
-                } footer: {
-                    Text("Gently dims the display after 20 seconds with no vehicle behind — the screen is by far the biggest battery cost on a long ride. Full brightness returns instantly when the radar detects a vehicle, or the moment you touch the screen.")
+                // Only offered alongside Keep screen on — without it, iOS
+                // sleeps the display itself and there's nothing to dim.
+                if settings.keepScreenOn {
+                    Section {
+                        Picker("Dim screen when clear", selection: $settings.dimClearPercent) {
+                            Text("No dim").tag(0)
+                            ForEach([75, 50, 25, 10], id: \.self) { pct in
+                                Text(verbatim: "\(pct)%").tag(pct)
+                            }
+                        }
+                    } header: {
+                        Text("Battery")
+                    } footer: {
+                        Text("Dims the display to the chosen brightness after 20 seconds with no vehicle behind — the screen is by far the biggest battery cost on a long ride. Full brightness returns instantly when the radar detects a vehicle, or the moment you touch the screen.")
+                    }
                 }
 
                 Section {

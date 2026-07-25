@@ -50,10 +50,14 @@ meters work too.
   Island**: speed, distance, time and heart rate, and when the radar sees a
   vehicle behind you the whole strip floods with the threat colour — a pocketed
   phone still shows what's coming.
-- **Battery saver** — the screen gently dims after 20 seconds of clear road
-  (the display is the biggest battery cost on a long ride) and snaps back to
-  full brightness the instant the radar detects a vehicle or you touch the
-  screen. Settings → Battery.
+- **Battery saver** — pick a dim level (Settings → Battery, shown with Keep
+  screen on) and the screen dims to it after 20 seconds of clear road — the
+  display is the biggest battery cost on a long ride. Full brightness snaps
+  back the instant the radar detects a vehicle or you touch the screen.
+- **Map when no route** — optionally fill the radar panel with a street map
+  of where you are while the road behind is clear, even with no route being
+  followed; the radar takes the panel back the moment a vehicle appears.
+  Settings → Map.
 - **Live tracking** *(optional, off by default)* — each ride publishes a
   private map link you can send to whoever should know where you are: live
   position, the **path ridden so far**, the **planned route** (dashed) when

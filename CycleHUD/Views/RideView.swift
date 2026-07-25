@@ -201,7 +201,8 @@ struct RideView: View {
     /// demo), app frontmost, no vehicle behind, no SOS, nothing presented.
     /// Any of these flipping restores the rider's brightness instantly.
     private var dimEligible: Bool {
-        settings.dimWhenClearEnabled
+        settings.dimClearPercent > 0
+            && settings.keepScreenOn
             && scenePhase == .active
             && ride.status != .idle
             && !ride.demoActive
@@ -221,7 +222,7 @@ struct RideView: View {
             dimmed = true
             // Ramp down gently — a snap to dark reads as the app dying. The
             // ramp aborts mid-way if anything cancels the dim.
-            let target = min(savedBrightness, 0.25)
+            let target = min(savedBrightness, CGFloat(settings.dimClearPercent) / 100)
             for step in 1...12 {
                 guard !Task.isCancelled, dimmed else { return }
                 UIScreen.main.brightness =
@@ -458,7 +459,8 @@ struct RideView: View {
 
     /// The radar lane plus its debug "Mark car" overlay, shared by both layouts.
     /// With a route being followed and the road behind clear, the slot shows
-    /// the route ahead instead — the radar takes it back the moment a vehicle
+    /// the route ahead instead — or, with no route and the map option on, a
+    /// plain street map — and the radar takes it back the moment a vehicle
     /// is detected.
     private var radarPanel: some View {
         Group {
@@ -514,6 +516,15 @@ struct RideView: View {
                            showTraffic: settings.routeTrafficEnabled,
                            windConditions: settings.weatherEnabled ? weather.conditions : nil,
                            distanceUnit: settings.distanceUnit)
+            } else if settings.mapWhenClearEnabled, ble.threats.isEmpty,
+                      let loc = location.currentLocation {
+                // No route, road clear: the opt-in free-ride map (Settings →
+                // Map). Falls through to the radar lane without a GPS fix.
+                FreeRideMapPanel(location: loc,
+                                 course: location.courseDegrees ?? location.headingDegrees,
+                                 radarConnected: ble.status(for: .radar) == .connected,
+                                 batteryPercent: ble.radarBatteryPercent,
+                                 showTraffic: settings.routeTrafficEnabled)
             } else {
                 RadarView(threats: ble.threats, distanceUnit: settings.distanceUnit,
                           speedUnit: settings.speedUnit,

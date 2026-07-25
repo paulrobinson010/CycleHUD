@@ -5752,42 +5752,42 @@
         }
       }
     },
-    "Gently dims the display after 20 seconds with no vehicle behind — the screen is by far the biggest battery cost on a long ride. Full brightness returns instantly when the radar detects a vehicle, or the moment you touch the screen." : {
+    "Dims the display to the chosen brightness after 20 seconds with no vehicle behind — the screen is by far the biggest battery cost on a long ride. Full brightness returns instantly when the radar detects a vehicle, or the moment you touch the screen." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dunkelt das Display sanft ab, wenn 20 Sekunden lang kein Fahrzeug von hinten kommt — das Display ist mit Abstand der größte Batterieverbraucher auf einer langen Fahrt. Die volle Helligkeit kehrt sofort zurück, sobald das Radar ein Fahrzeug erkennt oder du den Bildschirm berührst."
+            "value" : "Dunkelt das Display auf die gewählte Helligkeit ab, wenn 20 Sekunden lang kein Fahrzeug von hinten kommt — das Display ist mit Abstand der größte Batterieverbraucher auf einer langen Fahrt. Die volle Helligkeit kehrt sofort zurück, sobald das Radar ein Fahrzeug erkennt oder du den Bildschirm berührst."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gently dims the display after 20 seconds with no vehicle behind — the screen is by far the biggest battery cost on a long ride. Full brightness returns instantly when the radar detects a vehicle, or the moment you touch the screen."
+            "value" : "Dims the display to the chosen brightness after 20 seconds with no vehicle behind — the screen is by far the biggest battery cost on a long ride. Full brightness returns instantly when the radar detects a vehicle, or the moment you touch the screen."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gently dims the display after 20 seconds with no vehicle behind — the screen is by far the biggest battery cost on a long ride. Full brightness returns instantly when the radar detects a vehicle, or the moment you touch the screen."
+            "value" : "Dims the display to the chosen brightness after 20 seconds with no vehicle behind — the screen is by far the biggest battery cost on a long ride. Full brightness returns instantly when the radar detects a vehicle, or the moment you touch the screen."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atenúa suavemente la pantalla tras 20 segundos sin vehículos detrás — la pantalla es, con diferencia, el mayor consumo de batería en una salida larga. El brillo completo vuelve al instante en cuanto el radar detecta un vehículo o en el momento en que tocas la pantalla."
+            "value" : "Atenúa la pantalla al brillo elegido tras 20 segundos sin vehículos detrás — la pantalla es, con diferencia, el mayor consumo de batería en una salida larga. El brillo completo vuelve al instante en cuanto el radar detecta un vehículo o en el momento en que tocas la pantalla."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atténue doucement l’écran après 20 secondes sans véhicule derrière — l’écran est de loin le plus gros poste de consommation de batterie sur une longue sortie. La pleine luminosité revient instantanément dès que le radar détecte un véhicule, ou dès que vous touchez l’écran."
+            "value" : "Atténue l’écran à la luminosité choisie après 20 secondes sans véhicule derrière — l’écran est de loin le plus gros poste de consommation de batterie sur une longue sortie. La pleine luminosité revient instantanément dès que le radar détecte un véhicule, ou dès que vous touchez l’écran."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Attenua gradualmente lo schermo dopo 20 secondi senza veicoli alle spalle — lo schermo è di gran lunga il maggior consumo di batteria in un giro lungo. La luminosità piena torna all’istante appena il radar rileva un veicolo o non appena tocchi lo schermo."
+            "value" : "Attenua lo schermo alla luminosità scelta dopo 20 secondi senza veicoli alle spalle — lo schermo è di gran lunga il maggior consumo di batteria in un giro lungo. La luminosità piena torna all’istante appena il radar rileva un veicolo o non appena tocchi lo schermo."
           }
         }
       }
@@ -7761,6 +7761,86 @@
         }
       }
     },
+    "Map" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Map"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Map"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mappa"
+          }
+        }
+      }
+    },
+    "Map when no route" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte ohne Route"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Map when no route"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Map when no route"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapa sin ruta"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carte sans itinéraire"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mappa senza percorso"
+          }
+        }
+      }
+    },
     "Mark car" : {
       "localizations" : {
         "de-DE" : {
@@ -8604,6 +8684,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nessun percorso ciclabile trovato tra questi punti."
+          }
+        }
+      }
+    },
+    "No dim" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht dimmen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No dim"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No dim"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No atenuar"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne pas atténuer"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non attenuare"
           }
         }
       }
@@ -12993,6 +13113,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrate"
+          }
+        }
+      }
+    },
+    "Shows a street map of where you are in the radar panel while the road behind is clear and you're not following a route — the radar takes the panel back the instant a vehicle is detected. With a route active, the route map appears instead, as usual." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt im Radar-Panel eine Straßenkarte deiner Umgebung, solange die Straße hinter dir frei ist und du keiner Route folgst — das Radar übernimmt das Panel sofort wieder, sobald ein Fahrzeug erkannt wird. Bei aktiver Route erscheint wie gewohnt stattdessen die Routenkarte."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows a street map of where you are in the radar panel while the road behind is clear and you're not following a route — the radar takes the panel back the instant a vehicle is detected. With a route active, the route map appears instead, as usual."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows a street map of where you are in the radar panel while the road behind is clear and you're not following a route — the radar takes the panel back the instant a vehicle is detected. With a route active, the route map appears instead, as usual."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra en el panel del radar un mapa de calles de donde estás mientras la vía detrás esté despejada y no sigas una ruta — el radar recupera el panel en el instante en que se detecta un vehículo. Con una ruta activa aparece el mapa de la ruta, como siempre."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche dans le panneau radar une carte des rues autour de vous tant que la route derrière est libre et qu’aucun itinéraire n’est suivi — le radar reprend le panneau dès qu’un véhicule est détecté. Avec un itinéraire actif, c’est la carte de l’itinéraire qui s’affiche, comme d’habitude."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra nel pannello radar una mappa stradale di dove ti trovi finché la strada alle spalle è libera e non stai seguendo un percorso — il radar riprende il pannello nell’istante in cui viene rilevato un veicolo. Con un percorso attivo compare invece la mappa del percorso, come di consueto."
           }
         }
       }
