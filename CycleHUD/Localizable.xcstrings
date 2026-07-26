@@ -977,42 +977,42 @@
         }
       }
     },
-    "A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts — alongside the temperature and the wind (shown as headwind or tailwind relative to the way you're heading). It updates every minute while the app is open. A live road-gradient tile is shown too. Uses Apple Weather and your location." : {
+    "A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts — alongside the temperature and the wind (shown as headwind or tailwind relative to the way you're heading). It updates every minute when rain is near, otherwise every few minutes to save battery. A live road-gradient tile is shown too. Uses Apple Weather and your location." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Kurzvorhersage für Regen (nächste Stunde) erscheint im Fahrtbildschirm – wann Regen kommt, mit Intensität, wie bald er beginnt und wie lange er dauert – neben Temperatur und Wind (als Gegen- oder Rückenwind relativ zu deiner Fahrtrichtung). Sie aktualisiert sich jede Minute, solange die App geöffnet ist. Außerdem wird eine Live-Kachel für die Steigung angezeigt. Nutzt Apple Wetter und deinen Standort."
+            "value" : "Eine Kurzvorhersage für Regen (nächste Stunde) erscheint im Fahrtbildschirm – wann Regen kommt, mit Intensität, wie bald er beginnt und wie lange er dauert – neben Temperatur und Wind (als Gegen- oder Rückenwind relativ zu deiner Fahrtrichtung). Sie aktualisiert sich jede Minute, wenn Regen naht, sonst alle paar Minuten, um die Batterie zu schonen. Außerdem wird eine Live-Kachel für die Steigung angezeigt. Nutzt Apple Wetter und deinen Standort."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts — alongside the temperature and the wind (shown as headwind or tailwind relative to the way you're heading). It updates every minute while the app is open. A live road-gradient tile is shown too. Uses Apple Weather and your location."
+            "value" : "A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts — alongside the temperature and the wind (shown as headwind or tailwind relative to the way you're heading). It updates every minute when rain is near, otherwise every few minutes to save battery. A live road-gradient tile is shown too. Uses Apple Weather and your location."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts — alongside the temperature and the wind (shown as headwind or tailwind relative to the way you're heading). It updates every minute while the app is open. A live road-gradient tile is shown too. Uses Apple Weather and your location."
+            "value" : "A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts — alongside the temperature and the wind (shown as headwind or tailwind relative to the way you're heading). It updates every minute when rain is near, otherwise every few minutes to save battery. A live road-gradient tile is shown too. Uses Apple Weather and your location."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aparece un pronóstico de lluvia a corto plazo (próxima hora) en la pantalla de ruta —cuándo llega la lluvia, con su intensidad, en cuánto empieza y cuánto dura— junto a la temperatura y el viento (mostrado como viento en contra o a favor según tu dirección). Se actualiza cada minuto mientras la app está abierta. También se muestra una casilla de pendiente en tiempo real. Usa Apple Tiempo y tu ubicación."
+            "value" : "Aparece un pronóstico de lluvia a corto plazo (próxima hora) en la pantalla de ruta —cuándo llega la lluvia, con su intensidad, en cuánto empieza y cuánto dura— junto a la temperatura y el viento (mostrado como viento en contra o a favor según tu dirección). Se actualiza cada minuto cuando hay lluvia cerca y, si no, cada pocos minutos para ahorrar batería. También se muestra una casilla de pendiente en tiempo real. Usa Apple Tiempo y tu ubicación."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une prévision de pluie à court terme (heure suivante) apparaît sur l’écran de sortie – quand la pluie arrive, avec son intensité, dans combien de temps elle débute et combien de temps elle dure – à côté de la température et du vent (indiqué comme vent de face ou vent arrière par rapport à votre direction). Elle se met à jour chaque minute tant que l’app est ouverte. Une tuile de pente en temps réel est aussi affichée. Utilise Apple Météo et votre position."
+            "value" : "Une prévision de pluie à court terme (heure suivante) apparaît sur l’écran de sortie – quand la pluie arrive, avec son intensité, dans combien de temps elle débute et combien de temps elle dure – à côté de la température et du vent (indiqué comme vent de face ou vent arrière par rapport à votre direction). Elle se met à jour chaque minute quand la pluie approche, sinon toutes les quelques minutes pour économiser la batterie. Une tuile de pente en temps réel est aussi affichée. Utilise Apple Météo et votre position."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una previsione pioggia a breve termine (prossima ora) appare nella schermata dell’uscita – quando arriva la pioggia, con la sua intensità, tra quanto inizia e quanto dura – insieme a temperatura e vento (indicato come vento contrario o a favore rispetto alla tua direzione). Si aggiorna ogni minuto mentre l’app è aperta. È mostrata anche una scheda con la pendenza in tempo reale. Usa Apple Meteo e la tua posizione."
+            "value" : "Una previsione pioggia a breve termine (prossima ora) appare nella schermata dell’uscita – quando arriva la pioggia, con la sua intensità, tra quanto inizia e quanto dura – insieme a temperatura e vento (indicato come vento contrario o a favore rispetto alla tua direzione). Si aggiorna ogni minuto quando la pioggia è vicina, altrimenti ogni pochi minuti per risparmiare batteria. È mostrata anche una scheda con la pendenza in tempo reale. Usa Apple Meteo e la tua posizione."
           }
         }
       }

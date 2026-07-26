@@ -41,16 +41,23 @@ final class RideManager: ObservableObject {
     private let autoResumeDelay: TimeInterval = 1.0    // moving this long ⇒ auto-resume
 
     @Published private(set) var status: RideStatus = .idle
-    @Published private(set) var distanceMeters: Double = 0
-    @Published private(set) var movingTimeSeconds: Double = 0
-    @Published private(set) var currentSpeedMps: Double = 0
-    @Published private(set) var elevationGainMeters: Double = 0   // total ascent this ride
-    @Published private(set) var caloriesKcal: Double = 0
-    @Published private(set) var currentHeartRate: Int?            // from the Watch, if present
-    @Published private(set) var currentGradientPercent: Double?   // live road gradient (%)
-    @Published private(set) var maxSpeedMps: Double = 0           // peak speed this ride
     @Published private(set) var laps: [Lap] = []                  // manually-marked splits
-    @Published private(set) var currentLapTimeSeconds: Double = 0 // elapsed in the current lap
+
+    // The live ride numbers are deliberately plain vars, NOT @Published: they
+    // are written on every 2 Hz tick (several of them per tick), and each
+    // @Published assignment re-rendered every observing view — the whole ride
+    // screen many times a second, all ride long. Internally they stay exact;
+    // publishIfDisplayChanged() fires ONE objectWillChange, at most once a
+    // second, when any of them has changed at the precision the UI shows.
+    private(set) var distanceMeters: Double = 0
+    private(set) var movingTimeSeconds: Double = 0
+    private(set) var currentSpeedMps: Double = 0
+    private(set) var elevationGainMeters: Double = 0   // total ascent this ride
+    private(set) var caloriesKcal: Double = 0
+    private(set) var currentHeartRate: Int?            // from the Watch, if present
+    private(set) var currentGradientPercent: Double?   // live road gradient (%)
+    private(set) var maxSpeedMps: Double = 0           // peak speed this ride
+    private(set) var currentLapTimeSeconds: Double = 0 // elapsed in the current lap
 
     var averageSpeedMps: Double {
         movingTimeSeconds > 0 ? distanceMeters / movingTimeSeconds : 0
@@ -644,6 +651,7 @@ final class RideManager: ObservableObject {
         currentHeartRate = min(155, max(126, hr))
         caloriesKcal += (10.0 / 60.0) * dt
         currentGradientPercent = sin(movingTimeSeconds / 18.0) * 4 + Double.random(in: -0.4...0.4)
+        publishIfDisplayChanged()   // the ride numbers are plain vars (see tick)
         sendMirror()   // drive the Watch (mirror + escalating haptics) during the demo too
     }
 
@@ -773,6 +781,36 @@ final class RideManager: ObservableObject {
         if saveTick % 4 == 0 { persistSnapshot() }      // ~every 2 s
         if saveTick % 30 == 0 { persistRoute() }        // ~every 15 s
         if saveTick % 1200 == 0 { logBattery("mid-ride") }   // ~every 10 min
+
+        // UI refresh, at most 1/s (every other tick): safety state (threats,
+        // status, SOS) publishes on its own paths instantly — this is just
+        // the numbers, and no one reads a speed readout faster than that.
+        if saveTick % 2 == 0 { publishIfDisplayChanged() }
+    }
+
+    /// The last display-granular picture the UI was told about.
+    private var lastUIFingerprint: [Double] = []
+
+    /// Fire ONE objectWillChange when anything the ride screen shows has
+    /// changed at the precision it's shown at (whole seconds, 0.1-unit speed,
+    /// 10 m of distance, whole kcal…). Sitting paused, or idle with the radar
+    /// on, this publishes nothing at all.
+    private func publishIfDisplayChanged() {
+        let fp: [Double] = [
+            movingTimeSeconds.rounded(.down),
+            (settings.speedUnit.value(fromMps: currentSpeedMps) * 10).rounded(),
+            (settings.speedUnit.value(fromMps: maxSpeedMps) * 10).rounded(),
+            caloriesKcal.rounded(.down),
+            Double(currentHeartRate ?? -1),
+            ((currentGradientPercent ?? -999) * 10).rounded(),
+            currentLapTimeSeconds.rounded(.down),
+            (distanceMeters / 10).rounded(.down),
+            elevationGainMeters.rounded(.down)
+        ]
+        if fp != lastUIFingerprint {
+            lastUIFingerprint = fp
+            objectWillChange.send()
+        }
     }
 
     // MARK: - Battery instrumentation

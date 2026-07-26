@@ -31,10 +31,16 @@ final class WeatherManager: ObservableObject {
     var isEnabled: (() -> Bool)?
 
     private var lastFetch: Date?
-    /// Minimum gap between network fetches. Just below the 60 s tick so each tick
-    /// actually refreshes (the nowcast — and its "rain in N min" countdown — is
-    /// only as current as the last fetch, so we refresh every minute while shown).
-    private let minInterval: TimeInterval = 45
+    /// Minimum gap between network fetches, adaptive to what's at stake. With
+    /// rain now or on the way, just below the 60 s tick so every tick fetches
+    /// and the countdown/intensity stay current. On a dry forecast, every 3rd
+    /// tick: each fetch is a cellular radio wake (a real battery cost over a
+    /// long ride), the "rain in N min" countdown is computed from the stored
+    /// timeline so it stays live between fetches, and wind/temperature drift
+    /// slowly.
+    private var minInterval: TimeInterval {
+        (nowcast?.hasRain ?? false) ? 45 : 165
+    }
     private var timer: Timer?
 
     /// Begin minute-by-minute refreshes (idempotent). WeatherKit's minute forecast

@@ -27,6 +27,7 @@ struct FreeRideMapPanel: View {
     @State private var camCenter: CLLocationCoordinate2D?
     @State private var camHeading: Double = 0
     @State private var camDistance: Double = 1500
+    @State private var camAimedAt = Date.distantPast
     /// Last real course, so stopping at lights doesn't snap the map north.
     @State private var heldCourse: Double = 0
 
@@ -93,14 +94,19 @@ struct FreeRideMapPanel: View {
             let turned = abs(angleDelta(heading, camHeading))
             let zoomed = abs(zoomDistance - camDistance)
             guard moved >= 3 || turned >= 2 || zoomed > 1 else { return }
+            // At speed, cap re-aims to ~1/s — each is a MapKit transaction,
+            // and a 1 s linear glide between them is visually continuous.
+            // Zoom changes skip the cap: that's the rider pinching, respond now.
+            if zoomed <= 1, Date().timeIntervalSince(camAimedAt) < 0.9 { return }
         }
         camCenter = center
         camHeading = heading
         camDistance = zoomDistance
+        camAimedAt = Date()
         let target = MapCameraPosition.camera(
             MapCamera(centerCoordinate: center, distance: zoomDistance, heading: heading))
         if animated {
-            withAnimation(.easeInOut(duration: 0.45)) { camera = target }
+            withAnimation(.linear(duration: 1.0)) { camera = target }
         } else {
             camera = target
         }

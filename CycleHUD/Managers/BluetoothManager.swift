@@ -235,15 +235,22 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
             guard now.timeIntervalSince(lastDataAt[id] ?? .distantPast) > timeout else { continue }
 
             connectionStates[id] = .retrying       // heartbeat stopped → treat as gone
-            if isRadar { threats = [] }            // safety: never show stale cars
+            if isRadar, !threats.isEmpty { threats = [] }   // safety: never show stale cars
         }
         // Prune threats we haven't seen recently so a car that has passed can't
         // linger on the lane (covers radars that don't send an explicit "clear").
+        // Freshness comes from threatSeenAt (refreshed on every frame, even
+        // ones that don't publish), not the array's own lastSeen stamps.
         if !demoActive {
-            let fresh = threats.filter { now.timeIntervalSince($0.lastSeen) <= 5 }
+            let fresh = threats.filter {
+                now.timeIntervalSince(threatSeenAt[$0.id] ?? $0.lastSeen) <= 5
+            }
             if fresh.count != threats.count { threats = fresh }
         }
     }
+
+    /// When each threat id was last reported by the radar (see applyThreats).
+    private var threatSeenAt: [Int: Date] = [:]
 
     // MARK: - Role / device status (for the main-screen icons)
 
@@ -695,7 +702,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
                 BluetoothManager.radarServiceUUIDs.contains($0.uuid)
             }
         }
-        if !radarConnected && !demoActive { threats = [] }
+        if !radarConnected && !demoActive && !threats.isEmpty { threats = [] }
     }
 
     // MARK: - Radar parsing
@@ -703,8 +710,12 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     // Payload = 1 page/counter byte, then 3 bytes per threat:
     //   [threat id][distance in metres][approach speed in km/h]
 
-    @Published private(set) var radarPacketCount = 0
-    @Published private(set) var lastRadarHex = ""
+    // Deliberately NOT @Published: these change on every radar frame (~2-4 Hz
+    // all ride long), and publishing them re-rendered every observing view per
+    // packet. DiagnosticsView reads them and refreshes whenever the (throttled)
+    // diagnostics log publishes, which is plenty for a debug readout.
+    private(set) var radarPacketCount = 0
+    private(set) var lastRadarHex = ""
     private var lastRadarLogAt: Date?
 
     /// Number of manual "a car just passed" marks the rider has logged this run.
@@ -820,7 +831,23 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         let sorted = incoming.sorted { $0.distanceMeters < $1.distanceMeters }
         let existingIDs = Set(threats.map(\.id))
         let newThreats = sorted.filter { !existingIDs.contains($0.id) }
-        threats = sorted
+        // Freshness is tracked outside the published array so a repeat frame
+        // can refresh it without a publish (the prune in checkLiveness reads
+        // this map — otherwise skipping the publish would make a car that
+        // holds a steady distance look stale after 5 s).
+        let now = Date()
+        threatSeenAt = Dictionary(sorted.map { ($0.id, now) },
+                                  uniquingKeysWith: { a, _ in a })
+        // Publish only when the picture actually changed. The radar streams
+        // frames continuously — on a clear road that's an empty list at frame
+        // rate, and every publish re-renders the whole ride screen. Identical
+        // repeat frames (same cars, same metres, same speed) are skipped too.
+        let unchanged = sorted.count == threats.count
+            && zip(sorted, threats).allSatisfy {
+                $0.id == $1.id && $0.distanceMeters == $1.distanceMeters
+                    && $0.approachSpeedKmh == $1.approachSpeedKmh
+            }
+        if !unchanged { threats = sorted }
         if !newThreats.isEmpty, alertsAllowed?() ?? true {
             if settings.beepEnabled { AudioAlerts.shared.playNewCar() }
             if settings.voiceAlertsEnabled {

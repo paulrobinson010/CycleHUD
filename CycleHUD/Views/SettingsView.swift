@@ -147,7 +147,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Weather")
                 } footer: {
-                    Text("A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts — alongside the temperature and the wind (shown as headwind or tailwind relative to the way you're heading). It updates every minute while the app is open. A live road-gradient tile is shown too. Uses Apple Weather and your location.")
+                    Text("A short-term rain forecast (next hour) appears on the ride screen — when rain is coming, with its intensity, how soon it starts and how long it lasts — alongside the temperature and the wind (shown as headwind or tailwind relative to the way you're heading). It updates every minute when rain is near, otherwise every few minutes to save battery. A live road-gradient tile is shown too. Uses Apple Weather and your location.")
                 }
 
                 Section {
