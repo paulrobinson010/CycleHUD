@@ -177,6 +177,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     private var sensorMonitorStartedAt: Date?
     private var sensorReminderSent = false
     private static let sensorReminderDelay: TimeInterval = 300   // 5 minutes
+    /// The reminder is only meaningful shortly after the ride. Past this, the
+    /// moment has passed — sensor data arriving hours later is the bike being
+    /// moved (which wakes the sensors), not something "left on".
+    private static let sensorReminderWindow: TimeInterval = 900  // 15 minutes
 
     // Liveness: a sensor counts as connected only while it's actually streaming
     // data (CoreBluetooth can report a powered-off sensor as connected for ages).
@@ -385,8 +389,13 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     func suspendForBackground() {
         guard !backgroundSuspended else { return }
         // While monitoring for left-on sensors, keep them connected so we can
-        // detect it and remind (bounded to 5 min by the reminder itself).
-        if sensorMonitorStartedAt != nil, !sensorReminderSent { return }
+        // detect it and remind — but ONLY within the reminder window. An armed
+        // monitor must never block suspension indefinitely: it did, when the
+        // sensors went to sleep before the (data-driven) reminder check ever
+        // ran — the app then sat un-suspended for hours with pending
+        // reconnects, and moving the bike the next evening woke it all up.
+        if let startedAt = sensorMonitorStartedAt, !sensorReminderSent,
+           Date().timeIntervalSince(startedAt) < BluetoothManager.sensorReminderWindow { return }
         backgroundSuspended = true
         stopScan()
         radarKeepAliveTimer?.invalidate()
@@ -425,14 +434,24 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     /// actually on and feeding us). Once 5 min have passed with a sensor still
     /// connected, remind the rider and drop the connections.
     private func checkSensorReminder() {
-        guard let startedAt = sensorMonitorStartedAt, !sensorReminderSent,
-              Date().timeIntervalSince(startedAt) >= BluetoothManager.sensorReminderDelay else { return }
-        let names = connectedSensorNames()
+        guard let startedAt = sensorMonitorStartedAt, !sensorReminderSent else { return }
+        let elapsed = Date().timeIntervalSince(startedAt)
+        guard elapsed >= BluetoothManager.sensorReminderDelay else { return }
         sensorMonitorStartedAt = nil
-        guard !names.isEmpty else { return }
         sensorReminderSent = true
-        NotificationManager.shared.notifySensorsLeftOn(names)
-        // They've been reminded — stop the background drain by dropping them.
+        // Remind only close to the ride. This check runs from the data stream,
+        // so "elapsed" can be huge: a sensor that slept before the 5-minute
+        // mark and reconnected when the bike was next moved delivered its
+        // first data HOURS later — and produced a nonsense reminder. That
+        // late case now just drops the connections quietly.
+        let names = connectedSensorNames()
+        if elapsed <= BluetoothManager.sensorReminderWindow, !names.isEmpty {
+            NotificationManager.shared.notifySensorsLeftOn(names)
+            AppLog.shared.log("Sensors-left-on reminder sent (\(names.joined(separator: ", ")))")
+        } else {
+            AppLog.shared.log("Sensor monitor expired after \(Int(elapsed)) s — no reminder")
+        }
+        // Either way, stop the background drain by dropping the connections.
         if UIApplication.shared.applicationState != .active { suspendForBackground() }
     }
 
@@ -500,7 +519,22 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         // lot) — unless we deliberately backgrounded; then wait for resume.
         if savedDevices.contains(where: { $0.id == peripheral.identifier }) {
             connectionStates[peripheral.identifier] = .retrying
-            if !backgroundSuspended { central.connect(peripheral, options: nil) }
+            // Post-ride (the monitor is only armed then), app in background: a
+            // sensor disconnecting means the rider is switching things off or
+            // walking away. When the LAST one goes, suspend for real instead
+            // of queueing a reconnect — a pending connect sits live for hours
+            // and wakes the app (timers and all) the next time the bike moves.
+            let othersConnected = connected.contains {
+                $0.key != peripheral.identifier && $0.value.state == .connected
+            }
+            if sensorMonitorStartedAt != nil, !othersConnected,
+               UIApplication.shared.applicationState != .active {
+                cancelSensorMonitor()
+                suspendForBackground()
+                AppLog.shared.log("BLE: last sensor off post-ride — suspended, no reconnect queued")
+            } else if !backgroundSuspended {
+                central.connect(peripheral, options: nil)
+            }
         } else {
             connectionStates[peripheral.identifier] = nil
         }
