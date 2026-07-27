@@ -78,6 +78,8 @@ final class RideManager: ObservableObject {
     var liveTrack: LiveTrackManager?
     /// Wired in by the app: finished rides auto-upload when enabled.
     var strava: StravaManager?
+    /// Wired in by the app: finished rides advance the component odometer.
+    var components: ComponentStore?
 
     /// Rider's perceived effort from the end-of-ride prompt → Apple Health.
     func recordEffort(_ score: Int) { health.recordEffort(score: score) }
@@ -321,7 +323,9 @@ final class RideManager: ObservableObject {
     func togglePause() {
         switch status {
         case .running: status = .paused
-        case .paused, .autoPaused: status = .running
+        case .paused, .autoPaused:
+            status = .running
+            ble.setBikeWatch(false)   // back on the bike — watch over
         case .idle: break
         }
         stationarySeconds = 0
@@ -334,6 +338,8 @@ final class RideManager: ObservableObject {
         AppLog.shared.log("Ride STOP (user) dist=\(Int(distanceMeters))m time=\(Int(movingTimeSeconds))s")
         logBattery("ride stop")
         rideStartBattery = nil
+        ble.setBikeWatch(false)
+        components?.recordRide(distanceMeters: distanceMeters)   // wear odometer
         liveActivity.end(activityState)          // take the ride off the Lock Screen
         liveTrack?.endSession()                  // kill the share link + its record
         routes?.endGhostRun()                    // a complete run may become the ghost
@@ -1026,6 +1032,11 @@ final class RideManager: ObservableObject {
     }
 
     private func updateAutoResume(dt: Double) {
+        // Café watch armed = the rider has deliberately walked away from the
+        // bike. Their own wandering (or the bike being wheeled!) must not
+        // auto-resume the ride; it resumes when they press Resume, which
+        // also disarms the watch.
+        guard !ble.bikeWatchArmed else { return }
         // Position check first: if the rider has clearly moved away from the
         // pause spot, resume regardless of what the speed estimate says. The
         // speed can wedge near zero (a wheel sensor's 16-bit event clock wraps

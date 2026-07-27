@@ -408,6 +408,7 @@ final class RouteStore: ObservableObject {
         completionFired = false
         completion = nil
         routeStart = nil
+        climbEntry = [:]
     }
 
     /// Call each tick while riding: stamp the rider's progress point.
@@ -426,7 +427,53 @@ final class RouteStore: ObservableObject {
             run[idx] = onRoute
             ghostRun = run
         }
+        // Stamp where (and when, on the run's clock) this run entered each
+        // climb — the climb race re-zeroes here, so it's a fresh race even if
+        // the rider joined the route halfway up the hill.
+        if let climb = activeClimbs(for: route)
+            .first(where: { idx >= $0.startIndex && idx <= $0.endIndex }),
+           climbEntry[climb.startIndex] == nil {
+            climbEntry[climb.startIndex] = (elapsed: onRoute, index: idx)
+        }
         checkCompletion(run: run, route: route, index: idx, onRoute: onRoute)
+    }
+
+    // MARK: - Climb ghosts
+
+    /// Detected climbs of the active route (cached — detection walks the
+    /// whole elevation profile).
+    private var climbCache: (routeID: UUID, climbs: [PlannedRoute.Climb])?
+    /// The run's clock and path index where it entered each climb (keyed by
+    /// the climb's startIndex). Reset per run.
+    private var climbEntry: [Int: (elapsed: Double, index: Int)] = [:]
+
+    private func activeClimbs(for route: PlannedRoute) -> [PlannedRoute.Climb] {
+        if let c = climbCache, c.routeID == route.id { return c.climbs }
+        let detected = route.climbs()
+        climbCache = (route.id, detected)
+        return detected
+    }
+
+    /// The race up the CURRENT climb: seconds vs the best run over the same
+    /// stretch, measured from where this run entered the climb. Every climb
+    /// becomes its own fresh race — even when the whole-route delta is
+    /// minutes gone, the hill is still winnable. nil when not on a climb,
+    /// or when the route has no ghost yet.
+    func climbDelta(elapsed: Double) -> Double? {
+        guard joinedActiveRoute, let route = activeRoute,
+              let best = route.bestTimes, let idx = progressHint, idx < best.count,
+              let start = ghostRunStart else { return nil }
+        guard let climb = activeClimbs(for: route)
+                .first(where: { idx >= $0.startIndex && idx < $0.endIndex }),
+              let entry = climbEntry[climb.startIndex],
+              entry.index < best.count else { return nil }
+        var bestHere = best[idx]
+        if idx + 1 < best.count {
+            bestHere += (best[idx + 1] - bestHere) * progressFrac
+        }
+        let bestOverSame = bestHere - best[entry.index]
+        guard bestOverSame >= 0 else { return nil }
+        return ((elapsed - start) - entry.elapsed) - bestOverSame
     }
 
     /// Fired once when the run first touches the route — the ride screen

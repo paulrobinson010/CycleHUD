@@ -11,6 +11,7 @@ struct SettingsView: View {
     @EnvironmentObject var sos: SOSManager
     @EnvironmentObject var strava: StravaManager
     @EnvironmentObject var liveTrack: LiveTrackManager
+    @EnvironmentObject var componentStore: ComponentStore
     @Environment(\.dismiss) private var dismiss
 
     /// Set when the rider explicitly picks "Custom" in the wheel-size picker, so
@@ -189,6 +190,20 @@ struct SettingsView: View {
                     Text("Map")
                 } footer: {
                     Text("Shows a street map of where you are in the radar panel while the road behind is clear and you're not following a route — the radar takes the panel back the instant a vehicle is detected. With a route active, the route map appears instead, as usual.")
+                }
+
+                Section {
+                    NavigationLink {
+                        ComponentsView()
+                            .environmentObject(componentStore)
+                            .environmentObject(settings)
+                    } label: {
+                        Label("Components", systemImage: "wrench.and.screwdriver")
+                    }
+                } header: {
+                    Text("Bike")
+                } footer: {
+                    Text("Tracks the distance on your chain, tyres, brake pads and more — every ride counts toward each part's next service, with a heads-up when one falls due.")
                 }
 
                 Section {

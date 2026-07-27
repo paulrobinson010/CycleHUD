@@ -20,6 +20,7 @@ struct RideView: View {
     @EnvironmentObject var cloud: CloudSync
     @EnvironmentObject var strava: StravaManager
     @EnvironmentObject var liveTrack: LiveTrackManager
+    @EnvironmentObject var componentStore: ComponentStore
 
     private enum ActiveSheet: Int, Identifiable {
         case pairing, settings, routes
@@ -79,6 +80,7 @@ struct RideView: View {
                         .environmentObject(ride).environmentObject(history).environmentObject(weather)
                         .environmentObject(sos).environmentObject(cloud)
                         .environmentObject(strava).environmentObject(liveTrack)
+                        .environmentObject(componentStore)
                 case .routes: RoutesView().environmentObject(routes).environmentObject(settings)
                         .environmentObject(weather).environmentObject(history)
                 }
@@ -508,6 +510,8 @@ struct RideView: View {
                                ? routes.ghostPosition(elapsed: ride.movingTimeSeconds)?.coordinate : nil,
                            ghostBearing: ride.status != .idle
                                ? routes.ghostPosition(elapsed: ride.movingTimeSeconds)?.bearing : nil,
+                           climbDeltaSeconds: ride.status != .idle
+                               ? routes.climbDelta(elapsed: ride.movingTimeSeconds) : nil,
                            showClimbStrip: settings.routeElevationEnabled
                                && !visibleMetricKinds.contains(.climb),
                            junction: settings.junctionsEnabled && !visibleMetricKinds.contains(.junction)
@@ -1266,6 +1270,10 @@ struct RideView: View {
                 }
             } else {
                 if controlStatus == .running && !ride.demoActive { lapButton }
+                // Café watch: only while paused — that's when the bike is
+                // leant outside and the rider isn't looking at it.
+                if (controlStatus == .paused || controlStatus == .autoPaused)
+                    && !ride.demoActive { bikeWatchButton }
                 if !ride.demoActive, liveTrack.state != .off, let url = liveTrack.shareURL {
                     liveShareButton(url: url)
                 }
@@ -1298,6 +1306,23 @@ struct RideView: View {
         }
         .buttonStyle(PressableButtonStyle())
         .accessibilityLabel("Share live tracking link")
+    }
+
+    /// Café watch: arm while paused to get an alert (phone + mirrored to the
+    /// Watch) if a bike sensor reports movement while you're away from it.
+    private var bikeWatchButton: some View {
+        Button {
+            ble.setBikeWatch(!ble.bikeWatchArmed)
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        } label: {
+            Image(systemName: ble.bikeWatchArmed ? "bell.fill" : "bell")
+                .font(.system(size: 22, weight: .bold))
+                .foregroundStyle(ble.bikeWatchArmed ? .white : Theme.textPrimary)
+                .frame(width: 58, height: 58)
+                .background(RoundedRectangle(cornerRadius: 16)
+                    .fill(ble.bikeWatchArmed ? Theme.accent : Theme.panelRaised))
+        }
+        .accessibilityLabel("Watch bike")
     }
 
     /// Compact icon-only lap button: closes the current lap and starts a new one.

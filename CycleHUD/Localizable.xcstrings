@@ -937,6 +937,46 @@
         }
       }
     },
+    "%@ has reached its service interval — worth a check." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hat das Wartungsintervall erreicht — eine Kontrolle lohnt sich."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ has reached its service interval — worth a check."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ has reached its service interval — worth a check."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ha alcanzado su intervalo de mantenimiento — conviene revisarlo."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a atteint son intervalle d’entretien — un contrôle s’impose."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ha raggiunto il suo intervallo di manutenzione — vale la pena controllare."
+          }
+        }
+      }
+    },
     "A record of your rides and sensor activity, kept on your device. If something didn't work as expected, you can share it so the problem can be looked into." : {
       "localizations" : {
         "de-DE" : {
@@ -973,6 +1013,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Un registro delle tue uscite e dell'attività dei sensori, conservato sul dispositivo. Se qualcosa non ha funzionato come previsto, puoi condividerlo per far esaminare il problema."
+          }
+        }
+      }
+    },
+    "A sensor on your bike just reported movement. Worth a look." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Sensor an deinem Fahrrad hat gerade Bewegung gemeldet. Sieh besser nach."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A sensor on your bike just reported movement. Worth a look."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A sensor on your bike just reported movement. Worth a look."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un sensor de tu bici acaba de detectar movimiento. Mejor echa un vistazo."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un capteur de votre vélo vient de signaler un mouvement. Mieux vaut jeter un œil."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un sensore della tua bici ha appena segnalato un movimento. Meglio dare un'occhiata."
           }
         }
       }
@@ -1134,6 +1214,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aggiungi almeno due punti."
+          }
+        }
+      }
+    },
+    "Add component" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Komponente hinzufügen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add component"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add component"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir componente"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter un composant"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi componente"
           }
         }
       }
@@ -2182,6 +2302,46 @@
         }
       }
     },
+    "Bar tape" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lenkerband"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bar tape"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bar tape"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cinta de manillar"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ruban de cintre"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nastro manubrio"
+          }
+        }
+      }
+    },
     "Based on your rides on similar terrain." : {
       "localizations" : {
         "de-DE" : {
@@ -2342,6 +2502,166 @@
         }
       }
     },
+    "Bike" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fahrrad"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bike"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bike"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bici"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vélo"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bici"
+          }
+        }
+      }
+    },
+    "Bike moved!" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fahrrad bewegt!"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bike moved!"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bike moved!"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Bici movida!"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vélo déplacé !"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bici spostata!"
+          }
+        }
+      }
+    },
+    "Bike service due" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fahrrad-Wartung fällig"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bike service due"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bike service due"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantenimiento de la bici pendiente"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entretien du vélo à prévoir"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manutenzione bici in scadenza"
+          }
+        }
+      }
+    },
+    "Bike total: %@" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fahrrad gesamt: %@"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bike total: %@"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bike total: %@"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total de la bici: %@"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total du vélo : %@"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Totale bici: %@"
+          }
+        }
+      }
+    },
     "Bluetooth is off" : {
       "localizations" : {
         "de-DE" : {
@@ -2378,6 +2698,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Il Bluetooth è disattivato"
+          }
+        }
+      }
+    },
+    "Bottom bracket" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Innenlager"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom bracket"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom bracket"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eje de pedalier"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boîtier de pédalier"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Movimento centrale"
+          }
+        }
+      }
+    },
+    "Brake pads" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bremsbeläge"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brake pads"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brake pads"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pastillas de freno"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plaquettes de frein"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pastiglie freni"
           }
         }
       }
@@ -2820,6 +3220,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Auto da dietro, %@ metri"
+          }
+        }
+      }
+    },
+    "Cassette" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kassette"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cassette"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cassette"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Casete"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cassette"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cassetta"
+          }
+        }
+      }
+    },
+    "Chain" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kette"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chain"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chain"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cadena"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaîne"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catena"
           }
         }
       }
@@ -3340,6 +3820,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bussola"
+          }
+        }
+      }
+    },
+    "Components" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Komponenten"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Components"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Components"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Componentes"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Composants"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Componenti"
           }
         }
       }
@@ -4906,6 +5426,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Distanza per settimana"
+          }
+        }
+      }
+    },
+    "Distances count up from each part's install or last service. The intervals are starting points — adjust them to your parts and conditions." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Distanzen zählen ab Einbau oder letzter Wartung jedes Teils. Die Intervalle sind Richtwerte — passe sie an deine Teile und Bedingungen an."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distances count up from each part's install or last service. The intervals are starting points — adjust them to your parts and conditions."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distances count up from each part's install or last service. The intervals are starting points — adjust them to your parts and conditions."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las distancias se cuentan desde la instalación o el último mantenimiento de cada pieza. Los intervalos son orientativos — ajústalos a tus piezas y condiciones."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les distances se comptent depuis la pose ou le dernier entretien de chaque pièce. Les intervalles sont des points de départ — ajustez-les à vos pièces et conditions."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le distanze si contano dall’installazione o dall’ultima manutenzione di ogni parte. Gli intervalli sono valori di partenza — adattali alle tue parti e condizioni."
           }
         }
       }
@@ -7923,6 +8483,46 @@
         }
       }
     },
+    "Mark serviced" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als gewartet markieren"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark serviced"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark serviced"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcar como revisado"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marquer comme entretenu"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segna come revisionato"
+          }
+        }
+      }
+    },
     "Mark that a car just passed" : {
       "localizations" : {
         "de-DE" : {
@@ -7999,6 +8599,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Segnati %lld"
+          }
+        }
+      }
+    },
+    "Marking it serviced restarts the count from today — use it when the part is replaced, cleaned or checked." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„Als gewartet markieren“ startet die Zählung ab heute neu — nutze es, wenn das Teil ersetzt, gereinigt oder geprüft wurde."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marking it serviced restarts the count from today — use it when the part is replaced, cleaned or checked."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marking it serviced restarts the count from today — use it when the part is replaced, cleaned or checked."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcar como revisado reinicia el recuento desde hoy — úsalo cuando la pieza se sustituya, limpie o revise."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marquer comme entretenu fait repartir le compteur d’aujourd’hui — à utiliser quand la pièce est remplacée, nettoyée ou vérifiée."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segnare come revisionato fa ripartire il conteggio da oggi — usalo quando la parte viene sostituita, pulita o controllata."
           }
         }
       }
@@ -9247,6 +9887,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Non configurato"
+          }
+        }
+      }
+    },
+    "Nothing tracked yet — add your chain and every ride counts toward its next check." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nichts erfasst — füge deine Kette hinzu, und jede Fahrt zählt auf ihre nächste Kontrolle ein."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing tracked yet — add your chain and every ride counts toward its next check."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing tracked yet — add your chain and every ride counts toward its next check."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay nada registrado — añade tu cadena y cada salida contará para su próxima revisión."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien de suivi pour l’instant — ajoutez votre chaîne et chaque sortie comptera vers son prochain contrôle."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora niente da monitorare — aggiungi la catena e ogni uscita conterà verso il suo prossimo controllo."
           }
         }
       }
@@ -12673,6 +13353,46 @@
         }
       }
     },
+    "Service interval" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wartungsintervall"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service interval"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service interval"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalo de mantenimiento"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervalle d’entretien"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervallo di manutenzione"
+          }
+        }
+      }
+    },
     "Settings" : {
       "localizations" : {
         "de-DE" : {
@@ -13193,6 +13913,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostra l'uscita nella schermata di blocco e nella Dynamic Island, colorandosi del colore di allerta quando c'è un veicolo dietro. Nota: le attività in diretta dell'iPhone compaiono anche su Apple Watch e possono occuparne lo schermo quando alzi il polso — se usi l'app CycleHUD per l'orologio, disattiva questa opzione o disattiva sull'orologio Impostazioni → Generali → Apertura automatica → Attività in diretta."
+          }
+        }
+      }
+    },
+    "Since install" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seit Einbau"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Since install"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Since install"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desde la instalación"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depuis la pose"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dall’installazione"
           }
         }
       }
@@ -14606,6 +15366,46 @@
         }
       }
     },
+    "Tracks the distance on your chain, tyres, brake pads and more — every ride counts toward each part's next service, with a heads-up when one falls due." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erfasst die Distanz von Kette, Reifen, Bremsbelägen und mehr — jede Fahrt zählt auf die nächste Wartung jedes Teils ein, mit einem Hinweis, sobald eine fällig ist."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tracks the distance on your chain, tyres, brake pads and more — every ride counts toward each part's next service, with a heads-up when one falls due."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tracks the distance on your chain, tires, brake pads and more — every ride counts toward each part's next service, with a heads-up when one falls due."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registra la distancia de la cadena, los neumáticos, las pastillas de freno y más — cada salida cuenta para el próximo mantenimiento de cada pieza, con un aviso cuando toque."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suit la distance de votre chaîne, vos pneus, vos plaquettes de frein et plus — chaque sortie compte vers le prochain entretien de chaque pièce, avec un rappel quand il est dû."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registra la distanza di catena, copertoni, pastiglie dei freni e altro — ogni uscita conta verso la prossima manutenzione di ogni parte, con un avviso quando è il momento."
+          }
+        }
+      }
+    },
     "Traffic" : {
       "localizations" : {
         "de-DE" : {
@@ -14802,6 +15602,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Attiva il Bluetooth per trovare i sensori."
+          }
+        }
+      }
+    },
+    "Tyres" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reifen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tyres"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tires"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neumáticos"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pneus"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copertoni"
           }
         }
       }
@@ -15566,6 +16406,46 @@
         }
       }
     },
+    "Watch bike" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fahrrad überwachen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Watch bike"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Watch bike"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vigilar la bici"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surveiller le vélo"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorveglia la bici"
+          }
+        }
+      }
+    },
     "Weather" : {
       "localizations" : {
         "de-DE" : {
@@ -16126,6 +17006,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tu %@"
+          }
+        }
+      }
+    },
+    "You'll get a notification at the end of the ride that crosses it." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Am Ende der Fahrt, mit der es überschritten wird, bekommst du eine Mitteilung."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You'll get a notification at the end of the ride that crosses it."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You'll get a notification at the end of the ride that crosses it."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recibirás una notificación al final de la salida que lo cruce."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous recevrez une notification à la fin de la sortie qui le franchit."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riceverai una notifica alla fine dell’uscita che lo supera."
           }
         }
       }

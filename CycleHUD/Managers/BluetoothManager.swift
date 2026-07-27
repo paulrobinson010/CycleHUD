@@ -416,6 +416,51 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         reconnectSavedDevices()
     }
 
+    // MARK: - Café watch (bike-moved alert)
+
+    /// Armed by the rider when leaving the bike mid-ride. Any sign of the
+    /// bike moving trips it: a bike-mounted sensor waking from sleep and
+    /// reconnecting (motion is exactly what wakes them), or wheel/crank data
+    /// while armed. Trips fire a notification — which iOS mirrors to a
+    /// locked-phone rider's Apple Watch on its own.
+    @Published private(set) var bikeWatchArmed = false
+    /// A short grace after arming so racking the bike doesn't self-trip.
+    private var bikeWatchArmedAt = Date.distantPast
+    private var bikeWatchAlertAt = Date.distantPast
+
+    func setBikeWatch(_ armed: Bool) {
+        guard armed != bikeWatchArmed else { return }
+        bikeWatchArmed = armed
+        bikeWatchArmedAt = Date()
+        bikeWatchAlertAt = .distantPast
+        if armed, !NotificationManager.shared.isAuthorized {
+            NotificationManager.shared.requestAuthorization()
+        }
+        AppLog.shared.log(armed ? "Bike watch ARMED" : "Bike watch disarmed")
+    }
+
+    /// Bike-mounted roles only: an HR strap is on the rider, not the bike,
+    /// and the radar has a power switch, not a motion wake.
+    private static let bikeMountedRoles: Set<DeviceRole> = [.speed, .cadence, .power]
+
+    private func bikeWatchTripped(_ reason: String) {
+        guard bikeWatchArmed,
+              Date().timeIntervalSince(bikeWatchArmedAt) > 30,
+              Date().timeIntervalSince(bikeWatchAlertAt) >= 120 else { return }
+        bikeWatchAlertAt = Date()
+        AppLog.shared.log("Bike watch TRIPPED (\(reason))")
+        NotificationManager.shared.notifyBikeMoved()
+    }
+
+    /// didConnect while armed: a sleeping bike sensor only wakes on motion.
+    private func bikeWatchSensorConnected(_ peripheral: CBPeripheral) {
+        guard bikeWatchArmed,
+              let dev = savedDevices.first(where: { $0.id == peripheral.identifier }),
+              dev.roles.contains(where: { BluetoothManager.bikeMountedRoles.contains($0) })
+        else { return }
+        bikeWatchTripped("\(dev.roles.map(\.rawValue).joined(separator: "/")) sensor woke")
+    }
+
     // MARK: - "Sensors left on" reminder
 
     /// Begin watching, after a ride, whether the sensors get left switched on.
@@ -505,6 +550,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         lastDataAt[peripheral.identifier] = Date()   // grace period before liveness applies
         upsertSavedDevice(id: peripheral.identifier, name: peripheral.name ?? "")
         diag("Connected: \(peripheral.name ?? "?")")
+        bikeWatchSensorConnected(peripheral)   // a waking bike sensor = it moved
         peripheral.discoverServices(nil)   // discover everything, match by UUID below
     }
 
@@ -1050,6 +1096,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
                     if speed < 30 {
                         sensorSpeedMps = speed
                         sensorSpeedUpdatedAt = Date()
+                        if speed > 0.3 { bikeWatchTripped("wheel turning") }
                     }
                 } else if dRevs == 0 {
                     sensorSpeedMps = 0
@@ -1070,6 +1117,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
                     let minutes = Double(dTime) / 1024.0 / 60.0
                     cadenceRpm = Int((Double(dRevs) / minutes).rounded())
                     cadenceUpdatedAt = Date()
+                    if dRevs > 0 { bikeWatchTripped("cranks turning") }
                 } else if dRevs == 0 {
                     cadenceRpm = 0
                     cadenceUpdatedAt = Date()

@@ -32,6 +32,9 @@ struct RoutePanel: View {
     var ghostDeltaSeconds: Double? = nil
     var ghostCoordinate: CLLocationCoordinate2D? = nil
     var ghostBearing: Double? = nil
+    /// The race up the current climb (RouteStore.climbDelta) — shown on the
+    /// climb card while a climb is underway.
+    var climbDeltaSeconds: Double? = nil
     /// False when the climb row tile is on the current page — the row carries
     /// the profile, so the map keeps its full height.
     var showClimbStrip: Bool = true
@@ -96,6 +99,7 @@ struct RoutePanel: View {
                         ClimbCard(route: route, climb: climb,
                                   riddenMeters: max(0, route.remainingMeters(from: 0) - progress.remainingMeters),
                                   progressIndex: progress.index,
+                                  deltaSeconds: climbDeltaSeconds,
                                   distanceUnit: distanceUnit)
                             .frame(height: 54)
                             .padding(.horizontal, 10)
@@ -622,6 +626,8 @@ struct ClimbCard: View {
     let climb: PlannedRoute.Climb
     let riddenMeters: Double
     let progressIndex: Int
+    /// Seconds vs the best run up this climb (− = ahead); nil = no ghost.
+    var deltaSeconds: Double? = nil
     let distanceUnit: DistanceUnit
 
     private var toTopMeters: Double { max(0, climb.endMeters - riddenMeters) }
@@ -638,6 +644,19 @@ struct ClimbCard: View {
         HStack(spacing: 12) {
             profile
                 .frame(maxWidth: .infinity)
+            // The climb race: this hill vs the ghost's time up it, re-zeroed
+            // at the bottom — winnable even when the route race is long gone.
+            if let deltaSeconds {
+                HStack(spacing: 4) {
+                    Image(systemName: "flag.checkered")
+                        .font(.system(size: 13, weight: .bold))
+                    Text(verbatim: climbDeltaText(deltaSeconds))
+                        .font(Theme.font(size: 17, weight: .heavy))
+                        .monospacedDigit()
+                }
+                .foregroundStyle(deltaSeconds <= 0 ? Theme.good : Theme.threatHigh)
+                .fixedSize()
+            }
             VStack(alignment: .trailing, spacing: 2) {
                 Text(verbatim: toTopText)
                     .font(Theme.font(size: 17, weight: .heavy))
@@ -654,6 +673,12 @@ struct ClimbCard: View {
         .padding(.vertical, 6)
         .background(RoundedRectangle(cornerRadius: 10).fill(Theme.panel.opacity(0.9)))
         .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    /// "−0:14" / "+1:02" vs the ghost's climb.
+    private func climbDeltaText(_ seconds: Double) -> String {
+        let s = Int(abs(seconds).rounded())
+        return "\(seconds <= 0 ? "−" : "+")\(s / 60):\(String(format: "%02d", s % 60))"
     }
 
     /// "820 m" close in, "1.4 km" further out (rider's units).

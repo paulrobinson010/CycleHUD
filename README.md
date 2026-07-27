@@ -58,6 +58,16 @@ meters work too.
   of where you are while the road behind is clear, even with no route being
   followed; the radar takes the panel back the moment a vehicle appears.
   Settings → Map.
+- **Climb ghosts** — on a route with a best time, every climb becomes its own
+  fresh race: the climb card shows live seconds vs your best up that hill,
+  re-zeroed at the bottom — winnable even when the route race is long gone.
+- **Café watch** — pause the ride, tap the bell, walk into the café. If a
+  sensor on the bike reports movement (a waking speed/cadence sensor is
+  exactly what a moved bike produces), your phone — and mirrored to your
+  watch — gets a "Bike moved!" alert.
+- **Component tracking** — Settings → Bike: distance on your chain, tyres,
+  brake pads and more, counted up by every ride against per-part service
+  intervals, with a notification when a part falls due.
 - **Live tracking** *(optional, off by default)* — each ride publishes a
   private map link you can send to whoever should know where you are: live
   position, the **path ridden so far**, the **planned route** (dashed) when
