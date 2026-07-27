@@ -45,8 +45,11 @@ struct JunctionTile: View {
                 }
                 Spacer(minLength: 4)
                 if let info {
+                    // As large as the tile allows — the schematic is the point
+                    // of this tile, and it's read at speed.
+                    let glyphSide = min(height - 24, valueSize * 2.2)
                     JunctionGlyph(info: info, routeBearing: routeBearing)
-                        .frame(width: valueSize * 1.5, height: valueSize * 1.5)
+                        .frame(width: glyphSide, height: glyphSide)
                         .shadow(color: Theme.glow, radius: 6)
                 }
             }

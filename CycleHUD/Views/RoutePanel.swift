@@ -133,16 +133,18 @@ struct RoutePanel: View {
     /// mute controls when the tile itself isn't on the page.
     @ViewBuilder private var junctionBadge: some View {
         if let junction {
-            HStack(spacing: 6) {
+            // Big enough to read at speed — the badge is the junction view
+            // whenever the tile isn't on the current page.
+            HStack(spacing: 8) {
                 JunctionGlyph(info: junction, routeBearing: junctionRouteBearing)
-                    .frame(width: 30, height: 30)
+                    .frame(width: 48, height: 48)
                 Text(verbatim: "\(Fmt.int(distanceUnit.shortValue(fromMeters: junction.distanceMeters))) \(distanceUnit.shortLabel)")
-                    .font(Theme.font(size: 13, weight: .heavy))
+                    .font(Theme.font(size: 20, weight: .heavy))
                     .monospacedDigit()
                     .foregroundStyle(Theme.textPrimary)
             }
-            .padding(.horizontal, 9)
-            .padding(.vertical, 5)
+            .padding(.horizontal, 11)
+            .padding(.vertical, 7)
             .background(Capsule().fill(Theme.panel.opacity(0.85)))
             .padding(.trailing, 10)
             .padding(.top, 64)     // clear of the mute controls above
