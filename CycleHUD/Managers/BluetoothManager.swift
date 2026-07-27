@@ -170,17 +170,20 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     // processing the radar's stream. Reconnected on return to the foreground.
     private var backgroundSuspended = false
 
-    // After a ride ends we watch (up to 5 min) whether the sensors are still on,
+    // After a ride ends we watch (up to 2 min) whether the sensors are still on,
     // and if so remind the rider to switch them off (they have their own
     // batteries). The check piggybacks on the sensors' own stream, so it costs
     // nothing once they're actually switched off.
     private var sensorMonitorStartedAt: Date?
     private var sensorReminderSent = false
-    private static let sensorReminderDelay: TimeInterval = 300   // 5 minutes
+    // 2 minutes: enough to rack the bike; any longer and the rider is inside,
+    // past caring — and the shorter the watch, the sooner the connections drop
+    // and the app suspends after a ride.
+    private static let sensorReminderDelay: TimeInterval = 120
     /// The reminder is only meaningful shortly after the ride. Past this, the
     /// moment has passed — sensor data arriving hours later is the bike being
     /// moved (which wakes the sensors), not something "left on".
-    private static let sensorReminderWindow: TimeInterval = 900  // 15 minutes
+    private static let sensorReminderWindow: TimeInterval = 600  // 10 minutes
 
     // Liveness: a sensor counts as connected only while it's actually streaming
     // data (CoreBluetooth can report a powered-off sensor as connected for ages).
@@ -431,7 +434,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     }
 
     /// Called from the sensor data stream (so it only runs while a sensor is
-    /// actually on and feeding us). Once 5 min have passed with a sensor still
+    /// actually on and feeding us). Once 2 min have passed with a sensor still
     /// connected, remind the rider and drop the connections.
     private func checkSensorReminder() {
         guard let startedAt = sensorMonitorStartedAt, !sensorReminderSent else { return }
@@ -440,7 +443,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         sensorMonitorStartedAt = nil
         sensorReminderSent = true
         // Remind only close to the ride. This check runs from the data stream,
-        // so "elapsed" can be huge: a sensor that slept before the 5-minute
+        // so "elapsed" can be huge: a sensor that slept before the reminder
         // mark and reconnected when the bike was next moved delivered its
         // first data HOURS later — and produced a nonsense reminder. That
         // late case now just drops the connections quietly.

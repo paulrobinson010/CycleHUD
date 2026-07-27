@@ -207,7 +207,7 @@ meters work too.
   came up behind you. Open the full-screen map and **tap a vehicle** to pull up
   that pass's full trace (distance, your speed and the closing speed over time).
 - **"Sensors left on" reminder** — if your radar or speed/cadence sensors are
-  still switched on 5 minutes after a ride ends, a notification names which ones
+  still switched on 2 minutes after a ride ends, a notification names which ones
   so you can switch them off and save their batteries.
 - **Landscape layout** *(optional)* — turn it on to fix the ride screen in
   landscape: the radar on one side (left or right — your choice) and your ride
