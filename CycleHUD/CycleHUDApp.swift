@@ -146,6 +146,7 @@ struct CycleHUDApp: App {
                 ride.liveTrack = liveTrack     // share-my-ride sessions
                 ride.strava = strava           // auto-upload finished rides
                 ride.components = componentStore   // wear odometer per ride
+                ride.junctions = junctions         // give-way junction warnings
                 componentStore.seedIfNeeded(historyMeters:
                     history.rides.reduce(0) { $0 + $1.distanceMeters })
                 liveTrack.isEnabled = { settings.liveTrackingEnabled }

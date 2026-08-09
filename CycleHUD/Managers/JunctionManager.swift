@@ -11,6 +11,10 @@ struct JunctionInfo: Equatable {
     /// The bearing the rider arrives at the junction on (last edge walked).
     var approachBearing: Double
     var isRoundabout: Bool
+    /// A stop or give-way sign sits at (or within ~40 m of) this junction —
+    /// someone has to yield here. Blind priority junctions at speed are the
+    /// danger case, so the UI escalates these.
+    var giveWay: Bool = false
     /// OSM node id — stable identity while approaching the same junction.
     var nodeID: Int64
     /// The junction's position (used to match it against a planned route).
@@ -43,6 +47,11 @@ final class JunctionManager: ObservableObject {
     private var nodeCoords: [Int64: CLLocationCoordinate2D] = [:]
     private var neighbors: [Int64: Set<Int64>] = [:]
     private var roundaboutNodes: Set<Int64> = []
+    /// Stop / give-way sign nodes (deduped across refetches). The sign is
+    /// rarely the junction node itself — it sits on an approach a few metres
+    /// out — so junctions are flagged by proximity, not id.
+    private var yieldNodeIDs: Set<Int64> = []
+    private var yieldNodeCoords: [CLLocationCoordinate2D] = []
     /// Spatial hash of edges for map-matching (~250 m cells, key = packed cell).
     private var edgeGrid: [Int64: [(a: Int64, b: Int64)]] = [:]
 
@@ -125,7 +134,9 @@ final class JunctionManager: ObservableObject {
         let dLat = Self.fetchRadius / 111_320
         let dLon = Self.fetchRadius / (111_320 * max(0.2, cos(lat * .pi / 180)))
         let bbox = "\(lat - dLat),\(lon - dLon),\(lat + dLat),\(lon + dLon)"
-        let query = "[out:json][timeout:10];way[\"highway\"~\"^(\(Self.highwayFilter))$\"](\(bbox));out geom;"
+        // Union query: the rideable ways, plus stop/give-way sign nodes so a
+        // controlled junction can be flagged (the signs are their own nodes).
+        let query = "[out:json][timeout:10];(way[\"highway\"~\"^(\(Self.highwayFilter))$\"](\(bbox));node[\"highway\"~\"^(stop|give_way)$\"](\(bbox)););out geom;"
 
         var request = URLRequest(url: URL(string: "https://overpass-api.de/api/interpreter")!)
         request.httpMethod = "POST"
@@ -158,6 +169,14 @@ final class JunctionManager: ObservableObject {
     private func ingest(_ data: Data) {
         guard let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let elements = root["elements"] as? [[String: Any]] else { return }
+        // Stop/give-way sign nodes (the query only returns those node types).
+        for node in elements where node["type"] as? String == "node" {
+            guard let num = node["id"] as? NSNumber,
+                  let lat = node["lat"] as? Double,
+                  let lon = node["lon"] as? Double,
+                  yieldNodeIDs.insert(num.int64Value).inserted else { continue }
+            yieldNodeCoords.append(CLLocationCoordinate2D(latitude: lat, longitude: lon))
+        }
         for way in elements where way["type"] as? String == "way" {
             guard let ids = way["nodes"] as? [NSNumber],
                   let geometry = way["geometry"] as? [[String: Any]],
@@ -223,6 +242,7 @@ final class JunctionManager: ObservableObject {
                                     armBearings: arms,
                                     approachBearing: bearing(from, at),
                                     isRoundabout: roundaboutNodes.contains(cur),
+                                    giveWay: yieldNodeCoords.contains { meters($0, at) < 40 },
                                     nodeID: cur,
                                     latitude: at.latitude,
                                     longitude: at.longitude)

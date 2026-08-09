@@ -212,6 +212,10 @@ struct RideView: View {
             && !sos.isCountingDown
             && activeSheet == nil
             && ride.finishedSummary == nil
+            // A junction inside 250 m needs eyes: full brightness while it
+            // approaches, dim again once it's past.
+            && !(settings.junctionsEnabled
+                 && (junctions.next?.distanceMeters ?? .infinity) < 250)
     }
 
     /// Arm the 20 s countdown to dimming (cancelling any previous one).

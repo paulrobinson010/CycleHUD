@@ -80,6 +80,8 @@ final class RideManager: ObservableObject {
     var strava: StravaManager?
     /// Wired in by the app: finished rides advance the component odometer.
     var components: ComponentStore?
+    /// Wired in by the app: stop/give-way junction warnings read from here.
+    var junctions: JunctionManager?
 
     /// Rider's perceived effort from the end-of-ride prompt → Apple Health.
     func recordEffort(_ score: Int) { health.recordEffort(score: score) }
@@ -742,6 +744,7 @@ final class RideManager: ObservableObject {
             sampleTrack(now: now)
             updateGradient()
             checkTurnCue()
+            checkJunctionWarning()
             routes?.recordGhost(elapsed: movingTimeSeconds)
             announceCompletionIfNeeded()
         case .autoPaused:
@@ -1014,6 +1017,26 @@ final class RideManager: ObservableObject {
         }
         watch.sendRouteDoneHaptic()
         AppLog.shared.log("Route completed in \(Int(c.seconds)) s (newBest=\(c.newBest))")
+    }
+
+    /// One-shot warning as a stop/give-way junction closes in: wrist tap plus
+    /// a spoken cue (when either voice setting is on). A blind priority
+    /// junction taken at speed leaves no braking margin — this buys seconds.
+    private var warnedJunctionNode: Int64?
+
+    private func checkJunctionWarning() {
+        guard settings.junctionsEnabled, !demoActive,
+              let j = junctions?.next, j.giveWay,
+              j.distanceMeters < 200,
+              warnedJunctionNode != j.nodeID else { return }
+        warnedJunctionNode = j.nodeID
+        watch.sendTurnHaptic()
+        if settings.voiceAlertsEnabled || settings.routeTurnAlertsEnabled {
+            AudioAlerts.shared.speak(String(localized: "Give way ahead", bundle: Lang.bundle),
+                                     language: settings.appLanguage.isEmpty
+                                        ? Locale.current.identifier : settings.appLanguage)
+        }
+        AppLog.shared.log("Give-way junction warning at \(Int(j.distanceMeters)) m")
     }
 
     private func updateAutoPause(dt: Double) {

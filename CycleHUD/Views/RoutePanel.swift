@@ -62,6 +62,9 @@ struct RoutePanel: View {
     @State private var camDistance: Double = 1500
     @State private var camAimedAt = Date.distantPast
 
+    /// Pulse phase for the give-way junction badge's warning ring.
+    @State private var giveWayPulse = false
+
     /// Strayed after joining — amber "back to route" guidance.
     private var offRoute: Bool { joined && (progress?.offMeters ?? 0) > 80 }
     /// Not there yet — calm "to the start" guidance.
@@ -138,18 +141,40 @@ struct RoutePanel: View {
     @ViewBuilder private var junctionBadge: some View {
         if let junction {
             // Big enough to read at speed — the badge is the junction view
-            // whenever the tile isn't on the current page.
+            // whenever the tile isn't on the current page. A stop/give-way
+            // junction turns the badge red with a pulsing ring and warning
+            // triangle (language-free): a blind priority junction at speed
+            // is the case where seconds of warning matter.
             HStack(spacing: 8) {
-                JunctionGlyph(info: junction, routeBearing: junctionRouteBearing)
-                    .frame(width: 48, height: 48)
+                JunctionGlyph(info: junction, routeBearing: junctionRouteBearing,
+                              color: junction.giveWay ? Theme.threatHigh : Theme.accent)
+                    .frame(width: 58, height: 58)
+                if junction.giveWay {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundStyle(Theme.threatHigh)
+                }
                 Text(verbatim: "\(Fmt.int(distanceUnit.shortValue(fromMeters: junction.distanceMeters))) \(distanceUnit.shortLabel)")
-                    .font(Theme.font(size: 20, weight: .heavy))
+                    .font(Theme.font(size: 24, weight: .heavy))
                     .monospacedDigit()
-                    .foregroundStyle(Theme.textPrimary)
+                    .foregroundStyle(junction.giveWay ? Theme.threatHigh : Theme.textPrimary)
             }
-            .padding(.horizontal, 11)
-            .padding(.vertical, 7)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
             .background(Capsule().fill(Theme.panel.opacity(0.85)))
+            .overlay(Capsule()
+                .stroke(Theme.threatHigh, lineWidth: junction.giveWay ? 3 : 0)
+                .opacity(giveWayPulse ? 1 : 0.15))
+            .task(id: "\(junction.nodeID)-\(junction.giveWay)") {
+                guard junction.giveWay else { return }
+                while !Task.isCancelled {
+                    withAnimation(.easeInOut(duration: 0.45)) { giveWayPulse = true }
+                    try? await Task.sleep(nanoseconds: 450_000_000)
+                    guard !Task.isCancelled else { break }
+                    withAnimation(.easeInOut(duration: 0.55)) { giveWayPulse = false }
+                    try? await Task.sleep(nanoseconds: 750_000_000)
+                }
+            }
             .padding(.trailing, 10)
             .padding(.top, 64)     // clear of the mute controls above
         }
@@ -208,13 +233,9 @@ struct RoutePanel: View {
                     .stroke(Theme.good,
                             style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
             }
-            ForEach(Array(route.waypoints.enumerated()), id: \.offset) { _, wp in
-                Annotation("", coordinate: wp.coordinate) {
-                    Circle().fill(Theme.accent)
-                        .frame(width: 10, height: 10)
-                        .overlay(Circle().stroke(.white, lineWidth: 1.5))
-                }
-            }
+            // (Planning waypoints are deliberately NOT drawn here: they're the
+            // editor's input pins, not features of the road — on the ride they
+            // just cluttered the path. Start/finish markers stay.)
             if let start = route.path.first {
                 Annotation("", coordinate: start.coordinate) {
                     Circle().fill(Theme.good)
@@ -382,10 +403,13 @@ struct RoutePanel: View {
                         tint: Theme.textPrimary)
             }
             if let ghostDeltaSeconds, !offRoute, !headingToStart {
-                // The race against this route's best run: green = ahead.
+                // The race against this route's best run: green = ahead. A
+                // FILLED pill with white text — tinted text on the panel wash
+                // was unreadable in dark mode with the screen dimmed.
                 bigPill(icon: "flag.checkered",
                         text: deltaText(ghostDeltaSeconds),
-                        tint: ghostDeltaSeconds <= 0 ? Theme.good : Theme.threatHigh)
+                        tint: .white,
+                        fill: ghostDeltaSeconds <= 0 ? Theme.good : Theme.threatHigh)
             }
             if radarConnected, let batteryPercent {
                 infoPill(icon: "battery.100",
@@ -416,7 +440,8 @@ struct RoutePanel: View {
     /// The numbers being ridden against — ETA and the ghost race — at twice
     /// the info-pill size, readable at a glance on the bars. (The radar
     /// battery keeps the small pill; it's a check, not a race.)
-    private func bigPill(icon: String, text: String, tint: Color) -> some View {
+    private func bigPill(icon: String, text: String, tint: Color,
+                         fill: Color? = nil) -> some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
                 .font(.system(size: 20, weight: .bold))
@@ -427,7 +452,7 @@ struct RoutePanel: View {
         .foregroundStyle(tint)
         .padding(.horizontal, 12)
         .padding(.vertical, 5)
-        .background(Capsule().fill(Theme.panel.opacity(0.85)))
+        .background(Capsule().fill(fill?.opacity(0.92) ?? Theme.panel.opacity(0.85)))
     }
 
     /// "−0:14" / "+1:02" vs the ghost.
@@ -647,6 +672,8 @@ struct ClimbCard: View {
             // The climb race: this hill vs the ghost's time up it, re-zeroed
             // at the bottom — winnable even when the route race is long gone.
             if let deltaSeconds {
+                // Filled pill, white text — same readability rule as the
+                // route ghost pill (tinted text washed out under dimming).
                 HStack(spacing: 4) {
                     Image(systemName: "flag.checkered")
                         .font(.system(size: 13, weight: .bold))
@@ -654,7 +681,11 @@ struct ClimbCard: View {
                         .font(Theme.font(size: 17, weight: .heavy))
                         .monospacedDigit()
                 }
-                .foregroundStyle(deltaSeconds <= 0 ? Theme.good : Theme.threatHigh)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(Capsule().fill(
+                    (deltaSeconds <= 0 ? Theme.good : Theme.threatHigh).opacity(0.92)))
                 .fixedSize()
             }
             VStack(alignment: .trailing, spacing: 2) {

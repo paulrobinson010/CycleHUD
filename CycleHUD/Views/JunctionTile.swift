@@ -30,7 +30,8 @@ struct JunctionTile: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(value)
                         .font(Theme.valueFont(valueSize))
-                        .foregroundStyle(Theme.valueStyle)
+                        .foregroundStyle(info?.giveWay == true
+                            ? AnyShapeStyle(Theme.threatHigh) : Theme.valueStyle)
                         .shadow(color: Theme.glow, radius: 6)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
@@ -46,9 +47,11 @@ struct JunctionTile: View {
                 Spacer(minLength: 4)
                 if let info {
                     // As large as the tile allows — the schematic is the point
-                    // of this tile, and it's read at speed.
+                    // of this tile, and it's read at speed. Red = a stop or
+                    // give-way sign controls this junction.
                     let glyphSide = min(height - 24, valueSize * 2.2)
-                    JunctionGlyph(info: info, routeBearing: routeBearing)
+                    JunctionGlyph(info: info, routeBearing: routeBearing,
+                                  color: info.giveWay ? Theme.threatHigh : Theme.accent)
                         .frame(width: glyphSide, height: glyphSide)
                         .shadow(color: Theme.glow, radius: 6)
                 }
