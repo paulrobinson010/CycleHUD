@@ -218,12 +218,21 @@ struct RadarView: View {
                     .foregroundStyle(Theme.good)
                     .scaleEffect(breathe ? 1.08 : 0.94)
                     .opacity(breathe ? 1.0 : 0.72)
-                    .onAppear {
-                        breathe = false
-                        withAnimation(.easeInOut(duration: 2.2)
-                            .repeatForever(autoreverses: true)) { breathe = true }
+                    .task {
+                        // One gentle pulse every few seconds, not a
+                        // repeatForever breath: a continuous animation keeps
+                        // the display compositing (ProMotion at high refresh)
+                        // for the whole ride, and this badge is on screen the
+                        // entire time the road is clear. The pause between
+                        // pulses lets the panel idle — still clearly alive.
+                        while !Task.isCancelled {
+                            withAnimation(.easeInOut(duration: 0.9)) { breathe = true }
+                            try? await Task.sleep(nanoseconds: 900_000_000)
+                            guard !Task.isCancelled else { break }
+                            withAnimation(.easeInOut(duration: 1.1)) { breathe = false }
+                            try? await Task.sleep(nanoseconds: 4_500_000_000)
+                        }
                     }
-                    .onDisappear { breathe = false }
                 Text("Clear")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Theme.good)

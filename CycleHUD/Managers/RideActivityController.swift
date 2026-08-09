@@ -37,13 +37,13 @@ final class RideActivityController {
         guard let activity else { return }
         guard state != lastState else { return }
         // Threat/pause/radar transitions jump the throttle; steady metrics
-        // wait. 6 s is plenty for a lock-screen speed/distance readout, and
+        // wait. 12 s is plenty for a lock-screen speed/distance readout, and
         // every ActivityKit update costs a cross-process render.
         let urgent = state.threatLevel != lastState?.threatLevel
             || state.threatCount != lastState?.threatCount
             || state.paused != lastState?.paused
             || state.radarConnected != lastState?.radarConnected
-        guard urgent || Date().timeIntervalSince(lastUpdate) >= 6 else { return }
+        guard urgent || Date().timeIntervalSince(lastUpdate) >= 12 else { return }
         lastState = state
         lastUpdate = Date()
         Task { await activity.update(ActivityContent(state: state, staleDate: nil)) }
