@@ -225,6 +225,15 @@ final class WatchSessionManager: NSObject, ObservableObject {
             requestHealthAuthorization()   // no-op if already asked; completion re-runs the start
             return
         }
+        // Escalating retry gate. Without it, a session that fails INSTANTLY
+        // (HealthKit refusing mid-ride) put finalizeDiscard → updateWorkout →
+        // fail → finalizeDiscard into a hot loop — a real ride logged ~10
+        // request/discard cycles PER SECOND for half a minute. The mirror
+        // loop keeps calling updateWorkout, so gated attempts retry naturally.
+        guard Date() >= sessionRetryAt else { return }
+        sessionRetryCount += 1
+        sessionRetryAt = Date().addingTimeInterval(
+            sessionRetryCount <= 3 ? 5 : min(120, 15 * Double(sessionRetryCount)))
         let config = HKWorkoutConfiguration()
         config.activityType = .cycling
         config.locationType = .outdoor
@@ -261,6 +270,8 @@ final class WatchSessionManager: NSObject, ObservableObject {
     private func stopWorkout(reason: String) {
         guard let session = workoutSession, !pendingDiscard else { return }
         wlog("ending session — \(reason)")
+        sessionRetryCount = 0            // don't carry backoff into the next ride
+        sessionRetryAt = .distantPast
         pendingDiscard = true
         startDiscardTimeout()
         session.end()   // → didChangeTo .ended → finalizeDiscard (discards, never saves)
@@ -284,6 +295,10 @@ final class WatchSessionManager: NSObject, ObservableObject {
     /// When the session was last requested; gives startActivity a grace
     /// period to reach .running before the verifier declares it dead.
     private var sessionStartedAt: Date?
+    /// Retry pacing for session creation (see startWorkout). Reset when a
+    /// session reaches .running and when the ride ends.
+    private var sessionRetryCount = 0
+    private var sessionRetryAt = Date.distantPast
 
     /// The killer failure mode this guards against: startActivity fails
     /// SILENTLY, leaving a session object that never runs — no background
@@ -663,7 +678,11 @@ extension WatchSessionManager: HKWorkoutSessionDelegate {
         // immediately while the ride is still active.
         wlog("session state \(fromState.rawValue) → \(toState.rawValue)")
         if toState == .running {
-            DispatchQueue.main.async { self.workoutActive = true }
+            DispatchQueue.main.async {
+                self.workoutActive = true
+                self.sessionRetryCount = 0        // healthy again — full speed
+                self.sessionRetryAt = .distantPast
+            }
         }
         switch toState {
         case .ended:

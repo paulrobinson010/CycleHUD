@@ -103,13 +103,21 @@ final class JunctionManager: ObservableObject {
 
     // MARK: - Overpass fetch
 
+    /// Consecutive failed fetches — drives the exponential retry backoff.
+    private var fetchFailures = 0
+
     private func maybeFetch(around loc: CLLocation) {
         if let coverage,
            loc.distance(from: coverage.center) < coverage.radius - Self.refetchMargin {
             return                                       // still well inside the graph
         }
         guard !fetching else { return }
-        if let last = lastFetchAttempt, Date().timeIntervalSince(last) < 20 { return }
+        // 20 s base gap, doubling per consecutive failure (capped at 10 min):
+        // a failing or rate-limiting Overpass must not be hammered for a
+        // whole ride — one real 100-minute log showed 18 failed fetches, each
+        // a radio wake for nothing.
+        let gap = min(600.0, 20.0 * pow(2.0, Double(fetchFailures)))
+        if let last = lastFetchAttempt, Date().timeIntervalSince(last) < gap { return }
         fetching = true
         lastFetchAttempt = Date()
 
@@ -133,11 +141,13 @@ final class JunctionManager: ObservableObject {
             guard error == nil, let data,
                   (response as? HTTPURLResponse)?.statusCode == 200 else {
                 AppLog.shared.log("Junctions: Overpass fetch failed (\(error?.localizedDescription ?? "HTTP"))")
-                return                                   // keep the old graph; retry throttled
+                DispatchQueue.main.async { self.fetchFailures += 1 }   // widen the retry gap
+                return                                   // keep the old graph; retry backed off
             }
             self.workQueue.async {
                 self.ingest(data)
                 DispatchQueue.main.async {
+                    self.fetchFailures = 0
                     self.coverage = (loc, Self.fetchRadius)
                 }
             }
