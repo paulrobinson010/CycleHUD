@@ -65,9 +65,13 @@ meters work too.
   sensor on the bike reports movement (a waking speed/cadence sensor is
   exactly what a moved bike produces), your phone — and mirrored to your
   watch — gets a "Bike moved!" alert.
-- **Component tracking** — Settings → Bike: distance on your chain, tyres,
-  brake pads and more, counted up by every ride against per-part service
-  intervals, with a notification when a part falls due.
+- **Bike profiles** — Settings → Bike: a profile per bike, each with its own
+  wheel circumference (road through 29″ mountain presets), its own distance and
+  **component tracking** (chain, tyres, brake pads… against per-part service
+  intervals, with a notification when one falls due), and its own choice of
+  crash detection and junctions — both of which suit tarmac and misfire on
+  trails. Assign a bike's speed or cadence sensor to it and CycleHUD selects
+  that bike itself when the sensor connects; rides are recorded against it.
 - **Live tracking** *(optional, off by default)* — each ride publishes a
   private map link you can send to whoever should know where you are: live
   position, the **path ridden so far**, the **planned route** (dashed) when

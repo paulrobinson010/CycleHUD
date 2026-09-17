@@ -11,7 +11,7 @@ struct SettingsView: View {
     @EnvironmentObject var sos: SOSManager
     @EnvironmentObject var strava: StravaManager
     @EnvironmentObject var liveTrack: LiveTrackManager
-    @EnvironmentObject var componentStore: ComponentStore
+    @EnvironmentObject var bikes: BikeStore
     @Environment(\.dismiss) private var dismiss
 
     /// Set when the rider explicitly picks "Custom" in the wheel-size picker, so
@@ -31,7 +31,12 @@ struct SettingsView: View {
     private let wheelPresets: [WheelPreset] = [
         .init(name: "700x23c", mm: 2096), .init(name: "700x25c", mm: 2105),
         .init(name: "700x28c", mm: 2136), .init(name: "700x32c", mm: 2155),
-        .init(name: "650b x 47", mm: 2030), .init(name: "Custom", mm: -1)
+        .init(name: "700x40c", mm: 2200), .init(name: "650b x 47", mm: 2030),
+        // Mountain-bike sizes: a 29er rolls ~9% further per revolution than a
+        // road wheel, so a road figure left in place under-reports badly.
+        .init(name: "27.5 x 2.25\"", mm: 2180), .init(name: "27.5 x 2.4\"", mm: 2215),
+        .init(name: "29 x 2.1\"", mm: 2265), .init(name: "29 x 2.25\"", mm: 2290),
+        .init(name: "29 x 2.4\"", mm: 2330), .init(name: "Custom", mm: -1)
     ]
 
     var body: some View {
@@ -86,7 +91,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Speed Sensor")
                 } footer: {
-                    Text("Used to convert wheel revolutions into speed. GPS is used when no speed sensor is connected.")
+                    Text("Used to convert wheel revolutions into speed. This is the selected bike's wheel — changing it here updates that bike's profile. GPS is used when no speed sensor is connected.")
                 }
 
                 Section {
@@ -194,16 +199,23 @@ struct SettingsView: View {
 
                 Section {
                     NavigationLink {
-                        ComponentsView()
-                            .environmentObject(componentStore)
+                        BikesView()
+                            .environmentObject(bikes)
+                            .environmentObject(ble)
                             .environmentObject(settings)
                     } label: {
-                        Label("Components", systemImage: "wrench.and.screwdriver")
+                        HStack {
+                            Label("Bikes", systemImage: "bicycle")
+                            Spacer()
+                            Text(verbatim: bikes.active?.name ?? "")
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
                     }
                 } header: {
                     Text("Bike")
                 } footer: {
-                    Text("Tracks the distance on your chain, tyres, brake pads and more — every ride counts toward each part's next service, with a heads-up when one falls due.")
+                    Text("Keep a profile per bike — each with its own wheel size, its own distance and component wear, and its own choice of crash detection and junctions. Rides are recorded against the selected bike, and assigning a bike's sensor to it selects that bike automatically.")
                 }
 
                 Section {

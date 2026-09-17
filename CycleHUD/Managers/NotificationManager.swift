@@ -48,11 +48,11 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     }
 
     /// A tracked component crossed its service interval on the ride that just
-    /// ended (ComponentStore fires this once per crossing).
-    func notifyComponentDue(name: String) {
+    /// ended (BikeStore fires this once per crossing, per bike).
+    func notifyComponentDue(name: String, bike: String) {
         let content = UNMutableNotificationContent()
         content.title = String(localized: "Bike service due")
-        content.body = String(localized: "\(name) has reached its service interval — worth a check.")
+        content.body = String(localized: "\(name) on \(bike) has reached its service interval — worth a check.")
         content.sound = .default
         let request = UNNotificationRequest(identifier: "component-due-\(UUID().uuidString)",
                                             content: content, trigger: nil)   // deliver now

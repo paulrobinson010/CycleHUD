@@ -20,7 +20,7 @@ struct RideView: View {
     @EnvironmentObject var cloud: CloudSync
     @EnvironmentObject var strava: StravaManager
     @EnvironmentObject var liveTrack: LiveTrackManager
-    @EnvironmentObject var componentStore: ComponentStore
+    @EnvironmentObject var bikeStore: BikeStore
 
     private enum ActiveSheet: Int, Identifiable {
         case pairing, settings, routes
@@ -80,7 +80,7 @@ struct RideView: View {
                         .environmentObject(ride).environmentObject(history).environmentObject(weather)
                         .environmentObject(sos).environmentObject(cloud)
                         .environmentObject(strava).environmentObject(liveTrack)
-                        .environmentObject(componentStore)
+                        .environmentObject(bikeStore)
                 case .routes: RoutesView().environmentObject(routes).environmentObject(settings)
                         .environmentObject(weather).environmentObject(history)
                 }

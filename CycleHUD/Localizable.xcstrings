@@ -937,42 +937,82 @@
         }
       }
     },
-    "%@ has reached its service interval — worth a check." : {
+    "%@ on %@ has reached its service interval — worth a check." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ hat das Wartungsintervall erreicht — eine Kontrolle lohnt sich."
+            "value" : "%1$@ an %2$@ hat das Wartungsintervall erreicht — eine Kontrolle lohnt sich."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ has reached its service interval — worth a check."
+            "value" : "%@ on %@ has reached its service interval — worth a check."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ has reached its service interval — worth a check."
+            "value" : "%@ on %@ has reached its service interval — worth a check."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ha alcanzado su intervalo de mantenimiento — conviene revisarlo."
+            "value" : "%1$@ de %2$@ ha alcanzado su intervalo de mantenimiento — conviene revisarlo."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a atteint son intervalle d’entretien — un contrôle s’impose."
+            "value" : "%1$@ sur %2$@ a atteint son intervalle d’entretien — un contrôle s’impose."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ha raggiunto il suo intervallo di manutenzione — vale la pena controllare."
+            "value" : "%1$@ della %2$@ ha raggiunto il suo intervallo di manutenzione — vale la pena controllare."
+          }
+        }
+      }
+    },
+    "%@ total: %@" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ gesamt: %2$@"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ total: %@"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ total: %@"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total de %1$@: %2$@"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total %1$@ : %2$@"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Totale %1$@: %2$@"
           }
         }
       }
@@ -1174,6 +1214,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Registro attività"
+          }
+        }
+      }
+    },
+    "Add a bike" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fahrrad hinzufügen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a bike"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a bike"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir una bici"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter un vélo"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi una bici"
           }
         }
       }
@@ -2622,42 +2702,42 @@
         }
       }
     },
-    "Bike total: %@" : {
+    "Bikes" : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fahrrad gesamt: %@"
+            "value" : "Fahrräder"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bike total: %@"
+            "value" : "Bikes"
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bike total: %@"
+            "value" : "Bikes"
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Total de la bici: %@"
+            "value" : "Bicis"
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Total du vélo : %@"
+            "value" : "Vélos"
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Totale bici: %@"
+            "value" : "Bici"
           }
         }
       }
@@ -2698,6 +2778,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Il Bluetooth è disattivato"
+          }
+        }
+      }
+    },
+    "Both are usually worth having on the road and awkward off it: rough ground trips the impact detector, and stopping after it is normal on a trail, while the junction map covers roads and cycleways — not paths, tracks or bridleways. Selecting this bike applies these." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beide sind auf der Straße meist sinnvoll und im Gelände unpraktisch: unebener Boden löst die Sturzerkennung aus, und danach anzuhalten ist auf dem Trail normal, während die Kreuzungskarte Straßen und Radwege abdeckt — keine Pfade, Wirtschaftswege oder Reitwege. Beim Auswählen dieses Fahrrads werden diese Einstellungen übernommen."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Both are usually worth having on the road and awkward off it: rough ground trips the impact detector, and stopping after it is normal on a trail, while the junction map covers roads and cycleways — not paths, tracks or bridleways. Selecting this bike applies these."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Both are usually worth having on the road and awkward off it: rough ground trips the impact detector, and stopping after it is normal on a trail, while the junction map covers roads and cycleways — not paths, tracks or bridleways. Selecting this bike applies these."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ambas suelen merecer la pena en carretera y resultan incómodas fuera de ella: el terreno irregular dispara el detector de impactos, y pararse después es normal en un sendero, mientras que el mapa de cruces cubre carreteras y carriles bici — no senderos, pistas ni caminos de herradura. Al seleccionar esta bici se aplican estas opciones."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les deux sont généralement utiles sur la route et gênantes en dehors : un terrain accidenté déclenche le détecteur d’impact, et s’arrêter ensuite est normal sur un sentier, tandis que la carte des intersections couvre les routes et les voies cyclables — pas les sentiers, chemins ou allées cavalières. Sélectionner ce vélo applique ces réglages."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrambe valgono in genere su strada e sono scomode fuori: il terreno accidentato fa scattare il rilevatore di impatti, e fermarsi dopo è normale su un sentiero, mentre la mappa degli incroci copre strade e piste ciclabili — non sentieri, sterrate o ippovie. Selezionando questa bici queste opzioni vengono applicate."
           }
         }
       }
@@ -6150,6 +6270,46 @@
         }
       }
     },
+    "Features on this bike" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Funktionen für dieses Fahrrad"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Features on this bike"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Features on this bike"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Funciones en esta bici"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonctions sur ce vélo"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Funzioni su questa bici"
+          }
+        }
+      }
+    },
     "Finding quiet roads…" : {
       "localizations" : {
         "de-DE" : {
@@ -6554,6 +6714,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pendenza"
+          }
+        }
+      }
+    },
+    "Gravel" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gravel"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gravel"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gravel"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gravel"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gravel"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gravel"
+          }
+        }
+      }
+    },
+    "Gravel bike" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gravelbike"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gravel bike"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gravel bike"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bici de gravel"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vélo gravel"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bici gravel"
           }
         }
       }
@@ -9047,6 +9287,126 @@
         }
       }
     },
+    "Mountain" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mountainbike"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mountain"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mountain"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montaña"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VTT"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mountain"
+          }
+        }
+      }
+    },
+    "Mountain bike" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mountainbike"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mountain bike"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mountain bike"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bici de montaña"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VTT"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mountain bike"
+          }
+        }
+      }
+    },
+    "My bike" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mein Fahrrad"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My bike"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My bike"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mi bici"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mon vélo"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La mia bici"
+          }
+        }
+      }
+    },
     "My location: %@" : {
       "localizations" : {
         "de-DE" : {
@@ -10291,6 +10651,46 @@
         }
       }
     },
+    "Other" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Andere"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otra"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autre"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altro"
+          }
+        }
+      }
+    },
     "Part of it runs along a one-way road." : {
       "localizations" : {
         "de-DE" : {
@@ -10327,6 +10727,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Una parte percorre una strada a senso unico."
+          }
+        }
+      }
+    },
+    "parts" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teile"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "parts"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "parts"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "piezas"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pièces"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "parti"
           }
         }
       }
@@ -10489,6 +10929,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Autorizzazione necessaria"
+          }
+        }
+      }
+    },
+    "Pick a tyre size" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reifengröße wählen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a tyre size"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a tire size"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir medida de neumático"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisir une taille de pneu"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegli una misura di copertone"
           }
         }
       }
@@ -11705,6 +12185,46 @@
         }
       }
     },
+    "Remove bike" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fahrrad entfernen"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove bike"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove bike"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar bici"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer le vélo"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi bici"
+          }
+        }
+      }
+    },
     "Remove tile" : {
       "localizations" : {
         "de-DE" : {
@@ -11741,6 +12261,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rimuovi scheda"
+          }
+        }
+      }
+    },
+    "Removes this bike and its component history. Rides already recorded against it are kept." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entfernt dieses Fahrrad und seine Komponenten-Historie. Bereits erfasste Fahrten bleiben erhalten."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removes this bike and its component history. Rides already recorded against it are kept."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removes this bike and its component history. Rides already recorded against it are kept."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elimina esta bici y el historial de sus componentes. Las salidas ya registradas se conservan."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprime ce vélo et l’historique de ses composants. Les sorties déjà enregistrées sont conservées."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuove questa bici e lo storico dei suoi componenti. Le uscite già registrate vengono mantenute."
           }
         }
       }
@@ -12221,6 +12781,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Preparati a svoltare a destra"
+          }
+        }
+      }
+    },
+    "Road" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rennrad"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Road"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Road"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carretera"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strada"
+          }
+        }
+      }
+    },
+    "Road bike" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rennrad"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Road bike"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Road bike"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bici de carretera"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vélo de route"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bici da strada"
           }
         }
       }
@@ -13307,6 +13947,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sensori"
+          }
+        }
+      }
+    },
+    "Sensors on this bike" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensoren an diesem Fahrrad"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensors on this bike"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensors on this bike"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensores en esta bici"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capteurs sur ce vélo"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensori su questa bici"
           }
         }
       }
@@ -14718,6 +15398,46 @@
         }
       }
     },
+    "Tap a bike to select it — rides, distance and component wear are recorded against whichever bike is selected. Assign a bike's speed or cadence sensor to it and CycleHUD selects that bike by itself when the sensor connects." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe ein Fahrrad an, um es auszuwählen — Fahrten, Distanz und Komponentenverschleiß werden dem ausgewählten Fahrrad zugeordnet. Weise ihm seinen Geschwindigkeits- oder Trittfrequenzsensor zu, und CycleHUD wählt dieses Fahrrad selbst aus, sobald der Sensor verbindet."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a bike to select it — rides, distance and component wear are recorded against whichever bike is selected. Assign a bike's speed or cadence sensor to it and CycleHUD selects that bike by itself when the sensor connects."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a bike to select it — rides, distance and component wear are recorded against whichever bike is selected. Assign a bike's speed or cadence sensor to it and CycleHUD selects that bike by itself when the sensor connects."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca una bici para seleccionarla — las salidas, la distancia y el desgaste de componentes se registran en la bici seleccionada. Asígnale su sensor de velocidad o cadencia y CycleHUD seleccionará esa bici por sí solo cuando el sensor se conecte."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez un vélo pour le sélectionner — les sorties, la distance et l’usure des composants sont enregistrées sur le vélo sélectionné. Affectez-lui son capteur de vitesse ou de cadence et CycleHUD sélectionnera ce vélo tout seul dès que le capteur se connecte."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tocca una bici per selezionarla — uscite, distanza e usura dei componenti vengono registrate sulla bici selezionata. Assegnale il suo sensore di velocità o cadenza e CycleHUD selezionerà quella bici da sé appena il sensore si connette."
+          }
+        }
+      }
+    },
     "Tap a route to follow it on the ride screen; tap again to stop following. The route replaces the radar lane until a vehicle appears." : {
       "comment" : "A description of how to follow a route.",
       "isCommentAutoGenerated" : true
@@ -15406,42 +16126,42 @@
         }
       }
     },
-    "Tracks the distance on your chain, tyres, brake pads and more — every ride counts toward each part's next service, with a heads-up when one falls due." : {
+    "Keep a profile per bike — each with its own wheel size, its own distance and component wear, and its own choice of crash detection and junctions. Rides are recorded against the selected bike, and assigning a bike's sensor to it selects that bike automatically." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erfasst die Distanz von Kette, Reifen, Bremsbelägen und mehr — jede Fahrt zählt auf die nächste Wartung jedes Teils ein, mit einem Hinweis, sobald eine fällig ist."
+            "value" : "Führe pro Fahrrad ein Profil — jedes mit eigener Radgröße, eigener Distanz und eigenem Komponentenverschleiß und eigener Wahl von Unfallerkennung und Kreuzungen. Fahrten werden dem ausgewählten Fahrrad zugeordnet, und wenn du ihm einen Sensor zuweist, wird dieses Fahrrad automatisch ausgewählt."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tracks the distance on your chain, tyres, brake pads and more — every ride counts toward each part's next service, with a heads-up when one falls due."
+            "value" : "Keep a profile per bike — each with its own wheel size, its own distance and component wear, and its own choice of crash detection and junctions. Rides are recorded against the selected bike, and assigning a bike's sensor to it selects that bike automatically."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tracks the distance on your chain, tires, brake pads and more — every ride counts toward each part's next service, with a heads-up when one falls due."
+            "value" : "Keep a profile per bike — each with its own wheel size, its own distance and component wear, and its own choice of crash detection and junctions. Rides are recorded against the selected bike, and assigning a bike's sensor to it selects that bike automatically."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Registra la distancia de la cadena, los neumáticos, las pastillas de freno y más — cada salida cuenta para el próximo mantenimiento de cada pieza, con un aviso cuando toque."
+            "value" : "Mantén un perfil por bici — cada uno con su propio tamaño de rueda, su propia distancia y desgaste de componentes, y su propia elección de detección de caídas y cruces. Las salidas se registran en la bici seleccionada, y si le asignas un sensor, esa bici se selecciona automáticamente."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suit la distance de votre chaîne, vos pneus, vos plaquettes de frein et plus — chaque sortie compte vers le prochain entretien de chaque pièce, avec un rappel quand il est dû."
+            "value" : "Gardez un profil par vélo — chacun avec sa taille de roue, sa distance et l’usure de ses composants, et son propre choix de détection de chute et d’intersections. Les sorties sont enregistrées sur le vélo sélectionné, et si vous lui affectez un capteur, ce vélo est sélectionné automatiquement."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Registra la distanza di catena, copertoni, pastiglie dei freni e altro — ogni uscita conta verso la prossima manutenzione di ogni parte, con un avviso quando è il momento."
+            "value" : "Tieni un profilo per bici — ognuno con la propria misura di ruota, la propria distanza e usura dei componenti e la propria scelta di rilevamento incidenti e incroci. Le uscite vengono registrate sulla bici selezionata e, se le assegni un sensore, quella bici viene selezionata automaticamente."
           }
         }
       }
@@ -15642,6 +16362,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Attiva il Bluetooth per trovare i sensori."
+          }
+        }
+      }
+    },
+    "Type" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Typ"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipo"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipo"
           }
         }
       }
@@ -16126,42 +16886,82 @@
         }
       }
     },
-    "Used to convert wheel revolutions into speed. GPS is used when no speed sensor is connected." : {
+    "Used to convert wheel revolutions into speed. This is the selected bike's wheel — changing it here updates that bike's profile. GPS is used when no speed sensor is connected." : {
       "localizations" : {
         "de-DE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dient zur Umrechnung der Radumdrehungen in Geschwindigkeit. Ohne Geschwindigkeitssensor wird GPS verwendet."
+            "value" : "Wird genutzt, um Radumdrehungen in Geschwindigkeit umzurechnen. Das ist das Rad des ausgewählten Fahrrads — eine Änderung hier aktualisiert dessen Profil. Ohne verbundenen Geschwindigkeitssensor wird GPS verwendet."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Used to convert wheel revolutions into speed. GPS is used when no speed sensor is connected."
+            "value" : "Used to convert wheel revolutions into speed. This is the selected bike's wheel — changing it here updates that bike's profile. GPS is used when no speed sensor is connected."
           }
         },
         "en-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Used to convert wheel revolutions into speed. GPS is used when no speed sensor is connected."
+            "value" : "Used to convert wheel revolutions into speed. This is the selected bike's wheel — changing it here updates that bike's profile. GPS is used when no speed sensor is connected."
           }
         },
         "es-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sirve para convertir las vueltas de rueda en velocidad. Se usa el GPS si no hay sensor de velocidad."
+            "value" : "Se usa para convertir las revoluciones de la rueda en velocidad. Es la rueda de la bici seleccionada — cambiarla aquí actualiza su perfil. Se usa el GPS cuando no hay sensor de velocidad conectado."
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sert à convertir les tours de roue en vitesse. Le GPS est utilisé sans capteur de vitesse."
+            "value" : "Sert à convertir les tours de roue en vitesse. Il s’agit de la roue du vélo sélectionné — la modifier ici met à jour son profil. Le GPS est utilisé lorsqu’aucun capteur de vitesse n’est connecté."
           }
         },
         "it-IT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Serve a convertire i giri della ruota in velocità. Senza sensore di velocità si usa il GPS."
+            "value" : "Serve a convertire i giri della ruota in velocità. È la ruota della bici selezionata — modificarla qui aggiorna il suo profilo. Si usa il GPS quando non è connesso un sensore di velocità."
+          }
+        }
+      }
+    },
+    "Used to turn this bike's wheel-sensor revolutions into speed and distance. A mountain bike's wheel is much bigger than a road bike's, so a road figure left in place reports both several percent low. GPS is used when no speed sensor is connected." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird genutzt, um die Radumdrehungen dieses Fahrrads in Geschwindigkeit und Distanz umzurechnen. Ein Mountainbike-Laufrad ist deutlich größer als ein Rennrad-Laufrad — bleibt ein Rennrad-Wert stehen, werden beide um mehrere Prozent zu niedrig angezeigt. Ohne verbundenen Geschwindigkeitssensor wird GPS verwendet."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used to turn this bike's wheel-sensor revolutions into speed and distance. A mountain bike's wheel is much bigger than a road bike's, so a road figure left in place reports both several percent low. GPS is used when no speed sensor is connected."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used to turn this bike's wheel-sensor revolutions into speed and distance. A mountain bike's wheel is much bigger than a road bike's, so a road figure left in place reports both several percent low. GPS is used when no speed sensor is connected."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se usa para convertir las revoluciones del sensor de rueda de esta bici en velocidad y distancia. La rueda de una bici de montaña es mucho mayor que la de carretera, así que dejar un valor de carretera hace que ambas se queden varios puntos porcentuales por debajo. Se usa el GPS cuando no hay sensor de velocidad conectado."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sert à convertir les tours de roue de ce vélo en vitesse et distance. La roue d’un VTT est bien plus grande que celle d’un vélo de route : en laissant une valeur route, les deux sont sous-estimées de plusieurs pour cent. Le GPS est utilisé lorsqu’aucun capteur de vitesse n’est connecté."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serve a convertire i giri del sensore di ruota di questa bici in velocità e distanza. La ruota di una mountain bike è molto più grande di quella da strada, quindi lasciare un valore da strada fa segnare entrambe di diversi punti percentuali in meno. Si usa il GPS quando non è connesso un sensore di velocità."
           }
         }
       }
@@ -16650,6 +17450,46 @@
         }
       }
     },
+    "Wheel" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laufrad"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wheel"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wheel"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rueda"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Roue"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ruota"
+          }
+        }
+      }
+    },
     "Wheel size" : {
       "localizations" : {
         "de-DE" : {
@@ -16726,6 +17566,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Quando attivo, ogni uscita pubblica un link privato con posizione, velocità e distanza in tempo reale su una mappa — condividilo con chi deve sapere dove sei. Il link è un indirizzo casuale non indovinabile, si aggiorna ogni 15 secondi tramite il tuo iCloud e smette di funzionare appena termini il giro. Tutto è cifrato end-to-end: la chiave viaggia solo nel link stesso — senza di essa nessuno, nemmeno CycleHUD, può leggere dove sei."
+          }
+        }
+      }
+    },
+    "When one of these connects, CycleHUD selects this bike — so swapping bikes needs nothing from you. A sensor belongs to one bike at a time." : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobald einer davon verbindet, wählt CycleHUD dieses Fahrrad aus — ein Fahrradwechsel erfordert also nichts von dir. Ein Sensor gehört immer zu genau einem Fahrrad."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When one of these connects, CycleHUD selects this bike — so swapping bikes needs nothing from you. A sensor belongs to one bike at a time."
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When one of these connects, CycleHUD selects this bike — so swapping bikes needs nothing from you. A sensor belongs to one bike at a time."
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando uno de ellos se conecta, CycleHUD selecciona esta bici — así que cambiar de bici no te exige nada. Un sensor pertenece a una sola bici a la vez."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dès que l’un d’eux se connecte, CycleHUD sélectionne ce vélo — changer de vélo ne vous demande donc rien. Un capteur n’appartient qu’à un seul vélo à la fois."
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando uno di questi si connette, CycleHUD seleziona questa bici — cambiare bici non richiede nulla da te. Un sensore appartiene a una sola bici per volta."
           }
         }
       }
@@ -17086,6 +17966,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Riceverai una notifica alla fine dell’uscita che lo supera."
+          }
+        }
+      }
+    },
+    "Your bikes" : {
+      "localizations" : {
+        "de-DE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Fahrräder"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your bikes"
+          }
+        },
+        "en-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your bikes"
+          }
+        },
+        "es-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus bicis"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vos vélos"
+          }
+        },
+        "it-IT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le tue bici"
           }
         }
       }

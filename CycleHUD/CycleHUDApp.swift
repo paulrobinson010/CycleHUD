@@ -45,7 +45,7 @@ struct CycleHUDApp: App {
     @StateObject private var cloud: CloudSync
     @StateObject private var strava: StravaManager
     @StateObject private var liveTrack: LiveTrackManager
-    @StateObject private var componentStore: ComponentStore
+    @StateObject private var bikeStore: BikeStore
     /// Branded splash (website hero) shown over the HUD at launch, then faded.
     @State private var showSplash = true
 
@@ -68,7 +68,7 @@ struct CycleHUDApp: App {
         let cloud = CloudSync()
         let strava = StravaManager()
         let liveTrack = LiveTrackManager()
-        let componentStore = ComponentStore()
+        let bikeStore = BikeStore(settings: settings)
         _settings = StateObject(wrappedValue: settings)
         _ble = StateObject(wrappedValue: ble)
         _location = StateObject(wrappedValue: location)
@@ -83,7 +83,7 @@ struct CycleHUDApp: App {
         _cloud = StateObject(wrappedValue: cloud)
         _strava = StateObject(wrappedValue: strava)
         _liveTrack = StateObject(wrappedValue: liveTrack)
-        _componentStore = StateObject(wrappedValue: componentStore)
+        _bikeStore = StateObject(wrappedValue: bikeStore)
     }
 
     var body: some Scene {
@@ -119,7 +119,7 @@ struct CycleHUDApp: App {
             .environmentObject(cloud)
             .environmentObject(strava)
             .environmentObject(liveTrack)
-            .environmentObject(componentStore)
+            .environmentObject(bikeStore)
             .preferredColorScheme(settings.appearanceTheme.colorScheme)
             // Shared route files ("open in CycleHUD" from Files, AirDrop,
             // Messages…) land here and go straight into the list.
@@ -145,10 +145,17 @@ struct CycleHUDApp: App {
                 ride.routes = routes           // turn cues + ghost rider
                 ride.liveTrack = liveTrack     // share-my-ride sessions
                 ride.strava = strava           // auto-upload finished rides
-                ride.components = componentStore   // wear odometer per ride
+                ride.bikes = bikeStore             // per-bike odometer + wear
                 ride.junctions = junctions         // give-way junction warnings
-                componentStore.seedIfNeeded(historyMeters:
+                // One profile per bike: migrate the pre-profiles component
+                // list and odometer onto the first bike, then let a
+                // connecting bike sensor select the bike being ridden.
+                bikeStore.migrateIfNeeded(historyMeters:
                     history.rides.reduce(0) { $0 + $1.distanceMeters })
+                bikeStore.rideActive = { ride.status != .idle }
+                ble.onSensorConnected = { [weak bikeStore] id in
+                    bikeStore?.sensorConnected(id)
+                }
                 liveTrack.isEnabled = { settings.liveTrackingEnabled }
                 cloud.isEnabled = { settings.iCloudSyncEnabled }
                 routes.cloud = cloud

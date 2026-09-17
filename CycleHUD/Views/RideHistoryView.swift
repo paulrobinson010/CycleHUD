@@ -44,7 +44,10 @@ struct RideHistoryView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(ride.date.formatted(date: .abbreviated, time: .shortened))
                     .font(.system(size: 15, weight: .semibold))
-                Text("\(distance(ride))  ·  \(time(ride))")
+                // The bike is appended once profiles exist; rides recorded
+                // before them have no bike and read exactly as before.
+                Text(verbatim: "\(distance(ride))  ·  \(time(ride))"
+                     + (ride.bikeName.map { "  ·  \($0)" } ?? ""))
                     .font(.system(size: 13))
                     .foregroundStyle(.secondary)
             }

@@ -78,8 +78,12 @@ final class RideManager: ObservableObject {
     var liveTrack: LiveTrackManager?
     /// Wired in by the app: finished rides auto-upload when enabled.
     var strava: StravaManager?
-    /// Wired in by the app: finished rides advance the component odometer.
-    var components: ComponentStore?
+    /// Wired in by the app: finished rides advance the ridden bike's odometer.
+    var bikes: BikeStore?
+    /// The bike this ride started on — captured at the start so the ride (and
+    /// its component wear) is attributed to it even if the selection changes
+    /// afterwards.
+    private var rideBike: BikeProfile?
     /// Wired in by the app: stop/give-way junction warnings read from here.
     var junctions: JunctionManager?
 
@@ -273,7 +277,8 @@ final class RideManager: ObservableObject {
                 ? routes?.activeRoute?.path.map { ($0.lat, $0.lon) } : nil
             liveTrack?.beginSession(routePath: routePath)
         }
-        AppLog.shared.log("Ride START")
+        rideBike = bikes?.active
+        AppLog.shared.log("Ride START\(rideBike.map { " on \($0.name)" } ?? "")")
         // Battery drain instrumentation: level at start, every 10 minutes,
         // and at stop — so a hungry ride can be diagnosed from the log.
         UIDevice.current.isBatteryMonitoringEnabled = true
@@ -341,7 +346,7 @@ final class RideManager: ObservableObject {
         logBattery("ride stop")
         rideStartBattery = nil
         ble.setBikeWatch(false)
-        components?.recordRide(distanceMeters: distanceMeters)   // wear odometer
+        bikes?.recordRide(distanceMeters: distanceMeters, bikeID: rideBike?.id)   // wear odometer
         liveActivity.end(activityState)          // take the ride off the Lock Screen
         liveTrack?.endSession()                  // kill the share link + its record
         routes?.endGhostRun()                    // a complete run may become the ghost
@@ -406,7 +411,9 @@ final class RideManager: ObservableObject {
                                       averagePower: powerTime > 60
                                           ? Int((powerSum / powerTime).rounded()) : nil,
                                       normalizedPower: powerTime > 60
-                                          ? PowerZones.normalizedPower(track) : nil)
+                                          ? PowerZones.normalizedPower(track) : nil,
+                                      bikeID: rideBike?.id,
+                                      bikeName: rideBike?.name)
             history.add(summary)
             finishedSummary = summary
             if settings.stravaAutoUploadEnabled, strava?.connected == true {
@@ -1267,6 +1274,7 @@ final class RideManager: ObservableObject {
                                distanceUnit: settings.distanceUnit,
                                state: activityState)
         }
+        rideBike = bikes?.active      // best effort: the selection at relaunch
         AppLog.shared.log("Restored in-progress ride (status=\(snap.statusRaw), dist=\(Int(distanceMeters))m) — prior session likely crashed/terminated")
         // Re-baseline the battery instrumentation from here (the pre-kill
         // start level is gone; drain figures cover the restored stretch).

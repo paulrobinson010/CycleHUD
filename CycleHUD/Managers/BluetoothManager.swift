@@ -428,6 +428,10 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
     private var bikeWatchArmedAt = Date.distantPast
     private var bikeWatchAlertAt = Date.distantPast
 
+    /// Wired by the app: a saved sensor connected (BikeStore may switch to the
+    /// bike that sensor is fitted to).
+    var onSensorConnected: ((UUID) -> Void)?
+
     func setBikeWatch(_ armed: Bool) {
         guard armed != bikeWatchArmed else { return }
         bikeWatchArmed = armed
@@ -551,6 +555,7 @@ final class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelega
         upsertSavedDevice(id: peripheral.identifier, name: peripheral.name ?? "")
         diag("Connected: \(peripheral.name ?? "?")")
         bikeWatchSensorConnected(peripheral)   // a waking bike sensor = it moved
+        onSensorConnected?(peripheral.identifier)   // may select that bike's profile
         peripheral.discoverServices(nil)   // discover everything, match by UUID below
     }
 

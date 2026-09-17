@@ -54,6 +54,11 @@ struct RideSummary: Identifiable, Codable, Equatable {
     // Optional so summaries saved before power support existed still decode.
     var averagePower: Int? = nil    // watts, when a power meter was connected
     var normalizedPower: Int? = nil // 30 s-smoothed 4th-power mean, same condition
+    // Which bike this ride was on (nil for rides recorded before bike
+    // profiles existed). The name is stored alongside the id so history still
+    // reads correctly after a bike is renamed or removed.
+    var bikeID: UUID? = nil
+    var bikeName: String? = nil
 
     var averageSpeedMps: Double {
         movingTimeSeconds > 0 ? distanceMeters / movingTimeSeconds : 0
