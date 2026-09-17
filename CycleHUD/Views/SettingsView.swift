@@ -47,6 +47,27 @@ struct SettingsView: View {
             Form {
                 Section {
                     NavigationLink {
+                        BikesView()
+                            .environmentObject(bikes)
+                            .environmentObject(ble)
+                            .environmentObject(settings)
+                    } label: {
+                        HStack {
+                            Label("Bikes", systemImage: "bicycle")
+                            Spacer()
+                            Text(verbatim: bikes.active?.name ?? "")
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
+                    }
+                } header: {
+                    Text("Bike")
+                } footer: {
+                    Text("Keep a profile per bike — each with its own wheel size, its own distance and component wear, and its own choice of crash detection and junctions. Rides are recorded against the selected bike, and assigning a bike's sensor to it selects that bike automatically.")
+                }
+
+                Section {
+                    NavigationLink {
                         RideHistoryView().environmentObject(history).environmentObject(settings)
                     } label: {
                         Label("Previous rides", systemImage: "list.bullet.rectangle")
@@ -198,27 +219,6 @@ struct SettingsView: View {
                     Text("Map")
                 } footer: {
                     Text("Shows a street map of where you are in the radar panel while the road behind is clear and you're not following a route — the radar takes the panel back the instant a vehicle is detected. With a route active, the route map appears instead, as usual.")
-                }
-
-                Section {
-                    NavigationLink {
-                        BikesView()
-                            .environmentObject(bikes)
-                            .environmentObject(ble)
-                            .environmentObject(settings)
-                    } label: {
-                        HStack {
-                            Label("Bikes", systemImage: "bicycle")
-                            Spacer()
-                            Text(verbatim: bikes.active?.name ?? "")
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        }
-                    }
-                } header: {
-                    Text("Bike")
-                } footer: {
-                    Text("Keep a profile per bike — each with its own wheel size, its own distance and component wear, and its own choice of crash detection and junctions. Rides are recorded against the selected bike, and assigning a bike's sensor to it selects that bike automatically.")
                 }
 
                 Section {
