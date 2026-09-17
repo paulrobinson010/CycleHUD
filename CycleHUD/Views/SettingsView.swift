@@ -32,8 +32,11 @@ struct SettingsView: View {
         .init(name: "700x23c", mm: 2096), .init(name: "700x25c", mm: 2105),
         .init(name: "700x28c", mm: 2136), .init(name: "700x32c", mm: 2155),
         .init(name: "700x40c", mm: 2200), .init(name: "650b x 47", mm: 2030),
-        // Mountain-bike sizes: a 29er rolls ~9% further per revolution than a
-        // road wheel, so a road figure left in place under-reports badly.
+        // Mountain-bike sizes, 26" through 29". A 29er rolls ~9% further per
+        // revolution than a road wheel (and a 26" slightly less far), so a
+        // road figure left in place reports the wrong distance either way.
+        .init(name: "26 x 1.75\"", mm: 2023), .init(name: "26 x 2.1\"", mm: 2068),
+        .init(name: "26 x 2.35\"", mm: 2083),
         .init(name: "27.5 x 2.25\"", mm: 2180), .init(name: "27.5 x 2.4\"", mm: 2215),
         .init(name: "29 x 2.1\"", mm: 2265), .init(name: "29 x 2.25\"", mm: 2290),
         .init(name: "29 x 2.4\"", mm: 2330), .init(name: "Custom", mm: -1)
